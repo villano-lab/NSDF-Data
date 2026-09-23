@@ -126,7 +126,7 @@
 </div>
 
 <h3>Histogram of <code>bstd</code> for the 500-sample window</h3>
-<p>Where the cap sits relative to the actual <code>bstd</code> distribution of Branch 2. All Detector 0 / Channel 0 traces, <code>log10(bstd)</code> on the 500-sample window, with the Tight selection overlaid, the 1000-sample <code>bstd</code> as an outline for comparison, and the 32.48 cap marked. The count axis is logarithmic because the quiet population dominates and the interesting part is the tail.</p>
+<p>We use the plot below to see whether adjusting the <code>bstd</code> cut is worth it: a <code>bstd</code> threshold can only help if the traces we want to remove sit apart from the ones we want to keep. It shows all Detector 0 / Channel 0 traces (1517) as a histogram of <code>log10(bstd)</code> on the 500-sample window, with the Tight selection overlaid in orange, the 1000-sample <code>bstd</code> as a black outline for comparison, and the 32.48 cap as a dashed line. The count axis is logarithmic because the quiet population dominates and the interesting part is the tail.</p>
 
 <figure>
   <img src="img/dump1_bstd_hist_500.png" alt="Histogram of log10(bstd) for the 500-sample window with the Tight selection, the 1000-sample distribution as an outline, and the 32.48 cap">

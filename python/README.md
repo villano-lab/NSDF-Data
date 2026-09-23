@@ -52,6 +52,12 @@ no default), used e.g. by `07221203_2025_dump2_pulse.ipynb`'s `ratio > 9` cut.
 objects -- `load_channel_batch` turns a list of `detector_id`s into a plain
 `(n_pulses, n_samples)` array for everything else to consume.
 
+`pulse_archive.py` is a fifth, separate module: it persists a cut's *result*
+(which `detector_id`s it selected, for a given series/detector/channel) to an
+HDF5 file, rather than computing something from pulse data -- see its own
+docstring and `archives/README.md` at the repo root. It's the only module
+that needs `h5py`.
+
 ## `PulseConfig`
 
 A frozen dataclass (`pretrigger_samples`, `glitch_samples`, `sample_period_s`)
@@ -100,5 +106,7 @@ cd python && python -m pytest tests/ -v
 They need `numpy` + `pytest` (present in the base conda env; `pytest` is
 *not* currently in `darkmatter_cli_env`). The library modules themselves only
 need `numpy`, so they work fine under either environment -- `pulse_io.py` is
-the only file that additionally needs `nsdf_dark_matter` at import time, only
-because it calls into a `cdms` object you already have.
+the only file that additionally needs `nsdf_dark_matter` at import time (only
+because it calls into a `cdms` object you already have), and `pulse_archive.py`
+the only one that needs `h5py` (installed in both `darkmatter_cli_env` and the
+base conda env as of 2026-09-23).

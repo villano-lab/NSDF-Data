@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 7: Origin of the sharp PSD peaks; the 204 kHz line</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>Origin of the sharp peaks in the average noise PSD; the 204 kHz line</h1>
+<p class="meta"><strong>Note 7</strong> &middot; Author(s): Anthony Villano &middot; 23 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<h2>Code Repository</h2>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/b1b88ee/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the &ldquo;Origin of the sharp peaks in the average PSD&rdquo; section and the three-cut comparison. Pinned to <code>b1b88ee</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the library it uses (<a href="note-04-pulse-library.html">Note 4</a>). Pinned to <code>085aa3d</code>.</li>
+</ul>
+
+<h2>Question</h2>
+<p>The average PSD of the 14 selected traces in <a href="note-03-noise-psd.html">Note 3</a> has several sharp peaks. In the larger selections of <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> (192, 744 and 179 traces) most of them are gone, except one near 200&nbsp;kHz. Where do the peaks come from, and why does that one survive?</p>
+
+<p>Throughout, the leading glitch samples are <strong>kept</strong> in the traces that go into the FFT (a deliberate choice; baseline subtraction skips them only when computing the mean it subtracts).</p>
+
+<h2>The peaks come from two traces</h2>
+<p>Peaks were located programmatically as bins standing well above a rolling median of the log-power, and then, for each peak bin, the summed power over the 14 traces was split by trace. The same two events, <strong>10708</strong> and <strong>10959</strong>, are the largest contributor at 7 of the 8 flagged bins (the remaining one is the lowest-frequency bin, an edge effect of the steep low-frequency slope rather than a real peak):</p>
+
+<div class="table-scroll" style="max-width: 640px;">
+<table class="compact">
+  <thead><tr><th class="num">Frequency (Hz)</th><th>Top contributor</th><th class="num">Its share of summed power</th><th class="num">Top two together</th></tr></thead>
+  <tbody>
+    <tr><td class="num">26,398</td><td>evt 10708</td><td class="num">0.49</td><td class="num">0.87</td></tr>
+    <tr><td class="num">42,267</td><td>evt 10708</td><td class="num">0.62</td><td class="num">0.95</td></tr>
+    <tr><td class="num">77,667</td><td>evt 10708</td><td class="num">0.53</td><td class="num">0.96</td></tr>
+    <tr><td class="num">105,591</td><td>evt 10708</td><td class="num">0.51</td><td class="num">0.80</td></tr>
+    <tr><td class="num">183,258</td><td>evt 10959</td><td class="num">0.60</td><td class="num">0.95</td></tr>
+    <tr><td class="num">186,462</td><td>evt 10959</td><td class="num">0.73</td><td class="num">0.93</td></tr>
+    <tr><td class="num">204,010</td><td>evt 10959</td><td class="num">0.68</td><td class="num">0.87</td></tr>
+    <tr><td class="num">153 (lowest bin)</td><td>evt 10037</td><td class="num">0.16</td><td class="num">0.31</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>At each peak, one or two of the 14 traces supply 80&ndash;96% of the summed power. Plotted individually, both traces follow the noise floor of the other twelve almost everywhere, but carry genuine narrow spikes 1&ndash;2 orders of magnitude above their own local continuum at those frequencies. In the time domain they are indistinguishable from ordinary noise apart from the known leading-glitch spike, so the lines are visible only in the frequency domain.</p>
+
+<figure>
+  <img src="img/psd_outlier_traces.png" alt="Time-domain traces and individual power spectra of events 10708 and 10959 against the other twelve traces">
+  <figcaption>Events 10708 (red) and 10959 (blue) against the other 12 traces (gray). Top: baseline-subtracted time domain. Bottom: individual power spectra, log&ndash;log.</figcaption>
+</figure>
+
+<p>A single-sample glitch produces a broadband, roughly flat contribution to <code>|FFT|<sup>2</sup></code>, not narrow lines, so the leading glitch samples cannot explain these peaks.</p>
+
+<p>With only 14 traces in the mean, two events that each ring at several frequencies are enough to dominate the average at every one of those frequencies. These peaks are an artifact of <em>which</em> traces happened to be in this particular 14 &mdash; drawn from the cruder first cut, which lets such traces through &mdash; not a property of the noise in general.</p>
+
+<p><strong>Hypothesis, not yet checked:</strong> the two events share nearly the same set of line frequencies, including one near 204&nbsp;kHz. That suggests one source that is normally present at a low level and is much stronger in these two events, rather than two independent phenomena.</p>
+
+<h2>Why 204 kHz survives in the larger selections</h2>
+<p>The same per-trace check at the 204&nbsp;kHz bin (204,010&nbsp;Hz) for the three selections of Note 6 gives a different picture:</p>
+
+<div class="table-scroll" style="max-width: 720px;">
+<table class="compact">
+  <thead><tr><th>Selection</th><th class="num">Traces</th><th class="num">Largest single trace, share of summed power</th><th class="num">Fraction of traces &gt; 2&times; local neighbors</th><th class="num">Median excess over neighbors</th></tr></thead>
+  <tbody>
+    <tr><td><code>excursion_band</code></td><td class="num">192</td><td class="num">0.03</td><td class="num">0.73</td><td class="num">5.3&times;</td></tr>
+    <tr><td><code>excursion_band_loose</code></td><td class="num">744</td><td class="num">0.01</td><td class="num">0.72</td><td class="num">4.9&times;</td></tr>
+    <tr><td><code>excursion_band_AI</code></td><td class="num">179</td><td class="num">0.03</td><td class="num">0.72</td><td class="num">5.1&times;</td></tr>
+  </tbody>
+</table>
+</div>
+<p>&ldquo;Local neighbors&rdquo; means the median of the five bins on each side of 204,010&nbsp;Hz, taken per trace.</p>
+
+<p>No trace dominates (the largest supplies 1&ndash;3%, against 68% in the 14-trace mean), yet about 72% of individual traces show a real excess at that exact bin, by a median factor of about 5. In the <em>median</em> spectrum of the 179 <code>excursion_band_AI</code> traces, two adjacent bins (204,010 and 204,163&nbsp;Hz) stand at about 5.4&times;10<sup>4</sup>, against roughly 5&ndash;10&times;10<sup>3</sup> in the bins around them &mdash; a line about two bins (~300&nbsp;Hz) wide.</p>
+
+<figure>
+  <img src="img/psd_three_cuts.png" alt="Average PSD for the three selections; the 204 kHz line is visible in all three">
+  <figcaption>Average PSD for the three selections; the line near 204&nbsp;kHz is visible in all of them, while the peaks that came from events 10708 and 10959 are not.</figcaption>
+</figure>
+
+<p>Common to most traces but never dominated by one or two is what a population-wide narrowband pickup tone looks like, as opposed to per-event contamination. The data alone cannot say what produces it (a clock, a switching supply, something in the readout); that needs the DAQ and electronics documentation.</p>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>Identify the source of the ~204&nbsp;kHz line from the electronics documentation.</li>
+  <li>Check whether it appears in the other dumps (<code>F0002</code>&ndash;<code>F0005</code>), the other channels and detectors, and other series, and whether its frequency and amplitude are stable over time.</li>
+  <li>Test the hypothesis that events 10708 and 10959 are the same source at high amplitude, e.g. by looking at their timing relative to each other and to other events.</li>
+  <li>Decide how to treat the line when a noise PSD is used for optimal filtering (mask, notch, or keep).</li>
+  <li>Repeat the peak search on the AI-filtered selection itself to see what other, weaker lines are present.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

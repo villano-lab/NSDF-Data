@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 4: python/ pulse library</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>python/ pulse library: operations, cuts, and derived quantities</h1>
+<p class="meta"><strong>Note 4</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<h2>Code Repository</h2>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/894ef9d/python/README.md"><code>python/README.md</code></a> &mdash; conventions and import pattern. Pinned to <code>894ef9d</code>.</li>
+</ul>
+
+<h2>Why a library</h2>
+<p>Three notebooks had each grown their own copy of the same handful of computations (pretrigger mean and standard deviation, the excursion ratio, baseline subtraction, an FFT power spectrum), with the same constants hardcoded separately in each. That logic now lives in one place, and the notebooks import it. Refactoring reproduced the notebooks&rsquo; earlier numbers exactly (<code>bstd_cap = 32.48</code>, <code>ratio_thresh = 1.93</code>, 41 of 1517 traces for the first noise cut; 10 of 11,642 for the triggered-pulse cut).</p>
+
+<h2>Framework</h2>
+<ul>
+  <li><strong>Samples on the last axis.</strong> Every function takes an array shaped <code>(..., n_samples)</code>: one pulse <code>(n_samples,)</code> or a batch <code>(n_pulses, n_samples)</code> both work, because every reduction runs along <code>axis=-1</code>. A plain NumPy array <em>is</em> the pulse; there is no custom class.</li>
+  <li><strong>One shared config.</strong> A frozen dataclass <code>PulseConfig</code> (<code>pretrigger_samples = 1000</code>, <code>glitch_samples = 10</code>, <code>sample_period_s = 1.6e-6</code>) is passed explicitly to every function, replacing the constants copied between notebooks.</li>
+  <li><strong>Three categories, one contract each.</strong> <em>Quantities</em> return one number (or spectrum) per pulse; <em>cuts</em> return one boolean per pulse and combine with plain <code>&amp;</code>, <code>|</code>, <code>~</code>; <em>operations</em> return new pulses and never modify their input.</li>
+  <li><strong>Flat modules, no package.</strong> Imported by inserting <code>python/</code> into <code>sys.path</code>, the same convention as <code>nrFanoII_paper2022</code>&rsquo;s <code>python/ba_bknd_lines.py</code>.</li>
+  <li><strong>Only two modules touch outside systems.</strong> <code>pulse_io.py</code> is the only one that knows about <code>nsdf_dark_matter</code>&rsquo;s <code>cdms</code> objects; <code>pulse_archive.py</code> is the only one that needs <code>h5py</code>.</li>
+</ul>
+
+<h2>Marking functions done or under development</h2>
+<p>Every function is tagged <code>@status(DONE)</code> or <code>@status(UNDER_DEVELOPMENT, note=...)</code>. An under-development function still runs, but emits a <code>UserWarning</code> carrying its note on every call, so a notebook that depends on one says so in its own output instead of looking as settled as everything else. <code>list_statuses(module)</code> returns the inventory. Currently <strong>24 done and 5 under development</strong> across 29 tagged functions.</p>
+
+<h2>Function inventory</h2>
+
+<h3>Quantities &mdash; <code>pulse_quantities.py</code></h3>
+<div class="table-scroll"><table>
+  <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td><code>pretrigger_mean</code></td><td>Mean of the pretrigger window, glitch samples skipped</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>pretrigger_std</code></td><td>Standard deviation of the same window</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>max_deviation</code></td><td>Largest |post-pretrigger sample &minus; pretrigger mean| (&ldquo;dev&rdquo;)</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_ratio</code></td><td><code>max_deviation / pretrigger_std</code> (&ldquo;ratio&rdquo;)</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>log_excursion_ratio</code></td><td><code>log10</code> of the ratio</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_duration</code></td><td>Longest run of consecutive post-pretrigger samples at or above half of the trace&rsquo;s own <code>dev</code></td><td><span class="status under-dev">under development</span></td></tr>
+    <tr><td><code>rise_sample</code></td><td>First post-pretrigger sample crossing a fraction of <code>dev</code> (half-maximum heuristic; used on one analysis only)</td><td><span class="status under-dev">under development</span></td></tr>
+    <tr><td><code>power_spectrum</code></td><td>Real part of <code>rfft &times; conj(rfft)</code></td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>frequencies_hz</code></td><td>Frequency bins matching <code>power_spectrum</code></td><td><span class="status done">done</span></td></tr>
+  </tbody>
+</table></div>
+
+<h3>Cuts &mdash; <code>pulse_cuts.py</code></h3>
+<div class="table-scroll"><table>
+  <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td><code>dead_channel</code></td><td>Pretrigger standard deviation is exactly zero (channel not read out)</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>active</code></td><td><code>~dead_channel</code></td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>quiet_baseline</code></td><td><code>bstd</code> below its own percentile across the batch; dead channels never pass</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>ratio_band</code></td><td>Linear <code>ratio</code> in <code>[low, high)</code>, either bound optional (generic)</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_band</code></td><td><code>log10(ratio)</code> in <code>[0.5, 0.7)</code> by default: the tightened cut of <a href="note-02-noise-selection.html">Note 2</a></td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_band_loose</code></td><td><code>log10(ratio)</code> in <code>[0.5, 1.0)</code>: the &ldquo;best&rdquo; cut of Note 2</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_below_percentile</code></td><td><code>ratio</code> below its own percentile; biased toward contaminated traces when used alone</td><td><span class="status under-dev">under development</span></td></tr>
+    <tr><td><code>looks_like_pulse</code></td><td><code>excursion_duration</code> at or above <code>min_duration</code> (50)</td><td><span class="status under-dev">under development</span></td></tr>
+    <tr><td><code>excursion_band_AI</code></td><td><code>excursion_band</code> with <code>looks_like_pulse</code> traces removed (<a href="note-06-ai-pulse-veto-archive.html">Note 6</a>)</td><td><span class="status under-dev">under development</span></td></tr>
+  </tbody>
+</table></div>
+
+<h3>Operations &mdash; <code>pulse_operations.py</code></h3>
+<div class="table-scroll"><table>
+  <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td><code>baseline_subtract</code></td><td>Subtract each pulse&rsquo;s own pretrigger mean (does not remove the glitch samples)</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>trim_glitch</code></td><td>Drop the leading glitch samples from every pulse</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>clip</code></td><td>Clip every sample to <code>[low, high]</code></td><td><span class="status done">done</span></td></tr>
+  </tbody>
+</table></div>
+
+<h3>I/O &mdash; <code>pulse_io.py</code> and <code>pulse_archive.py</code></h3>
+<div class="table-scroll"><table>
+  <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td><code>detector_index</code></td><td>Parse the detector component of a <code>&lt;event&gt;_&lt;detector&gt;_Phonon_&lt;n&gt;</code> id</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>event_id</code></td><td>Parse the event component of the same id</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>filter_by_detector</code></td><td>Keep only ids for a given detector</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>load_channel_batch</code></td><td><code>cdms</code> object to a plain <code>(n_pulses, n_samples)</code> array</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>load_channel_batch_multi</code></td><td>Same, pooled across several dumps</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>save_good_events</code></td><td>Write a cut&rsquo;s selected ids for one series/detector/channel to an HDF5 archive</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>load_good_events</code></td><td>Read one archived selection back</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>list_archive</code></td><td>Overview of everything in an archive file</td><td><span class="status done">done</span></td></tr>
+  </tbody>
+</table></div>
+
+<h2>Validation</h2>
+<p>There are 40 synthetic-data unit tests (no dependence on real detector data or <code>nsdf_dark_matter</code>), all passing. One of them began life with a wrong expected value and, once corrected, became a regression test for the pretrigger-contamination effect of <a href="note-02-noise-selection.html">Note 2</a>: a spike confined to the pretrigger window drags the baseline mean far enough that flat post-trigger samples end up looking like the largest excursion. Tests run under the base conda environment (<code>pytest</code> is not installed in <code>darkmatter_cli_env</code>): <code>cd python &amp;&amp; python -m pytest tests/</code>.</p>
+
+<h2>Naming change on 2026-09-23</h2>
+<p>The original generic <code>excursion_band(low, high)</code> thresholded the linear ratio. To free the name for the specific <code>log10(ratio)</code> cut, the generic function was renamed <code>ratio_band</code>; its one caller, the <code>ratio &gt; 9</code> cut in <a href="note-05-triggered-pulses.html">Note 5</a>, was updated and re-run to confirm it still selects the same 10 traces.</p>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>Five functions are still under development; see their status notes for what is not yet checked.</li>
+  <li>Thresholds such as the default <code>min_duration = 50</code> were chosen on one dataset (Detector 0 / Channel 0, dump 1) and need re-checking elsewhere.</li>
+  <li>A proper normalized one-sided PSD quantity is missing (see <a href="note-03-noise-psd.html">Note 3</a>).</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

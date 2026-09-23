@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 3: Noise PSD from selected traces</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>Noise PSD from selected traces (Detector 0 / Channel 0)</h1>
+<p class="meta"><strong>Note 3</strong> &middot; Author(s): Anthony Villano &middot; 21 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<h2>Code Repository</h2>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/b1b88ee/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; time-domain overlay, FFT, and average power spectrum (this note); the later sections belong to <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> and <a href="note-07-psd-peaks-204khz.html">Note 7</a>. Pinned to <code>b1b88ee</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/f03ce14/R76/analysis_notes/good_noise_traces.csv"><code>good_noise_traces.csv</code></a> &mdash; the 21-trace selection this note starts from (from the original <code>dump1_noise_pulses.ipynb</code>: <code>bstd</code> cap 5, ratio threshold 2.45). Pinned to <code>f03ce14</code>.</li>
+</ul>
+
+<h2>Input</h2>
+<p>The 21 traces in <code>good_noise_traces.csv</code> came from the first, cruder noise cut (see <a href="note-02-noise-selection.html">Note 2</a>). Restricting to <strong>Channel 0</strong>, the best-represented channel in that set, leaves <strong>14 traces</strong> from series <code>07221203_2025</code>, dump <code>F0001</code>.</p>
+
+<h2>Time domain</h2>
+<p>Each trace is baseline-subtracted with the mean of its own pretrigger window. A couple of the traces have a single-sample startup transient in the first few dozen samples, a known quirk of this digitizer data rather than a real pulse. The plot&rsquo;s y-axis is clipped to the 0.5&ndash;99.5 percentile of all plotted samples so the transient does not wash out the noise texture.</p>
+
+<figure>
+  <img src="img/psd_14trace_overlay.png" alt="Fourteen baseline-subtracted noise traces overlaid">
+  <figcaption>The 14 Channel 0 traces, baseline-subtracted and overlaid.</figcaption>
+</figure>
+
+<h2>Frequency domain</h2>
+<p>The real FFT (<code>np.fft.rfft</code>) is taken of every trace. The sample period is 1.6&nbsp;&micro;s (625&nbsp;kHz sample rate, supplied by the user; it is not recorded elsewhere in the repository), so with 4096 samples per trace the bins are 152.6&nbsp;Hz wide and run up to the 312.5&nbsp;kHz Nyquist frequency. The power spectrum is <code>spectrum &times; conj(spectrum)</code> (its imaginary part is zero by construction), plotted log&ndash;log with the DC bin dropped. Averaging the 14 spectra bin by bin gives a first noise PSD estimate:</p>
+
+<figure>
+  <img src="img/psd_14trace_average.png" alt="Average power spectrum of the 14 traces on log-log axes">
+  <figcaption>Average <code>|FFT|<sup>2</sup></code> over the 14 traces, log&ndash;log, real Hz.</figcaption>
+</figure>
+
+<p>The average falls steeply from about 8&times;10<sup>6</sup> at 150&nbsp;Hz to ~2&times;10<sup>5</sup> near 2&ndash;3&nbsp;kHz, stays roughly flat out to ~20&nbsp;kHz, then rolls off to a floor near 10<sup>4</sup> above ~100&nbsp;kHz. Several sharp peaks (near 26, 42, 78, 105 and 204&nbsp;kHz, among others) sit on top of it. Where those peaks come from is the subject of <a href="note-07-psd-peaks-204khz.html">Note 7</a>.</p>
+
+<h2>Conventions and caveats</h2>
+<ul>
+  <li>The plotted quantity is the raw NumPy <code>|FFT|<sup>2</sup></code>, not a normalized one-sided PSD in units per Hz. Golwala&rsquo;s SLAC thesis (Appendix B, &ldquo;Noise and Optimal Filtering&rdquo;) puts a <code>1/N</code> on the forward transform, opposite to NumPy, so the absolute scale here is not directly comparable to it.</li>
+  <li>The leading glitch samples are <strong>kept</strong> in the traces that go into the FFT. Baseline subtraction skips them only when computing the mean it subtracts; it does not remove them. This was a deliberate choice.</li>
+  <li>The selection is small (14 traces) and came from the cruder cut, so the average is dominated by whichever few traces happen to be unusual (see Note 7).</li>
+</ul>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>Done since: the PSD from the larger, better-motivated selections of <a href="note-02-noise-selection.html">Note 2</a> is compared in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>.</li>
+  <li>Repeat for the other channels; Channel 2 never passed the original cut.</li>
+  <li>Normalize to a proper one-sided PSD following the thesis convention before using it for optimal filtering.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

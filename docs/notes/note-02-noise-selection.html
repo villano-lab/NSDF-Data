@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 2: Noise-pulse selection</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>Noise-pulse selection on Detector 0 / Channel 0 (series 07221203_2025, dump 1)</h1>
+<p class="meta"><strong>Note 2</strong> &middot; Author(s): Anthony Villano &middot; 14 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<h2>Code Repository</h2>
+<p>Notebooks and library files this note rests on, each pinned to the commit that produced the results below:</p>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/085aa3d/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb"><code>dump1_noise_pulses.ipynb</code></a> &mdash; the original first-pass notebook, superseded but kept for history. Pinned to <code>c892af4</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-04-pulse-library.html">Note 4</a>). Pinned to <code>085aa3d</code>.</li>
+</ul>
+
+<h2>Goal and setup</h2>
+<p>Pick out clean noise traces on <strong>Detector 0, Channel 0</strong> of series <code>07221203_2025</code>, dump <code>F0001</code> (Run76: Side2, PuBe, Pb&amp;poly lead stack and borax, &minus;83.2 V), as the input to a noise-PSD study. The dump has 4551 channel groups; Detector 0 / Channel 0 contributes <strong>1517</strong> traces of 4096 samples each.</p>
+
+<p>Per trace, from a pretrigger window at the start of the trace: <code>bmean</code> and <code>bstd</code> are the mean and standard deviation of the pretrigger samples, <code>dev</code> is the largest <code>|sample &minus; bmean|</code> in the samples <em>after</em> the pretrigger window, and <code>ratio = dev / bstd</code>. Some traces have a brief (1&ndash;5 sample) electronic step glitch at the very start, so the first 10 samples are skipped when computing <code>bmean</code> and <code>bstd</code>. That fixes the glitch but not a real pulse that reaches into the pretrigger window.</p>
+
+<p><code>dev</code> is measured only after the pretrigger window on purpose. Measuring it over the same samples that set <code>bstd</code> puts a hard floor near <code>ratio ~ 1</code> whatever threshold is used, which made an initially requested threshold of 0.5 impossible to reach.</p>
+
+<h2>First cut, and why it is misleading</h2>
+<p>The first &ldquo;good noise&rdquo; cut kept traces with <code>bstd</code> below its own 75th percentile and <code>ratio</code> below its own 25th percentile (<code>bstd &lt; 32.48</code>, <code>ratio &lt; 1.93</code>): <strong>41 of 1517</strong> traces. Plotting <code>log10(ratio)</code> for all traces shows two features: a sharp spike near 0 and a broad hump from about 0.5 to 1.4.</p>
+
+<p>Repeating the calculation with the pretrigger window shortened from 1000 to 500 samples changes the picture:</p>
+<ul>
+  <li>the near-zero spike <strong>disappears</strong>;</li>
+  <li>the broad hump stays where it was, so it does not depend on the window length;</li>
+  <li>a new bump appears near <code>log10(ratio)</code> 2.0&ndash;2.4: pulses that start between sample 500 and 1000 are correctly seen as excursions with the shorter window, but were swallowed into the baseline with the longer one.</li>
+</ul>
+
+<figure>
+  <img src="img/dump1_ratio_hist_1000_vs_500.png" alt="Histogram of log10(ratio) for the 1000-sample and 500-sample pretrigger windows, overlaid">
+  <figcaption><code>log10(dev/bstd)</code> for Detector 0 / Channel 0, 1000-sample window vs. 500-sample window overlaid. The near-zero spike exists only with the 1000-sample window.</figcaption>
+</figure>
+
+<p>The reason is extreme-value statistics. <code>dev</code> is the maximum over roughly 3000 samples, so even pure Gaussian noise lands around <code>ratio ~ 3&ndash;8</code> (<code>log10</code> 0.5&ndash;0.9), not near 1. A trace only reaches <code>ratio ~ 1</code> if its own <code>bstd</code> is inflated, i.e. its pretrigger window already contains part of a pulse or a slow drift. <strong>The low-ratio spike is contamination, not quiet noise</strong> &mdash; the naive &ldquo;smaller ratio means quieter&rdquo; expectation is backwards.</p>
+
+<h2>Branch 1: the 1000-sample window</h2>
+<p>Widening the near-zero slice to <code>log10(ratio)</code> in [&minus;0.05, 0.48) gives &ldquo;Cut A&rdquo; (417 traces); the broad hump [0.5, 1.0) on the same window gives &ldquo;Cut B&rdquo; (892 traces).</p>
+
+<div class="grid2">
+  <figure><img src="img/dump1_cutA.png" alt="Cut A example traces, mostly showing a real pulse"><figcaption>Cut A: mostly traces with an obvious real pulse.</figcaption></figure>
+  <figure><img src="img/dump1_cutB.png" alt="Cut B example traces, mostly flat noise"><figcaption>Cut B: mostly flat noise (30 of 892 shown).</figcaption></figure>
+</div>
+
+<div class="callout">
+  <strong class="tag">Unverified.</strong>
+  The rise-time result in this subsection rests on <code>pulse_quantities.rise_sample</code>, a half-maximum-crossing heuristic that is tagged <code>under_development</code> and has only been used on this one analysis. Treat it as a working hypothesis. In the notebook this section is collapsed by default and carries the same warning.
+</div>
+
+<p>Hypothesis: if the Cut A pulses have similar amplitude, then the later a pulse rises, the less of the pretrigger window it contaminates, so <code>bstd</code> is smaller and <code>ratio</code> larger. Estimating a rise sample per trace (first post-pretrigger sample crossing half of <code>dev</code>) over all 417 traces gives a Pearson correlation of <strong>0.45</strong> between <code>ratio</code> and rise sample, with rise samples spanning 1000&ndash;2698. The scatter has two components: a floor at exactly 1000 (pulses that already crossed half-maximum inside the pretrigger window, so the method reports the window boundary), and a genuine rising trend above it (<code>ratio</code> 1.3&ndash;2.9 with rise sample 1200&ndash;2700). Consistent with the hypothesis, but not independently verified.</p>
+
+<figure>
+  <img src="img/dump1_rise_scatter.png" alt="Rise sample versus ratio across Cut A">
+  <figcaption>Cut A: estimated rise sample vs. <code>ratio</code>; correlation 0.45. Unverified &mdash; see the warning above.</figcaption>
+</figure>
+
+<h2>Branch 2: cut on the 500-sample window</h2>
+<p>Instead of refining Branch 1, cut directly on the clean hump of the 500-sample window. All of these use the 500-sample pretrigger window and <code>dev &gt; 0</code>.</p>
+
+<div class="table-scroll" style="max-width: 720px;">
+<table class="compact">
+  <thead><tr><th>Cut</th><th>Window</th><th><code>log10(ratio)</code></th><th class="num">Traces (of 1517)</th></tr></thead>
+  <tbody>
+    <tr><td>&ldquo;Good noise&rdquo; (first cut)</td><td>1000</td><td><code>bstd</code> &lt; p75 and <code>ratio</code> &lt; p25</td><td class="num">41</td></tr>
+    <tr><td>Cut A (widened)</td><td>1000</td><td>[&minus;0.05, 0.48)</td><td class="num">417</td></tr>
+    <tr><td>Cut B</td><td>1000</td><td>[0.5, 1.0)</td><td class="num">892</td></tr>
+    <tr><td>Branch 2</td><td>500</td><td>[0.5, 1.4)</td><td class="num">1012</td></tr>
+    <tr><td>&nbsp;&nbsp;shoulder</td><td>500</td><td>[1.0, 1.4)</td><td class="num">268</td></tr>
+    <tr><td>&nbsp;&nbsp;high tail</td><td>500</td><td>&ge; 2.0</td><td class="num">346</td></tr>
+    <tr><td>&ldquo;Best&rdquo;</td><td>500</td><td>[0.5, 1.0)</td><td class="num">744</td></tr>
+    <tr><td>Tightened</td><td>500</td><td>[0.5, 0.7)</td><td class="num">192</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="grid2">
+  <figure><img src="img/dump1_branch2.png" alt="Branch 2 example traces"><figcaption>Branch 2, [0.5, 1.4): 1012 traces (30 shown).</figcaption></figure>
+  <figure><img src="img/dump1_shoulder.png" alt="Branch 2 shoulder example traces"><figcaption>Shoulder, [1.0, 1.4): contamination starts creeping in.</figcaption></figure>
+  <figure><img src="img/dump1_high_tail.png" alt="Branch 2 high tail example traces"><figcaption>High tail, &ge; 2.0: dominated by real pulses.</figcaption></figure>
+  <figure><img src="img/dump1_tight.png" alt="Tightened cut example traces"><figcaption>Tightened, [0.5, 0.7): 192 traces, the cleanest slice.</figcaption></figure>
+</div>
+
+<p>Moving down in <code>ratio</code> makes the selection cleaner: contamination increases toward the shoulder, and the high tail is real pulses. The tightened slice is the cleanest, but even it lets a few real pulses through (13 of its 192, found in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>).</p>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>The tightened cut is now a library function (<code>excursion_band</code>, with <code>excursion_band_loose</code> for [0.5, 1.0)); see <a href="note-04-pulse-library.html">Note 4</a>.</li>
+  <li>The 13 real pulses in the tightened selection are removed by a pulse-shape veto in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>.</li>
+  <li>The rise-time hypothesis (Branch 1) is still unverified; <code>rise_sample</code> needs checking against noisy and multi-peak traces first.</li>
+  <li>Everything here is one detector and one channel of one dump. Other channels and other dumps have not been done (Channel 2 was 100% dead in this dump, so it needs a separate look).</li>
+  <li>The cut boundaries (0.5, 0.7, 1.0, 1.4) were chosen by looking at plots, not derived from a model of the noise.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

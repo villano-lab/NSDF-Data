@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NSDF-Data Analysis Notes</title>
+<meta name="description" content="Index of analysis notes for the NSDF-Data repository: University of Minnesota R76 SuperCDMS-type data accessed through nsdf-cli.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+<header class="site">
+  <h1>NSDF-Data Analysis Notes</h1>
+  <p>Analysis of University of Minnesota R68/R76 SuperCDMS-type data accessed through the National Science Data Fabric and <code>nsdf-cli</code>.</p>
+  <nav>
+    <a href="https://github.com/villano-lab/NSDF-Data">GitHub repository</a>
+    <a href="https://github.com/villano-lab/NSDF-Data/tree/master/python">python/ pulse library</a>
+    <a href="https://nsdf-fabric.github.io/nsdf-slac/">NSDF-SLAC documentation</a>
+  </nav>
+</header>
+
+<h2>Analysis Notes</h2>
+
+<p>Each note summarizes one investigation, pins the notebooks it rests on to the commits that produced the results, and ends with a status and next steps. Newest first.</p>
+
+<h3>Status legend</h3>
+<div class="table-scroll" style="max-width: 760px;">
+<table class="compact">
+  <thead><tr><th>Status</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td><span class="status complete">Complete</span></td><td>Note is in a complete and finalized state.</td></tr>
+    <tr><td><span class="status in-progress">In-progress</span></td><td>Note is still being worked on.</td></tr>
+    <tr><td><span class="status outdated">Outdated</span></td><td>Note is no longer relevant to the analysis or a newer version has taken its place.</td></tr>
+    <tr><td><span class="status abandoned">Abandoned</span></td><td>Note was created, but, for whatever reason, is left incomplete without the intent for completion in the future.</td></tr>
+    <tr><td><span class="status brainstorm">Brainstorm</span></td><td>Note is used for brainstorming or putting down ideas, without any analysis results or conclusions.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="table-scroll">
+<table class="notes">
+  <thead>
+    <tr>
+      <th class="num">Note #</th>
+      <th>Link</th>
+      <th>Date</th>
+      <th>Author</th>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Keywords</th>
+      <th>Status</th>
+      <th>Presentation at Analysis Meeting</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td class="num">7</td>
+      <td class="link"><a href="notes/note-07-psd-peaks-204khz.html">Open note &rarr;</a></td>
+      <td class="date">23 Sept 2026</td>
+      <td>Anthony</td>
+      <td>Origin of the sharp peaks in the average noise PSD; the 204 kHz line</td>
+      <td class="desc">The sharp peaks in the 14-trace average PSD come from two outlier events (10708, 10959), not from the noise in general. A ~204 kHz line does persist in the larger cuts, present in ~72% of individual traces &mdash; a population-wide pickup tone of unidentified source.</td>
+      <td class="kw">PSD, line noise, 204 kHz, outlier traces, glitch samples</td>
+      <td><span class="status in-progress">In progress</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="num">6</td>
+      <td class="link"><a href="notes/note-06-ai-pulse-veto-archive.html">Open note &rarr;</a></td>
+      <td class="date">23 Sept 2026</td>
+      <td>Anthony</td>
+      <td>excursion_band_AI: removing pulse-like traces from the noise selection, and the good_noise archive</td>
+      <td class="desc">Adds a pulse-shape veto to the tightened cut (192 &rarr; 179 traces). The 13 removed traces are unambiguous pulses or drifts, and the mean PSD drops by a factor of ~20&ndash;165 below ~2 kHz. The selection is archived in an HDF5 file.</td>
+      <td class="kw">excursion_band_AI, looks_like_pulse, HDF5 archive, PSD, under development</td>
+      <td><span class="status in-progress">In progress</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="num">5</td>
+      <td class="link"><a href="notes/note-05-triggered-pulses.html">Open note &rarr;</a></td>
+      <td class="date">22 Sept 2026</td>
+      <td>Anthony</td>
+      <td>Good triggered pulses on Detector 0 / Channel 0 (series 07221203_2025, dumps 2&ndash;5)</td>
+      <td class="desc">A tightened cut (bstd &lt; p10, ratio &gt; 9, dev &lt; 20) picks 10 of 11,642 pooled traces, but only 3 contain a visible pulse; the other 7 are selected by baseline drift. The 3 real pulses start at different samples (~1650, ~3600, ~3900).</td>
+      <td class="kw">triggered pulses, baseline drift, pulse onset, trigger time</td>
+      <td><span class="status in-progress">In progress</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="num">4</td>
+      <td class="link"><a href="notes/note-04-pulse-library.html">Open note &rarr;</a></td>
+      <td class="date">22 Sept 2026</td>
+      <td>Anthony</td>
+      <td>python/ pulse library: operations, cuts, and derived quantities</td>
+      <td class="desc">A shared library (29 status-tagged functions, 40 unit tests) that replaces per-notebook copies of the same computations, with a done / under_development marker on every function.</td>
+      <td class="kw">library, PulseConfig, cuts, quantities, operations, status tagging</td>
+      <td><span class="status in-progress">In progress</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="num">3</td>
+      <td class="link"><a href="notes/note-03-noise-psd.html">Open note &rarr;</a></td>
+      <td class="date">21 Sept 2026</td>
+      <td>Anthony</td>
+      <td>Noise PSD from selected traces (Detector 0 / Channel 0)</td>
+      <td class="desc">Time-domain overlay, FFT, and average power spectrum of 14 selected noise traces on a real-Hz axis (625 kHz sample rate), as a first noise PSD estimate.</td>
+      <td class="kw">PSD, FFT, noise, sample rate, glitch</td>
+      <td><span class="status in-progress">In progress</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="num">2</td>
+      <td class="link"><a href="notes/note-02-noise-selection.html">Open note &rarr;</a></td>
+      <td class="date">14 Sept 2026</td>
+      <td>Anthony</td>
+      <td>Noise-pulse selection on Detector 0 / Channel 0 (series 07221203_2025, dump 1)</td>
+      <td class="desc">Building a clean-noise selection from 1517 traces. A naive low-ratio cut selects pulse-contaminated baselines; a 500-sample pretrigger window isolates the genuinely quiet population.</td>
+      <td class="kw">noise selection, pretrigger window, baseline contamination, dev/bstd ratio, extreme-value statistics</td>
+      <td><span class="status in-progress">In progress</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="num">1</td>
+      <td class="link"><a href="notes/note-01-run76-series-catalog.html">Open note &rarr;</a></td>
+      <td class="date">14 Sept 2026</td>
+      <td>Anthony</td>
+      <td>Run76 series catalog: non-PuBe series and availability on nsdf-cli</td>
+      <td class="desc">Cross-checked the 235 Run76 series in DataSeriesList.xlsx against the nsdf-cli manifest: only PuBe series (130 of 170) are downloadable, and none of the 65 non-PuBe series (42 Am, 2 Na-22, 21 with no source recorded) are.</td>
+      <td class="kw">Run76, DataSeriesList, nsdf-cli, Am, PuBe, availability</td>
+      <td><span class="status complete">Complete (2026-09-14)</span></td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<footer>
+  Source: <a href="https://github.com/villano-lab/NSDF-Data/tree/master/docs">docs/</a> in the
+  <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data</a> repository. Plain static HTML, no build step.
+  Layout follows the Analysis Notes table used for the NR Fano analysis.
+</footer>
+
+</div>
+</body>
+</html>

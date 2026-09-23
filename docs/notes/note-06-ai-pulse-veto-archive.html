@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 6: excursion_band_AI and the good_noise archive</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>excursion_band_AI: removing pulse-like traces from the noise selection, and the good_noise archive</h1>
+<p class="meta"><strong>Note 6</strong> &middot; Author(s): Anthony Villano &middot; 23 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<h2>Code Repository</h2>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/085aa3d/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the &ldquo;Tightened, AI-filtered&rdquo;, &ldquo;What the AI filter removes&rdquo; and &ldquo;Archive&rdquo; sections at the end. Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/b1b88ee/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the three-cut PSD comparison. Pinned to <code>b1b88ee</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c3d6754/python/pulse_cuts.py"><code>python/pulse_cuts.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/blob/c3d6754/python/pulse_quantities.py"><code>pulse_quantities.py</code></a> &mdash; <code>excursion_band_AI</code>, <code>looks_like_pulse</code>, <code>excursion_duration</code>. Pinned to <code>c3d6754</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/894ef9d/python/pulse_archive.py"><code>python/pulse_archive.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/archives"><code>archives/</code></a> &mdash; the HDF5 archive. Pinned to <code>894ef9d</code> and <code>085aa3d</code>.</li>
+</ul>
+
+<h2>Motivation</h2>
+<p>The tightened noise cut of <a href="note-02-noise-selection.html">Note 2</a> (<code>log10(ratio)</code> in [0.5, 0.7), 500-sample window) keeps 192 of 1517 traces and is the cleanest slice found, but a few real pulses still get through. <code>excursion_band_AI</code> is the same cut with a second criterion added: remove whatever looks like a real pulse. The name is literal: the pulse judgment is a heuristic worked out with an AI assistant, not a validated physical criterion, and the cut is tagged <code>under_development</code>.</p>
+
+<h2>The pulse-shape criterion</h2>
+<p>A real pulse rises and then decays slowly, so it stays near its own peak for a long time. Noise does not. The quantity <code>excursion_duration</code> is the <strong>longest run of <em>consecutive</em> post-pretrigger samples</strong> whose deviation is at least half of the trace&rsquo;s own <code>dev</code>. <code>looks_like_pulse</code> flags a trace when that run is at least <code>min_duration</code> samples.</p>
+
+<h3>A first version that failed</h3>
+<p>The first attempt counted the <em>total</em> number of samples above half of <code>dev</code>. On real data it flagged all 192 traces of the tightened cut as pulses. With ~2500 post-pretrigger samples and <code>dev</code> only 3&ndash;5 times the noise standard deviation, half of <code>dev</code> is just 1.5&ndash;2.5 sigma, which ordinary Gaussian noise exceeds in a few percent of samples. Requiring the samples to be <em>consecutive</em> removes that effect, since the chance of a long unbroken run in noise falls off geometrically.</p>
+
+<h3>Choosing <code>min_duration</code></h3>
+<p>With the consecutive-run definition, the 192 traces of the tightened cut split cleanly (Detector 0 / Channel 0, dump 1, 500-sample window):</p>
+<ul>
+  <li><strong>179 traces</strong> have a longest run of 2&ndash;25 samples (median 7);</li>
+  <li><strong>13 traces</strong> have runs of 168 to 3564 samples (168, 225, 919, 1699, 1940, 2055, 2079, 2768, 2875, 3300, 3521, 3538, 3564);</li>
+  <li><strong>nothing</strong> lies between 25 and 168.</li>
+</ul>
+<p>The default <code>min_duration = 50</code> sits inside that gap. It was picked by eye from this one dataset, so it may need a different value elsewhere.</p>
+
+<h2>What it removes</h2>
+<p><code>excursion_band_AI</code> keeps <strong>179</strong> of the 192 traces. All 13 rejected traces are visually unambiguous real pulses or slow drifts:</p>
+
+<figure>
+  <img src="img/dump1_rejected_by_AI.png" alt="The 13 traces rejected by excursion_band_AI: real pulses and slow baseline drifts">
+  <figcaption>The 13 traces kept by <code>excursion_band</code> but rejected by <code>excursion_band_AI</code>: pulses (rising near samples 450&ndash;600 and 2400) and slow monotonic drifts.</figcaption>
+</figure>
+
+<p>The 179 kept traces are flat noise (30 shown; the spike at sample 0 is the known leading glitch):</p>
+
+<figure>
+  <img src="img/dump1_tight_AI.png" alt="30 of the 179 traces kept by excursion_band_AI, flat noise">
+  <figcaption><code>excursion_band_AI</code>: 179 of 1517 traces.</figcaption>
+</figure>
+
+<p>Because slow drifts also stay near their peak for a long time, the same criterion rejects drifting baselines, not only pulses. That is desirable for a noise selection, and relevant to <a href="note-05-triggered-pulses.html">Note 5</a>, where drift is the problem.</p>
+
+<h2>Effect on the noise PSD</h2>
+<p>The clearest practical check is the average PSD of each selection (Detector 0 / Channel 0, dump 1). Below ~2 kHz, <code>excursion_band</code> and <code>excursion_band_loose</code> lie well above <code>excursion_band_AI</code>, because a pulse&rsquo;s rise and decay is low-frequency dominated and a few of them are enough to raise a <em>mean</em> spectrum:</p>
+
+<div class="table-scroll" style="max-width: 520px;">
+<table class="compact">
+  <thead><tr><th>Frequency</th><th class="num">tight / AI</th><th class="num">loose / AI</th></tr></thead>
+  <tbody>
+    <tr><td>150 Hz</td><td class="num">164</td><td class="num">165</td></tr>
+    <tr><td>1 kHz</td><td class="num">64</td><td class="num">61</td></tr>
+    <tr><td>2 kHz</td><td class="num">23</td><td class="num">20</td></tr>
+    <tr><td>5 kHz</td><td class="num">4.3</td><td class="num">4.0</td></tr>
+    <tr><td>10 kHz</td><td class="num">1.8</td><td class="num">1.4</td></tr>
+    <tr><td>30 kHz</td><td class="num">1.1</td><td class="num">0.7</td></tr>
+  </tbody>
+</table>
+</div>
+<p>Ratio of the mean <code>|FFT|<sup>2</sup></code> of each selection to that of <code>excursion_band_AI</code> at that frequency (nearest bin).</p>
+
+<figure>
+  <img src="img/psd_three_cuts.png" alt="Average PSD for excursion_band, excursion_band_loose and excursion_band_AI on the same vertical scale as the 14-trace PSD">
+  <figcaption>Average PSD for the three selections (N = 192, 744, 179), on the same vertical scale as the 14-trace PSD of <a href="note-03-noise-psd.html">Note 3</a>; the first two run off the top at low frequency.</figcaption>
+</figure>
+
+<p>The PSD is therefore an independent check of the pulse criterion, on top of the visual one. It is not a proof: the same data were used to choose <code>min_duration</code>.</p>
+
+<h2>The good_noise archive</h2>
+<p>Since the AI selection is the one to build on, its <code>detector_id</code>s are stored in an HDF5 file, <code>archives/good_noise.h5</code>, written and read through <code>python/pulse_archive.py</code>. Layout: one group per <code>(series, detector, channel)</code> at <code>/&lt;series&gt;/detector&lt;N&gt;/channel&lt;C&gt;</code>, containing a <code>detector_ids</code> dataset plus attributes recording how the selection was made: cut name and parameters, the cut&rsquo;s status (<code>under_development</code> here), the <code>PulseConfig</code> values, dump, source notebook, counts kept and total, and a UTC timestamp.</p>
+<ul>
+  <li>First entry: <code>07221203_2025</code>, detector 0, channel 0: <strong>179</strong> events out of 1517, from <code>excursion_band_AI</code>.</li>
+  <li>Saving a group <strong>overwrites</strong> it: the file holds the current selection per key, not a history.</li>
+  <li>The functions (<code>save_good_events</code>, <code>load_good_events</code>, <code>list_archive</code>) are cut-agnostic; a future non-noise archive would get its own file rather than a group in this one.</li>
+</ul>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>Check <code>looks_like_pulse</code> and its threshold on other channels, detectors and dumps before relying on it; it was tuned on one dataset.</li>
+  <li>Decide whether small or unusual pulses that never reach 50 consecutive samples above half-maximum could slip through.</li>
+  <li>Fill the archive for the remaining channels and detectors as they are processed.</li>
+  <li>The archived selection is marked <code>under_development</code> and will change if the cut does.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

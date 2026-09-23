@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 5: Good triggered pulses</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>Good triggered pulses on Detector 0 / Channel 0 (series 07221203_2025, dumps 2&ndash;5)</h1>
+<p class="meta"><strong>Note 5</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<h2>Code Repository</h2>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c3d6754/R76/analysis_notes/07221203_2025_dump2_pulse.ipynb"><code>07221203_2025_dump2_pulse.ipynb</code></a> &mdash; the notebook behind this note. Pinned to <code>c3d6754</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/c3d6754/python"><code>python/</code></a> &mdash; the library it uses (<a href="note-04-pulse-library.html">Note 4</a>). Pinned to <code>c3d6754</code>.</li>
+</ul>
+
+<h2>Goal</h2>
+<p>Find several clean, clearly triggered, comparably sized pulses in series <code>07221203_2025</code> and overlay them to see where the pulse onset falls inside the 4096-sample window. Dumps <code>F0002</code>&ndash;<code>F0005</code> (8961, 8580, 8724 and 8661 channel groups) are pooled; restricted to <strong>Detector 0, Channel 0</strong> this gives <strong>11,642</strong> traces.</p>
+
+<h2>The cut</h2>
+<p>Tightened relative to the single-dump version on every axis:</p>
+<ul>
+  <li><code>bstd</code> below its own 10th percentile, pooled across the four dumps (<code>bstd &lt; 1.70</code>): a much quieter pretrigger baseline, to keep out the contamination described in <a href="note-02-noise-selection.html">Note 2</a>;</li>
+  <li><code>dev</code> (maximum excursion) below 20 ADC counts, down from 100, to get small, comparably sized pulses;</li>
+  <li><code>ratio &gt; 9</code>, raised from 8 after looking at the plot: at 8 most examples showed no visible pulse, because some quiet traces cross a loose ratio threshold by extreme-value chance alone. Going to 9 cut the candidates from 29 to 10.</li>
+</ul>
+<p>Result: <strong>10 of 11,642</strong> traces.</p>
+
+<figure>
+  <img src="img/dump2_good_pulses.png" alt="Ten selected traces from dumps F0002 to F0005, baseline-subtracted, with the end of the pretrigger window marked">
+  <figcaption>The 10 selected traces, baseline-subtracted; dashed line at sample 1000 (end of the pretrigger window).</figcaption>
+</figure>
+
+<h2>Check made while writing this note: most of the 10 are not pulses</h2>
+<div class="callout">
+  <strong class="tag">Finding.</strong>
+  Only <strong>3 of the 10</strong> selected traces contain a visible pulse. The other 7 pass the cut because their baseline <em>drifts</em> downward by roughly 10&ndash;17 counts across the post-pretrigger window: for those traces <code>dev</code> (14&ndash;17.4) is essentially the drift, and after removing a linear trend nothing larger than ~2.5 counts remains (noise level ~0.25 counts in a 40-sample average).
+</div>
+
+<div class="table-scroll" style="max-width: 760px;">
+<table class="compact">
+  <thead><tr><th>Trace</th><th class="num"><code>dev</code></th><th class="num"><code>ratio</code></th><th>Visible pulse?</th><th>Approximate onset</th></tr></thead>
+  <tbody>
+    <tr><td>F0005:10881</td><td class="num">20.0</td><td class="num">12.1</td><td>yes</td><td>sample ~1650</td></tr>
+    <tr><td>F0005:11426</td><td class="num">16.0</td><td class="num">10.7</td><td>yes</td><td>sample ~3600</td></tr>
+    <tr><td>F0004:11416</td><td class="num">14.7</td><td class="num">10.2</td><td>yes</td><td>sample ~3900 (still rising at the end of the trace)</td></tr>
+    <tr><td>the other 7</td><td class="num">14.4&ndash;17.4</td><td class="num">9.1&ndash;10.7</td><td>no (drift)</td><td>&mdash;</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Among the three real pulses the onset is different every time, all well past the nominal pretrigger/post-trigger boundary at sample 1000. That is consistent with there being no fixed &ldquo;trigger sample&rdquo; for this trigger configuration, which would matter for optimal filtering: Golwala&rsquo;s thesis (Appendix B, section B.4) assumes a known template start time, so a time-offset search rather than a fixed-position fit would be needed. Three pulses is thin evidence for that, though.</p>
+
+<div class="callout">
+  <strong class="tag">Discrepancy with the notebook.</strong>
+  The notebook&rsquo;s closing &ldquo;Observation&rdquo; cell says pulse onsets land &ldquo;anywhere from roughly sample 1150 to 3050&rdquo;. That is not supported by the figure above or by the check in this note (the 1150&ndash;1860 &ldquo;rise samples&rdquo; that a half-maximum estimate gives for the drifting traces are drift crossings, not pulse onsets). The notebook text has not been changed yet.
+</div>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>Fix the notebook&rsquo;s observation cell to match the check above.</li>
+  <li>The cut needs a term that rejects slow drift; <code>dev</code> and <code>ratio</code> alone cannot tell a drifting baseline from a pulse. A drift or slope quantity, or requiring a localized excursion, would be candidates.</li>
+  <li>With that in place, redo the pulse selection to get more than three genuine pulses before drawing conclusions about onset time.</li>
+  <li>The <code>ratio &gt; 9</code> threshold was chosen by eye.</li>
+  <li>The cut now calls <code>ratio_band</code> (renamed from <code>excursion_band</code> on 2026-09-23; see <a href="note-04-pulse-library.html">Note 4</a>) and still selects the same 10 traces.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

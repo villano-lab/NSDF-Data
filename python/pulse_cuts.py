@@ -75,8 +75,9 @@ def ratio_band(pulses, config: PulseConfig = DEFAULT_CONFIG, low=None, high=None
 def excursion_band(pulses, config: PulseConfig = DEFAULT_CONFIG, low=0.5, high=0.7,
                     log_ratio=None):
     """True where `log_excursion_ratio` is in `[low, high)` -- default `[0.5, 0.7)`,
-    the "tightened" Branch 2 cut from 07221203_2025_dump1_noise.ipynb (cleanest
-    slice found there, though even it let one real pulse through). Pass a
+    the "tight" Branch 2 cut from 07221203_2025_dump1_noise.ipynb (cleanest
+    slice found there, though even it keeps 13 of its 192 traces that look like
+    real pulses -- see `excursion_band_AI`). Pass a
     `config` with the pretrigger window you want (Branch 2 used 500 samples, not
     the library default of 1000).
 
@@ -91,9 +92,9 @@ def excursion_band(pulses, config: PulseConfig = DEFAULT_CONFIG, low=0.5, high=0
 
 @status(DONE)
 def excursion_band_loose(pulses, config: PulseConfig = DEFAULT_CONFIG, log_ratio=None):
-    """`excursion_band` widened to `[0.5, 1.0)` -- the "best noise examples" Branch 2
-    cut from 07221203_2025_dump1_noise.ipynb (more traces retained, somewhat more
-    contamination than the tightened `[0.5, 0.7)` default)."""
+    """`excursion_band` widened to `[0.5, 1.0)` -- the "loose" Branch 2 cut from
+    07221203_2025_dump1_noise.ipynb (more traces retained, somewhat more
+    contamination than the tight `[0.5, 0.7)` default)."""
     return excursion_band(pulses, config, low=0.5, high=1.0, log_ratio=log_ratio)
 
 
@@ -123,7 +124,7 @@ def excursion_below_percentile(pulses, config: PulseConfig = DEFAULT_CONFIG,
         "min_duration), which a real detector pulse's rise-then-decay does and "
         "ordinary noise usually doesn't. default min_duration=50 was picked by "
         "eye from a real gap in the data (07221203_2025_F0001, Detector0/Channel0, "
-        "500-sample window): within the tightened excursion_band, 179/192 traces "
+        "500-sample window): within the tight excursion_band, 179/192 traces "
         "had duration <= 25 and the other 13 had duration >= 168 -- nothing in "
         "between -- and those 13 are visually unambiguous real pulses/drifts, the "
         "other 179 visually flat noise. Devised for excursion_band_AI -- treat as a "

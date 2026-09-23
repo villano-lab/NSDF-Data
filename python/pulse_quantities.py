@@ -76,7 +76,7 @@ def log_excursion_ratio(pulses, config: PulseConfig = DEFAULT_CONFIG):
         "total count -- with ~2500 post-pretrigger samples, a plain count of "
         "samples above half-max is dominated by ordinary Gaussian tail hits (checked "
         "against real 07221203_2025_F0001 data: an early total-count version flagged "
-        "every trace in the tightened excursion_band as 'pulse-like'). Not "
+        "every trace in the tight excursion_band as 'pulse-like'). Not "
         "independently validated beyond that one check.")
 def excursion_duration(pulses, config: PulseConfig = DEFAULT_CONFIG, fraction: float = 0.5):
     """Longest run of *consecutive* post-pretrigger samples with

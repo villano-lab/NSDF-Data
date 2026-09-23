@@ -25,7 +25,23 @@
 <h2>Goal and setup</h2>
 <p>Pick out clean noise traces on <strong>Detector 0, Channel 0</strong> of series <code>07221203_2025</code>, dump <code>F0001</code> (Run76: Side2, PuBe, Pb&amp;poly lead stack and borax, &minus;83.2 V), as the input to a noise-PSD study. The dump has 4551 channel groups; Detector 0 / Channel 0 contributes <strong>1517</strong> traces of 4096 samples each.</p>
 
-<p>Per trace, from a pretrigger window at the start of the trace: <code>bmean</code> and <code>bstd</code> are the mean and standard deviation of the pretrigger samples, <code>dev</code> is the largest <code>|sample &minus; bmean|</code> in the samples <em>after</em> the pretrigger window, and <code>ratio = dev / bstd</code>. Some traces have a brief (1&ndash;5 sample) electronic step glitch at the very start, so the first 10 samples are skipped when computing <code>bmean</code> and <code>bstd</code>. That fixes the glitch but not a real pulse that reaches into the pretrigger window.</p>
+<h3>Definitions</h3>
+<p>Let <var>x<sub>i</sub></var> be sample <var>i</var> of a trace (<var>i</var> = 0 &hellip; 4095, in ADC counts), <var>N</var> the length of the pretrigger window (1000 or 500 samples; both are compared below), and <var>g</var> = 10 the number of leading glitch samples that are skipped.</p>
+
+<div class="table-scroll"><table>
+  <thead><tr><th>Quantity</th><th>Definition</th><th>Library function</th></tr></thead>
+  <tbody>
+    <tr><td><code>bmean</code></td><td>Mean of <var>x<sub>i</sub></var> over the pretrigger window, <var>i</var> = <var>g</var> &hellip; <var>N</var>&minus;1</td><td><code>pretrigger_mean</code></td></tr>
+    <tr><td><code>bstd</code></td><td>Standard deviation of the same samples (population form, divisor <var>N</var>&minus;<var>g</var>)</td><td><code>pretrigger_std</code></td></tr>
+    <tr><td><code>dev</code></td><td>Largest deviation from the baseline <em>after</em> the pretrigger window, either polarity: max over <var>i</var> = <var>N</var> &hellip; 4095 of |<var>x<sub>i</sub></var> &minus; <code>bmean</code>|</td><td><code>max_deviation</code></td></tr>
+    <tr><td><strong><code>ratio</code></strong></td><td><strong><code>dev / bstd</code></strong></td><td><code>excursion_ratio</code></td></tr>
+    <tr><td><code>log10(ratio)</code></td><td>Base-10 logarithm of <code>ratio</code>, the quantity plotted and cut on throughout this note (a trace with <code>dev</code> = 0 would give &minus;&infin; and is excluded; none occur here)</td><td><code>log_excursion_ratio</code></td></tr>
+  </tbody>
+</table></div>
+
+<p><code>ratio</code> is dimensionless: it is the size of the trace&rsquo;s largest post-pretrigger excursion measured in units of the trace&rsquo;s <em>own</em> baseline scatter, so it does not depend on the overall scale of the trace. A large <code>ratio</code> means something after the pretrigger window stands well above the baseline noise (a pulse, a drift, or simply the largest noise fluctuation); what values to expect for pure noise, and what a small <code>ratio</code> means, is worked out in &ldquo;First cut, and why it is misleading&rdquo; below.</p>
+
+<p>Some traces have a brief (1&ndash;5 sample) electronic step glitch at the very start, which is why the first <var>g</var> = 10 samples are skipped in <code>bmean</code> and <code>bstd</code>. That fixes the glitch but not a real pulse that reaches into the pretrigger window.</p>
 
 <p><code>dev</code> is measured only after the pretrigger window on purpose. Measuring it over the same samples that set <code>bstd</code> puts a hard floor near <code>ratio ~ 1</code> whatever threshold is used, which made an initially requested threshold of 0.5 impossible to reach.</p>
 

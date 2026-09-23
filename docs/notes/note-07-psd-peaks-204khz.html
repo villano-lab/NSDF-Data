@@ -16,16 +16,21 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/b1b88ee/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the &ldquo;Origin of the sharp peaks in the average PSD&rdquo; section and the three-cut comparison. Pinned to <code>b1b88ee</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/850500f/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the &ldquo;Origin of the sharp peaks in the average PSD&rdquo; section, the detector comparison, and the three-cut comparison. Pinned to <code>850500f</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the library it uses (<a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
 </ul>
 
 <h2>Question</h2>
-<p>The average PSD of the 14 selected traces in <a href="note-03-noise-psd.html">Note 3</a> has several sharp peaks. In the larger selections of <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> (192, 744 and 179 traces) most of them are gone, except one near 200&nbsp;kHz. Where do the peaks come from, and why does that one survive?</p>
+<p>The average PSD of the 14 selected Channel 0 traces in <a href="note-03-noise-psd.html">Note 3</a> has several sharp peaks. In the larger selections of <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> (192, 744 and 179 traces) most of them are gone, except one near 200&nbsp;kHz. Where do the peaks come from, and why does that one survive?</p>
 
 <p>Throughout, the leading glitch samples are <strong>kept</strong> in the traces that go into the FFT (a deliberate choice; baseline subtraction skips them only when computing the mean it subtracts).</p>
 
-<h2>The peaks come from two traces</h2>
+<div class="callout">
+  <strong class="tag">Correction.</strong>
+  An earlier version of this note attributed the peaks to two unusual events that dominate a small average. That was wrong: the two events are both from <strong>Detector 1</strong>, and the lines are a Detector 1 feature. The detector split of the 14 traces was not checked until this revision.
+</div>
+
+<h2>Two traces dominate the 14-trace average</h2>
 <p>Peaks were located programmatically as bins standing well above a rolling median of the log-power, and then, for each peak bin, the summed power over the 14 traces was split by trace. The same two events, <strong>10708</strong> and <strong>10959</strong>, are the largest contributor at 7 of the 8 flagged bins (the remaining one is the lowest-frequency bin, an edge effect of the steep low-frequency slope rather than a real peak):</p>
 
 <div class="table-scroll" style="max-width: 640px;">
@@ -44,7 +49,7 @@
 </table>
 </div>
 
-<p>At each peak, one or two of the 14 traces supply 80&ndash;96% of the summed power. Plotted individually, both traces follow the noise floor of the other twelve almost everywhere, but carry genuine narrow spikes 1&ndash;2 orders of magnitude above their own local continuum at those frequencies. In the time domain they are indistinguishable from ordinary noise apart from the known leading-glitch spike, so the lines are visible only in the frequency domain.</p>
+<p>At each peak, one or two of the 14 traces supply 80&ndash;96% of the summed power. Plotted individually, both traces follow the noise floor of the other twelve almost everywhere, but carry narrow spikes 1&ndash;2 orders of magnitude above their own local continuum at those frequencies. In the time domain they are indistinguishable from ordinary noise apart from the known leading-glitch spike, so the lines are visible only in the frequency domain.</p>
 
 <figure>
   <img src="img/psd_outlier_traces.png" alt="Time-domain traces and individual power spectra of events 10708 and 10959 against the other twelve traces">
@@ -53,12 +58,35 @@
 
 <p>A single-sample glitch produces a broadband, roughly flat contribution to <code>|FFT|<sup>2</sup></code>, not narrow lines, so the leading glitch samples cannot explain these peaks.</p>
 
-<p>With only 14 traces in the mean, two events that each ring at several frequencies are enough to dominate the average at every one of those frequencies. These peaks are an artifact of <em>which</em> traces happened to be in this particular 14 &mdash; drawn from the cruder first cut, which lets such traces through &mdash; not a property of the noise in general.</p>
+<h2>Both traces are from Detector 1, and the lines are Detector 1&rsquo;s</h2>
+<p>The 21-trace selection behind Note 3 spans Detectors 0 and 1, and the channel filter did not separate them. Of the 14 Channel 0 traces, 12 are from Detector 0 and <strong>2 are from Detector 1: events 10708 and 10959</strong>, the two that dominate every peak.</p>
 
-<p><strong>Hypothesis, not yet checked:</strong> the two events share nearly the same set of line frequencies, including one near 204&nbsp;kHz. That suggests one source that is normally present at a low level and is much stronger in these two events, rather than two independent phenomena.</p>
+<p>To see whether the lines belong to those events or to the detector, the median power spectrum was taken over <em>all</em> quiet-baseline Channel 0 traces of each detector (<code>bstd &lt; 3</code>, so pulses and drifts cannot affect a median): 908 traces from Detector 0 and 695 from Detector 1, with no further selection. The excess is each line bin&rsquo;s median power divided by the median of the five bins on each side.</p>
 
-<h2>Why 204 kHz survives in the larger selections</h2>
-<p>The same per-trace check at the 204&nbsp;kHz bin (204,010&nbsp;Hz) for the three selections of Note 6 gives a different picture:</p>
+<div class="table-scroll" style="max-width: 560px;">
+<table class="compact">
+  <thead><tr><th class="num">Line (Hz)</th><th class="num">Detector 0</th><th class="num">Detector 1</th></tr></thead>
+  <tbody>
+    <tr><td class="num">26,398</td><td class="num">1.0&times;</td><td class="num">50&times;</td></tr>
+    <tr><td class="num">42,267</td><td class="num">1.1&times;</td><td class="num">181&times;</td></tr>
+    <tr><td class="num">77,667</td><td class="num">1.5&times;</td><td class="num">58&times;</td></tr>
+    <tr><td class="num">105,591</td><td class="num">1.7&times;</td><td class="num">27&times;</td></tr>
+    <tr><td class="num">183,258</td><td class="num">1.0&times;</td><td class="num">16&times;</td></tr>
+    <tr><td class="num">186,462</td><td class="num">1.3&times;</td><td class="num">20&times;</td></tr>
+    <tr><td class="num">204,010</td><td class="num">6.0&times;</td><td class="num">28&times;</td></tr>
+  </tbody>
+</table>
+</div>
+
+<figure>
+  <img src="img/psd_det0_vs_det1.png" alt="Median power spectra of Detector 0 and Detector 1 Channel 0; Detector 1 has a comb of sharp lines and a higher continuum">
+  <figcaption>Median power spectrum of quiet Channel 0 traces, Detector 0 (blue, 908 traces) and Detector 1 (red, 695 traces). Dotted lines mark the seven flagged frequencies.</figcaption>
+</figure>
+
+<p>Detector 1 has all seven lines in its median spectrum (16&ndash;181&times;), so they are present in at least half of its quiet traces, and it has many more lines than the seven flagged; its continuum is also visibly higher. Detector 0 shows only the 204&nbsp;kHz line, and more weakly (6&times;). So the sharp peaks in the 14-trace average come from its two Detector 1 traces because <em>Detector 1 has these lines</em>, not because those two events are unusual. It also means that averaging the two detectors together gives a spectrum that describes neither.</p>
+
+<h2>The 204 kHz line</h2>
+<p>The larger selections of Note 6 (192, 744 and 179 traces) are Detector 0 only, which is why the Detector 1 lines are absent there: there are no Detector 1 traces in them, so it is not a matter of dilution. The 204&nbsp;kHz line is the one flagged line present in <em>both</em> detectors (6&times; in Detector 0, 28&times; in Detector 1). Within Detector 0, a per-trace check at the 204,010&nbsp;Hz bin for the three selections gives:</p>
 
 <div class="table-scroll" style="max-width: 720px;">
 <table class="compact">
@@ -72,22 +100,22 @@
 </div>
 <p>&ldquo;Local neighbors&rdquo; means the median of the five bins on each side of 204,010&nbsp;Hz, taken per trace.</p>
 
-<p>No trace dominates (the largest supplies 1&ndash;3%, against 68% in the 14-trace mean), yet about 72% of individual traces show a real excess at that exact bin, by a median factor of about 5. In the <em>median</em> spectrum of the 179 <code>excursion_band_AI</code> traces, two adjacent bins (204,010 and 204,163&nbsp;Hz) stand at about 5.4&times;10<sup>4</sup>, against roughly 5&ndash;10&times;10<sup>3</sup> in the bins around them &mdash; a line about two bins (~300&nbsp;Hz) wide.</p>
+<p>No trace dominates (the largest supplies 1&ndash;3%), yet about 72% of individual traces show a real excess at that exact bin, by a median factor of about 5. In the <em>median</em> spectrum of the 179 <code>excursion_band_AI</code> traces, two adjacent bins (204,010 and 204,163&nbsp;Hz) stand at about 5.4&times;10<sup>4</sup>, against roughly 5&ndash;10&times;10<sup>3</sup> in the bins around them &mdash; a line about two bins (~300&nbsp;Hz) wide.</p>
 
 <figure>
-  <img src="img/psd_three_cuts.png" alt="Average PSD for the three selections; the 204 kHz line is visible in all three">
-  <figcaption>Average PSD for the three selections; the line near 204&nbsp;kHz is visible in all of them, while the peaks that came from events 10708 and 10959 are not.</figcaption>
+  <img src="img/psd_three_cuts.png" alt="Average PSD for the three Detector 0 selections; the 204 kHz line is visible in all three">
+  <figcaption>Average PSD for the three Detector 0 selections; the line near 204&nbsp;kHz is visible in all of them.</figcaption>
 </figure>
 
-<p>Common to most traces but never dominated by one or two is what a population-wide narrowband pickup tone looks like, as opposed to per-event contamination. The data alone cannot say what produces it (a clock, a switching supply, something in the readout); that needs the DAQ and electronics documentation.</p>
+<p>Common to most traces but never dominated by one or two is what a population-wide narrowband pickup tone looks like, as opposed to per-event contamination. That it appears in both detectors, more strongly in Detector 1, suggests a source common to both readouts. The data alone cannot say what produces it (a clock, a switching supply, something in the readout); that needs the DAQ and electronics documentation.</p>
 
 <h2>Status / Next Steps</h2>
 <ul>
-  <li>Identify the source of the ~204&nbsp;kHz line from the electronics documentation.</li>
-  <li>Check whether it appears in the other dumps (<code>F0002</code>&ndash;<code>F0005</code>), the other channels and detectors, and other series, and whether its frequency and amplitude are stable over time.</li>
-  <li>Test the hypothesis that events 10708 and 10959 are the same source at high amplitude, e.g. by looking at their timing relative to each other and to other events.</li>
-  <li>Decide how to treat the line when a noise PSD is used for optimal filtering (mask, notch, or keep).</li>
-  <li>Repeat the peak search on the AI-filtered selection itself to see what other, weaker lines are present.</li>
+  <li>Identify the source of the Detector 1 line comb and of the ~204&nbsp;kHz line from the electronics documentation. The comb is larger than the seven lines flagged here.</li>
+  <li>Check the other detectors and channels, the other dumps (<code>F0002</code>&ndash;<code>F0005</code>) and other series for the same lines, and whether their frequency and amplitude are stable over time.</li>
+  <li>Compute noise PSDs per detector (and per channel), not from mixed selections.</li>
+  <li>Decide how to treat the lines when a noise PSD is used for optimal filtering (mask, notch, or keep).</li>
+  <li>Build a Detector 1 noise selection with the cuts of <a href="note-02-noise-selection.html">Note 2</a> and <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> (so far only Detector 0 has been done) and repeat the peak search on it.</li>
 </ul>
 
 <footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

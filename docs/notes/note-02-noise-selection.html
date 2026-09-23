@@ -48,6 +48,8 @@
 <h2>First cut, and why it is misleading</h2>
 <p>The first &ldquo;good noise&rdquo; cut kept traces with <code>bstd</code> below its own 75th percentile and <code>ratio</code> below its own 25th percentile (<code>bstd &lt; 32.48</code>, <code>ratio &lt; 1.93</code>): <strong>41 of 1517</strong> traces. Plotting <code>log10(ratio)</code> for all traces shows two features: a sharp spike near 0 and a broad hump from about 0.5 to 1.4.</p>
 
+<p><em>Not to be confused with</em> the 21-trace <code>good_noise_traces.csv</code> selection that feeds <a href="note-03-noise-psd.html">Note 3</a>: that comes from the original notebook, with different scope, thresholds and baseline definition, and shares no events with these 41. Note 3 compares the two.</p>
+
 <p>Repeating the calculation with the pretrigger window shortened from 1000 to 500 samples changes the picture:</p>
 <ul>
   <li>the near-zero spike <strong>disappears</strong>;</li>

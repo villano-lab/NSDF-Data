@@ -17,7 +17,7 @@
 <h2>Code Repository</h2>
 <p>Notebooks and library files this note rests on, each pinned to the commit that produced the results below:</p>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/a70483a/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>a70483a</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/1958479/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>1958479</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb"><code>dump1_noise_pulses.ipynb</code></a> &mdash; the original first-pass notebook, superseded but kept for history. Pinned to <code>c892af4</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
 </ul>
@@ -167,7 +167,9 @@
 
 <p>The large green trace of the Tight plot (event 11539, <code>bstd</code> 18.05) <strong>is removed</strong>. What is left in the sample is flat noise with no pulses or drifts; a few traces show brief stretches of somewhat larger scatter, up to about 7 counts. The 13 removed traces are exactly the 13 pulse-like traces, and the 179 retained are exactly the rest of the Tight cut (checked in the notebook). The 13 were identified in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> from their pulse shape, not from their baseline scatter.</p>
 
-<p>That agreement is not an independent confirmation: 3.16 lies between 2.83 and 4.65, the largest <code>bstd</code> among the 179 Tight traces that are not pulse-like and the smallest among the 13 that are, so any threshold in that range gives the same 13. That range was found on this same data. Applied to the Loose cut, the same <code>bstd</code> cut removes 53 of the 744 traces (691 kept).</p>
+<p>The exact match is a meaningful agreement between two different criteria, though not a full test of the <code>bstd</code> cut. The threshold 0.5 was chosen from the histogram alone, where the distribution starts to rise sharply, without reference to the pulse-like traces, and it removes exactly the 13 that were identified from their pulse shape. The match is also not sensitive to the exact value: among the Tight traces, the 179 that are not pulse-like have <code>bstd</code> up to 2.83 and the 13 pulse-like traces start at 4.65, so any threshold in that gap, 3.16 included, gives the same result. It is not a full test because the pulse-like classification is itself a heuristic, and because this is one detector and channel: it shows that baseline scatter alone separates the two groups within the Tight cut, not that the cut would work on another selection.</p>
+
+<p>Applied to the Loose cut, the same <code>bstd</code> cut removes 53 of the 744 traces (691 kept); how many of those 53 are pulse-like has not been checked.</p>
 
 <h2>Status / Next Steps</h2>
 <ul>
@@ -176,7 +178,7 @@
   <li>The rise-time hypothesis (Branch 1) is still unverified; <code>rise_sample</code> needs checking against noisy and multi-peak traces first.</li>
   <li>Everything here is one detector and one channel of one dump. Other channels and other dumps have not been done (Channel 2 was 100% dead in this dump, so it needs a separate look).</li>
   <li>The cut boundaries (0.5, 0.7, 1.0, 1.4) were chosen by looking at plots, not derived from a model of the noise.</li>
-  <li>Choose the <code>bstd</code> cap for Branch 2: 32.48 is loose in the 500-sample window, and any value between 2.83 and 4.65 (the largest <code>bstd</code> among the Tight traces that are not pulse-like and the smallest among the 13 that are) removes exactly the 13 pulse-like traces on this dataset. But the overall 500-sample <code>bstd</code> distribution has no natural break between about 2 and 30 (see the histogram), so the value needs another justification. The next attempt, <code>log10(bstd) &lt; 0.5</code>, removes exactly those 13 from the Tight cut, but its threshold was chosen from that same gap. It has mostly been examined on the Tight cut.</li>
+  <li>Choose the <code>bstd</code> cap for Branch 2: 32.48 is loose in the 500-sample window, and any value between 2.83 and 4.65 (the largest <code>bstd</code> among the Tight traces that are not pulse-like and the smallest among the 13 that are) removes exactly the 13 pulse-like traces on this dataset. But the overall 500-sample <code>bstd</code> distribution has no natural break between about 2 and 30 (see the histogram), so the value needs another justification. The next attempt, <code>log10(bstd) &lt; 0.5</code>, was chosen from the histogram alone and removes exactly those 13 from the Tight cut. It has mostly been examined on the Tight cut.</li>
 </ul>
 
 <footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

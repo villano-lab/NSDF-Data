@@ -17,7 +17,7 @@
 <h2>Code Repository</h2>
 <p>Notebooks and library files this note rests on, each pinned to the commit that produced the results below:</p>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/085aa3d/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8b0ab40/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>8b0ab40</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb"><code>dump1_noise_pulses.ipynb</code></a> &mdash; the original first-pass notebook, superseded but kept for history. Pinned to <code>c892af4</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
 </ul>
@@ -95,28 +95,28 @@
     <tr><td>Branch 2</td><td>500</td><td>[0.5, 1.4)</td><td class="num">1012</td></tr>
     <tr><td>&nbsp;&nbsp;shoulder</td><td>500</td><td>[1.0, 1.4)</td><td class="num">268</td></tr>
     <tr><td>&nbsp;&nbsp;high tail</td><td>500</td><td>&ge; 2.0</td><td class="num">346</td></tr>
-    <tr><td>&ldquo;Best&rdquo;</td><td>500</td><td>[0.5, 1.0)</td><td class="num">744</td></tr>
-    <tr><td>Tightened</td><td>500</td><td>[0.5, 0.7)</td><td class="num">192</td></tr>
+    <tr><td>Loose</td><td>500</td><td>[0.5, 1.0)</td><td class="num">744</td></tr>
+    <tr><td>Tight</td><td>500</td><td>[0.5, 0.7)</td><td class="num">192</td></tr>
   </tbody>
 </table>
 </div>
 
-<p>Cut B and &ldquo;Best&rdquo; cover the same <code>log10(ratio)</code> range, [0.5, 1.0), but on different pretrigger windows: Cut B uses 1000 samples (892 traces), &ldquo;Best&rdquo; uses 500 (744 traces). &ldquo;Best&rdquo; is the name given to the narrower core of Branch 2&rsquo;s range: it stops short of the shoulder, [1.0, 1.4), where contamination starts creeping in, so it is the part of the clean hump furthest from both failure modes. It is the cut now in the library as <code>excursion_band_loose</code>.</p>
+<p>Cut B and Loose cover the same <code>log10(ratio)</code> range, [0.5, 1.0), but on different pretrigger windows: Cut B uses 1000 samples (892 traces), Loose uses 500 (744 traces). Within Branch 2, <strong>Loose</strong> is the wider of two narrowed cuts: it stops short of the shoulder, [1.0, 1.4), where contamination starts creeping in, but keeps the most traces. <strong>Tight</strong>, [0.5, 0.7), is narrower still and cleaner, at the cost of statistics. They are the library&rsquo;s <code>excursion_band_loose</code> and <code>excursion_band</code>. Neither is claimed to be the ideal noise selection; the names only say how wide the slice is.</p>
 
 <div class="grid2">
   <figure><img src="img/dump1_branch2.png" alt="Branch 2 example traces"><figcaption>Branch 2, [0.5, 1.4): 1012 traces (30 shown).</figcaption></figure>
   <figure><img src="img/dump1_shoulder.png" alt="Branch 2 shoulder example traces"><figcaption>Shoulder, [1.0, 1.4): contamination starts creeping in.</figcaption></figure>
   <figure><img src="img/dump1_high_tail.png" alt="Branch 2 high tail example traces"><figcaption>High tail, &ge; 2.0: dominated by real pulses.</figcaption></figure>
-  <figure><img src="img/dump1_best.png" alt="Best noise examples, log10(ratio) in [0.5, 1.0), 500-sample window"><figcaption>&ldquo;Best&rdquo;, [0.5, 1.0): 744 traces (30 shown), the core of the clean hump.</figcaption></figure>
-  <figure><img src="img/dump1_tight.png" alt="Tightened cut example traces"><figcaption>Tightened, [0.5, 0.7): 192 traces, the cleanest slice.</figcaption></figure>
+  <figure><img src="img/dump1_loose.png" alt="Loose cut example traces, log10(ratio) in [0.5, 1.0), 500-sample window"><figcaption>Loose, [0.5, 1.0): 744 traces (30 shown); stops short of the contaminated shoulder.</figcaption></figure>
+  <figure><img src="img/dump1_tight.png" alt="Tight cut example traces"><figcaption>Tight, [0.5, 0.7): 192 traces, the cleanest slice.</figcaption></figure>
 </div>
 
-<p>Moving down in <code>ratio</code> makes the selection cleaner: contamination increases toward the shoulder, and the high tail is real pulses. The tightened slice is the cleanest, but even it lets a few real pulses through (13 of its 192, found in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>).</p>
+<p>Moving down in <code>ratio</code> makes the selection cleaner: contamination increases toward the shoulder, and the high tail is real pulses. The Tight slice is the cleanest, but even it lets a few real pulses through (13 of its 192, found in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>).</p>
 
 <h2>Status / Next Steps</h2>
 <ul>
-  <li>The tightened cut is now a library function (<code>excursion_band</code>, with <code>excursion_band_loose</code> for [0.5, 1.0)); see <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</li>
-  <li>The 13 real pulses in the tightened selection are removed by a pulse-shape veto in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>.</li>
+  <li>The Tight cut is now a library function (<code>excursion_band</code>), and the Loose cut is <code>excursion_band_loose</code>; see <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</li>
+  <li>The 13 real pulses in the Tight selection are removed by a pulse-shape veto in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>.</li>
   <li>The rise-time hypothesis (Branch 1) is still unverified; <code>rise_sample</code> needs checking against noisy and multi-peak traces first.</li>
   <li>Everything here is one detector and one channel of one dump. Other channels and other dumps have not been done (Channel 2 was 100% dead in this dump, so it needs a separate look).</li>
   <li>The cut boundaries (0.5, 0.7, 1.0, 1.4) were chosen by looking at plots, not derived from a model of the noise.</li>

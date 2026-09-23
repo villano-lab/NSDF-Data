@@ -105,8 +105,8 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>active</code></td><td><code>~dead_channel</code></td><td><span class="status done">done</span></td></tr>
     <tr><td><code>quiet_baseline</code></td><td><code>bstd</code> below its own percentile across the batch; dead channels never pass</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>ratio_band</code></td><td>Linear <code>ratio</code> in <code>[low, high)</code>, either bound optional (generic)</td><td><span class="status done">done</span></td></tr>
-    <tr><td><code>excursion_band</code></td><td><code>log10(ratio)</code> in <code>[0.5, 0.7)</code> by default: the tightened cut of <a href="note-02-noise-selection.html">Note 2</a></td><td><span class="status done">done</span></td></tr>
-    <tr><td><code>excursion_band_loose</code></td><td><code>log10(ratio)</code> in <code>[0.5, 1.0)</code>: the &ldquo;best&rdquo; cut of Note 2</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_band</code></td><td><code>log10(ratio)</code> in <code>[0.5, 0.7)</code> by default: the Tight cut of <a href="note-02-noise-selection.html">Note 2</a></td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_band_loose</code></td><td><code>log10(ratio)</code> in <code>[0.5, 1.0)</code>: the Loose cut of Note 2</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>excursion_below_percentile</code></td><td><code>ratio</code> below its own percentile across the batch</td><td><span class="status under-dev">under development</span></td></tr>
     <tr><td><code>looks_like_pulse</code></td><td><code>excursion_duration</code> at or above <code>min_duration</code> (default 50)</td><td><span class="status under-dev">under development</span></td></tr>
     <tr><td><code>excursion_band_AI</code></td><td><code>excursion_band</code> with <code>looks_like_pulse</code> traces removed (<a href="note-06-ai-pulse-veto-archive.html">Note 6</a>)</td><td><span class="status under-dev">under development</span></td></tr>
@@ -152,7 +152,7 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>excursion_band_AI</code></td><td><code>pulse_cuts.py</code></td><td><code>excursion_band</code> plus the <code>looks_like_pulse</code> veto; both are judgment calls. Check what it removes before trusting it on a new dataset.</td></tr>
     <tr><td><code>excursion_below_percentile</code></td><td><code>pulse_cuts.py</code></td><td>Matches the original &ldquo;good noise&rdquo; cut, which is biased toward contaminated-baseline traces when used alone; combine it with <code>quiet_baseline</code>.</td></tr>
     <tr><td><code>looks_like_pulse</code></td><td><code>pulse_cuts.py</code></td><td>A judgment call, not a validated physical criterion. The default <code>min_duration = 50</code> was picked by eye from a gap in one dataset (179 traces at &le; 25 samples, 13 at &ge; 168, none between).</td></tr>
-    <tr><td><code>excursion_duration</code></td><td><code>pulse_quantities.py</code></td><td>Devised for the pulse veto and checked on one dataset only. Deliberately uses the longest <em>contiguous</em> run: a plain count of samples above half-maximum flagged every trace in the tightened cut.</td></tr>
+    <tr><td><code>excursion_duration</code></td><td><code>pulse_quantities.py</code></td><td>Devised for the pulse veto and checked on one dataset only. Deliberately uses the longest <em>contiguous</em> run: a plain count of samples above half-maximum flagged every trace in the Tight cut.</td></tr>
     <tr><td><code>rise_sample</code></td><td><code>pulse_quantities.py</code></td><td>Half-maximum crossing heuristic, used in one exploratory analysis (Cut A rise time, <a href="note-02-noise-selection.html">Note 2</a>). Not yet checked against noisy or multi-peak traces.</td></tr>
   </tbody>
 </table></div>

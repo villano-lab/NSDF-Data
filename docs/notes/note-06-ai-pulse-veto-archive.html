@@ -16,23 +16,23 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/085aa3d/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the &ldquo;Tightened, AI-filtered&rdquo;, &ldquo;What the AI filter removes&rdquo; and &ldquo;Archive&rdquo; sections at the end. Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8b0ab40/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the &ldquo;Tight, AI-filtered&rdquo;, &ldquo;What the AI filter removes&rdquo; and &ldquo;Archive&rdquo; sections at the end. Pinned to <code>8b0ab40</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/b1b88ee/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the three-cut PSD comparison. Pinned to <code>b1b88ee</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c3d6754/python/pulse_cuts.py"><code>python/pulse_cuts.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/blob/c3d6754/python/pulse_quantities.py"><code>pulse_quantities.py</code></a> &mdash; <code>excursion_band_AI</code>, <code>looks_like_pulse</code>, <code>excursion_duration</code>. Pinned to <code>c3d6754</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/894ef9d/python/pulse_archive.py"><code>python/pulse_archive.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/archives"><code>archives/</code></a> &mdash; the HDF5 archive. Pinned to <code>894ef9d</code> and <code>085aa3d</code>.</li>
 </ul>
 
 <h2>Motivation</h2>
-<p>The tightened noise cut of <a href="note-02-noise-selection.html">Note 2</a> (<code>log10(ratio)</code> in [0.5, 0.7), 500-sample window) keeps 192 of 1517 traces and is the cleanest slice found, but a few real pulses still get through. <code>excursion_band_AI</code> is the same cut with a second criterion added: remove whatever looks like a real pulse. The name is literal: the pulse judgment is a heuristic worked out with an AI assistant, not a validated physical criterion, and the cut is tagged <code>under_development</code>.</p>
+<p>The Tight noise cut of <a href="note-02-noise-selection.html">Note 2</a> (<code>log10(ratio)</code> in [0.5, 0.7), 500-sample window) keeps 192 of 1517 traces and is the cleanest slice found, but a few real pulses still get through. <code>excursion_band_AI</code> is the same cut with a second criterion added: remove whatever looks like a real pulse. The name is literal: the pulse judgment is a heuristic worked out with an AI assistant, not a validated physical criterion, and the cut is tagged <code>under_development</code>.</p>
 
 <h2>The pulse-shape criterion</h2>
 <p>A real pulse rises and then decays slowly, so it stays near its own peak for a long time. Noise does not. The quantity <code>excursion_duration</code> is the <strong>longest run of <em>consecutive</em> post-pretrigger samples</strong> whose deviation is at least half of the trace&rsquo;s own <code>dev</code>. <code>looks_like_pulse</code> flags a trace when that run is at least <code>min_duration</code> samples.</p>
 
 <h3>A first version that failed</h3>
-<p>The first attempt counted the <em>total</em> number of samples above half of <code>dev</code>. On real data it flagged all 192 traces of the tightened cut as pulses. With ~2500 post-pretrigger samples and <code>dev</code> only 3&ndash;5 times the noise standard deviation, half of <code>dev</code> is just 1.5&ndash;2.5 sigma, which ordinary Gaussian noise exceeds in a few percent of samples. Requiring the samples to be <em>consecutive</em> removes that effect, since the chance of a long unbroken run in noise falls off geometrically.</p>
+<p>The first attempt counted the <em>total</em> number of samples above half of <code>dev</code>. On real data it flagged all 192 traces of the Tight cut as pulses. With ~2500 post-pretrigger samples and <code>dev</code> only 3&ndash;5 times the noise standard deviation, half of <code>dev</code> is just 1.5&ndash;2.5 sigma, which ordinary Gaussian noise exceeds in a few percent of samples. Requiring the samples to be <em>consecutive</em> removes that effect, since the chance of a long unbroken run in noise falls off geometrically.</p>
 
 <h3>Choosing <code>min_duration</code></h3>
-<p>With the consecutive-run definition, the 192 traces of the tightened cut split cleanly (Detector 0 / Channel 0, dump 1, 500-sample window):</p>
+<p>With the consecutive-run definition, the 192 traces of the Tight cut split cleanly (Detector 0 / Channel 0, dump 1, 500-sample window):</p>
 <ul>
   <li><strong>179 traces</strong> have a longest run of 2&ndash;25 samples (median 7);</li>
   <li><strong>13 traces</strong> have runs of 168 to 3564 samples (168, 225, 919, 1699, 1940, 2055, 2079, 2768, 2875, 3300, 3521, 3538, 3564);</li>

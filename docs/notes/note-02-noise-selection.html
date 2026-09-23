@@ -17,7 +17,7 @@
 <h2>Code Repository</h2>
 <p>Notebooks and library files this note rests on, each pinned to the commit that produced the results below:</p>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8b0ab40/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>8b0ab40</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8a2c41a/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>8a2c41a</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb"><code>dump1_noise_pulses.ipynb</code></a> &mdash; the original first-pass notebook, superseded but kept for history. Pinned to <code>c892af4</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
 </ul>
@@ -115,6 +115,34 @@
 
 <p>Moving down in <code>ratio</code> makes the selection cleaner: contamination increases toward the shoulder, and the high tail is real pulses. The Tight slice is the cleanest, but even it lets a few real pulses through (13 of its 192, found in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>).</p>
 
+<h3>Restricting <code>bstd</code> in Branch 2</h3>
+<p>Branch 2&rsquo;s cuts so far look only at <code>ratio</code>. The first cut of this note also capped <code>bstd</code> (<code>bstd &lt; 32.48</code>, the 75th percentile of the 1000-sample <code>bstd</code>). Applying the same number as a cap on Branch 2&rsquo;s own 500-sample <code>bstd</code>, on top of the Tight cut, keeps <strong>189</strong> of the 192 Tight traces (and 738 of the 744 Loose ones). The plot below shows the same 30 traces as the Tight plot above, minus any the cap removes; none of the three removed traces were in that sample, so it looks the same.</p>
+
+<p><strong>Does the cap remove the obvious green trace? No.</strong> That trace (event 11539: a baseline decaying from about +33 to &minus;30 across the pretrigger window, then a pulse rising near sample 500) has a 500-sample <code>bstd</code> of 18.05, well under the cap, so it is kept. The three traces the cap does remove have <code>bstd</code> of 33 to 72: two large drifts and one large pulse.</p>
+
+<div class="grid2">
+  <figure><img src="img/dump1_tight_bstdcap.png" alt="Tight cut plus bstd below 32.48: 30 of 189 example traces, including the large green trace"><figcaption>Tight + <code>bstd</code> &lt; 32.48: 189 traces (30 shown, the same sample as the Tight plot). The large green trace is still there.</figcaption></figure>
+  <figure><img src="img/dump1_removed_by_bstdcap.png" alt="The three Tight traces removed by the bstd cap"><figcaption>The 3 traces the cap removes (events 10164, 10714, 10919). Colors are per plot, so the green line here is not the green trace at left.</figcaption></figure>
+</div>
+
+<p>The reason is that 32.48 is far looser in the 500-sample window than it was in the 1000-sample one: it is the 98th percentile of the 500-sample <code>bstd</code> (median 1.54), not the 75th. Removing the green trace needs a cap below 18. How the choice of cap plays out, and how it compares with the pulse-shape veto of <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>, which rejects 13 of the 192 Tight traces:</p>
+
+<div class="table-scroll">
+<table class="compact">
+  <thead><tr><th class="num"><code>bstd</code> cap</th><th class="num">Kept</th><th class="num">Removed</th><th class="num">of which veto rejects</th><th class="num">of which veto keeps</th></tr></thead>
+  <tbody>
+    <tr><td class="num">32.48</td><td class="num">189</td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
+    <tr><td class="num">20</td><td class="num">186</td><td class="num">6</td><td class="num">6</td><td class="num">0</td></tr>
+    <tr><td class="num">10</td><td class="num">181</td><td class="num">11</td><td class="num">11</td><td class="num">0</td></tr>
+    <tr><td class="num">5</td><td class="num">180</td><td class="num">12</td><td class="num">12</td><td class="num">0</td></tr>
+    <tr><td class="num">3</td><td class="num">179</td><td class="num">13</td><td class="num">13</td><td class="num">0</td></tr>
+    <tr><td class="num">2.5</td><td class="num">178</td><td class="num">14</td><td class="num">13</td><td class="num">1</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Caps apply to the 500-sample <code>bstd</code>; &ldquo;Kept&rdquo; is out of the 192 Tight traces, and &ldquo;veto&rdquo; is the <code>excursion_band_AI</code> pulse-shape veto of Note 6. Every trace a cap removes, at every value down to 3, is one the pulse-shape veto also rejects. At a cap of 3 the removed set is exactly those 13. There is a gap between the largest <code>bstd</code> among the 179 traces the veto keeps (2.83) and the smallest among the 13 it rejects (4.65), so any cap between them removes the same 13 by a much simpler criterion; at 2.5 it starts removing traces the veto keeps. This was found on the same data used to choose both criteria, so it is a consistency check between two heuristics, not a validation of either.</p>
+
 <h2>Status / Next Steps</h2>
 <ul>
   <li>The Tight cut is now a library function (<code>excursion_band</code>), and the Loose cut is <code>excursion_band_loose</code>; see <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</li>
@@ -122,6 +150,7 @@
   <li>The rise-time hypothesis (Branch 1) is still unverified; <code>rise_sample</code> needs checking against noisy and multi-peak traces first.</li>
   <li>Everything here is one detector and one channel of one dump. Other channels and other dumps have not been done (Channel 2 was 100% dead in this dump, so it needs a separate look).</li>
   <li>The cut boundaries (0.5, 0.7, 1.0, 1.4) were chosen by looking at plots, not derived from a model of the noise.</li>
+  <li>Choose the <code>bstd</code> cap for Branch 2: 32.48 is loose in the 500-sample window, and any value between 2.83 and 4.65 removes the same 13 traces as the pulse-shape veto on this dataset. It has only been examined on the Tight cut.</li>
 </ul>
 
 <footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

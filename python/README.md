@@ -32,9 +32,21 @@ class; a plain NumPy array *is* the pulse (or batch of pulses).
 | `pulse_operations.py` | `(pulses, config, **params)` | new pulses, same pulse-shaped family as the input |
 
 Quantities are the primitives; cuts are built by thresholding a quantity
-(e.g. `excursion_band` thresholds `excursion_ratio`) and combine with plain
-`&`/`|`/`~`; operations are independent transforms (baseline subtraction,
-glitch trimming) and never mutate their input in place.
+(e.g. `ratio_band` thresholds `excursion_ratio`, `excursion_band` thresholds
+`log_excursion_ratio`) and combine with plain `&`/`|`/`~`; operations are
+independent transforms (baseline subtraction, glitch trimming) and never
+mutate their input in place.
+
+`pulse_cuts.excursion_band` (default `[0.5, 0.7)`) and `excursion_band_loose`
+(`[0.5, 1.0)`) are the two named log10(ratio) cuts from the Branch 2
+exploration in `07221203_2025_dump1_noise.ipynb` -- pass a `config` with the
+pretrigger window you want (Branch 2 used 500 samples). `excursion_band_AI`
+additionally removes traces `pulse_cuts.looks_like_pulse` flags as containing
+a real pulse (a sustained, consecutive-sample excursion rather than a brief
+noise fluctuation) -- an exploratory heuristic, not a validated cut; see its
+docstring/status note before trusting it on a new dataset. `ratio_band` is the
+older, fully generic linear-ratio band-threshold utility (any `low`/`high`,
+no default), used e.g. by `07221203_2025_dump2_pulse.ipynb`'s `ratio > 9` cut.
 
 `pulse_io.py` is the only module that knows about `nsdf_dark_matter`'s `cdms`
 objects -- `load_channel_batch` turns a list of `detector_id`s into a plain
@@ -70,10 +82,11 @@ def rise_sample(pulses, config=DEFAULT_CONFIG, fraction=0.5):
 list_statuses(pulse_quantities)  # {"pretrigger_mean": ("done", None), "rise_sample": ("under_development", "..."), ...}
 ```
 
-As of today, `rise_sample` (a lightly-validated heuristic) and
-`excursion_below_percentile` (known to be biased toward contaminated traces
-when used *alone* -- see its docstring) are the two `under_development`
-entries; everything else is `done`.
+As of today, `rise_sample` and `excursion_below_percentile` (known to be
+biased toward contaminated traces when used *alone* -- see its docstring),
+plus `excursion_duration`, `looks_like_pulse`, and `excursion_band_AI` (the
+"is this actually a pulse" heuristic and the cut built on it), are
+`under_development`; everything else is `done`.
 
 ## Tests
 

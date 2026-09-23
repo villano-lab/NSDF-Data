@@ -13,7 +13,9 @@ reference set, unless that's actually what you want.
 import numpy as np
 
 from pulse_config import PulseConfig, DEFAULT_CONFIG
-from pulse_quantities import pretrigger_std, excursion_ratio
+from pulse_quantities import (
+    pretrigger_std, excursion_ratio, log_excursion_ratio, excursion_duration,
+)
 from pulse_status import status, DONE, UNDER_DEVELOPMENT
 
 
@@ -50,9 +52,11 @@ def quiet_baseline(pulses, config: PulseConfig = DEFAULT_CONFIG, percentile: flo
 
 
 @status(DONE)
-def excursion_band(pulses, config: PulseConfig = DEFAULT_CONFIG, low=None, high=None,
-                    ratio=None):
-    """True where `excursion_ratio` is in `[low, high)` (either bound optional).
+def ratio_band(pulses, config: PulseConfig = DEFAULT_CONFIG, low=None, high=None,
+                ratio=None):
+    """True where `excursion_ratio` (linear, not log) is in `[low, high)` (either
+    bound optional). The generic band-threshold utility -- see `excursion_band`
+    for the specific log10(ratio) cut used by the Branch 2 exploration.
 
     Pass a precomputed `ratio` (e.g. `pulse_quantities.excursion_ratio(pulses, config)`)
     to avoid recomputing it when combining with other cuts on the same batch.
@@ -65,6 +69,32 @@ def excursion_band(pulses, config: PulseConfig = DEFAULT_CONFIG, low=None, high=
     if high is not None:
         mask &= ratio < high
     return mask
+
+
+@status(DONE)
+def excursion_band(pulses, config: PulseConfig = DEFAULT_CONFIG, low=0.5, high=0.7,
+                    log_ratio=None):
+    """True where `log_excursion_ratio` is in `[low, high)` -- default `[0.5, 0.7)`,
+    the "tightened" Branch 2 cut from 07221203_2025_dump1_noise.ipynb (cleanest
+    slice found there, though even it let one real pulse through). Pass a
+    `config` with the pretrigger window you want (Branch 2 used 500 samples, not
+    the library default of 1000).
+
+    Pass a precomputed `log_ratio` (e.g.
+    `pulse_quantities.log_excursion_ratio(pulses, config)`) to avoid recomputing
+    it when combining with other cuts on the same batch.
+    """
+    if log_ratio is None:
+        log_ratio = log_excursion_ratio(pulses, config)
+    return (log_ratio >= low) & (log_ratio < high)
+
+
+@status(DONE)
+def excursion_band_loose(pulses, config: PulseConfig = DEFAULT_CONFIG, log_ratio=None):
+    """`excursion_band` widened to `[0.5, 1.0)` -- the "best noise examples" Branch 2
+    cut from 07221203_2025_dump1_noise.ipynb (more traces retained, somewhat more
+    contamination than the tightened `[0.5, 0.7)` default)."""
+    return excursion_band(pulses, config, low=0.5, high=1.0, log_ratio=log_ratio)
 
 
 @status(UNDER_DEVELOPMENT, note="matches the original dump1_noise 'good noise' cut, "
@@ -85,3 +115,37 @@ def excursion_below_percentile(pulses, config: PulseConfig = DEFAULT_CONFIG,
         return np.zeros_like(finite)
     thresh = np.percentile(ratio[finite], percentile)
     return finite & (ratio < thresh)
+
+
+@status(UNDER_DEVELOPMENT, note="'looks like a pulse' is a judgment call, not a "
+        "validated physical criterion. Flags traces whose excursion stays near "
+        "its own peak for a long *consecutive* run (excursion_duration >= "
+        "min_duration), which a real detector pulse's rise-then-decay does and "
+        "ordinary noise usually doesn't. default min_duration=50 was picked by "
+        "eye from a real gap in the data (07221203_2025_F0001, Detector0/Channel0, "
+        "500-sample window): within the tightened excursion_band, 179/192 traces "
+        "had duration <= 25 and the other 13 had duration >= 168 -- nothing in "
+        "between -- and those 13 are visually unambiguous real pulses/drifts, the "
+        "other 179 visually flat noise. Devised for excursion_band_AI -- treat as a "
+        "first guess to be checked against the traces it flags on any new dataset, "
+        "not ground truth.")
+def looks_like_pulse(pulses, config: PulseConfig = DEFAULT_CONFIG, min_duration: int = 50,
+                      duration=None):
+    """True where `excursion_duration` is at or above `min_duration` samples."""
+    if duration is None:
+        duration = excursion_duration(pulses, config)
+    return duration >= min_duration
+
+
+@status(UNDER_DEVELOPMENT, note="excursion_band ([0.5, 0.7) by default) with "
+        "looks_like_pulse traces removed -- i.e. 'whatever Claude judged to be a "
+        "real pulse, taken out.' Both the band and the pulse-shape veto are "
+        "judgment calls; treat this as an exploratory variant of excursion_band, "
+        "not an independently validated cut, and check what it removes before "
+        "trusting it on a new dataset.")
+def excursion_band_AI(pulses, config: PulseConfig = DEFAULT_CONFIG, low=0.5, high=0.7,
+                       log_ratio=None, min_duration: int = 50, duration=None):
+    """`excursion_band(low, high)` with `looks_like_pulse` traces removed."""
+    band = excursion_band(pulses, config, low=low, high=high, log_ratio=log_ratio)
+    pulse_like = looks_like_pulse(pulses, config, min_duration=min_duration, duration=duration)
+    return band & ~pulse_like

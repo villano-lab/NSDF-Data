@@ -62,6 +62,26 @@ def test_excursion_ratio_matches_dev_over_std():
     np.testing.assert_allclose(q.excursion_ratio(pulses, config), expected)
 
 
+def test_log_excursion_ratio_matches_log10_of_ratio():
+    config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=None)
+    rng = np.random.default_rng(9)
+    pulses = rng.normal(size=(5, 40))
+
+    expected = np.log10(q.excursion_ratio(pulses, config))
+    np.testing.assert_allclose(q.log_excursion_ratio(pulses, config), expected)
+
+
+def test_excursion_duration_counts_samples_above_half_max():
+    config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=None)
+    pulses = np.zeros((2, 30))
+    pulses[0, 15] = 10.0        # dev=10, half-max=5 -- only 1 sample at/above it
+    pulses[1, 15:25] = 10.0     # 10 samples at/above half-max
+
+    np.testing.assert_array_equal(
+        q.excursion_duration(pulses, config, fraction=0.5), [1, 10]
+    )
+
+
 def test_rise_sample_half_max_crossing():
     config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=None)
     pulse = np.zeros(30)

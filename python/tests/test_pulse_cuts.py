@@ -39,7 +39,7 @@ def test_quiet_baseline_all_dead_returns_all_false():
     np.testing.assert_array_equal(mask, [False, False, False, False])
 
 
-def test_excursion_band_bounds():
+def test_ratio_band_bounds():
     config = PulseConfig(pretrigger_samples=5, glitch_samples=0, sample_period_s=None)
     rng = np.random.default_rng(1)
     pulses = rng.normal(size=(20, 25))
@@ -47,20 +47,66 @@ def test_excursion_band_bounds():
     ratio = q.excursion_ratio(pulses, config)
     lo, hi = np.percentile(ratio, [25, 75])
 
-    mask = cuts.excursion_band(pulses, config, low=lo, high=hi)
+    mask = cuts.ratio_band(pulses, config, low=lo, high=hi)
     expected = (ratio >= lo) & (ratio < hi)
     np.testing.assert_array_equal(mask, expected)
 
 
-def test_excursion_band_precomputed_ratio_matches_recomputed():
+def test_ratio_band_precomputed_ratio_matches_recomputed():
     config = PulseConfig(pretrigger_samples=5, glitch_samples=0, sample_period_s=None)
     rng = np.random.default_rng(5)
     pulses = rng.normal(size=(10, 25))
     ratio = q.excursion_ratio(pulses, config)
 
-    from_precomputed = cuts.excursion_band(pulses, config, low=2, high=5, ratio=ratio)
-    from_scratch = cuts.excursion_band(pulses, config, low=2, high=5)
+    from_precomputed = cuts.ratio_band(pulses, config, low=2, high=5, ratio=ratio)
+    from_scratch = cuts.ratio_band(pulses, config, low=2, high=5)
     np.testing.assert_array_equal(from_precomputed, from_scratch)
+
+
+def test_excursion_band_default_matches_tightened_log_ratio_cut():
+    config = PulseConfig(pretrigger_samples=5, glitch_samples=0, sample_period_s=None)
+    rng = np.random.default_rng(6)
+    pulses = rng.normal(size=(30, 25))
+
+    log_ratio = q.log_excursion_ratio(pulses, config)
+    expected = (log_ratio >= 0.5) & (log_ratio < 0.7)
+    np.testing.assert_array_equal(cuts.excursion_band(pulses, config), expected)
+
+
+def test_excursion_band_loose_matches_wider_log_ratio_cut():
+    config = PulseConfig(pretrigger_samples=5, glitch_samples=0, sample_period_s=None)
+    rng = np.random.default_rng(7)
+    pulses = rng.normal(size=(30, 25))
+
+    log_ratio = q.log_excursion_ratio(pulses, config)
+    expected = (log_ratio >= 0.5) & (log_ratio < 1.0)
+    np.testing.assert_array_equal(cuts.excursion_band_loose(pulses, config), expected)
+
+
+def test_looks_like_pulse_flags_sustained_excursion_not_single_spike():
+    config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=None)
+    pulses = np.zeros((2, 30))
+    pulses[0, 15] = 10.0          # single-sample noise spike
+    pulses[1, 15:25] = 10.0       # sustained plateau, like a real pulse's decay
+
+    np.testing.assert_array_equal(
+        cuts.looks_like_pulse(pulses, config, min_duration=3), [False, True]
+    )
+
+
+def test_excursion_band_AI_removes_pulse_like_traces_from_the_band():
+    config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=None)
+    rng = np.random.default_rng(8)
+    pretrig = rng.normal(scale=1.0, size=(2, 10))
+    pulses = np.hstack([pretrig, np.zeros((2, 20))])
+    pulses[0, 15] = 5.0        # brief spike -> noise-like
+    pulses[1, 15:25] = 5.0     # sustained -> pulse-like
+
+    band = cuts.excursion_band(pulses, config, low=-10, high=10)
+    assert band.all(), "both traces should land in a wide-open band"
+
+    ai = cuts.excursion_band_AI(pulses, config, low=-10, high=10, min_duration=3)
+    np.testing.assert_array_equal(ai, [True, False])
 
 
 def test_excursion_below_percentile():

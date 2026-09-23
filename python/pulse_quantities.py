@@ -60,6 +60,49 @@ def excursion_ratio(pulses, config: PulseConfig = DEFAULT_CONFIG):
     return max_deviation(pulses, config) / pretrigger_std(pulses, config)
 
 
+@status(DONE)
+def log_excursion_ratio(pulses, config: PulseConfig = DEFAULT_CONFIG):
+    """`log10(excursion_ratio)` -- the quantity actually thresholded by the
+    notebooks' Branch 2 exploration (07221203_2025_dump1_noise.ipynb), since the
+    ratio's dynamic range spans orders of magnitude between the contaminated and
+    quiet populations."""
+    return np.log10(excursion_ratio(pulses, config))
+
+
+@status(UNDER_DEVELOPMENT, note="devised specifically to tell a sustained real "
+        "pulse (rises and stays elevated for many *consecutive* samples while it "
+        "decays) apart from noise, for use by pulse_cuts.looks_like_pulse / "
+        "excursion_band_AI. Deliberately uses the longest *contiguous* run, not a "
+        "total count -- with ~2500 post-pretrigger samples, a plain count of "
+        "samples above half-max is dominated by ordinary Gaussian tail hits (checked "
+        "against real 07221203_2025_F0001 data: an early total-count version flagged "
+        "every trace in the tightened excursion_band as 'pulse-like'). Not "
+        "independently validated beyond that one check.")
+def excursion_duration(pulses, config: PulseConfig = DEFAULT_CONFIG, fraction: float = 0.5):
+    """Longest run of *consecutive* post-pretrigger samples with
+    `|sample - pretrigger_mean| >= fraction * max_deviation` -- how long the trace
+    stays near its own peak without dropping back down."""
+    pulses = np.asarray(pulses)
+    bmean = pretrigger_mean(pulses, config)
+    dev = max_deviation(pulses, config)
+    post = pulses[..., config.pretrigger_samples:]
+    absdev = np.abs(post - bmean[..., np.newaxis])
+    mask = absdev >= (fraction * dev)[..., np.newaxis]
+
+    orig_shape = mask.shape[:-1]
+    flat = mask.reshape(-1, mask.shape[-1])
+    durations = np.zeros(flat.shape[0], dtype=int)
+    for i, row in enumerate(flat):
+        if not row.any():
+            continue
+        padded = np.concatenate(([False], row, [False])).astype(np.int8)
+        edges = np.diff(padded)
+        starts = np.flatnonzero(edges == 1)
+        ends = np.flatnonzero(edges == -1)
+        durations[i] = (ends - starts).max()
+    return durations.reshape(orig_shape)
+
+
 @status(UNDER_DEVELOPMENT, note="fraction=0.5 half-max crossing heuristic; only "
         "validated on one exploratory analysis (07221203_2025_dump1_noise.ipynb's "
         "Cut A rise-time check) -- not yet checked against noisy/multi-peak traces")

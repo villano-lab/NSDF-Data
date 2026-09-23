@@ -19,7 +19,7 @@
 <ul class="repo">
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/085aa3d/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>085aa3d</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb"><code>dump1_noise_pulses.ipynb</code></a> &mdash; the original first-pass notebook, superseded but kept for history. Pinned to <code>c892af4</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-04-pulse-library.html">Note 4</a>). Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
 </ul>
 
 <h2>Goal and setup</h2>
@@ -96,7 +96,7 @@
 
 <h2>Status / Next Steps</h2>
 <ul>
-  <li>The tightened cut is now a library function (<code>excursion_band</code>, with <code>excursion_band_loose</code> for [0.5, 1.0)); see <a href="note-04-pulse-library.html">Note 4</a>.</li>
+  <li>The tightened cut is now a library function (<code>excursion_band</code>, with <code>excursion_band_loose</code> for [0.5, 1.0)); see <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</li>
   <li>The 13 real pulses in the tightened selection are removed by a pulse-shape veto in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>.</li>
   <li>The rise-time hypothesis (Branch 1) is still unverified; <code>rise_sample</code> needs checking against noisy and multi-peak traces first.</li>
   <li>Everything here is one detector and one channel of one dump. Other channels and other dumps have not been done (Channel 2 was 100% dead in this dump, so it needs a separate look).</li>

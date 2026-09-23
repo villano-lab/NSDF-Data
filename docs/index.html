@@ -96,9 +96,9 @@
       <td class="link"><a href="notes/note-04-pulse-library.html">Open note &rarr;</a></td>
       <td class="date">22 Sept 2026</td>
       <td>Anthony</td>
-      <td>python/ pulse library: operations, cuts, and derived quantities</td>
-      <td class="desc">A shared library (29 status-tagged functions, 40 unit tests) that replaces per-notebook copies of the same computations, with a done / under_development marker on every function.</td>
-      <td class="kw">library, PulseConfig, cuts, quantities, operations, status tagging</td>
+      <td>python/ pulse library: development history and validation</td>
+      <td class="desc">How the shared library grew from 20 to 29 functions over 22&ndash;23 Sept, how the refactored notebooks were checked against their earlier results, and the 40 unit tests. Structure and function tables are in Note 1a.</td>
+      <td class="kw">library, validation, refactoring, unit tests, history</td>
       <td><span class="status in-progress">In progress</span></td>
       <td></td>
     </tr>
@@ -123,6 +123,18 @@
       <td>Noise-pulse selection on Detector 0 / Channel 0 (series 07221203_2025, dump 1)</td>
       <td class="desc">Building a clean-noise selection from 1517 traces. A naive low-ratio cut selects pulse-contaminated baselines; a 500-sample pretrigger window isolates the genuinely quiet population.</td>
       <td class="kw">noise selection, pretrigger window, baseline contamination, dev/bstd ratio, extreme-value statistics</td>
+      <td><span class="status in-progress">In progress</span></td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td class="num">1a</td>
+      <td class="link"><a href="notes/note-01a-pulse-library-structure.html">Open note &rarr;</a></td>
+      <td class="date">22 Sept 2026</td>
+      <td>Anthony</td>
+      <td>python/ library structure: modules, function tables, and status markers</td>
+      <td class="desc">How the shared pulse library is organized (samples on the last axis, one config, quantities / cuts / operations / I/O / archive), with a table per category listing every function&rsquo;s purpose and its done or under-development status. 29 functions: 24 done, 5 under development.</td>
+      <td class="kw">library, structure, PulseConfig, status tagging, function inventory</td>
       <td><span class="status in-progress">In progress</span></td>
       <td></td>
     </tr>

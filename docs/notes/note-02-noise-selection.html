@@ -17,7 +17,7 @@
 <h2>Code Repository</h2>
 <p>Notebooks and library files this note rests on, each pinned to the commit that produced the results below:</p>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8a2c41a/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>8a2c41a</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/250ac7b/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>250ac7b</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb"><code>dump1_noise_pulses.ipynb</code></a> &mdash; the original first-pass notebook, superseded but kept for history. Pinned to <code>c892af4</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
 </ul>
@@ -143,6 +143,40 @@
 
 <p>Caps apply to the 500-sample <code>bstd</code>; &ldquo;Kept&rdquo; is out of the 192 Tight traces, and &ldquo;veto&rdquo; is the <code>excursion_band_AI</code> pulse-shape veto of Note 6. Every trace a cap removes, at every value down to 3, is one the pulse-shape veto also rejects. At a cap of 3 the removed set is exactly those 13. There is a gap between the largest <code>bstd</code> among the 179 traces the veto keeps (2.83) and the smallest among the 13 it rejects (4.65), so any cap between them removes the same 13 by a much simpler criterion; at 2.5 it starts removing traces the veto keeps. This was found on the same data used to choose both criteria, so it is a consistency check between two heuristics, not a validation of either.</p>
 
+<h3>Histogram of <code>bstd</code> for the 500-sample window</h3>
+<p>Where the cap sits relative to the actual <code>bstd</code> distribution of Branch 2. All Detector 0 / Channel 0 traces, <code>log10(bstd)</code> on the 500-sample window, with the Tight selection overlaid, the 1000-sample <code>bstd</code> as an outline for comparison, and the 32.48 cap marked. The count axis is logarithmic because the quiet population dominates and the interesting part is the tail.</p>
+
+<figure>
+  <img src="img/dump1_bstd_hist_500.png" alt="Histogram of log10(bstd) for the 500-sample window with the Tight selection, the 1000-sample distribution as an outline, and the 32.48 cap">
+  <figcaption><code>log10(bstd)</code>, Detector 0 / Channel 0: all 1517 traces on the 500-sample window (blue), the 192 Tight traces (orange), the 1000-sample window (black outline), and the 32.48 cap (dashed). Log count axis.</figcaption>
+</figure>
+
+<div class="table-scroll" style="max-width: 640px;">
+<table class="compact">
+  <thead><tr><th>Window</th><th class="num">p50</th><th class="num">p75</th><th class="num">p90</th><th class="num">p95</th><th class="num">p98</th><th class="num">max</th></tr></thead>
+  <tbody>
+    <tr><td>500-sample</td><td class="num">1.54</td><td class="num">1.69</td><td class="num">3.42</td><td class="num">10.53</td><td class="num">33.39</td><td class="num">179</td></tr>
+    <tr><td>1000-sample</td><td class="num">1.88</td><td class="num">32.48</td><td class="num">124.91</td><td class="num">149.76</td><td class="num">170.51</td><td class="num">199</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="table-scroll" style="max-width: 520px;">
+<table class="compact">
+  <thead><tr><th>500-sample <code>bstd</code></th><th class="num">All traces</th><th class="num">In Tight</th></tr></thead>
+  <tbody>
+    <tr><td>0 to 2</td><td class="num">1249</td><td class="num">175</td></tr>
+    <tr><td>2 to 5</td><td class="num">158</td><td class="num">5</td></tr>
+    <tr><td>5 to 32.48</td><td class="num">78</td><td class="num">9</td></tr>
+    <tr><td>&ge; 32.48</td><td class="num">32</td><td class="num">3</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>The 500-sample <code>bstd</code> is sharply peaked near 1.5 (median 1.54; 1249 of the 1517 traces are below 2) with a sparse tail out to 179. The 1000-sample <code>bstd</code> (black outline) has a second population at <code>bstd</code> of roughly 80 to 180 (<code>log10</code> about 1.9 to 2.25): the pulse-contaminated baselines discussed above, pulses that start between samples 500 and 1000. That population is why its 75th percentile is 32.48 and its 90th is 125. It is largely gone in the 500-sample window (32 traces, 2%, at or above 32.48), so the same number that sat in the valley between the two populations for the 1000-sample window now sits in a sparse tail.</p>
+
+<p>Of the 192 Tight traces, 175 are in the main peak (<code>bstd</code> below 2), 5 are between 2 and 5, 9 between 5 and 32.48, and 3 are above the cap. The 17 with <code>bstd</code> of 2 or more are the 13 the pulse-shape veto rejects (<code>bstd</code> 4.65 and up) and 4 it keeps (2.0 to 2.83). There is no gap in the overall distribution between about 2 and 30: the tail falls smoothly (158 traces between 2 and 5, 78 between 5 and 32.48, across all traces). So the gap between 2.83 and 4.65 found above is a property of the Tight selection, not a natural break in the <code>bstd</code> distribution, and a cap of about 3 to 4 needs some other justification than the shape of this histogram.</p>
+
 <h2>Status / Next Steps</h2>
 <ul>
   <li>The Tight cut is now a library function (<code>excursion_band</code>), and the Loose cut is <code>excursion_band_loose</code>; see <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</li>
@@ -150,7 +184,7 @@
   <li>The rise-time hypothesis (Branch 1) is still unverified; <code>rise_sample</code> needs checking against noisy and multi-peak traces first.</li>
   <li>Everything here is one detector and one channel of one dump. Other channels and other dumps have not been done (Channel 2 was 100% dead in this dump, so it needs a separate look).</li>
   <li>The cut boundaries (0.5, 0.7, 1.0, 1.4) were chosen by looking at plots, not derived from a model of the noise.</li>
-  <li>Choose the <code>bstd</code> cap for Branch 2: 32.48 is loose in the 500-sample window, and any value between 2.83 and 4.65 removes the same 13 traces as the pulse-shape veto on this dataset. It has only been examined on the Tight cut.</li>
+  <li>Choose the <code>bstd</code> cap for Branch 2: 32.48 is loose in the 500-sample window, and any value between 2.83 and 4.65 removes the same 13 traces as the pulse-shape veto on this dataset. But the overall 500-sample <code>bstd</code> distribution has no natural break between about 2 and 30 (see the histogram), so the value needs another justification. It has only been examined on the Tight cut.</li>
 </ul>
 
 <footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

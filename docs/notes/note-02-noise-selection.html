@@ -101,10 +101,13 @@
 </table>
 </div>
 
+<p>Cut B and &ldquo;Best&rdquo; cover the same <code>log10(ratio)</code> range, [0.5, 1.0), but on different pretrigger windows: Cut B uses 1000 samples (892 traces), &ldquo;Best&rdquo; uses 500 (744 traces). &ldquo;Best&rdquo; is the name given to the narrower core of Branch 2&rsquo;s range: it stops short of the shoulder, [1.0, 1.4), where contamination starts creeping in, so it is the part of the clean hump furthest from both failure modes. It is the cut now in the library as <code>excursion_band_loose</code>.</p>
+
 <div class="grid2">
   <figure><img src="img/dump1_branch2.png" alt="Branch 2 example traces"><figcaption>Branch 2, [0.5, 1.4): 1012 traces (30 shown).</figcaption></figure>
   <figure><img src="img/dump1_shoulder.png" alt="Branch 2 shoulder example traces"><figcaption>Shoulder, [1.0, 1.4): contamination starts creeping in.</figcaption></figure>
   <figure><img src="img/dump1_high_tail.png" alt="Branch 2 high tail example traces"><figcaption>High tail, &ge; 2.0: dominated by real pulses.</figcaption></figure>
+  <figure><img src="img/dump1_best.png" alt="Best noise examples, log10(ratio) in [0.5, 1.0), 500-sample window"><figcaption>&ldquo;Best&rdquo;, [0.5, 1.0): 744 traces (30 shown), the core of the clean hump.</figcaption></figure>
   <figure><img src="img/dump1_tight.png" alt="Tightened cut example traces"><figcaption>Tightened, [0.5, 0.7): 192 traces, the cleanest slice.</figcaption></figure>
 </div>
 

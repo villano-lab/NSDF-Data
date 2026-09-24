@@ -17,8 +17,8 @@
 <h2>Code Repository</h2>
 <p>Files this note rests on, each pinned to the commit that last changed it:</p>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/3dfb4fe/R76/analysis_notes/nsdf_r76_availability.py"><code>R76/analysis_notes/nsdf_r76_availability.py</code></a> &mdash; compares the run log with nsdf-cli&rsquo;s list and, with <code>--probe</code>, with the live server; writes the CSV below. Pinned to <code>3dfb4fe</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/3dfb4fe/R76/nsdf_r76_series.csv"><code>R76/nsdf_r76_series.csv</code></a> &mdash; one row per Run76 series in the run log (235), with source, trigger, and what nsdf holds. Pinned to <code>3dfb4fe</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/322b1b8/R76/analysis_notes/nsdf_r76_availability.py"><code>R76/analysis_notes/nsdf_r76_availability.py</code></a> &mdash; compares the run log with nsdf-cli&rsquo;s list and, with <code>--probe</code>, with the live server; writes the CSV below. Pinned to <code>322b1b8</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/322b1b8/R76/nsdf_r76_series.csv"><code>R76/nsdf_r76_series.csv</code></a> &mdash; one row per Run76 series in the run log (235), with source, trigger, and what nsdf holds. Pinned to <code>322b1b8</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8917088/R76/DataSeriesList.xlsx"><code>R76/DataSeriesList.xlsx</code></a> &mdash; the run log; sheet <code>Run76</code> is the one used. Pinned to <code>8917088</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/am_lead_series.csv"><code>R76/am_lead_series.csv</code></a> &mdash; 317 Am/lead series from Runs 72&ndash;74 (see below). Pinned to <code>c892af4</code>.</li>
   <li><code>nsdf_dark_matter_cli/r_dataset.csv</code> &mdash; the list bundled inside the installed <code>nsdf-cli</code> package (version 0.5.0; 78,088 files, each tagged <code>R68</code> or <code>R76</code>). Not in this repository.</li>
@@ -55,11 +55,15 @@
 <h3>Has it changed since the table was last made?</h3>
 <p><strong>No.</strong> The series counts, and which series are available, are identical to the previous version of this table. Checked against each source:</p>
 <ul>
-  <li><strong>Run log:</strong> the <code>Run76</code> sheet is identical to the committed copy (235 series, same content in every row). The file was last saved on 14 Sept; its last commit (22 Sept) is described as a normalization after an Excel re-save.</li>
+  <li><strong>Run log:</strong> the <code>Run76</code> sheet is identical to the committed copy (235 series, same content in every row). The file was last saved on 14 Sept; its last commit (22 Sept) is described as a normalization after an Excel re-save. The sheet has an active filter that hides 62 of these rows; they are included in every count here (see the next section).</li>
   <li><strong>Bundled list:</strong> the same, since 0.5.0 is still the latest release. All 130 available series appear in the run log, and no Run76 series in the log is listed there under the other run&rsquo;s tag (<code>R68</code>).</li>
   <li><strong>Live server:</strong> agrees with the list. The first and last listed dump of all 130 series exist, and none has dumps beyond its last listed one. None of the 105 series without a listing has anything on the server under <code>F0001</code>&ndash;<code>F0005</code>. The 317 Am/lead series from Runs 72&ndash;74 in <code>am_lead_series.csv</code> were also checked live (<code>F0001</code> and <code>F0002</code> each): none is on the server.</li>
 </ul>
 <p>Limit of the live check: for series without a listing, only the first five dumps were tried. Of the 130 known series, 129 start at <code>F0001</code> and one at <code>F0002</code>, so a series that exists only under higher dump numbers would be missed.</p>
+
+<h2>A filter in the run log hides 62 series</h2>
+<p>The <code>Run76</code> sheet has an Excel filter switched on for its trigger column. It hides <strong>62 rows: exactly the 62 <code>DCRC3</code>-triggered series</strong>. Opened in Excel, the sheet shows only 173 of the 235 series, and any list made from what is visible would be missing those 62.</p>
+<p>Every count in this note includes the hidden rows. The reader used here returns hidden rows like any others, and this was checked against the raw file rather than assumed: 237 rows, 62 marked hidden, and 235 of the rows are series (the last row is a formula helper, not a series). The script prints the filter range and the number of hidden rows on every run, and the CSV marks each series the filter hides (<code>hidden_by_filter</code>). All 130 available series are among the 173 visible ones, so the filter hides only series that are not on NSDF. The workbook itself was not changed.</p>
 
 <h2>What the 130 available series look like</h2>
 <ul>
@@ -69,7 +73,7 @@
 </ul>
 
 <h2>Which PuBe series are not there</h2>
-<p>Of the 170 PuBe series, 40 are not on NSDF. They differ from the 130 that are in how they were triggered: 39 of the 40 use a <code>DCRC3</code> trigger and one has no trigger recorded, whereas none of the 130 available series does. Across the whole run log, <strong>none of the 62 <code>DCRC3</code>-triggered series is on NSDF</strong>, whatever its source. The trigger is not the whole story, though: the 20 Am series triggered on <code>DCRC1</code> or <code>NaI</code> are missing too.</p>
+<p>Of the 170 PuBe series, 40 are not on NSDF. They differ from the 130 that are in how they were triggered: 39 of the 40 use a <code>DCRC3</code> trigger and one has no trigger recorded, whereas none of the 130 available series does. Across the whole run log, <strong>none of the 62 <code>DCRC3</code>-triggered series is on NSDF</strong>, whatever its source; these are also the 62 rows the sheet&rsquo;s filter hides. The trigger is not the whole story, though: the 20 Am series triggered on <code>DCRC1</code> or <code>NaI</code> are missing too.</p>
 <p>The processing columns (<code>proc0</code>, <code>proc1</code>) do not explain it: 106 processed series are on NSDF and 86 processed ones are not. The reason these series were not uploaded is not in the data available here.</p>
 
 <h2>The 130 available series</h2>
@@ -221,7 +225,7 @@
 
 <div class="callout">
   <strong class="tag">Lesson: read column C, and mind the filter.</strong>
-  The Am tag lives in column C (<code>source / shield</code>) of the run-log sheets, not in the <code>type</code> column, and the sheet carries an Excel AutoFilter that hides rows. A first pass that read <code>type</code> missed the Am series entirely; the numbers above come from reading column C directly with the filter ignored.
+  The Am tag lives in column C (<code>source / shield</code>) of the run-log sheets, not in the <code>type</code> column, and the sheet carries an Excel AutoFilter that hides rows (currently 62 of them, above). A first pass that read <code>type</code> missed the Am series entirely; the numbers above come from reading column C directly, with every row included whatever the filter hides. When reading a run-log sheet, check its filter state and hidden-row count each time.
 </div>
 
 <h2>Status / Next Steps</h2>
@@ -231,6 +235,7 @@
   <li>If Am, Na-22, or any <code>DCRC3</code>-triggered data are needed, they would have to come from outside <code>nsdf-cli</code>, or NSDF would have to add them. Whether there is a reason they were left out is a question for whoever uploaded the data.</li>
   <li>The 42 Run76 Am series and their run-log details are now in <code>nsdf_r76_series.csv</code> (filter <code>source_shield</code> starting with <code>Am</code>).</li>
   <li>Delete the five empty stub folders in <code>~/idx</code> before any retry of those downloads.</li>
+  <li>The filter in the run log is still switched on; anyone who opens it in Excel sees only 173 series. Clearing it in Excel (Data &rarr; Clear) would show all 235.</li>
 </ul>
 
 <footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

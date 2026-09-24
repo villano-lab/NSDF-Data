@@ -42,14 +42,18 @@ def mib(s):
 
 
 # --- run log
+# The sheet carries an Excel AutoFilter that HIDES rows (at the time of writing: the 62 DCRC3-triggered series). openpyxl
+# returns hidden rows like any other, so every series is read; the filter state is reported below and each series is
+# flagged, so a hidden series can never go unnoticed. The workbook itself is never modified.
 ws = openpyxl.load_workbook(REPO / "R76" / "DataSeriesList.xlsx", data_only=True)["Run76"]
-rows = list(ws.iter_rows(values_only=True))
-hdr = [str(c).strip() if c else "" for c in rows[0]]
+hdr = [str(c).strip() if c else "" for c in next(ws.iter_rows(min_row=1, max_row=1, values_only=True))]
+hidden_rows = {i for i, d in ws.row_dimensions.items() if d.hidden}
 log = []
-for r in rows[1:]:
+for i, r in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
     if r and r[0]:
         d = dict(zip(hdr, r))
         d["series"] = str(r[0]).strip()
+        d["hidden_by_filter"] = i in hidden_rows
         log.append(d)
 
 
@@ -110,7 +114,7 @@ if args.probe:
 
 # --- output
 fields = ["series", "type", "source_shield", "HV", "trigger", "duration_min", "on_nsdf", "n_dumps", "first_dump",
-          "last_dump", "missing_dumps", "size_gib", "live_check", "local_dumps", "local_empty_stubs"]
+          "last_dump", "missing_dumps", "size_gib", "live_check", "hidden_by_filter", "local_dumps", "local_empty_stubs"]
 with open(args.out, "w", newline="") as f:
     w = csv.DictWriter(f, fieldnames=fields)
     w.writeheader()
@@ -131,9 +135,12 @@ with open(args.out, "w", newline="") as f:
             "on_nsdf": bool(ns), "n_dumps": len(ns), "first_dump": ns[0] if ns else "", "last_dump": ns[-1] if ns else "",
             "missing_dumps": (ns[-1] - ns[0] + 1 - len(ns)) if ns else "",
             "size_gib": round(sum(sz for _, sz in dumps[s]) / 1024, 2) if ns else "",
-            "live_check": note, "local_dumps": local_ok.get(s, 0), "local_empty_stubs": local_stub.get(s, 0)})
+            "live_check": note, "hidden_by_filter": d["hidden_by_filter"], "local_dumps": local_ok.get(s, 0), "local_empty_stubs": local_stub.get(s, 0)})
 
 # --- summary
+n_hidden = sum(d["hidden_by_filter"] for d in log)
+print(f"sheet filter: range {ws.auto_filter.ref or 'none'}; {len(hidden_rows)} rows hidden, {n_hidden} of them series "
+      f"(all still included below); {len(log) - n_hidden} series visible in Excel")
 print(f"run log: {len(log)} series ({dict(collections.Counter(category(d) for d in log))})")
 by_cat = collections.defaultdict(lambda: [0, 0, 0, 0.0])
 for d in log:

@@ -12,53 +12,225 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>Run76 series catalog: non-PuBe series and availability on nsdf-cli</h1>
-<p class="meta"><strong>Note 1</strong> &middot; Author(s): Anthony Villano &middot; 14 Sept 2026 &middot; Status: <span class="status complete">Complete (2026-09-14)</span></p>
+<p class="meta"><strong>Note 1</strong> &middot; Author(s): Anthony Villano &middot; 14 Sept 2026 (revised 24 Sept 2026) &middot; Status: <span class="status complete">Complete (2026-09-14)</span></p>
 
 <h2>Code Repository</h2>
 <p>Files this note rests on, each pinned to the commit that last changed it:</p>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8917088/R76/DataSeriesList.xlsx"><code>R76/DataSeriesList.xlsx</code></a> &mdash; the run log; sheet <code>Run76</code> is the one used here. Pinned to <code>8917088</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/am_lead_series.csv"><code>R76/am_lead_series.csv</code></a> &mdash; 317 Am/lead series (see below; despite living under <code>R76/</code> it covers Runs 72&ndash;74). Pinned to <code>c892af4</code>.</li>
-  <li><code>nsdf_dark_matter_cli/r_dataset.csv</code> &mdash; the manifest bundled inside the installed <code>nsdf-cli</code> package (78,088 files, each tagged <code>R68</code> or <code>R76</code>). Not in this repository.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/3dfb4fe/R76/analysis_notes/nsdf_r76_availability.py"><code>R76/analysis_notes/nsdf_r76_availability.py</code></a> &mdash; compares the run log with nsdf-cli&rsquo;s list and, with <code>--probe</code>, with the live server; writes the CSV below. Pinned to <code>3dfb4fe</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/3dfb4fe/R76/nsdf_r76_series.csv"><code>R76/nsdf_r76_series.csv</code></a> &mdash; one row per Run76 series in the run log (235), with source, trigger, and what nsdf holds. Pinned to <code>3dfb4fe</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8917088/R76/DataSeriesList.xlsx"><code>R76/DataSeriesList.xlsx</code></a> &mdash; the run log; sheet <code>Run76</code> is the one used. Pinned to <code>8917088</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/am_lead_series.csv"><code>R76/am_lead_series.csv</code></a> &mdash; 317 Am/lead series from Runs 72&ndash;74 (see below). Pinned to <code>c892af4</code>.</li>
+  <li><code>nsdf_dark_matter_cli/r_dataset.csv</code> &mdash; the list bundled inside the installed <code>nsdf-cli</code> package (version 0.5.0; 78,088 files, each tagged <code>R68</code> or <code>R76</code>). Not in this repository.</li>
 </ul>
 
 <h2>Question</h2>
-<p>Which Run76 data other than PuBe (in particular Am) exists, and can it be downloaded with <code>nsdf-cli</code>?</p>
+<p>Which Run76 data exists, and how much of it can actually be downloaded from NSDF, in particular anything other than PuBe?</p>
+
+<h2>How &ldquo;available&rdquo; was checked</h2>
+<p>In <code>nsdf-cli</code> a &ldquo;file&rdquo; is one <em>dump</em> of a series, e.g. <code>07221203_2025_F0001</code>; a series is a run of many dumps <code>F0001</code>, <code>F0002</code>, &hellip; Two checks were made:</p>
+<ul>
+  <li><strong>The list bundled with the package.</strong> <code>nsdf-cli ls</code> reads this file and never asks the server, so it is frozen at the package release. Version 0.5.0 is still the newest release on PyPI, so there is no newer list to install.</li>
+  <li><strong>The live server</strong> (new in this revision). The <code>download</code> command asks a <code>gen-url</code> endpoint for signed URLs, and that endpoint answers 200 for any name, real or not. A 1-byte ranged request on a dump&rsquo;s data file tells them apart: a real dump returns 206 with its true size (matching the local copy byte for byte), an absent one returns 404. Every series in the run log was checked this way.</li>
+</ul>
 
 <h2>Result: only PuBe is downloadable</h2>
-<p>The <code>Run76</code> sheet lists 235 series. Each series was matched by its <code>series</code> name against the file names in the bundled manifest, counting it as available if any file with that series name is tagged <code>R76</code>.</p>
+<p>The <code>Run76</code> sheet lists 235 series. Sizes are download sizes (the whole dump folder, compressed; a dump is about four times larger once loaded into memory).</p>
 
-<div class="table-scroll" style="max-width: 640px;">
+<div class="table-scroll" style="max-width: 720px;">
 <table class="compact">
-  <thead><tr><th>Source (column C, <code>source / shield</code>)</th><th class="num">Series</th><th class="num">On nsdf-cli</th></tr></thead>
+  <thead><tr><th>Source (column C, <code>source / shield</code>)</th><th class="num">Series in run log</th><th class="num">Series on nsdf</th><th class="num">Dumps (files)</th><th class="num">Size (GiB)</th></tr></thead>
   <tbody>
-    <tr><td>PuBe</td><td class="num">170</td><td class="num">130</td></tr>
-    <tr><td>Am</td><td class="num">42</td><td class="num">0</td></tr>
-    <tr><td>Na-22</td><td class="num">2</td><td class="num">0</td></tr>
-    <tr><td>No source recorded (mostly tests)</td><td class="num">21</td><td class="num">0</td></tr>
-    <tr><td><strong>Total</strong></td><td class="num"><strong>235</strong></td><td class="num"><strong>130</strong></td></tr>
+    <tr><td>PuBe</td><td class="num">170</td><td class="num">130</td><td class="num">38,566</td><td class="num">1,549.7</td></tr>
+    <tr><td>Am</td><td class="num">42</td><td class="num">0</td><td class="num">0</td><td class="num">0.0</td></tr>
+    <tr><td>Na-22</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">0.0</td></tr>
+    <tr><td>No source recorded (mostly tests)</td><td class="num">21</td><td class="num">0</td><td class="num">0</td><td class="num">0.0</td></tr>
+    <tr><td><strong>Total</strong></td><td class="num"><strong>235</strong></td><td class="num"><strong>130</strong></td><td class="num"><strong>38,566</strong></td><td class="num"><strong>1,549.7</strong></td></tr>
   </tbody>
 </table>
 </div>
 
-<p>The manifest contains exactly 130 series tagged <code>R76</code>, and all 130 are PuBe series. None of the 65 non-PuBe Run76 series are in it.</p>
+<p>All 130 available series are PuBe, and none of the 65 non-PuBe series (42 Am, 2 Na-22, 21 with no source recorded) are on NSDF. The 130 hold 38,566 dumps, 1,550 GiB (1.51 TiB).</p>
 
-<p>The 42 Am series split by shielding as: 21 &ldquo;Am / Pb&amp;poly E&amp;W only&rdquo;, 19 &ldquo;Am / Pb&amp;poly, lead stack, borax&rdquo;, 1 &ldquo;Am / Pb&amp;poly except N&rdquo;, and 1 &ldquo;Am / Pb&amp;poly, lead stack&rdquo;.</p>
+<h3>Has it changed since the table was last made?</h3>
+<p><strong>No.</strong> The series counts, and which series are available, are identical to the previous version of this table. Checked against each source:</p>
+<ul>
+  <li><strong>Run log:</strong> the <code>Run76</code> sheet is identical to the committed copy (235 series, same content in every row). The file was last saved on 14 Sept; its last commit (22 Sept) is described as a normalization after an Excel re-save.</li>
+  <li><strong>Bundled list:</strong> the same, since 0.5.0 is still the latest release. All 130 available series appear in the run log, and no Run76 series in the log is listed there under the other run&rsquo;s tag (<code>R68</code>).</li>
+  <li><strong>Live server:</strong> agrees with the list. The first and last listed dump of all 130 series exist, and none has dumps beyond its last listed one. None of the 105 series without a listing has anything on the server under <code>F0001</code>&ndash;<code>F0005</code>. The 317 Am/lead series from Runs 72&ndash;74 in <code>am_lead_series.csv</code> were also checked live (<code>F0001</code> and <code>F0002</code> each): none is on the server.</li>
+</ul>
+<p>Limit of the live check: for series without a listing, only the first five dumps were tried. Of the 130 known series, 129 start at <code>F0001</code> and one at <code>F0002</code>, so a series that exists only under higher dump numbers would be missed.</p>
+
+<h2>What the 130 available series look like</h2>
+<ul>
+  <li><strong>Size varies enormously.</strong> 3 to 3,122 dumps per series (median 113), and a median of 4.8 GiB per series. The largest, <code>07221001_2314</code>, has 3,122 dumps and 248.9 GiB. A single dump is 0.1 to 117 MiB.</li>
+  <li><strong>Dump numbering is not always complete.</strong> One series starts at <code>F0002</code> (<code>07221106_2320</code>), and two have gaps: <code>07220706_1303</code> has 109 of the 210 dump numbers up to its last, and <code>07221119_1016</code> has 202 of 231.</li>
+  <li><strong>All 130 are type <code>Side2</code>.</strong></li>
+</ul>
+
+<h2>Which PuBe series are not there</h2>
+<p>Of the 170 PuBe series, 40 are not on NSDF. They differ from the 130 that are in how they were triggered: 39 of the 40 use a <code>DCRC3</code> trigger and one has no trigger recorded, whereas none of the 130 available series does. Across the whole run log, <strong>none of the 62 <code>DCRC3</code>-triggered series is on NSDF</strong>, whatever its source. The trigger is not the whole story, though: the 20 Am series triggered on <code>DCRC1</code> or <code>NaI</code> are missing too.</p>
+<p>The processing columns (<code>proc0</code>, <code>proc1</code>) do not explain it: 106 processed series are on NSDF and 86 processed ones are not. The reason these series were not uploaded is not in the data available here.</p>
+
+<h2>The 130 available series</h2>
+<p>One row per available series (all 235 are in the CSV). Scroll for the full list; &ldquo;Downloaded&rdquo; is the number of dumps of that series present in <code>~/idx</code> on the machine this was run on.</p>
+
+<div class="table-scroll" style="max-height: 480px; overflow-y: auto;">
+<table class="compact">
+  <thead><tr><th>Series</th><th class="num">HV (V)</th><th>Trigger</th><th class="num">Duration (min)</th><th class="num">Dumps</th><th class="num">Size (GiB)</th><th class="num">Downloaded</th></tr></thead>
+  <tbody>
+    <tr><td><code>07220702_1055</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">171</td><td class="num">12</td><td class="num">0.10</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220703_2012</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">90</td><td class="num">90</td><td class="num">0.49</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220703_2151</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">708</td><td class="num">708</td><td class="num">3.79</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220704_1444</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">91</td><td class="num">92</td><td class="num">0.53</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220704_1630</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">271</td><td class="num">271</td><td class="num">1.53</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220704_2111</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">552</td><td class="num">201</td><td class="num">1.12</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220705_0646</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">268</td><td class="num">268</td><td class="num">1.52</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220706_1112</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">100</td><td class="num">100</td><td class="num">0.74</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220706_1303</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">210</td><td class="num">109</td><td class="num">3.91</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220706_1659</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">218</td><td class="num">218</td><td class="num">3.23</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220706_2048</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">575</td><td class="num">575</td><td class="num">8.50</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220707_0639</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">&mdash;</td><td class="num">3</td><td class="num">0.03</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220707_0644</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">289</td><td class="num">289</td><td class="num">4.23</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220707_1758</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">227</td><td class="num">227</td><td class="num">3.40</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220707_2205</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">611</td><td class="num">611</td><td class="num">8.97</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220708_0833</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">160</td><td class="num">160</td><td class="num">2.33</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220708_1632</code></td><td class="num">-197.4</td><td>NaI</td><td class="num">332</td><td class="num">332</td><td class="num">2.53</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220708_2217</code></td><td class="num">-197.4</td><td>NaI</td><td class="num">666</td><td class="num">127</td><td class="num">0.98</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220709_0935</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">273</td><td class="num">168</td><td class="num">1.29</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220709_1807</code></td><td class="num">0</td><td>NaI</td><td class="num">215</td><td class="num">204</td><td class="num">1.50</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220709_2144</code></td><td class="num">0</td><td>NaI</td><td class="num">2052</td><td class="num">2,052</td><td class="num">15.03</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220711_1709</code></td><td class="num">-197.3</td><td>NaI</td><td class="num">1022</td><td class="num">1,022</td><td class="num">7.69</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220712_1324</code></td><td class="num">&mdash;</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">3</td><td class="num">0.13</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220712_1336</code></td><td class="num">&mdash;</td><td>&mdash;</td><td class="num">207</td><td class="num">207</td><td class="num">17.27</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220826_1219</code></td><td class="num">-4</td><td>DCRC1pB 10</td><td class="num">81</td><td class="num">81</td><td class="num">4.33</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220826_1536</code></td><td class="num">-20.7</td><td>DCRC1pB 10</td><td class="num">84</td><td class="num">84</td><td class="num">4.42</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220826_2007</code></td><td class="num">-65</td><td>DCRC1pB 10</td><td class="num">79</td><td class="num">79</td><td class="num">4.21</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220827_1153</code></td><td class="num">-84.3</td><td>DCRC1pB 10</td><td class="num">90</td><td class="num">90</td><td class="num">4.17</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220830_1247</code></td><td class="num">&mdash;</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">6</td><td class="num">0.00</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220830_1724</code></td><td class="num">-85.3</td><td>DCRC1pB 10</td><td class="num">60</td><td class="num">60</td><td class="num">2.52</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220830_1829</code></td><td class="num">-85.2</td><td>NaI</td><td class="num">113</td><td class="num">113</td><td class="num">2.13</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220830_2033</code></td><td class="num">-85</td><td>DCRC1pB 10</td><td class="num">44</td><td class="num">44</td><td class="num">1.62</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220830_2118</code></td><td class="num">-84.8</td><td>NaI</td><td class="num">723</td><td class="num">723</td><td class="num">14.02</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220831_0955</code></td><td class="num">-84</td><td>DCRC1pB 10</td><td class="num">5</td><td class="num">3</td><td class="num">0.11</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220831_1002</code></td><td class="num">-81</td><td>DCRC1pB 10</td><td class="num">103</td><td class="num">103</td><td class="num">5.45</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220831_1151</code></td><td class="num">-84.2</td><td>NaI</td><td class="num">407</td><td class="num">407</td><td class="num">7.88</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220831_1846</code></td><td class="num">-83.9</td><td>DCRC1pB 10</td><td class="num">94</td><td class="num">94</td><td class="num">4.68</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220906_1510</code></td><td class="num">0</td><td>DCRC1pB 10</td><td class="num">53</td><td class="num">53</td><td class="num">3.92</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220906_1614</code></td><td class="num">0</td><td>NaI</td><td class="num">183</td><td class="num">183</td><td class="num">3.44</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_1115</code></td><td class="num">0</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">19</td><td class="num">1.30</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_1200</code></td><td class="num">0</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">14</td><td class="num">0.94</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_1256</code></td><td class="num">0</td><td>DCRC1pB 10</td><td class="num">44</td><td class="num">44</td><td class="num">3.14</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_1340</code></td><td class="num">0</td><td>SiHV&amp;NaI</td><td class="num">182</td><td class="num">182</td><td class="num">13.90</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_1648</code></td><td class="num">0</td><td>NaI</td><td class="num">196</td><td class="num">196</td><td class="num">3.69</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_2023</code></td><td class="num">-20.7</td><td>DCRC1pB 10</td><td class="num">38</td><td class="num">38</td><td class="num">3.04</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_2102</code></td><td class="num">-20.9</td><td>NaI</td><td class="num">25</td><td class="num">25</td><td class="num">0.50</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220909_2243</code></td><td class="num">-20.9</td><td>NaI</td><td class="num">796</td><td class="num">796</td><td class="num">15.86</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220910_1210</code></td><td class="num">-20.7</td><td>DCRC1pB 10</td><td class="num">34</td><td class="num">34</td><td class="num">2.75</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220910_1517</code></td><td class="num">-4.1</td><td>DCRC1pB 10</td><td class="num">49</td><td class="num">49</td><td class="num">3.84</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220910_1608</code></td><td class="num">-4.1</td><td>NaI</td><td class="num">982</td><td class="num">982</td><td class="num">17.33</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220912_1955</code></td><td class="num">-66.8</td><td>DCRC1pB 10</td><td class="num">70</td><td class="num">70</td><td class="num">5.81</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220912_2107</code></td><td class="num">-66.8</td><td>NaI</td><td class="num">657</td><td class="num">657</td><td class="num">13.57</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220913_0814</code></td><td class="num">-66.8</td><td>DCRC1pB 10</td><td class="num">82</td><td class="num">82</td><td class="num">6.86</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220913_1457</code></td><td class="num">97.9</td><td>DCRC1pB 10</td><td class="num">45</td><td class="num">45</td><td class="num">3.63</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220913_1546</code></td><td class="num">97.9</td><td>NaI</td><td class="num">718</td><td class="num">718</td><td class="num">14.76</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220914_1133</code></td><td class="num">97.8</td><td>DCRC1pB 10</td><td class="num">43</td><td class="num">42</td><td class="num">3.35</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220916_2059</code></td><td class="num">-79.4</td><td>DCRC1pB 10</td><td class="num">59</td><td class="num">59</td><td class="num">4.56</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220916_2200</code></td><td class="num">-79.7</td><td>NaI</td><td class="num">747</td><td class="num">747</td><td class="num">14.42</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220917_1039</code></td><td class="num">-80.2</td><td>DCRC1pB 10</td><td class="num">103</td><td class="num">103</td><td class="num">8.14</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220917_1225</code></td><td class="num">-80.3</td><td>NaI</td><td class="num">531</td><td class="num">531</td><td class="num">10.29</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220917_2125</code></td><td class="num">-80.3</td><td>DCRC1pB 10</td><td class="num">30</td><td class="num">30</td><td class="num">2.29</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220917_2155</code></td><td class="num">-80.3</td><td>NaI</td><td class="num">273</td><td class="num">273</td><td class="num">5.29</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220919_1723</code></td><td class="num">-80.3</td><td>DCRC1pB 10</td><td class="num">44</td><td class="num">44</td><td class="num">3.28</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220919_1808</code></td><td class="num">-80.6</td><td>NaI</td><td class="num">4</td><td class="num">4</td><td class="num">0.07</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220919_2012</code></td><td class="num">-80.7</td><td>NaI</td><td class="num">111</td><td class="num">111</td><td class="num">2.12</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220920_0925</code></td><td class="num">-80</td><td>DCRC1pB 10</td><td class="num">42</td><td class="num">42</td><td class="num">3.09</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220920_1007</code></td><td class="num">-80</td><td>NaI</td><td class="num">636</td><td class="num">636</td><td class="num">12.25</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220920_2052</code></td><td class="num">-78.9</td><td>DCRC1pB 10</td><td class="num">45</td><td class="num">45</td><td class="num">3.30</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220920_2138</code></td><td class="num">-78.9</td><td>NaI</td><td class="num">689</td><td class="num">689</td><td class="num">13.09</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220921_0915</code></td><td class="num">-81.1</td><td>DCRC1pB 10</td><td class="num">77</td><td class="num">77</td><td class="num">5.83</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220921_1034</code></td><td class="num">-81.3</td><td>NaI</td><td class="num">303</td><td class="num">303</td><td class="num">5.77</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220921_1541</code></td><td class="num">-81.4</td><td>DCRC1pB 10</td><td class="num">49</td><td class="num">49</td><td class="num">3.68</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220921_1631</code></td><td class="num">-81.4</td><td>NaI</td><td class="num">138</td><td class="num">138</td><td class="num">2.62</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220921_1851</code></td><td class="num">&mdash;</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">4</td><td class="num">0.07</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07220921_2055</code></td><td class="num">-81.4</td><td>DCRC1pB 10</td><td class="num">758</td><td class="num">758</td><td class="num">10.42</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221001_2314</code></td><td class="num">-82.5</td><td>DCRC1pA 2</td><td class="num">3122</td><td class="num">3,122</td><td class="num">248.87</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221017_1600</code></td><td class="num">-82.5</td><td>DCRC1pA 2</td><td class="num">&mdash;</td><td class="num">529</td><td class="num">41.77</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221019_1741</code></td><td class="num">-82.6</td><td>DCRC1pB 10</td><td class="num">46</td><td class="num">46</td><td class="num">3.66</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221019_1832</code></td><td class="num">-82.6</td><td>NaI</td><td class="num">202</td><td class="num">202</td><td class="num">6.04</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221019_2157</code></td><td class="num">-82.4</td><td>DCRC1pB 10</td><td class="num">42</td><td class="num">42</td><td class="num">3.45</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221019_2240</code></td><td class="num">-82.5</td><td>NaI</td><td class="num">533</td><td class="num">533</td><td class="num">15.92</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221020_0849</code></td><td class="num">-82.4</td><td>DCRC1pB 10</td><td class="num">63</td><td class="num">62</td><td class="num">4.96</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221020_0954</code></td><td class="num">-82.4</td><td>NaI</td><td class="num">524</td><td class="num">524</td><td class="num">15.75</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221020_1846</code></td><td class="num">-82.4</td><td>DCRC1pB 10</td><td class="num">43</td><td class="num">43</td><td class="num">2.63</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221020_1948</code></td><td class="num">-82.5</td><td>NaI</td><td class="num">841</td><td class="num">841</td><td class="num">17.68</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221021_1001</code></td><td class="num">-82.3</td><td>DCRC1pB 10</td><td class="num">84</td><td class="num">84</td><td class="num">4.95</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221021_1126</code></td><td class="num">-82.4</td><td>NaI</td><td class="num">368</td><td class="num">368</td><td class="num">7.68</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221025_1751</code></td><td class="num">-82.1</td><td>DCRC1pB 10</td><td class="num">&mdash;</td><td class="num">119</td><td class="num">8.63</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221025_1956</code></td><td class="num">-82.1</td><td>NaI</td><td class="num">621</td><td class="num">621</td><td class="num">18.99</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221026_0951</code></td><td class="num">-82.1</td><td>DCRC1pB 10</td><td class="num">57</td><td class="num">57</td><td class="num">4.56</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221026_1049</code></td><td class="num">-82.1</td><td>NaI</td><td class="num">646</td><td class="num">646</td><td class="num">19.67</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221026_2145</code></td><td class="num">-82.1</td><td>DCRC1pB 10</td><td class="num">39</td><td class="num">39</td><td class="num">3.07</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221026_2224</code></td><td class="num">-82.1</td><td>NaI</td><td class="num">640</td><td class="num">640</td><td class="num">19.58</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221027_0915</code></td><td class="num">-82.1</td><td>DCRC1pB 10</td><td class="num">44</td><td class="num">44</td><td class="num">3.49</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221027_0959</code></td><td class="num">-82.1</td><td>NaI</td><td class="num">366</td><td class="num">361</td><td class="num">10.96</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221102_1555</code></td><td class="num">0</td><td>DCRC1pB 10</td><td class="num">190</td><td class="num">190</td><td class="num">12.11</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221102_2132</code></td><td class="num">0</td><td>DCRC1pB 10</td><td class="num">&mdash;</td><td class="num">764</td><td class="num">48.87</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221106_2320</code></td><td class="num">0</td><td>DCRC1pB 10</td><td class="num">&mdash;</td><td class="num">802</td><td class="num">50.26</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221111_2153</code></td><td class="num">-82.2</td><td>DCRC1pB 10</td><td class="num">55</td><td class="num">55</td><td class="num">4.58</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221111_2249</code></td><td class="num">-82.2</td><td>NaI</td><td class="num">634</td><td class="num">634</td><td class="num">52.17</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221112_0943</code></td><td class="num">-82.2</td><td>DCRC1pB 10</td><td class="num">101</td><td class="num">101</td><td class="num">8.59</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221112_1127</code></td><td class="num">-82.1</td><td>NaI</td><td class="num">666</td><td class="num">666</td><td class="num">52.53</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221112_2249</code></td><td class="num">-82.1</td><td>DCRC1pB 10</td><td class="num">69</td><td class="num">69</td><td class="num">5.81</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221113_0000</code></td><td class="num">-82.1</td><td>NaI</td><td class="num">702</td><td class="num">702</td><td class="num">57.90</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221113_1159</code></td><td class="num">-82</td><td>DCRC1pB 10</td><td class="num">45</td><td class="num">45</td><td class="num">3.50</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221114_2141</code></td><td class="num">-81.8</td><td>DCRC1pB 10</td><td class="num">37</td><td class="num">37</td><td class="num">3.05</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221114_2223</code></td><td class="num">-81.8</td><td>NaI</td><td class="num">611</td><td class="num">611</td><td class="num">33.51</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221115_0845</code></td><td class="num">-81.7</td><td>DCRC1pB 10</td><td class="num">33</td><td class="num">33</td><td class="num">2.63</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221115_0919</code></td><td class="num">-81.7</td><td>NaI</td><td class="num">695</td><td class="num">695</td><td class="num">36.85</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221115_2109</code></td><td class="num">-81.7</td><td>DCRC1pB 10</td><td class="num">51</td><td class="num">51</td><td class="num">4.13</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221115_2201</code></td><td class="num">-81.7</td><td>NaI</td><td class="num">707</td><td class="num">707</td><td class="num">38.85</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221116_1003</code></td><td class="num">-81.6</td><td>DCRC1pB 10</td><td class="num">45</td><td class="num">45</td><td class="num">3.56</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221116_1048</code></td><td class="num">-81.7</td><td>NaI</td><td class="num">167</td><td class="num">167</td><td class="num">9.09</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221118_1404</code></td><td class="num">-81.6</td><td>DCRC1pA 2</td><td class="num">275</td><td class="num">275</td><td class="num">21.99</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221118_1850</code></td><td class="num">-81.6</td><td>DCRC1pA 2</td><td class="num">899</td><td class="num">899</td><td class="num">71.14</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221119_1016</code></td><td class="num">-81.5</td><td>DCRC1pA 2</td><td class="num">231</td><td class="num">202</td><td class="num">16.37</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221121_2214</code></td><td class="num">0</td><td>DCRC1pA 2</td><td class="num">779</td><td class="num">779</td><td class="num">56.15</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221124_1408</code></td><td class="num">-8.3</td><td>DCRC1pA 2</td><td class="num">67</td><td class="num">67</td><td class="num">4.83</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221124_1603</code></td><td class="num">-16.3</td><td>DCRC1pA 2</td><td class="num">84</td><td class="num">84</td><td class="num">6.20</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221124_1748</code></td><td class="num">-24</td><td>DCRC1pA 2</td><td class="num">118</td><td class="num">118</td><td class="num">9.12</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221124_2022</code></td><td class="num">-34</td><td>DCRC1pA 2</td><td class="num">97</td><td class="num">97</td><td class="num">7.33</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221124_2331</code></td><td class="num">-34</td><td>DCRC1pA 100</td><td class="num">361</td><td class="num">361</td><td class="num">20.92</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221125_0547</code></td><td class="num">0</td><td>DCRC1pA 100</td><td class="num">532</td><td class="num">532</td><td class="num">19.54</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221201_0118</code></td><td class="num">0</td><td>DCRC1pA 100</td><td class="num">&mdash;</td><td class="num">647</td><td class="num">17.53</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221203_1255</code></td><td class="num">-46.6</td><td>DCRC1pA 2</td><td class="num">68</td><td class="num">68</td><td class="num">5.26</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221203_1418</code></td><td class="num">-53.5</td><td>DCRC1pA 2</td><td class="num">108</td><td class="num">108</td><td class="num">7.71</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221203_1622</code></td><td class="num">-63.4</td><td>DCRC1pA 2</td><td class="num">68</td><td class="num">68</td><td class="num">5.29</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221203_1744</code></td><td class="num">-73</td><td>DCRC1pA 2</td><td class="num">64</td><td class="num">64</td><td class="num">4.89</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221203_1906</code></td><td class="num">-79.9</td><td>DCRC1pA 2</td><td class="num">62</td><td class="num">62</td><td class="num">4.65</td><td class="num">&mdash;</td></tr>
+    <tr><td><code>07221203_2025</code></td><td class="num">-83.2</td><td>DCRC1pA 2</td><td class="num">30</td><td class="num">30</td><td class="num">1.89</td><td class="num">5 of 30</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Local copy: five empty stub folders</h2>
+<p>Only one Run76 series is downloaded: <code>07221203_2025</code>, dumps <code>F0001</code>&ndash;<code>F0005</code> of its 30. <code>~/idx</code> also holds <strong>five empty folders</strong> for two series that are in the run log but not on NSDF: <code>07221022_1630_F0001</code>&ndash;<code>F0004</code> and <code>07221206_1738_F0001</code>. They are left over from failed download attempts, since the <code>download</code> command creates the folder before fetching. This matters because it also skips any name whose folder already exists, so a repeated download of one of these names would silently do nothing even if the files were added later. They have not been deleted.</p>
+
+<h2>Am/lead series in Runs 72&ndash;74</h2>
+<p><code>R76/am_lead_series.csv</code> lists the series tagged Am/lead in the neighbouring runs: 317 series (Run72: 8, Run73: 175, Run74: 134), none of them on NSDF, as above. This is a different set from the 42 Run76 Am series, and it does not include any Run76 series.</p>
 
 <div class="callout">
   <strong class="tag">Lesson: read column C, and mind the filter.</strong>
   The Am tag lives in column C (<code>source / shield</code>) of the run-log sheets, not in the <code>type</code> column, and the sheet carries an Excel AutoFilter that hides rows. A first pass that read <code>type</code> missed the Am series entirely; the numbers above come from reading column C directly with the filter ignored.
 </div>
 
-<h2>Am/lead series in Runs 72&ndash;74</h2>
-<p><code>R76/am_lead_series.csv</code> lists the series tagged Am/lead in the neighbouring runs: 317 series (Run72: 8, Run73: 175, Run74: 134). None of them are available on <code>nsdf-cli</code> (0 files each). This is a different set from the 42 Run76 Am series above, and it does not include any Run76 series.</p>
-
 <h2>Status / Next Steps</h2>
 <ul>
-  <li>Complete for the question asked: there is no non-PuBe Run76 data reachable through <code>nsdf-cli</code>. All analysis so far therefore uses PuBe series (notably <code>07221203_2025</code>).</li>
-  <li>The manifest is the one bundled with the installed package; re-run the check after upgrading <code>nsdf-cli</code>, since new series may be added.</li>
-  <li>If Am or Na-22 data are needed, they would have to come from outside <code>nsdf-cli</code> or be added to the manifest.</li>
-  <li>The 42-series Run76 Am list is not saved as a file in the repository; only the Runs 72&ndash;74 list is.</li>
+  <li>Complete for the question asked: there is no non-PuBe Run76 data reachable through <code>nsdf-cli</code>, and the available PuBe data is the 130 series above. All analysis so far uses PuBe series (notably <code>07221203_2025</code>).</li>
+  <li>Re-run <code>nsdf_r76_availability.py --probe</code> to refresh this. The live probe does not depend on the package version, so it will notice new uploads that <code>nsdf-cli ls</code> cannot.</li>
+  <li>If Am, Na-22, or any <code>DCRC3</code>-triggered data are needed, they would have to come from outside <code>nsdf-cli</code>, or NSDF would have to add them. Whether there is a reason they were left out is a question for whoever uploaded the data.</li>
+  <li>The 42 Run76 Am series and their run-log details are now in <code>nsdf_r76_series.csv</code> (filter <code>source_shield</code> starting with <code>Am</code>).</li>
+  <li>Delete the five empty stub folders in <code>~/idx</code> before any retry of those downloads.</li>
 </ul>
 
 <footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

@@ -12,13 +12,13 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>python/ library structure: modules, function tables, and status markers</h1>
-<p class="meta"><strong>Note 1a</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 (inventory as of 23 Sept 2026) &middot; Status: <span class="status in-progress">In progress</span></p>
+<p class="meta"><strong>Note 1a</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 (inventory as of 25 Sept 2026) &middot; Status: <span class="status in-progress">In progress</span></p>
 
 <p>This is the reference for how the shared pulse library is organized, placed early because every later note uses it. The history of how it came about and how it was validated is in <a href="note-04-pulse-library.html">Note 4</a>.</p>
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/f0196bd/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>f0196bd</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/894ef9d/python/README.md"><code>python/README.md</code></a> &mdash; the conventions in short form. Pinned to <code>894ef9d</code>.</li>
 </ul>
 
@@ -67,12 +67,12 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
 <table class="compact">
   <thead><tr><th>Module</th><th class="num">Functions</th><th class="num">Done</th><th class="num">Under development</th></tr></thead>
   <tbody>
-    <tr><td><code>pulse_quantities.py</code></td><td class="num">9</td><td class="num">7</td><td class="num">2</td></tr>
+    <tr><td><code>pulse_quantities.py</code></td><td class="num">11</td><td class="num">9</td><td class="num">2</td></tr>
     <tr><td><code>pulse_cuts.py</code></td><td class="num">9</td><td class="num">6</td><td class="num">3</td></tr>
     <tr><td><code>pulse_operations.py</code></td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
     <tr><td><code>pulse_io.py</code></td><td class="num">5</td><td class="num">5</td><td class="num">0</td></tr>
     <tr><td><code>pulse_archive.py</code></td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
-    <tr><td><strong>Total</strong></td><td class="num"><strong>29</strong></td><td class="num"><strong>24</strong></td><td class="num"><strong>5</strong></td></tr>
+    <tr><td><strong>Total</strong></td><td class="num"><strong>31</strong></td><td class="num"><strong>26</strong></td><td class="num"><strong>5</strong></td></tr>
   </tbody>
 </table>
 </div>
@@ -81,12 +81,14 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
 <h2>Function tables by category</h2>
 
 <h3>Quantities &mdash; <code>pulse_quantities.py</code></h3>
-<p>Pulses in, one number (or one spectrum) per pulse out. The primitives that cuts threshold. 9 functions: 7 done, 2 under development.</p>
+<p>Pulses in, one number (or one spectrum) per pulse out. The primitives that cuts threshold. 11 functions: 9 done, 2 under development.</p>
 <div class="table-scroll"><table>
   <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
   <tbody>
     <tr><td><code>pretrigger_mean</code></td><td>Mean of the pretrigger window, glitch samples skipped</td><td><span class="status done">done</span></td></tr>
-    <tr><td><code>pretrigger_std</code></td><td>Standard deviation of the same window (&ldquo;bstd&rdquo;)</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>pretrigger_std</code></td><td>Standard deviation of the same window, whose length follows the config (default 1000 samples)</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>bstd</code></td><td>Baseline scatter (&ldquo;bstd&rdquo;): standard deviation of the first 500 samples, glitch samples skipped. The window is fixed by <code>n_samples</code> (default 500), not by the config</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>bstd_1000</code></td><td><code>bstd</code> over the first 1000 samples</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>max_deviation</code></td><td>Largest |post-pretrigger sample &minus; pretrigger mean| (&ldquo;dev&rdquo;)</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>excursion_ratio</code></td><td><code>max_deviation / pretrigger_std</code> (&ldquo;ratio&rdquo;)</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>log_excursion_ratio</code></td><td><code>log10</code> of the ratio</td><td><span class="status done">done</span></td></tr>
@@ -105,8 +107,8 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>active</code></td><td><code>~dead_channel</code></td><td><span class="status done">done</span></td></tr>
     <tr><td><code>quiet_baseline</code></td><td><code>bstd</code> below its own percentile across the batch; dead channels never pass</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>ratio_band</code></td><td>Linear <code>ratio</code> in <code>[low, high)</code>, either bound optional (generic)</td><td><span class="status done">done</span></td></tr>
-    <tr><td><code>excursion_band</code></td><td><code>log10(ratio)</code> in <code>[0.5, 0.7)</code> by default: the Tight cut of <a href="note-02-noise-selection.html">Note 2</a></td><td><span class="status done">done</span></td></tr>
-    <tr><td><code>excursion_band_loose</code></td><td><code>log10(ratio)</code> in <code>[0.5, 1.0)</code>: the Loose cut of Note 2</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_band</code></td><td><code>log10(ratio)</code> in <code>[0.5, 0.7)</code> by default: the tightened cut of <a href="note-02-noise-selection.html">Note 2</a></td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>excursion_band_loose</code></td><td><code>log10(ratio)</code> in <code>[0.5, 1.0)</code>: the &ldquo;best&rdquo; cut of Note 2</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>excursion_below_percentile</code></td><td><code>ratio</code> below its own percentile across the batch</td><td><span class="status under-dev">under development</span></td></tr>
     <tr><td><code>looks_like_pulse</code></td><td><code>excursion_duration</code> at or above <code>min_duration</code> (default 50)</td><td><span class="status under-dev">under development</span></td></tr>
     <tr><td><code>excursion_band_AI</code></td><td><code>excursion_band</code> with <code>looks_like_pulse</code> traces removed (<a href="note-06-ai-pulse-veto-archive.html">Note 6</a>)</td><td><span class="status under-dev">under development</span></td></tr>
@@ -152,14 +154,14 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>excursion_band_AI</code></td><td><code>pulse_cuts.py</code></td><td><code>excursion_band</code> plus the <code>looks_like_pulse</code> veto; both are judgment calls. Check what it removes before trusting it on a new dataset.</td></tr>
     <tr><td><code>excursion_below_percentile</code></td><td><code>pulse_cuts.py</code></td><td>Matches the original &ldquo;good noise&rdquo; cut, which is biased toward contaminated-baseline traces when used alone; combine it with <code>quiet_baseline</code>.</td></tr>
     <tr><td><code>looks_like_pulse</code></td><td><code>pulse_cuts.py</code></td><td>A judgment call, not a validated physical criterion. The default <code>min_duration = 50</code> was picked by eye from a gap in one dataset (179 traces at &le; 25 samples, 13 at &ge; 168, none between).</td></tr>
-    <tr><td><code>excursion_duration</code></td><td><code>pulse_quantities.py</code></td><td>Devised for the pulse veto and checked on one dataset only. Deliberately uses the longest <em>contiguous</em> run: a plain count of samples above half-maximum flagged every trace in the Tight cut.</td></tr>
+    <tr><td><code>excursion_duration</code></td><td><code>pulse_quantities.py</code></td><td>Devised for the pulse veto and checked on one dataset only. Deliberately uses the longest <em>contiguous</em> run: a plain count of samples above half-maximum flagged every trace in the tightened cut.</td></tr>
     <tr><td><code>rise_sample</code></td><td><code>pulse_quantities.py</code></td><td>Half-maximum crossing heuristic, used in one exploratory analysis (Cut A rise time, <a href="note-02-noise-selection.html">Note 2</a>). Not yet checked against noisy or multi-peak traces.</td></tr>
   </tbody>
 </table></div>
 
 <h2>Status / Next Steps</h2>
 <ul>
-  <li>This inventory is current as of 2026-09-23; the source of truth is <code>list_statuses(module)</code> in the repository.</li>
+  <li>This inventory is current as of 2026-09-25; the source of truth is <code>list_statuses(module)</code> in the repository.</li>
   <li>Thresholds such as the default <code>min_duration = 50</code> were chosen on one dataset (Detector 0 / Channel 0, dump 1) and need re-checking elsewhere before the corresponding functions are promoted to done.</li>
   <li>A normalized one-sided PSD quantity is missing (see <a href="note-03-noise-psd.html">Note 3</a>).</li>
   <li>Keep this page in step with the library when functions are added or change status.</li>

@@ -16,8 +16,8 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/f906632/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>f906632</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/f906632/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities</code> (<code>bstd</code>, <code>bstd_1000</code>, <code>half_max_time_us</code>) (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>f906632</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/08bda67/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>08bda67</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/08bda67/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities</code> (<code>bstd</code>, <code>bstd_1000</code>, <code>half_max_time_us</code>), <code>pulse_cuts</code> (<code>randoms</code>, <code>real_triggers</code>) and <code>pulse_io.trigger_types</code> (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>08bda67</code>.</li>
 </ul>
 
 <h2>The question</h2>
@@ -104,6 +104,44 @@
 </table></div>
 <p><strong>Most <code>Unknown</code>-trigger pulses reach half of their maximum about 836 &micro;s into the trace</strong> (sample 522), in a narrow peak: 80% of them between 827 and 853 &micro;s (samples 517&ndash;533), the earliest at 823 &micro;s. Sample 500 is at 800 &micro;s, so the half-maximum point comes about 35 &micro;s (22 samples) after the end of the 500-sample window. The half-maximum time also includes each pulse&rsquo;s own rise time and amplitude, so it is later than the start of the pulse (the 10% crossing above has a median at sample 507) and the spread of about 25 &micro;s is not all trigger jitter. The <code>Physics</code> traces before event 11000, by contrast, are spread over the whole trace. The 249 <code>Unknown</code>-trigger traces that are not in the high tail have no pulse selected and are not in this histogram.</p>
 
+<h2>The noise selection with and without the trigger cut</h2>
+<p><strong>Working assumption from here on:</strong> the trigger-type labels are swapped relative to their names. Events recorded as <code>Physics</code> are taken to be <strong>randoms</strong> and events recorded as <code>Unknown</code> are taken to be <strong>real triggers</strong>. The library has two cuts for this, <code>pulse_cuts.randoms</code> and <code>pulse_cuts.real_triggers</code>. Unlike the other cuts they take the per-event trigger type (from <code>pulse_io.trigger_types</code>) instead of pulses, and they are tagged under development because the mapping is unconfirmed.</p>
+<p>The noise selection of <a href="note-02-noise-selection.html">Note 2</a> is the Tight band (<code>log10(ratio)</code> in [0.5, 0.7), 500-sample window, so <code>dev</code> is measured only after sample 500) plus <code>log10(bstd)</code> &lt; 0.5: <strong>179 traces</strong>. Adding <code>randoms</code> keeps 141 of them; the other 38 are real triggers.</p>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>Sample</th><th class="num">Traces</th><th>Events</th><th class="num">Median <code>bstd</code> (10&ndash;90%)</th><th class="num">Median <code>bline</code></th><th class="num"><code>bline</code> above 3300</th></tr></thead>
+  <tbody>
+    <tr><td>Noise selection</td><td class="num">179</td><td>10010&ndash;11544</td><td class="num">1.523 (1.436&ndash;1.644)</td><td class="num">3099.5</td><td class="num">19</td></tr>
+    <tr><td>&hellip; and <code>randoms</code></td><td class="num">141</td><td>10010&ndash;11433 (2 after 11000)</td><td class="num">1.513 (1.427&ndash;1.608)</td><td class="num">3103.3</td><td class="num">18</td></tr>
+    <tr><td>&hellip; and <code>real_triggers</code></td><td class="num">38</td><td>11005&ndash;11544</td><td class="num">1.580 (1.489&ndash;1.727)</td><td class="num">3073.1</td><td class="num">1</td></tr>
+  </tbody>
+</table></div>
+<p>The selection takes 141 of the 1008 <code>Physics</code> traces (14%) but only 38 of the 509 <code>Unknown</code> ones (7%). Fifteen of the 38 real triggers are in the first <code>Unknown</code> segment (events 11000&ndash;11067), the one without aligned pulses; the other 23 are spread over segments 2&ndash;8 (1 to 9 per segment).</p>
+<figure>
+  <img src="img/dump1_noise_sel_randoms.png" alt="Three panels comparing the 179-trace noise selection, its randoms subset and its real-trigger subset: bstd histogram, bline histogram, and mean raw FFT power against frequency">
+  <figcaption>The 179-trace noise selection (black), the part that passes <code>randoms</code> (orange, 141) and the part that passes <code>real_triggers</code> (blue, 38). Left: <code>bstd</code>. Middle: <code>bline</code>. Right: mean raw |FFT|<sup>2</sup> of the baseline-subtracted traces (unnormalized, so only the comparison between curves means anything).</figcaption>
+</figure>
+<ul>
+  <li><strong>Baseline scatter</strong> is nearly the same: <code>bstd</code> medians 1.513 (randoms) and 1.580 (real triggers), with the real triggers a little broader on the high side.</li>
+  <li><strong>Baseline level.</strong> 18 of the 141 randoms have <code>bline</code> above 3300 (a separate group near 3400 ADC counts); only 1 of the 38 real triggers does.</li>
+  <li><strong>Spectrum.</strong> The real triggers have less power between about 1 and 60 kHz. The 204 kHz line is in both groups, at a similar height (mean |FFT|<sup>2</sup> in that bin: 6.6&times;10<sup>4</sup> randoms, 7.1&times;10<sup>4</sup> and 9.5&times;10<sup>4</sup> for the two real-trigger groups below).</li>
+</ul>
+
+<p>The label and the time are tangled: 139 of the 141 randoms are before event 11000 and every real trigger is after it. Splitting the real triggers at the end of segment 1 shows the difference is not a simple randoms-versus-real one (mean raw |FFT|<sup>2</sup> in each band, relative to the 139 randoms before event 11000):</p>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>Band (Hz)</th><th class="num">Randoms before 11000 (139)</th><th class="num">Real, segment 1 (15)</th><th class="num">Real, later (23)</th><th class="num">Later / randoms</th><th class="num">Segment 1 / randoms</th></tr></thead>
+  <tbody>
+    <tr><td>1000&ndash;3000</td><td class="num">2.62&times;10<sup>5</sup></td><td class="num">8.53&times;10<sup>4</sup></td><td class="num">2.16&times;10<sup>5</sup></td><td class="num">0.82</td><td class="num">0.33</td></tr>
+    <tr><td>3000&ndash;10,000</td><td class="num">2.09&times;10<sup>5</sup></td><td class="num">4.47&times;10<sup>4</sup></td><td class="num">1.16&times;10<sup>5</sup></td><td class="num">0.55</td><td class="num">0.21</td></tr>
+    <tr><td>10,000&ndash;50,000</td><td class="num">1.15&times;10<sup>5</sup></td><td class="num">1.20&times;10<sup>4</sup></td><td class="num">5.70&times;10<sup>4</sup></td><td class="num">0.49</td><td class="num">0.10</td></tr>
+    <tr><td>50,000&ndash;150,000</td><td class="num">1.59&times;10<sup>4</sup></td><td class="num">7.90&times;10<sup>3</sup></td><td class="num">1.21&times;10<sup>4</sup></td><td class="num">0.76</td><td class="num">0.50</td></tr>
+    <tr><td>250,000&ndash;310,000</td><td class="num">8.61&times;10<sup>3</sup></td><td class="num">6.78&times;10<sup>3</sup></td><td class="num">7.32&times;10<sup>3</sup></td><td class="num">0.85</td><td class="num">0.79</td></tr>
+  </tbody>
+</table></div>
+<p>The real triggers of segment 1 have the least mid-band power (10&ndash;50 kHz power a tenth of the randoms&rsquo;), the later ones are in between (about half). So the spectrum changes by segment as well as, or instead of, by trigger label, and with 2 randoms after event 11000 there is no way in this dump to separate a trigger-type effect from a change in time. The averages are over 15 and 23 traces, so they are noisy.</p>
+
+<p><strong>What adding <code>randoms</code> does to the selection:</strong> it removes 38 of 179 traces (21%), which are the ones with the lowest mid-band noise power and the fewest high-<code>bline</code> traces; the remaining 141 are 97% from before event 11000. It leaves the <code>bstd</code> distribution and the 204 kHz line essentially unchanged.</p>
+<p>Note that the 38 real triggers in the selection are, by construction, traces with no pulse in Detector 0 / Channel 0 after sample 500 (and none in samples 500&ndash;1000 either). Whatever triggered those events was not a pulse on this channel; other channels and detectors were not looked at.</p>
+
 <h2>Reading</h2>
 <ul>
   <li><strong>Idea 1 holds for the first 1000 events.</strong> With only <code>Physics</code> traces, the 1000-sample window has 2.2 times as many high-<code>bstd</code> traces as the 500-sample one (59 vs. 27), close to the naive factor of 2. The small excess is in the direction expected if earlier pulses have more time to raise the scatter, but with counts this small it does not establish that.</li>
@@ -126,6 +164,7 @@
   <li>Find out what segment 1 (events 11000&ndash;11067) is: it is labeled <code>Unknown</code> but behaves like the early data. Check the other <code>.csv</code> columns (readout type) and other channels for a change at 11068&ndash;11071.</li>
   <li>Confirm the trigger settings for this series (number of randoms, trigger type and threshold) from the DAQ configuration, and whether the same layout appears in dumps 2&ndash;5, other channels and other series.</li>
   <li>Look at the 8 tail traces in segments 2&ndash;8 whose onset is not near 500, to see what they are.</li>
+  <li>Repeat the comparison on other dumps, where there may be randoms and real triggers in the same stretch of time, to separate a trigger-type effect from a time effect; look at the other channels and detectors of the 38 real-trigger noise traces to see what triggered them.</li>
   <li>Decide whether the Note 2 selection cuts should be restricted to events before 11000, or made on the trigger type, and whether the Note 2 fractions need to be restated by region.</li>
 </ul>
 

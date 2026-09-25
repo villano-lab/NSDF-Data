@@ -36,9 +36,10 @@
     <tr><td>2026-09-25</td><td><code>f0196bd</code></td><td>Fixed-window baseline quantities added: <code>bstd</code> (std of the first 500 samples by default, glitch samples skipped) and <code>bstd_1000</code> (first 1000). <code>pretrigger_std</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bstd</code> arrays exactly.</td><td class="num">31</td><td class="num">43</td></tr>
     <tr><td>2026-09-25</td><td><code>3e4efc6</code></td><td>Baseline-level companions added: <code>bline</code> (mean of the first 500 samples by default, glitch samples skipped) and <code>bline_1000</code>, built on <code>pretrigger_mean</code>. <code>pretrigger_mean</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bmean</code> arrays exactly.</td><td class="num">33</td><td class="num">46</td></tr>
     <tr><td>2026-09-25</td><td><code>61c374f</code></td><td>Time-of-rise quantity added: <code>half_max_time_us</code>, the time in microseconds (1.6 &micro;s per sample) at which a pulse first reaches 50% of its maximum deviation, built on <code>rise_sample</code> and tagged under development. It needs a window that ends before the pulse (500 samples for the dump 1 triggers). Used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td><td class="num">34</td><td class="num">49</td></tr>
+    <tr><td>2026-09-25</td><td><code>e6033f0</code></td><td>Trigger-type cuts added: <code>randoms</code> (recorded <code>Physics</code>) and <code>real_triggers</code> (recorded <code>Unknown</code>) in <code>pulse_cuts</code>, plus <code>pulse_io.trigger_types</code> to read the label from the dump&rsquo;s <code>.csv</code>. The two cuts take the trigger-type array rather than pulses, and are tagged under development because the label mapping (assumed swapped) is unconfirmed. Used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td><td class="num">37</td><td class="num">52</td></tr>
   </tbody>
 </table></div>
-<p>Function counts are status-tagged functions (<code>PulseConfig</code> and the <code>status</code> machinery are not counted). The current inventory, 28 done and 6 under development, is in <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</p>
+<p>Function counts are status-tagged functions (<code>PulseConfig</code> and the <code>status</code> machinery are not counted). The current inventory, 29 done and 8 under development, is in <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</p>
 
 <h2>Validation</h2>
 <h3>Refactoring reproduced the notebooks&rsquo; numbers</h3>
@@ -50,7 +51,7 @@
 </ul>
 
 <h3>Unit tests</h3>
-<p>There are 49 synthetic-data unit tests (no dependence on real detector data or <code>nsdf_dark_matter</code>), all passing. They run under the base conda environment, since <code>pytest</code> is not installed in <code>darkmatter_cli_env</code>: <code>cd python &amp;&amp; python -m pytest tests/</code>. <code>h5py</code> was installed into <code>darkmatter_cli_env</code> on 2026-09-23 for the archive module.</p>
+<p>There are 52 synthetic-data unit tests (no dependence on real detector data or <code>nsdf_dark_matter</code>), all passing. They run under the base conda environment, since <code>pytest</code> is not installed in <code>darkmatter_cli_env</code>: <code>cd python &amp;&amp; python -m pytest tests/</code>. <code>h5py</code> was installed into <code>darkmatter_cli_env</code> on 2026-09-23 for the archive module.</p>
 
 <p>One test began life with a wrong expected value and, once corrected, became a regression test for the pretrigger-contamination effect of <a href="note-02-noise-selection.html">Note 2</a>: a spike confined to the pretrigger window drags the baseline mean far enough that flat post-trigger samples end up looking like the largest excursion.</p>
 

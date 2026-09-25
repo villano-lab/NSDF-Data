@@ -18,7 +18,7 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/61c374f/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>61c374f</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/e6033f0/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>e6033f0</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/894ef9d/python/README.md"><code>python/README.md</code></a> &mdash; the conventions in short form. Pinned to <code>894ef9d</code>.</li>
 </ul>
 
@@ -68,11 +68,11 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
   <thead><tr><th>Module</th><th class="num">Functions</th><th class="num">Done</th><th class="num">Under development</th></tr></thead>
   <tbody>
     <tr><td><code>pulse_quantities.py</code></td><td class="num">14</td><td class="num">11</td><td class="num">3</td></tr>
-    <tr><td><code>pulse_cuts.py</code></td><td class="num">9</td><td class="num">6</td><td class="num">3</td></tr>
+    <tr><td><code>pulse_cuts.py</code></td><td class="num">11</td><td class="num">6</td><td class="num">5</td></tr>
     <tr><td><code>pulse_operations.py</code></td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
-    <tr><td><code>pulse_io.py</code></td><td class="num">5</td><td class="num">5</td><td class="num">0</td></tr>
+    <tr><td><code>pulse_io.py</code></td><td class="num">6</td><td class="num">6</td><td class="num">0</td></tr>
     <tr><td><code>pulse_archive.py</code></td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
-    <tr><td><strong>Total</strong></td><td class="num"><strong>34</strong></td><td class="num"><strong>28</strong></td><td class="num"><strong>6</strong></td></tr>
+    <tr><td><strong>Total</strong></td><td class="num"><strong>37</strong></td><td class="num"><strong>29</strong></td><td class="num"><strong>8</strong></td></tr>
   </tbody>
 </table>
 </div>
@@ -102,7 +102,7 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
   </tbody>
 </table></div>
 <h3>Cuts &mdash; <code>pulse_cuts.py</code></h3>
-<p>Pulses in, one boolean per pulse out (<code>True</code> = keep). Combine with plain <code>&amp;</code>, <code>|</code>, <code>~</code>. 9 functions: 6 done, 3 under development.</p>
+<p>Pulses in, one boolean per pulse out (<code>True</code> = keep). Combine with plain <code>&amp;</code>, <code>|</code>, <code>~</code>. 11 functions: 6 done, 5 under development.</p>
 <div class="table-scroll"><table>
   <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
   <tbody>
@@ -115,6 +115,8 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>excursion_below_percentile</code></td><td><code>ratio</code> below its own percentile across the batch</td><td><span class="status under-dev">under development</span></td></tr>
     <tr><td><code>looks_like_pulse</code></td><td><code>excursion_duration</code> at or above <code>min_duration</code> (default 50)</td><td><span class="status under-dev">under development</span></td></tr>
     <tr><td><code>excursion_band_AI</code></td><td><code>excursion_band</code> with <code>looks_like_pulse</code> traces removed (<a href="note-06-ai-pulse-veto-archive.html">Note 6</a>)</td><td><span class="status under-dev">under development</span></td></tr>
+    <tr><td><code>randoms</code></td><td>Trigger type recorded as <code>Physics</code>, taken to be random triggers (labels assumed swapped, <a href="note-02a-bstd-vs-time.html">Note 2a</a>). Takes the trigger-type array, not pulses</td><td><span class="status under-dev">under development</span></td></tr>
+    <tr><td><code>real_triggers</code></td><td>Trigger type recorded as <code>Unknown</code>, taken to be real triggers. Takes the trigger-type array, not pulses</td><td><span class="status under-dev">under development</span></td></tr>
   </tbody>
 </table></div>
 <h3>Operations &mdash; <code>pulse_operations.py</code></h3>
@@ -128,7 +130,7 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
   </tbody>
 </table></div>
 <h3>I/O: bridging <code>cdms</code> objects to arrays &mdash; <code>pulse_io.py</code></h3>
-<p>The only module that knows about <code>nsdf_dark_matter</code>&rsquo;s <code>cdms</code> objects. 5 functions: 5 done, 0 under development.</p>
+<p>The only module that knows about <code>nsdf_dark_matter</code>&rsquo;s <code>cdms</code> objects. 6 functions: 6 done, 0 under development.</p>
 <div class="table-scroll"><table>
   <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
   <tbody>
@@ -137,6 +139,7 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>filter_by_detector</code></td><td>Keep only ids for a given detector</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>load_channel_batch</code></td><td><code>cdms</code> object to a plain <code>(n_pulses, n_samples)</code> array</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>load_channel_batch_multi</code></td><td>Same, pooled across several dumps</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>trigger_types</code></td><td>The <code>trigger_type</code> the dump&rsquo;s <code>.csv</code> records for each id&rsquo;s event, aligned with the ids; input to <code>randoms</code> / <code>real_triggers</code></td><td><span class="status done">done</span></td></tr>
   </tbody>
 </table></div>
 <h3>Archive: persisting a cut&rsquo;s result &mdash; <code>pulse_archive.py</code></h3>
@@ -157,6 +160,8 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>excursion_band_AI</code></td><td><code>pulse_cuts.py</code></td><td><code>excursion_band</code> plus the <code>looks_like_pulse</code> veto; both are judgment calls. Check what it removes before trusting it on a new dataset.</td></tr>
     <tr><td><code>excursion_below_percentile</code></td><td><code>pulse_cuts.py</code></td><td>Matches the original &ldquo;good noise&rdquo; cut, which is biased toward contaminated-baseline traces when used alone; combine it with <code>quiet_baseline</code>.</td></tr>
     <tr><td><code>looks_like_pulse</code></td><td><code>pulse_cuts.py</code></td><td>A judgment call, not a validated physical criterion. The default <code>min_duration = 50</code> was picked by eye from a gap in one dataset (179 traces at &le; 25 samples, 13 at &ge; 168, none between).</td></tr>
+    <tr><td><code>randoms</code></td><td><code>pulse_cuts.py</code></td><td>The mapping of the recorded <code>Physics</code> label to random triggers is a working assumption from one dump, not confirmed against the DAQ configuration or the nsdf library.</td></tr>
+    <tr><td><code>real_triggers</code></td><td><code>pulse_cuts.py</code></td><td>The other half of the same assumption (<code>Unknown</code> taken to be real triggers).</td></tr>
     <tr><td><code>excursion_duration</code></td><td><code>pulse_quantities.py</code></td><td>Devised for the pulse veto and checked on one dataset only. Deliberately uses the longest <em>contiguous</em> run: a plain count of samples above half-maximum flagged every trace in the tightened cut.</td></tr>
     <tr><td><code>half_max_time_us</code></td><td><code>pulse_quantities.py</code></td><td>Built on <code>rise_sample</code>, so it inherits its status. Only meaningful for a trace that contains a pulse; first used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td></tr>
     <tr><td><code>rise_sample</code></td><td><code>pulse_quantities.py</code></td><td>Half-maximum crossing heuristic, used in one exploratory analysis (Cut A rise time, <a href="note-02-noise-selection.html">Note 2</a>). Not yet checked against noisy or multi-peak traces.</td></tr>

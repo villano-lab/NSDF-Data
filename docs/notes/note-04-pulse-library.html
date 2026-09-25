@@ -34,9 +34,10 @@
     <tr><td>2026-09-23</td><td><code>894ef9d</code></td><td>HDF5 good-event archive added (<code>pulse_archive.py</code>: save, load, list).</td><td class="num">29</td><td class="num">40</td></tr>
     <tr><td>2026-09-23</td><td><code>8b0ab40</code></td><td>Branch 2 cuts renamed <strong>Loose</strong> (<code>excursion_band_loose</code>, [0.5, 1.0)) and <strong>Tight</strong> (<code>excursion_band</code>, [0.5, 0.7)) in the notebook, plots and docstrings, replacing &ldquo;Best&rdquo; and &ldquo;Tightened&rdquo;. No behavior change.</td><td class="num">29</td><td class="num">40</td></tr>
     <tr><td>2026-09-25</td><td><code>f0196bd</code></td><td>Fixed-window baseline quantities added: <code>bstd</code> (std of the first 500 samples by default, glitch samples skipped) and <code>bstd_1000</code> (first 1000). <code>pretrigger_std</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bstd</code> arrays exactly.</td><td class="num">31</td><td class="num">43</td></tr>
+    <tr><td>2026-09-25</td><td><code>3e4efc6</code></td><td>Baseline-level companions added: <code>bline</code> (mean of the first 500 samples by default, glitch samples skipped) and <code>bline_1000</code>, built on <code>pretrigger_mean</code>. <code>pretrigger_mean</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bmean</code> arrays exactly.</td><td class="num">33</td><td class="num">46</td></tr>
   </tbody>
 </table></div>
-<p>Function counts are status-tagged functions (<code>PulseConfig</code> and the <code>status</code> machinery are not counted). The current inventory, 26 done and 5 under development, is in <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</p>
+<p>Function counts are status-tagged functions (<code>PulseConfig</code> and the <code>status</code> machinery are not counted). The current inventory, 28 done and 5 under development, is in <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</p>
 
 <h2>Validation</h2>
 <h3>Refactoring reproduced the notebooks&rsquo; numbers</h3>
@@ -48,7 +49,7 @@
 </ul>
 
 <h3>Unit tests</h3>
-<p>There are 43 synthetic-data unit tests (no dependence on real detector data or <code>nsdf_dark_matter</code>), all passing. They run under the base conda environment, since <code>pytest</code> is not installed in <code>darkmatter_cli_env</code>: <code>cd python &amp;&amp; python -m pytest tests/</code>. <code>h5py</code> was installed into <code>darkmatter_cli_env</code> on 2026-09-23 for the archive module.</p>
+<p>There are 46 synthetic-data unit tests (no dependence on real detector data or <code>nsdf_dark_matter</code>), all passing. They run under the base conda environment, since <code>pytest</code> is not installed in <code>darkmatter_cli_env</code>: <code>cd python &amp;&amp; python -m pytest tests/</code>. <code>h5py</code> was installed into <code>darkmatter_cli_env</code> on 2026-09-23 for the archive module.</p>
 
 <p>One test began life with a wrong expected value and, once corrected, became a regression test for the pretrigger-contamination effect of <a href="note-02-noise-selection.html">Note 2</a>: a spike confined to the pretrigger window drags the baseline mean far enough that flat post-trigger samples end up looking like the largest excursion.</p>
 

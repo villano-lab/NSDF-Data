@@ -18,7 +18,7 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/f0196bd/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>f0196bd</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/3e4efc6/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>3e4efc6</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/894ef9d/python/README.md"><code>python/README.md</code></a> &mdash; the conventions in short form. Pinned to <code>894ef9d</code>.</li>
 </ul>
 
@@ -67,12 +67,12 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
 <table class="compact">
   <thead><tr><th>Module</th><th class="num">Functions</th><th class="num">Done</th><th class="num">Under development</th></tr></thead>
   <tbody>
-    <tr><td><code>pulse_quantities.py</code></td><td class="num">11</td><td class="num">9</td><td class="num">2</td></tr>
+    <tr><td><code>pulse_quantities.py</code></td><td class="num">13</td><td class="num">11</td><td class="num">2</td></tr>
     <tr><td><code>pulse_cuts.py</code></td><td class="num">9</td><td class="num">6</td><td class="num">3</td></tr>
     <tr><td><code>pulse_operations.py</code></td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
     <tr><td><code>pulse_io.py</code></td><td class="num">5</td><td class="num">5</td><td class="num">0</td></tr>
     <tr><td><code>pulse_archive.py</code></td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
-    <tr><td><strong>Total</strong></td><td class="num"><strong>31</strong></td><td class="num"><strong>26</strong></td><td class="num"><strong>5</strong></td></tr>
+    <tr><td><strong>Total</strong></td><td class="num"><strong>33</strong></td><td class="num"><strong>28</strong></td><td class="num"><strong>5</strong></td></tr>
   </tbody>
 </table>
 </div>
@@ -81,7 +81,7 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
 <h2>Function tables by category</h2>
 
 <h3>Quantities &mdash; <code>pulse_quantities.py</code></h3>
-<p>Pulses in, one number (or one spectrum) per pulse out. The primitives that cuts threshold. 11 functions: 9 done, 2 under development.</p>
+<p>Pulses in, one number (or one spectrum) per pulse out. The primitives that cuts threshold. 13 functions: 11 done, 2 under development.</p>
 <div class="table-scroll"><table>
   <thead><tr><th>Function</th><th>Purpose</th><th>Status</th></tr></thead>
   <tbody>
@@ -89,6 +89,8 @@ power = pq.power_spectrum(op.baseline_subtract(pulses[mask], config), config)</c
     <tr><td><code>pretrigger_std</code></td><td>Standard deviation of the same window, whose length follows the config (default 1000 samples)</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>bstd</code></td><td>Baseline scatter (&ldquo;bstd&rdquo;): standard deviation of the first 500 samples, glitch samples skipped. The window is fixed by <code>n_samples</code> (default 500), not by the config</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>bstd_1000</code></td><td><code>bstd</code> over the first 1000 samples</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>bline</code></td><td>Baseline level (&ldquo;bline&rdquo;): mean of the first 500 samples, glitch samples skipped; the companion of <code>bstd</code>. The window is fixed by <code>n_samples</code> (default 500), not by the config</td><td><span class="status done">done</span></td></tr>
+    <tr><td><code>bline_1000</code></td><td><code>bline</code> over the first 1000 samples</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>max_deviation</code></td><td>Largest |post-pretrigger sample &minus; pretrigger mean| (&ldquo;dev&rdquo;)</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>excursion_ratio</code></td><td><code>max_deviation / pretrigger_std</code> (&ldquo;ratio&rdquo;)</td><td><span class="status done">done</span></td></tr>
     <tr><td><code>log_excursion_ratio</code></td><td><code>log10</code> of the ratio</td><td><span class="status done">done</span></td></tr>

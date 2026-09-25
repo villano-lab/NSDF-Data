@@ -8,6 +8,8 @@ all reductions run along ``axis=-1``. Output shape is one dimension smaller
 These are the primitives: cuts in `pulse_cuts.py` are built by thresholding
 the quantities defined here.
 """
+from dataclasses import replace
+
 import numpy as np
 
 from pulse_config import PulseConfig, DEFAULT_CONFIG
@@ -51,6 +53,26 @@ def bstd_1000(pulses, config: PulseConfig = DEFAULT_CONFIG):
     baseline scatter of the 1000-sample window used by Branch 1 of
     07221203_2025_dump1_noise.ipynb."""
     return bstd(pulses, config, n_samples=1000)
+
+
+@status(DONE)
+def bline(pulses, config: PulseConfig = DEFAULT_CONFIG, n_samples: int = 500):
+    """Baseline level ("bline"): mean of the first `n_samples` samples (default 500),
+    skipping `config.glitch_samples` leading samples. The companion of `bstd`.
+
+    Computed with `pretrigger_mean` on a copy of `config` whose window is
+    `n_samples`, so the window is fixed by `n_samples` rather than by
+    `config.pretrigger_samples`: it is the same 500-sample quantity whatever
+    config is passed (only `glitch_samples` is read from it). For the 1000-sample
+    window use `bline_1000`.
+    """
+    return pretrigger_mean(pulses, replace(config, pretrigger_samples=n_samples))
+
+
+@status(DONE)
+def bline_1000(pulses, config: PulseConfig = DEFAULT_CONFIG):
+    """`bline` over the first 1000 samples (skipping `config.glitch_samples`)."""
+    return bline(pulses, config, n_samples=1000)
 
 
 @status(DONE)

@@ -16,8 +16,8 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/f99edaa/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>f99edaa</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/f99edaa/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities.bstd</code> / <code>bstd_1000</code> (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>f99edaa</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/ff26b3e/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>ff26b3e</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/ff26b3e/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities.bstd</code> / <code>bstd_1000</code> (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>ff26b3e</code>.</li>
 </ul>
 
 <h2>The question</h2>
@@ -34,7 +34,7 @@
   <figcaption>Detector 0 / Channel 0, dump F0001, 1517 traces. Grey bands: events whose recorded trigger type is <code>Unknown</code>. Dashed line: <code>bstd</code> = 32.48.</figcaption>
 </figure>
 
-<p>The dump has two distinct parts. Events 10000&ndash;10999 (1000 traces, all trigger type <code>Physics</code>) look alike in both panels: mostly quiet, with a sparse scatter of high values. From event 11000 on, the recorded trigger type alternates between runs of <code>Unknown</code> events (8 runs, 49&ndash;76 events long, 509 traces in all) and single <code>Physics</code> events. Inside the <code>Unknown</code> runs <code>bstd</code> stays quiet while <code>bstd_1000</code> jumps to about 100 or more for most traces.</p>
+<p>The dump has two distinct parts. Events 10000&ndash;10999 (1000 traces, all trigger type <code>Physics</code>) look alike in both panels: mostly quiet, with a sparse scatter of high values. From event 11000 on, the recorded trigger type alternates between runs of <code>Unknown</code> events (8 runs, 49&ndash;76 events long, 509 traces in all) and single <code>Physics</code> events. In seven of the eight <code>Unknown</code> runs <code>bstd</code> stays quiet while <code>bstd_1000</code> jumps to about 100 or more for most traces. The exception is the first run (events 11000&ndash;11067), which looks like the early data (see the run-by-run table below).</p>
 
 <h2>The fractions, by region</h2>
 <div class="table-scroll"><table class="compact">
@@ -48,15 +48,57 @@
 </table></div>
 <p>Of the 379 traces with <code>bstd_1000</code> &gt; 32.48, 59 (16%) come from events before 11000 and 319 (84%) from <code>Unknown</code>-trigger events after it.</p>
 
+<p>Run by run (the <code>Unknown</code> runs, in event order; &ldquo;tail&rdquo; and &ldquo;aligned&rdquo; are defined in the next section):</p>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>Run (events)</th><th class="num">Traces</th><th class="num">Median <code>bstd_1000</code></th><th class="num">% <code>bstd_1000</code> &gt; 32.48</th><th class="num">In tail</th><th class="num">Aligned</th></tr></thead>
+  <tbody>
+    <tr><td>11000&ndash;11067</td><td class="num">57</td><td class="num">1.6</td><td class="num">7</td><td class="num">5</td><td class="num">0</td></tr>
+    <tr><td>11071&ndash;11133</td><td class="num">63</td><td class="num">135.1</td><td class="num">83</td><td class="num">47</td><td class="num">46</td></tr>
+    <tr><td>11141&ndash;11212</td><td class="num">72</td><td class="num">43.5</td><td class="num">56</td><td class="num">28</td><td class="num">26</td></tr>
+    <tr><td>11214&ndash;11289</td><td class="num">76</td><td class="num">100.8</td><td class="num">64</td><td class="num">49</td><td class="num">46</td></tr>
+    <tr><td>11291&ndash;11362</td><td class="num">72</td><td class="num">115.1</td><td class="num">71</td><td class="num">41</td><td class="num">41</td></tr>
+    <tr><td>11364&ndash;11425</td><td class="num">62</td><td class="num">122.6</td><td class="num">84</td><td class="num">44</td><td class="num">44</td></tr>
+    <tr><td>11434&ndash;11491</td><td class="num">58</td><td class="num">70.6</td><td class="num">67</td><td class="num">27</td><td class="num">25</td></tr>
+    <tr><td>11505&ndash;11553</td><td class="num">49</td><td class="num">58.5</td><td class="num">65</td><td class="num">19</td><td class="num">19</td></tr>
+  </tbody>
+</table></div>
+<p>The first run is quiet in both windows, like the events before 11000. The change in <code>bstd_1000</code> starts with the second run, at event 11071, so the trigger label alone does not separate the two behaviors.</p>
+
+<h2>The aligned pulses: Branch 2 high tail</h2>
+<p>The Branch 2 high tail of <a href="note-02-noise-selection.html">Note 2</a> (500-sample window, <code>log10(ratio)</code> &ge; 2.0, 346 of 1517 traces) shows pulses that all rise at almost the same sample (see its <a href="note-02-noise-selection.html">high-tail figure</a>). Repeating the selection with the library and splitting it at event 11000:</p>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>Region</th><th class="num">Traces</th><th class="num">In the tail</th><th class="num">Fraction</th></tr></thead>
+  <tbody>
+    <tr><td>Events before 11000 (Physics)</td><td class="num">1000</td><td class="num">85</td><td class="num">8.5%</td></tr>
+    <tr><td>From 11000 on, Unknown</td><td class="num">509</td><td class="num">260</td><td class="num">51.1%</td></tr>
+    <tr><td>From 11000 on, Physics</td><td class="num">8</td><td class="num">1</td><td class="num">12.5%</td></tr>
+    <tr><td>All</td><td class="num">1517</td><td class="num">346</td><td class="num">22.8%</td></tr>
+  </tbody>
+</table></div>
+<p><strong>The tail traces do not all come from the region after 11000:</strong> 85 of the 346 are earlier events. But those 85 look different from the rest.</p>
+<figure>
+  <img src="img/dump1_high_tail_split.png" alt="Branch 2 high tail traces, baseline subtracted: before event 11000 the pulses start at scattered samples, from event 11000 on they nearly all start just after sample 500">
+  <figcaption>The same high-tail selection, split at event 11000 (30 randomly chosen traces in each panel, baseline subtracted). Left: pulses start at scattered times. Right: nearly all start just after sample 500.</figcaption>
+</figure>
+<p>Defining the onset as the first sample after 500 where a trace reaches 10% of its own maximum deviation (<code>rise_sample</code> with <code>fraction=0.1</code>, still under development), 247 of the 261 tail traces from event 11000 on have it at or before sample 520 (median 507), against 1 of the 85 earlier ones (median 2025, spread over the whole trace). Overall, 248 of the 346 tail traces are aligned; all but one (event 10637, onset 511) are in the <code>Unknown</code> runs.</p>
+<figure>
+  <img src="img/dump1_high_tail_onset.png" alt="Onset sample of each high-tail trace against event number: scattered before event 11000, a dense line at about sample 505 from event 11071 on">
+  <figcaption>Onset sample of each high-tail trace against event number (grey: <code>Unknown</code> trigger). The aligned pulses form the line at the bottom, starting at event 11071; the scattered points are unaligned pulses.</figcaption>
+</figure>
+<p>The aligned pulses start in run 2 and later. Run 1 has 5 tail traces and none aligned. Eight tail traces inside runs 2&ndash;8 are not aligned.</p>
+
 <h2>Reading</h2>
 <ul>
   <li><strong>Idea 1 holds for the first 1000 events.</strong> With only <code>Physics</code> traces, the 1000-sample window has 2.2 times as many high-<code>bstd</code> traces as the 500-sample one (59 vs. 27), close to the naive factor of 2. The small excess is in the direction expected if earlier pulses have more time to raise the scatter, but with counts this small it does not establish that.</li>
-  <li><strong>Idea 2 matches the rest of the dump.</strong> The 25% vs. 2% headline number is almost entirely the <code>Unknown</code>-trigger runs from event 11000 on, where the ratio is about 80 and no random-placement argument applies. There the 500-sample window is quiet (median 1.56, the same as before) and the 1000-sample window is loud, so whatever raises the scatter begins after sample 500 and before sample 1000 in most of these traces. This is inferred from <code>bstd</code> alone; the onset sample itself has not been measured.</li>
+  <li><strong>Idea 2 matches the rest of the dump.</strong> The 25% vs. 2% headline number is almost entirely the <code>Unknown</code>-trigger runs from event 11000 on, where the ratio is about 80 and no random-placement argument applies. There the 500-sample window is quiet (median 1.56, the same as before) and the 1000-sample window is loud, because a pulse rises at a nearly fixed sample, just after 500 (247 of the 260 tail traces there have their 10% crossing within 20 samples of 500; median 507). That fixed onset is what a trigger at about sample 505 would produce.</li>
+  <li><strong>The alignment is a property of these runs, not of the ratio cut.</strong> The high tail before event 11000 is 85 traces with pulses at scattered times, what randomly placed pulses look like. So the lined-up pulses in the Note 2 high-tail figure come almost entirely (247 of 248 aligned traces) from the <code>Unknown</code>-trigger runs from event 11071 on.</li>
+  <li><strong>What the labels mean is not settled.</strong> A plausible reading is that the events before 11000 are randoms (a fixed number were taken, possibly 1000) and the aligned ones are triggered on real pulses, which would make the recorded <code>Physics</code> and <code>Unknown</code> labels look backwards; this fits the data above but rests on the trigger type in the <code>.csv</code> and on recollection of the DAQ configuration, neither confirmed. Run 1 (11000&ndash;11067) does not fit either group cleanly: it carries the <code>Unknown</code> label but has no aligned pulses.</li>
 </ul>
 
 <div class="callout"><strong class="tag">Caveats</strong>
 <ul>
   <li>What trigger type <code>Unknown</code> means is not established. Its coincidence with the change in <code>bstd_1000</code> is an observation, not an explanation.</li>
+  <li>The onset sample uses <code>rise_sample</code>, which is still under development, and only looks from sample 500 on; it says nothing about pulses that started earlier. The 20-sample window for &ldquo;aligned&rdquo; was chosen by looking at the plot.</li>
   <li>The event number is the time axis. The <code>.csv</code> timestamps have only 57 distinct values (one-second resolution), spanning 02:25:47 to 02:26:45 UTC on 4 Dec 2022, so they cannot order events within a second.</li>
   <li>Only 8 <code>Physics</code> traces come after event 11000, too few to compare with the earlier <code>Physics</code> ones.</li>
   <li>This is one detector and channel of one dump.</li>
@@ -64,8 +106,9 @@
 
 <h2>Next steps</h2>
 <ul>
-  <li>Plot sample-by-sample averages (or an overlay) of the <code>Unknown</code>-trigger traces to see where the excursion starts, and whether it is a fixed sample.</li>
-  <li>Find out what <code>Unknown</code> trigger type means, and whether the same alternation appears in dumps 2&ndash;5, other channels and other series.</li>
+  <li>Find out what run 1 (events 11000&ndash;11067) is: it is labeled <code>Unknown</code> but behaves like the early data. Check the other <code>.csv</code> columns (readout type) and other channels for a change at 11068&ndash;11071.</li>
+  <li>Confirm the trigger settings for this series (number of randoms, trigger type and threshold) from the DAQ configuration, and whether the same layout appears in dumps 2&ndash;5, other channels and other series.</li>
+  <li>Look at the 8 tail traces in runs 2&ndash;8 whose onset is not near 500, to see what they are.</li>
   <li>Decide whether the Note 2 selection cuts should be restricted to events before 11000, or made on the trigger type, and whether the Note 2 fractions need to be restated by region.</li>
 </ul>
 

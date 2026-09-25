@@ -173,6 +173,36 @@ def test_rise_sample_batch_shape():
     np.testing.assert_array_equal(rs, [12, 20, 29])
 
 
+def test_half_max_time_us_converts_the_half_max_sample_to_microseconds():
+    config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=1.6e-6)
+    pulses = np.zeros((2, 30))
+    pulses[0, 15:] = 20.0                 # half-max (10) reached at sample 15
+    pulses[1, 12:14] = 4.0
+    pulses[1, 14:] = 20.0                 # 4 < 10, so half-max is reached at sample 14
+
+    np.testing.assert_allclose(q.half_max_time_us(pulses, config), [15 * 1.6, 14 * 1.6])
+    np.testing.assert_allclose(q.rise_sample(pulses, config) * 1.6, q.half_max_time_us(pulses, config))
+
+
+def test_half_max_time_us_only_searches_after_the_pretrigger_window():
+    pulse = np.zeros(30)
+    pulse[8:] = 20.0                      # rises at sample 8, inside a 10-sample window
+    short = PulseConfig(pretrigger_samples=5, glitch_samples=0, sample_period_s=2e-6)
+    long = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=2e-6)
+
+    assert q.half_max_time_us(pulse, short) == 8 * 2.0
+    assert q.half_max_time_us(pulse, long) >= 10 * 2.0    # pulse is already up when the search starts
+
+
+def test_half_max_time_us_raises_without_sample_period():
+    config = PulseConfig(sample_period_s=None)
+    try:
+        q.half_max_time_us(np.zeros(20), config)
+        assert False, "expected ValueError"
+    except ValueError:
+        pass
+
+
 def test_power_spectrum_matches_manual_fft():
     config = PulseConfig(sample_period_s=1.0)
     rng = np.random.default_rng(3)

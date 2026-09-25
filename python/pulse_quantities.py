@@ -169,6 +169,22 @@ def rise_sample(pulses, config: PulseConfig = DEFAULT_CONFIG, fraction: float = 
     return config.pretrigger_samples + idx
 
 
+@status(UNDER_DEVELOPMENT, note="built on rise_sample, which is still under development; "
+        "meaningless for a trace with no pulse (it just finds the largest noise excursion)")
+def half_max_time_us(pulses, config: PulseConfig = DEFAULT_CONFIG):
+    """Time (microseconds from the first sample of the trace) at which the pulse first
+    reaches 50% of its own `max_deviation`: `rise_sample(fraction=0.5) * sample_period_s`.
+
+    Only samples after `config.pretrigger_samples` are searched, so the window must
+    end before the pulse starts: with the default 1000-sample window a pulse rising
+    at sample 505 is not seen. Use `replace(config, pretrigger_samples=500)` for
+    triggers near sample 500. Raises if `config.sample_period_s` is unset.
+    """
+    if config.sample_period_s is None:
+        raise ValueError("sample_period_s is not set on this PulseConfig")
+    return rise_sample(pulses, config, fraction=0.5) * config.sample_period_s * 1e6
+
+
 @status(DONE)
 def power_spectrum(pulses, config: PulseConfig = DEFAULT_CONFIG):
     """Real part of `rfft(pulse) * conj(rfft(pulse))` ("complex square"/|FFT|^2) per pulse.

@@ -14,6 +14,9 @@
   --brainstorm: #6b4fbb;
   --warn-bg: #fff4e5;
   --warn-border: #e0a040;
+  --jw-bg: #fdd;
+  --jw-fg: #3b1c1c;
+  --jw-border: #d9534f;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,6 +36,9 @@
     --brainstorm: #b9a3ff;
     --warn-bg: #2b2313;
     --warn-border: #a37a2d;
+    --jw-bg: #3a1f22;
+    --jw-fg: #f4c9c6;
+    --jw-border: #e5615c;
   }
 }
 
@@ -125,3 +131,18 @@ figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
 ul.repo li { margin-bottom: 6px; }
 
 footer { margin-top: 48px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem; }
+
+/* Jupyter-style DeprecationWarning box: the red-tinted stderr block a notebook shows for a warning. */
+pre.jupyter-warning {
+  background: var(--jw-bg);
+  color: var(--jw-fg);
+  border-left: 4px solid var(--jw-border);
+  border-radius: 2px;
+  padding: 10px 14px;
+  margin: 10px 0 14px;
+  font: 0.88rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+}
+p.caption { color: var(--muted); font-size: 0.9rem; margin: 14px 0 0; }
+details { margin: 4px 0 18px; }
+details summary { cursor: pointer; color: var(--link); }

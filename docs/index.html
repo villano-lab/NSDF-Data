@@ -38,6 +38,21 @@
 </table>
 </div>
 
+<h3>Notebooks and deprecation</h3>
+<p>Notes marked <span class="status complete">Complete</span> are left as they are, apart from small updates where a change in the <code>python/</code> library requires one, such as a renamed function. The Jupyter notebooks they rest on are handled separately: when a library change breaks a notebook, it is either updated for the change or, if it no longer runs and is not worth fixing, marked deprecated with a warning cell at the top, like this:</p>
+
+<p class="caption">Example of the marker (illustrative only; no notebook is marked deprecated at present):</p>
+<pre class="jupyter-warning"><b>DeprecationWarning:</b> example_notebook.ipynb is deprecated (2026-09-25).
+  It no longer runs: excursion_band(low, high) was renamed ratio_band in python/pulse_cuts.py.
+  Kept as a record of the analysis; the current version is in Note 2.</pre>
+
+<details>
+<summary>Cell to paste at the top of a deprecated notebook</summary>
+<pre><code>&lt;div style=&quot;border-left: 4px solid #d9534f; background: #fdd; color: #3b1c1c; padding: 10px 14px; font-family: monospace; white-space: pre-wrap;&quot;&gt;&lt;b&gt;DeprecationWarning:&lt;/b&gt; this notebook is deprecated (YYYY-MM-DD).
+  It no longer runs: WHAT CHANGED, e.g. excursion_band(low, high) was renamed ratio_band in python/pulse_cuts.py.
+  Kept as a record of the analysis; the current version is WHERE.&lt;/div&gt;</code></pre>
+</details>
+
 <div class="table-scroll">
 <table class="notes">
   <thead>

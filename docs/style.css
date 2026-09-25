@@ -146,3 +146,10 @@ pre.jupyter-warning {
 p.caption { color: var(--muted); font-size: 0.9rem; margin: 14px 0 0; }
 details { margin: 4px 0 18px; }
 details summary { cursor: pointer; color: var(--link); }
+
+/* Outline of section links at the top of a note. */
+nav.outline { border: 1px solid var(--border); background: var(--row-alt); border-radius: 6px; padding: 8px 14px; margin: 14px 0 6px; font-size: 0.95rem; }
+nav.outline ol { margin: 4px 0 2px; padding-left: 22px; columns: 2; column-gap: 28px; }
+nav.outline li { break-inside: avoid; }
+@media (max-width: 720px) { nav.outline ol { columns: 1; } }
+h2[id] { scroll-margin-top: 12px; }

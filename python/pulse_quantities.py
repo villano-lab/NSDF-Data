@@ -31,6 +31,29 @@ def pretrigger_std(pulses, config: PulseConfig = DEFAULT_CONFIG):
 
 
 @status(DONE)
+def bstd(pulses, config: PulseConfig = DEFAULT_CONFIG, n_samples: int = 500):
+    """Baseline scatter ("bstd"): std of the first `n_samples` samples (default 500),
+    skipping `config.glitch_samples` leading samples.
+
+    Unlike `pretrigger_std`, the window is set by `n_samples`, not by
+    `config.pretrigger_samples`, so it is the same 500-sample quantity whatever
+    config is passed (only `glitch_samples` is read from it). It matches the
+    "bstd" of the Branch 2 cuts in 07221203_2025_dump1_noise.ipynb. For the
+    1000-sample window use `bstd_1000`.
+    """
+    pulses = np.asarray(pulses)
+    return pulses[..., config.glitch_samples:n_samples].std(axis=-1)
+
+
+@status(DONE)
+def bstd_1000(pulses, config: PulseConfig = DEFAULT_CONFIG):
+    """`bstd` over the first 1000 samples (skipping `config.glitch_samples`): the
+    baseline scatter of the 1000-sample window used by Branch 1 of
+    07221203_2025_dump1_noise.ipynb."""
+    return bstd(pulses, config, n_samples=1000)
+
+
+@status(DONE)
 def max_deviation(pulses, config: PulseConfig = DEFAULT_CONFIG):
     """Max |post-pretrigger sample - pretrigger mean| per pulse ("dev" in the notebooks).
 

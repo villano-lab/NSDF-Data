@@ -16,6 +16,41 @@ def test_pretrigger_mean_std_match_manual_slice():
     np.testing.assert_allclose(q.pretrigger_std(pulses, config), expected_std)
 
 
+def test_bstd_defaults_to_500_samples_and_bstd_1000_to_1000():
+    config = PulseConfig(pretrigger_samples=2000, glitch_samples=10, sample_period_s=None)
+    rng = np.random.default_rng(10)
+    pulses = rng.normal(loc=5.0, scale=2.0, size=(4, 1500))
+    pulses[:, 700:] *= 3.0   # baseline scatter differs between the 500- and 1000-sample windows
+
+    np.testing.assert_allclose(q.bstd(pulses, config), pulses[:, 10:500].std(axis=-1))
+    np.testing.assert_allclose(q.bstd_1000(pulses, config), pulses[:, 10:1000].std(axis=-1))
+    assert not np.allclose(q.bstd(pulses, config), q.bstd_1000(pulses, config))
+
+
+def test_bstd_ignores_pretrigger_samples_and_honors_glitch_samples_and_n_samples():
+    rng = np.random.default_rng(11)
+    pulses = rng.normal(size=(3, 1200))
+    a = PulseConfig(pretrigger_samples=100, glitch_samples=10, sample_period_s=None)
+    b = PulseConfig(pretrigger_samples=1100, glitch_samples=10, sample_period_s=None)
+    np.testing.assert_array_equal(q.bstd(pulses, a), q.bstd(pulses, b))   # window is not config.pretrigger_samples
+
+    pulses[:, :5] = 1000.0   # leading glitch
+    skip = PulseConfig(glitch_samples=10, sample_period_s=None)
+    keep = PulseConfig(glitch_samples=0, sample_period_s=None)
+    assert np.all(q.bstd(pulses, skip) < 2.0)          # glitch skipped: ordinary noise scatter
+    assert np.all(q.bstd(pulses, keep) > 50.0)         # glitch kept: scatter is huge
+    np.testing.assert_allclose(q.bstd(pulses, skip, n_samples=300), pulses[:, 10:300].std(axis=-1))
+
+
+def test_bstd_matches_pretrigger_std_when_the_window_matches():
+    rng = np.random.default_rng(12)
+    pulses = rng.normal(size=(5, 1500))
+    c500 = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=None)
+    c1000 = PulseConfig(pretrigger_samples=1000, glitch_samples=10, sample_period_s=None)
+    np.testing.assert_allclose(q.bstd(pulses, c500), q.pretrigger_std(pulses, c500))
+    np.testing.assert_allclose(q.bstd_1000(pulses, c1000), q.pretrigger_std(pulses, c1000))
+
+
 def test_single_pulse_matches_corresponding_batch_row():
     config = PulseConfig(pretrigger_samples=20, glitch_samples=3, sample_period_s=None)
     rng = np.random.default_rng(1)

@@ -16,8 +16,8 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/08bda67/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>08bda67</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/08bda67/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities</code> (<code>bstd</code>, <code>bstd_1000</code>, <code>half_max_time_us</code>), <code>pulse_cuts</code> (<code>randoms</code>, <code>real_triggers</code>) and <code>pulse_io.trigger_types</code> (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>08bda67</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/74639f5/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>74639f5</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/74639f5/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities</code> (<code>bstd</code>, <code>bstd_1000</code>, <code>half_max_time_us</code>), <code>pulse_cuts</code> (<code>randoms</code>, <code>real_triggers</code>) and <code>pulse_io.trigger_types</code> (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>74639f5</code>.</li>
 </ul>
 
 <h2>The question</h2>
@@ -117,30 +117,50 @@
 </table></div>
 <p>The selection takes 141 of the 1008 <code>Physics</code> traces (14%) but only 38 of the 509 <code>Unknown</code> ones (7%). Fifteen of the 38 real triggers are in the first <code>Unknown</code> segment (events 11000&ndash;11067), the one without aligned pulses; the other 23 are spread over segments 2&ndash;8 (1 to 9 per segment).</p>
 <figure>
-  <img src="img/dump1_noise_sel_randoms.png" alt="Three panels comparing the 179-trace noise selection, its randoms subset and its real-trigger subset: bstd histogram, bline histogram, and mean raw FFT power against frequency">
-  <figcaption>The 179-trace noise selection (black), the part that passes <code>randoms</code> (orange, 141) and the part that passes <code>real_triggers</code> (blue, 38). Left: <code>bstd</code>. Middle: <code>bline</code>. Right: mean raw |FFT|<sup>2</sup> of the baseline-subtracted traces (unnormalized, so only the comparison between curves means anything).</figcaption>
+  <img src="img/dump1_noise_sel_traces.png" alt="Thirty randomly chosen baseline-subtracted traces from the randoms subset (left) and from the real-trigger subset (right), flat noise within about plus or minus 8 counts">
+  <figcaption>Thirty randomly chosen traces from each part of the selection (of 141 randoms and 38 real triggers), baseline-subtracted, zoomed to &plusmn;15 counts. The leading glitch, up to about 350 counts in a few traces, runs off the top. Both are flat noise with a slow drift of a couple of counts across the trace.</figcaption>
+</figure>
+<figure>
+  <img src="img/dump1_noise_sel_randoms.png" alt="Three panels comparing the 179-trace noise selection, its randoms subset and its real-trigger subset: bstd histogram, bline histogram, and mean raw FFT power against frequency; the spectra agree above 10 kHz">
+  <figcaption>The 179-trace noise selection (black), the part that passes <code>randoms</code> (orange, 141) and the part that passes <code>real_triggers</code> (blue, 38). Left: <code>bstd</code>. Middle: <code>bline</code>. Right: mean raw |FFT|<sup>2</sup> of the baseline-subtracted traces with the leading 10 samples dropped (unnormalized, so only the comparison between curves means anything).</figcaption>
 </figure>
 <ul>
   <li><strong>Baseline scatter</strong> is nearly the same: <code>bstd</code> medians 1.513 (randoms) and 1.580 (real triggers), with the real triggers a little broader on the high side.</li>
   <li><strong>Baseline level.</strong> 18 of the 141 randoms have <code>bline</code> above 3300 (a separate group near 3400 ADC counts); only 1 of the 38 real triggers does.</li>
-  <li><strong>Spectrum.</strong> The real triggers have less power between about 1 and 60 kHz. The 204 kHz line is in both groups, at a similar height (mean |FFT|<sup>2</sup> in that bin: 6.6&times;10<sup>4</sup> randoms, 7.1&times;10<sup>4</sup> and 9.5&times;10<sup>4</sup> for the two real-trigger groups below).</li>
+  <li><strong>Spectrum.</strong> The mean spectra of the two groups agree, including the 204 kHz line (mean |FFT|<sup>2</sup> in that bin: 9.0&times;10<sup>4</sup> for randoms before event 11000, 9.1&times;10<sup>4</sup> and 1.06&times;10<sup>5</sup> for the real triggers of segment 1 and of later segments).</li>
 </ul>
 
-<p>The label and the time are tangled: 139 of the 141 randoms are before event 11000 and every real trigger is after it. Splitting the real triggers at the end of segment 1 shows the difference is not a simple randoms-versus-real one (mean raw |FFT|<sup>2</sup> in each band, relative to the 139 randoms before event 11000):</p>
+<div class="callout"><strong class="tag">Correction</strong>
+<p>The first version of this section, published earlier on 25 Sept, said the real triggers have less power between about 1 and 60 kHz, in the band where a pulse has its signal, and that this difference was largest in segment 1. <strong>That was wrong.</strong> It came from averaging spectra of whole traces: six of the 141 randoms (events 10176, 10185, 10470, 10517, 10807 and 10971) begin with a glitch, a step of 150&ndash;350 counts lasting 5&ndash;8 samples, and one real trigger has one too (170 counts). <code>bstd</code> and <code>bline</code> skip the first 10 samples, but an FFT does not, and a step that large puts a broad spectrum into the mean.</p></div>
+<figure>
+  <img src="img/dump1_glitch_randoms.png" alt="First 40 samples of six randoms: each starts 150 to 350 counts above the baseline for 5 to 8 samples, then drops to zero">
+  <figcaption>The first 40 samples of the six randoms with the most 10&ndash;50 kHz power in the whole-trace spectrum.</figcaption>
+</figure>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th></th><th class="num">Whole trace: mean</th><th class="num">median</th><th class="num">Leading 10 samples dropped: mean</th><th class="num">median</th></tr></thead>
+  <tbody>
+    <tr><td>Randoms (141)</td><td class="num">1.14&times;10<sup>5</sup></td><td class="num">1.20&times;10<sup>4</sup></td><td class="num">1.16&times;10<sup>4</sup></td><td class="num">1.16&times;10<sup>4</sup></td></tr>
+    <tr><td>Real triggers (38)</td><td class="num">3.92&times;10<sup>4</sup></td><td class="num">1.20&times;10<sup>4</sup></td><td class="num">1.16&times;10<sup>4</sup></td><td class="num">1.15&times;10<sup>4</sup></td></tr>
+  </tbody>
+</table></div>
+<p>Per-trace power in the 10&ndash;50 kHz band (raw |FFT|<sup>2</sup>, mean over the band). The medians never differed; the mean of the whole-trace spectra of the randoms was ten times its median because of the glitch traces. With the first 10 samples dropped, mean and median agree in both groups.</p>
+<p>The corrected band-by-band comparison, with the real triggers split at the end of segment 1 (139 randoms before event 11000; mean raw |FFT|<sup>2</sup>, glitch samples dropped):</p>
 <div class="table-scroll"><table class="compact">
   <thead><tr><th>Band (Hz)</th><th class="num">Randoms before 11000 (139)</th><th class="num">Real, segment 1 (15)</th><th class="num">Real, later (23)</th><th class="num">Later / randoms</th><th class="num">Segment 1 / randoms</th></tr></thead>
   <tbody>
-    <tr><td>1000&ndash;3000</td><td class="num">2.62&times;10<sup>5</sup></td><td class="num">8.53&times;10<sup>4</sup></td><td class="num">2.16&times;10<sup>5</sup></td><td class="num">0.82</td><td class="num">0.33</td></tr>
-    <tr><td>3000&ndash;10,000</td><td class="num">2.09&times;10<sup>5</sup></td><td class="num">4.47&times;10<sup>4</sup></td><td class="num">1.16&times;10<sup>5</sup></td><td class="num">0.55</td><td class="num">0.21</td></tr>
-    <tr><td>10,000&ndash;50,000</td><td class="num">1.15&times;10<sup>5</sup></td><td class="num">1.20&times;10<sup>4</sup></td><td class="num">5.70&times;10<sup>4</sup></td><td class="num">0.49</td><td class="num">0.10</td></tr>
-    <tr><td>50,000&ndash;150,000</td><td class="num">1.59&times;10<sup>4</sup></td><td class="num">7.90&times;10<sup>3</sup></td><td class="num">1.21&times;10<sup>4</sup></td><td class="num">0.76</td><td class="num">0.50</td></tr>
-    <tr><td>250,000&ndash;310,000</td><td class="num">8.61&times;10<sup>3</sup></td><td class="num">6.78&times;10<sup>3</sup></td><td class="num">7.32&times;10<sup>3</sup></td><td class="num">0.85</td><td class="num">0.79</td></tr>
+    <tr><td>1000&ndash;3000</td><td class="num">9.28&times;10<sup>4</sup></td><td class="num">8.56&times;10<sup>4</sup></td><td class="num">1.43&times;10<sup>5</sup></td><td class="num">1.54</td><td class="num">0.92</td></tr>
+    <tr><td>3000&ndash;10,000</td><td class="num">4.40&times;10<sup>4</sup></td><td class="num">4.45&times;10<sup>4</sup></td><td class="num">5.08&times;10<sup>4</sup></td><td class="num">1.16</td><td class="num">1.01</td></tr>
+    <tr><td>10,000&ndash;50,000</td><td class="num">1.16&times;10<sup>4</sup></td><td class="num">1.17&times;10<sup>4</sup></td><td class="num">1.16&times;10<sup>4</sup></td><td class="num">1.00</td><td class="num">1.01</td></tr>
+    <tr><td>50,000&ndash;150,000</td><td class="num">7.83&times;10<sup>3</sup></td><td class="num">7.86&times;10<sup>3</sup></td><td class="num">7.87&times;10<sup>3</sup></td><td class="num">1.01</td><td class="num">1.00</td></tr>
+    <tr><td>250,000&ndash;310,000</td><td class="num">6.79&times;10<sup>3</sup></td><td class="num">6.75&times;10<sup>3</sup></td><td class="num">6.79&times;10<sup>3</sup></td><td class="num">1.00</td><td class="num">0.99</td></tr>
   </tbody>
 </table></div>
-<p>The real triggers of segment 1 have the least mid-band power (10&ndash;50 kHz power a tenth of the randoms&rsquo;), the later ones are in between (about half). So the spectrum changes by segment as well as, or instead of, by trigger label, and with 2 randoms after event 11000 there is no way in this dump to separate a trigger-type effect from a change in time. The averages are over 15 and 23 traces, so they are noisy.</p>
+<p>Above 10 kHz the three groups agree to about 1%. Below 10 kHz the later real triggers are somewhat higher (1.54 times in the 1&ndash;3 kHz band, 1.16 times in 3&ndash;10 kHz); those bands contain only a few frequency bins, the group is 23 traces, and no uncertainty has been estimated, so this is not established as a difference.</p>
 
-<p><strong>What adding <code>randoms</code> does to the selection:</strong> it removes 38 of 179 traces (21%), which are the ones with the lowest mid-band noise power and the fewest high-<code>bline</code> traces; the remaining 141 are 97% from before event 11000. It leaves the <code>bstd</code> distribution and the 204 kHz line essentially unchanged.</p>
-<p>Note that the 38 real triggers in the selection are, by construction, traces with no pulse in Detector 0 / Channel 0 after sample 500 (and none in samples 500&ndash;1000 either). Whatever triggered those events was not a pulse on this channel; other channels and detectors were not looked at.</p>
+<p><strong>What adding <code>randoms</code> does to the selection:</strong> it removes 38 of 179 traces (21%). The remaining 141 are 97% from before event 11000. In this dump it leaves the <code>bstd</code> distribution, the mean spectrum above 10 kHz and the 204 kHz line unchanged; the only difference found is the group of 18 randoms with <code>bline</code> near 3400. There is still no way in this dump to separate a trigger-type effect from a change in time, since only 2 randoms come after event 11000 and every real trigger does.</p>
+<p>The 38 real triggers in the selection are, by construction, traces with no pulse in Detector 0 / Channel 0 after sample 500 (and none in samples 500&ndash;1000 either). Whatever triggered those events was not a pulse on this channel; other channels and detectors were not looked at.</p>
+
+<p>The leading glitch matters for any spectrum study of this dump: <a href="note-03-noise-psd.html">Note 3</a> and later spectra should be checked for it (a glitch this size is enough to change a mean spectrum by an order of magnitude in the signal band).</p>
 
 <h2>Reading</h2>
 <ul>

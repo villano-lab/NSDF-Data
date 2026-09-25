@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 2a: bstd against time</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>Why does <code>bstd_1000</code> have so many more high-<code>bstd</code> traces than <code>bstd</code>? (series 07221203_2025, dump 1)</h1>
+<p class="meta"><strong>Note 2a</strong> &middot; Author(s): Anthony Villano &middot; 25 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<h2>Code Repository</h2>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/f99edaa/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>f99edaa</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/f99edaa/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities.bstd</code> / <code>bstd_1000</code> (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>f99edaa</code>.</li>
+</ul>
+
+<h2>The question</h2>
+<p><a href="note-02-noise-selection.html">Note 2</a> found many more high-<code>bstd</code> traces with the 1000-sample window than with the 500-sample one (25% vs. 2% above <code>bstd</code> = 32.48 over all 1517 traces of Detector 0 / Channel 0). Two possible explanations:</p>
+<ol>
+  <li><strong>Random pulses.</strong> If pulses land at random positions in the 4096-sample trace, the chance of one inside the window should scale with its length, 1000/4096 vs. 500/4096, only a factor of 2. A pulse that starts earlier has more time to raise the scatter, which could push the ratio somewhat above 2.</li>
+  <li><strong>A change in the data.</strong> At some point the dump could switch to triggered data whose trigger point sits between sample 500 and 1000.</li>
+</ol>
+<p>Starting point: <code>bstd</code> and <code>bstd_1000</code> plotted against time. Events are numbered in time order within a dump (checked: strictly increasing for these traces), so the event number is used as the time axis.</p>
+
+<h2><code>bstd</code> and <code>bstd_1000</code> against event number</h2>
+<figure>
+  <img src="img/dump1_bstd_time.png" alt="bstd (top) and bstd_1000 (bottom) against event number for dump 1, log y axis, with grey bands where the trigger type is Unknown">
+  <figcaption>Detector 0 / Channel 0, dump F0001, 1517 traces. Grey bands: events whose recorded trigger type is <code>Unknown</code>. Dashed line: <code>bstd</code> = 32.48.</figcaption>
+</figure>
+
+<p>The dump has two distinct parts. Events 10000&ndash;10999 (1000 traces, all trigger type <code>Physics</code>) look alike in both panels: mostly quiet, with a sparse scatter of high values. From event 11000 on, the recorded trigger type alternates between runs of <code>Unknown</code> events (8 runs, 49&ndash;76 events long, 509 traces in all) and single <code>Physics</code> events. Inside the <code>Unknown</code> runs <code>bstd</code> stays quiet while <code>bstd_1000</code> jumps to about 100 or more for most traces.</p>
+
+<h2>The fractions, by region</h2>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>Region</th><th class="num">Traces</th><th class="num">Median <code>bstd</code></th><th class="num">Median <code>bstd_1000</code></th><th class="num">% <code>bstd</code> &gt; 32.48</th><th class="num">% <code>bstd_1000</code> &gt; 32.48</th><th class="num">Ratio</th></tr></thead>
+  <tbody>
+    <tr><td>Events before 11000 (all Physics)</td><td class="num">1000</td><td class="num">1.53</td><td class="num">1.61</td><td class="num">2.7</td><td class="num">5.9</td><td class="num">2.2</td></tr>
+    <tr><td>From 11000 on, trigger Unknown</td><td class="num">509</td><td class="num">1.56</td><td class="num">78.20</td><td class="num">0.8</td><td class="num">62.7</td><td class="num">79.8</td></tr>
+    <tr><td>From 11000 on, trigger Physics</td><td class="num">8</td><td class="num">&nbsp;</td><td class="num">&nbsp;</td><td class="num">12.5</td><td class="num">12.5</td><td class="num">1.0</td></tr>
+    <tr><td>All traces</td><td class="num">1517</td><td class="num">&nbsp;</td><td class="num">&nbsp;</td><td class="num">2.1</td><td class="num">25.0</td><td class="num">11.8</td></tr>
+  </tbody>
+</table></div>
+<p>Of the 379 traces with <code>bstd_1000</code> &gt; 32.48, 59 (16%) come from events before 11000 and 319 (84%) from <code>Unknown</code>-trigger events after it.</p>
+
+<h2>Reading</h2>
+<ul>
+  <li><strong>Idea 1 holds for the first 1000 events.</strong> With only <code>Physics</code> traces, the 1000-sample window has 2.2 times as many high-<code>bstd</code> traces as the 500-sample one (59 vs. 27), close to the naive factor of 2. The small excess is in the direction expected if earlier pulses have more time to raise the scatter, but with counts this small it does not establish that.</li>
+  <li><strong>Idea 2 matches the rest of the dump.</strong> The 25% vs. 2% headline number is almost entirely the <code>Unknown</code>-trigger runs from event 11000 on, where the ratio is about 80 and no random-placement argument applies. There the 500-sample window is quiet (median 1.56, the same as before) and the 1000-sample window is loud, so whatever raises the scatter begins after sample 500 and before sample 1000 in most of these traces. This is inferred from <code>bstd</code> alone; the onset sample itself has not been measured.</li>
+</ul>
+
+<div class="callout"><strong class="tag">Caveats</strong>
+<ul>
+  <li>What trigger type <code>Unknown</code> means is not established. Its coincidence with the change in <code>bstd_1000</code> is an observation, not an explanation.</li>
+  <li>The event number is the time axis. The <code>.csv</code> timestamps have only 57 distinct values (one-second resolution), spanning 02:25:47 to 02:26:45 UTC on 4 Dec 2022, so they cannot order events within a second.</li>
+  <li>Only 8 <code>Physics</code> traces come after event 11000, too few to compare with the earlier <code>Physics</code> ones.</li>
+  <li>This is one detector and channel of one dump.</li>
+</ul></div>
+
+<h2>Next steps</h2>
+<ul>
+  <li>Plot sample-by-sample averages (or an overlay) of the <code>Unknown</code>-trigger traces to see where the excursion starts, and whether it is a fixed sample.</li>
+  <li>Find out what <code>Unknown</code> trigger type means, and whether the same alternation appears in dumps 2&ndash;5, other channels and other series.</li>
+  <li>Decide whether the Note 2 selection cuts should be restricted to events before 11000, or made on the trigger type, and whether the Note 2 fractions need to be restated by region.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

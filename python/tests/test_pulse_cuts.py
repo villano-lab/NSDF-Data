@@ -121,3 +121,17 @@ def test_excursion_below_percentile():
     np.testing.assert_array_equal(
         cuts.excursion_below_percentile(pulses, config, percentile=30), expected
     )
+
+
+def test_randoms_and_real_triggers_split_on_the_trigger_label():
+    triggers = np.array(["Physics", "Unknown", "Physics", "Unknown", "Other"])
+
+    np.testing.assert_array_equal(cuts.randoms(triggers), [True, False, True, False, False])
+    np.testing.assert_array_equal(cuts.real_triggers(triggers), [False, True, False, True, False])
+    # "Other" is in neither, so the two cuts are not complements
+    assert not np.any(cuts.randoms(triggers) & cuts.real_triggers(triggers))
+
+
+def test_randoms_label_can_be_overridden_and_accepts_a_list():
+    np.testing.assert_array_equal(cuts.randoms(["a", "b"], label="b"), [False, True])
+    np.testing.assert_array_equal(cuts.real_triggers(["a", "b"], label="a"), [True, False])

@@ -7,11 +7,15 @@ class FakeCdms:
     """Minimal stand-in for nsdf_dark_matter's `cdms` object -- just enough
     surface (`get_detector_channels`) for `pulse_io` to depend on."""
 
-    def __init__(self, data):
+    def __init__(self, data, triggers=None):
         self._data = data  # detector_id -> (n_channels, n_samples) array
+        self._triggers = triggers or {}  # event id string -> trigger_type
 
     def get_detector_channels(self, detector_id):
         return self._data[detector_id]
+
+    def get_event_metadata(self, event):
+        return type("Meta", (), {"trigger_type": self._triggers[event]})()
 
 
 def test_load_channel_batch_stacks_correct_channel_in_order():
@@ -63,3 +67,12 @@ def test_load_channel_batch_multi_pools_and_labels_dumps():
     np.testing.assert_array_equal(dumps, ["F0002", "F0003", "F0003"])
     np.testing.assert_array_equal(ids, ["100_0_Phonon_8", "200_0_Phonon_8", "201_0_Phonon_8"])
     assert batch.shape == (3, 8)
+
+
+def test_trigger_types_looks_up_each_ids_event_in_order():
+    ids = ["100_0_Phonon_8", "100_1_Phonon_8", "101_0_Phonon_8"]
+    cdms = FakeCdms({}, triggers={"100": "Physics", "101": "Unknown"})
+
+    out = io.trigger_types(cdms, ids)
+
+    np.testing.assert_array_equal(out, ["Physics", "Physics", "Unknown"])

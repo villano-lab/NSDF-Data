@@ -5,6 +5,9 @@ array of shape ``(...,)``. Cuts are plain functions of the quantities in
 `pulse_quantities.py` -- combine them with ordinary `&`/`|`/`~` rather than a
 special combinator API.
 
+`randoms` and `real_triggers` are the exception: they take an array of trigger-type
+labels (see `pulse_io.trigger_types`), not pulses, since that is per-event metadata.
+
 Percentile-based cuts (`quiet_baseline`, `excursion_below_percentile`) compute
 the percentile from the batch passed in, i.e. "quiet relative to this
 population" -- pass the same batch you're about to select from, not some other
@@ -150,3 +153,29 @@ def excursion_band_AI(pulses, config: PulseConfig = DEFAULT_CONFIG, low=0.5, hig
     band = excursion_band(pulses, config, low=low, high=high, log_ratio=log_ratio)
     pulse_like = looks_like_pulse(pulses, config, min_duration=min_duration, duration=duration)
     return band & ~pulse_like
+
+
+RANDOM_TRIGGER_LABEL = "Physics"
+REAL_TRIGGER_LABEL = "Unknown"
+
+
+@status(UNDER_DEVELOPMENT, note="assumes the dump's trigger_type labels are swapped "
+        "relative to their names: events recorded as 'Physics' are taken to be "
+        "randoms (fixed-count random triggers) and 'Unknown' to be real triggers. "
+        "That mapping is a working assumption from 07221203_2025_F0001 (see Note 2a), "
+        "not confirmed against the DAQ configuration or the nsdf library")
+def randoms(trigger_types, label: str = RANDOM_TRIGGER_LABEL):
+    """True where the recorded trigger type equals `label` (default `"Physics"`), taken
+    to be random triggers. Takes the trigger-type array from `pulse_io.trigger_types`
+    rather than pulses."""
+    return np.asarray(trigger_types) == label
+
+
+@status(UNDER_DEVELOPMENT, note="the other half of the randoms assumption: events "
+        "recorded as 'Unknown' are taken to be real (pulse-triggered) events. Not "
+        "confirmed; see `randoms`")
+def real_triggers(trigger_types, label: str = REAL_TRIGGER_LABEL):
+    """True where the recorded trigger type equals `label` (default `"Unknown"`), taken
+    to be real triggers. Takes the trigger-type array from `pulse_io.trigger_types`
+    rather than pulses."""
+    return np.asarray(trigger_types) == label

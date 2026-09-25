@@ -40,6 +40,15 @@ def load_channel_batch(cdms, detector_ids, channel: int):
 
 
 @status(DONE)
+def trigger_types(cdms, detector_ids):
+    """The `trigger_type` string the dump's `.csv` records for each id's event, as an
+    array aligned with `detector_ids` (e.g. `"Physics"`, `"Unknown"`). Metadata is per
+    event, so the three detectors of one event share a value. Feed it to
+    `pulse_cuts.randoms` / `real_triggers`."""
+    return np.array([cdms.get_event_metadata(event_id(d)).trigger_type for d in detector_ids])
+
+
+@status(DONE)
 def load_channel_batch_multi(cdms_by_dump, channel: int, detector=None):
     """Like `load_channel_batch`, pooled across multiple dumps.
 

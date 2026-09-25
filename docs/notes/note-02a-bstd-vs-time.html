@@ -16,8 +16,8 @@
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/50ab95a/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>50ab95a</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/50ab95a/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities.bstd</code> / <code>bstd_1000</code> (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>50ab95a</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/f906632/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb"><code>07221203_2025_dump1_bstd_time.ipynb</code></a> &mdash; everything below. Pinned to <code>f906632</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/f906632/python"><code>python/</code></a> &mdash; <code>pulse_io</code> and <code>pulse_quantities</code> (<code>bstd</code>, <code>bstd_1000</code>, <code>half_max_time_us</code>) (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>f906632</code>.</li>
 </ul>
 
 <h2>The question</h2>
@@ -87,6 +87,22 @@
   <figcaption>Onset sample of each high-tail trace against event number (grey: <code>Unknown</code> trigger). The aligned pulses form the line at the bottom, starting at event 11071; the scattered points are unaligned pulses.</figcaption>
 </figure>
 <p>The aligned pulses start in segment 2 and later. Segment 1 has 5 tail traces and none aligned. Eight tail traces inside segments 2&ndash;8 are not aligned.</p>
+
+<h2>When do the <code>Unknown</code>-trigger pulses rise?</h2>
+<p>A new library quantity, <code>half_max_time_us</code> (<a href="note-01a-pulse-library-structure.html">Note 1a</a>), gives the time in microseconds from the start of the trace (1.6 &micro;s per sample) at which a pulse first reaches 50% of its own maximum deviation. It is measured with the 500-sample window, and only means something for a trace that has a pulse, so the histograms use the high-tail selection above as &ldquo;has a pulse&rdquo;. It is still under development, like <code>rise_sample</code>, on which it is built.</p>
+<figure>
+  <img src="img/dump1_half_max_time_hist.png" alt="Left: histogram of the 50% rise time over the whole trace for Unknown-trigger and early Physics high-tail traces, log y axis; the Unknown traces pile up in one bin near 800 to 960 microseconds. Right: zoom on Unknown traces, a single peak between 823 and 870 microseconds">
+  <figcaption>Time at which high-tail pulses reach 50% of their maximum. Left: whole trace, 160 &micro;s bins, log y. Right: <code>Unknown</code> trigger only, one sample (1.6 &micro;s) per bin; sample 500 is at 800 &micro;s (dotted).</figcaption>
+</figure>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>High-tail traces</th><th class="num">Traces</th><th class="num">10th / 50th / 90th percentile (&micro;s)</th><th class="num">At or before 870 &micro;s</th></tr></thead>
+  <tbody>
+    <tr><td><code>Unknown</code> trigger</td><td class="num">260</td><td class="num">827 / 836 / 853</td><td class="num">246 (95%)</td></tr>
+    <tr><td>&nbsp;&nbsp;without segment 1</td><td class="num">255</td><td class="num">827 / 835 / 849</td><td class="num">246 (96%)</td></tr>
+    <tr><td><code>Physics</code>, events before 11000</td><td class="num">85</td><td class="num">1288 / 3346 / 6016</td><td class="num">2 (2%)</td></tr>
+  </tbody>
+</table></div>
+<p><strong>Most <code>Unknown</code>-trigger pulses reach half of their maximum about 836 &micro;s into the trace</strong> (sample 522), in a narrow peak: 80% of them between 827 and 853 &micro;s (samples 517&ndash;533), the earliest at 823 &micro;s. Sample 500 is at 800 &micro;s, so the half-maximum point comes about 35 &micro;s (22 samples) after the end of the 500-sample window. The half-maximum time also includes each pulse&rsquo;s own rise time and amplitude, so it is later than the start of the pulse (the 10% crossing above has a median at sample 507) and the spread of about 25 &micro;s is not all trigger jitter. The <code>Physics</code> traces before event 11000, by contrast, are spread over the whole trace. The 249 <code>Unknown</code>-trigger traces that are not in the high tail have no pulse selected and are not in this histogram.</p>
 
 <h2>Reading</h2>
 <ul>

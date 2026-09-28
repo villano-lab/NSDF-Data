@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 4: python/ library development and validation</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>python/ pulse library: development history and validation</h1>
+<p class="meta"><strong>Note 4</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<p>How the library came about, what changed when, and how it was checked. What the library <em>is</em> &mdash; the modules, the function tables with their status, and the done / under-development convention &mdash; is in <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</p>
+
+<h2>Code Repository</h2>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the library and its tests. Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python/tests"><code>python/tests/</code></a> &mdash; the unit tests. Pinned to <code>085aa3d</code>.</li>
+</ul>
+
+<h2>Why it was written</h2>
+<p>Three notebooks (<code>07221203_2025_dump1_noise.ipynb</code>, <code>07221203_2025_dump2_pulse.ipynb</code> and <code>good_pulses_overlay.ipynb</code>) had each grown their own copy of the same handful of computations, with the same constants (<code>PRETRIGGER_SAMPLES</code>, <code>GLITCH_SAMPLES</code>) hardcoded separately in each. The request was for a reusable library of pulse operations, cuts and derived quantities with a uniform input for every category.</p>
+
+<h2>Timeline</h2>
+<div class="table-scroll"><table>
+  <thead><tr><th>Date</th><th>Commit</th><th>Change</th><th class="num">Functions</th><th class="num">Tests</th></tr></thead>
+  <tbody>
+    <tr><td>2026-09-22</td><td><code>b23b9ed</code></td><td>Library created: config, quantities, cuts, operations, I/O and the status-tagging mechanism; the three notebooks refactored to use it. Two functions (<code>rise_sample</code>, <code>excursion_below_percentile</code>) tagged under development.</td><td class="num">20</td><td class="num">29</td></tr>
+    <tr><td>2026-09-23</td><td><code>c3d6754</code></td><td>Named log-ratio cuts <code>excursion_band</code> and <code>excursion_band_loose</code> added (from <a href="note-02-noise-selection.html">Note 2</a>), with <code>log_excursion_ratio</code>. Pulse veto added: <code>excursion_duration</code>, <code>looks_like_pulse</code>, <code>excursion_band_AI</code> (<a href="note-06-ai-pulse-veto-archive.html">Note 6</a>). Old generic <code>excursion_band</code> renamed <code>ratio_band</code>.</td><td class="num">26</td><td class="num">35</td></tr>
+    <tr><td>2026-09-23</td><td><code>894ef9d</code></td><td>HDF5 good-event archive added (<code>pulse_archive.py</code>: save, load, list).</td><td class="num">29</td><td class="num">40</td></tr>
+    <tr><td>2026-09-23</td><td><code>8b0ab40</code></td><td>Branch 2 cuts renamed <strong>Loose</strong> (<code>excursion_band_loose</code>, [0.5, 1.0)) and <strong>Tight</strong> (<code>excursion_band</code>, [0.5, 0.7)) in the notebook, plots and docstrings, replacing &ldquo;Best&rdquo; and &ldquo;Tightened&rdquo;. No behavior change.</td><td class="num">29</td><td class="num">40</td></tr>
+    <tr><td>2026-09-25</td><td><code>f0196bd</code></td><td>Fixed-window baseline quantities added: <code>bstd</code> (std of the first 500 samples by default, glitch samples skipped) and <code>bstd_1000</code> (first 1000). <code>pretrigger_std</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bstd</code> arrays exactly.</td><td class="num">31</td><td class="num">43</td></tr>
+    <tr><td>2026-09-25</td><td><code>3e4efc6</code></td><td>Baseline-level companions added: <code>bline</code> (mean of the first 500 samples by default, glitch samples skipped) and <code>bline_1000</code>, built on <code>pretrigger_mean</code>. <code>pretrigger_mean</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bmean</code> arrays exactly.</td><td class="num">33</td><td class="num">46</td></tr>
+    <tr><td>2026-09-25</td><td><code>61c374f</code></td><td>Time-of-rise quantity added: <code>half_max_time_us</code>, the time in microseconds (1.6 &micro;s per sample) at which a pulse first reaches 50% of its maximum deviation, built on <code>rise_sample</code> and tagged under development. It needs a window that ends before the pulse (500 samples for the dump 1 triggers). Used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td><td class="num">34</td><td class="num">49</td></tr>
+    <tr><td>2026-09-25</td><td><code>e6033f0</code></td><td>Trigger-type cuts added: <code>randoms</code> (recorded <code>Physics</code>) and <code>real_triggers</code> (recorded <code>Unknown</code>) in <code>pulse_cuts</code>, plus <code>pulse_io.trigger_types</code> to read the label from the dump&rsquo;s <code>.csv</code>. The two cuts take the trigger-type array rather than pulses, and are tagged under development because the label mapping (assumed swapped) is unconfirmed. Used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td><td class="num">37</td><td class="num">52</td></tr>
+  </tbody>
+</table></div>
+<p>Function counts are status-tagged functions (<code>PulseConfig</code> and the <code>status</code> machinery are not counted). The current inventory, 29 done and 8 under development, is in <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</p>
+
+<h2>Validation</h2>
+<h3>Refactoring reproduced the notebooks&rsquo; numbers</h3>
+<p>After each notebook was switched to the library it was re-run end to end and its printed results compared with the earlier ad-hoc version:</p>
+<ul>
+  <li>first noise cut on Detector 0 / Channel 0: <code>bstd_cap = 32.48</code>, <code>ratio_thresh = 1.93</code>, <strong>41 of 1517</strong> traces (<a href="note-02-noise-selection.html">Note 2</a>);</li>
+  <li>triggered-pulse cut over dumps 2&ndash;5: <strong>10 of 11,642</strong> traces (<a href="note-05-triggered-pulses.html">Note 5</a>);</li>
+  <li><code>good_pulses_overlay.ipynb</code> picked up one small intentional change from adopting the shared <code>PulseConfig</code>: its baseline now also skips the leading glitch samples, like the other two. Re-running showed a negligible effect on its already-quiet traces.</li>
+</ul>
+
+<h3>Unit tests</h3>
+<p>There are 52 synthetic-data unit tests (no dependence on real detector data or <code>nsdf_dark_matter</code>), all passing. They run under the base conda environment, since <code>pytest</code> is not installed in <code>darkmatter_cli_env</code>: <code>cd python &amp;&amp; python -m pytest tests/</code>. <code>h5py</code> was installed into <code>darkmatter_cli_env</code> on 2026-09-23 for the archive module.</p>
+
+<p>One test began life with a wrong expected value and, once corrected, became a regression test for the pretrigger-contamination effect of <a href="note-02-noise-selection.html">Note 2</a>: a spike confined to the pretrigger window drags the baseline mean far enough that flat post-trigger samples end up looking like the largest excursion.</p>
+
+<h3>Checks on real data</h3>
+<p>The new cuts were checked against real Detector 0 / Channel 0 data, not just synthetic tests. <code>excursion_band</code> and <code>excursion_band_loose</code> reproduced the notebook&rsquo;s inline masks exactly (192 and 744 of 1517). The first version of <code>excursion_duration</code> passed its unit test but failed on real data, flagging every trace of the Tight cut as a pulse, and was replaced by the consecutive-run definition (details in Note 6).</p>
+
+<h2>Naming change on 2026-09-23</h2>
+<p>The original generic <code>excursion_band(low, high)</code> thresholded the linear ratio. To free the name for the specific <code>log10(ratio)</code> cut, the generic function was renamed <code>ratio_band</code>. Its one caller, the <code>ratio &gt; 9</code> cut in <code>07221203_2025_dump2_pulse.ipynb</code> (<a href="note-05-triggered-pulses.html">Note 5</a>), was updated and re-run to confirm it still selects the same 10 traces. An early attempt to edit that notebook programmatically silently did nothing (the cell source was a single string, not a list of lines) and was only caught because the re-run failed.</p>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>Thresholds chosen on one dataset, such as the default <code>min_duration = 50</code>, need re-checking on other channels, detectors and dumps.</li>
+  <li>Add a normalized one-sided PSD quantity (see <a href="note-03-noise-psd.html">Note 3</a>).</li>
+  <li>Add a drift or slope quantity so a cut can tell a drifting baseline from a pulse (see <a href="note-05-triggered-pulses.html">Note 5</a>).</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 2: Noise-pulse selection</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>Noise-pulse selection on Detector 0 / Channel 0 (series 07221203_2025, dump 1)</h1>
+<p class="meta"><strong>Note 2</strong> &middot; Author(s): Anthony Villano &middot; 14 Sept 2026 &middot; Status: <span class="status complete">Complete (2026-09-23)</span></p>
+
+<h2>Code Repository</h2>
+<p>Notebooks and library files this note rests on, each pinned to the commit that produced the results below:</p>
+<ul class="repo">
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/1958479/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the main notebook for everything below. Pinned to <code>1958479</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb"><code>dump1_noise_pulses.ipynb</code></a> &mdash; the original first-pass notebook, superseded but kept for history. Pinned to <code>c892af4</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the pulse library the notebook now uses (see <a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
+</ul>
+
+<h2>Goal and setup</h2>
+<p>Pick out clean noise traces on <strong>Detector 0, Channel 0</strong> of series <code>07221203_2025</code>, dump <code>F0001</code> (Run76: Side2, PuBe, Pb&amp;poly lead stack and borax, &minus;83.2 V), as the input to a noise-PSD study. The dump has 4551 channel groups; Detector 0 / Channel 0 contributes <strong>1517</strong> traces of 4096 samples each.</p>
+
+<h3>Definitions</h3>
+<p>Let <var>x<sub>i</sub></var> be sample <var>i</var> of a trace (<var>i</var> = 0 &hellip; 4095, in ADC counts), <var>N</var> the length of the pretrigger window (1000 or 500 samples; both are compared below), and <var>g</var> = 10 the number of leading glitch samples that are skipped.</p>
+
+<div class="table-scroll"><table>
+  <thead><tr><th>Quantity</th><th>Definition</th><th>Library function</th></tr></thead>
+  <tbody>
+    <tr><td><code>bmean</code></td><td>Mean of <var>x<sub>i</sub></var> over the pretrigger window, <var>i</var> = <var>g</var> &hellip; <var>N</var>&minus;1</td><td><code>pretrigger_mean</code></td></tr>
+    <tr><td><code>bstd</code></td><td>Standard deviation of the same samples (population form, divisor <var>N</var>&minus;<var>g</var>)</td><td><code>pretrigger_std</code></td></tr>
+    <tr><td><code>dev</code></td><td>Largest deviation from the baseline <em>after</em> the pretrigger window, either polarity: max over <var>i</var> = <var>N</var> &hellip; 4095 of |<var>x<sub>i</sub></var> &minus; <code>bmean</code>|</td><td><code>max_deviation</code></td></tr>
+    <tr><td><strong><code>ratio</code></strong></td><td><strong><code>dev / bstd</code></strong></td><td><code>excursion_ratio</code></td></tr>
+    <tr><td><code>log10(ratio)</code></td><td>Base-10 logarithm of <code>ratio</code>, the quantity plotted and cut on throughout this note (a trace with <code>dev</code> = 0 would give &minus;&infin; and is excluded; none occur here)</td><td><code>log_excursion_ratio</code></td></tr>
+  </tbody>
+</table></div>
+
+<p><code>ratio</code> is dimensionless: it is the size of the trace&rsquo;s largest post-pretrigger excursion measured in units of the trace&rsquo;s <em>own</em> baseline scatter, so it does not depend on the overall scale of the trace. A large <code>ratio</code> means something after the pretrigger window stands well above the baseline noise (a pulse, a drift, or simply the largest noise fluctuation); what values to expect for pure noise, and what a small <code>ratio</code> means, is worked out in &ldquo;First cut, and why it is misleading&rdquo; below.</p>
+
+<p>Some traces have a brief (1&ndash;5 sample) electronic step glitch at the very start, which is why the first <var>g</var> = 10 samples are skipped in <code>bmean</code> and <code>bstd</code>. That fixes the glitch but not a real pulse that reaches into the pretrigger window.</p>
+
+<p><code>dev</code> is measured only after the pretrigger window on purpose. Measuring it over the same samples that set <code>bstd</code> puts a hard floor near <code>ratio ~ 1</code> whatever threshold is used, which made an initially requested threshold of 0.5 impossible to reach.</p>
+
+<h2>First cut, and why it is misleading</h2>
+<p>The first &ldquo;good noise&rdquo; cut kept traces with <code>bstd</code> below its own 75th percentile and <code>ratio</code> below its own 25th percentile (<code>bstd &lt; 32.48</code>, <code>ratio &lt; 1.93</code>): <strong>41 of 1517</strong> traces. Plotting <code>log10(ratio)</code> for all traces shows two features: a sharp spike near 0 and a broad hump from about 0.5 to 1.4.</p>
+
+<p><em>Not to be confused with</em> the 21-trace <code>good_noise_traces.csv</code> selection that feeds <a href="note-03-noise-psd.html">Note 3</a>: that comes from the original notebook, with different scope, thresholds and baseline definition, and shares no events with these 41. Note 3 compares the two.</p>
+
+<p>Repeating the calculation with the pretrigger window shortened from 1000 to 500 samples changes the picture:</p>
+<ul>
+  <li>the near-zero spike <strong>disappears</strong>;</li>
+  <li>the broad hump stays where it was, so it does not depend on the window length;</li>
+  <li>a new bump appears near <code>log10(ratio)</code> 2.0&ndash;2.4: pulses that start between sample 500 and 1000 are correctly seen as excursions with the shorter window, but were swallowed into the baseline with the longer one.</li>
+</ul>
+
+<figure>
+  <img src="img/dump1_ratio_hist_1000_vs_500.png" alt="Histogram of log10(ratio) for the 1000-sample and 500-sample pretrigger windows, overlaid">
+  <figcaption><code>log10(dev/bstd)</code> for Detector 0 / Channel 0, 1000-sample window vs. 500-sample window overlaid. The near-zero spike exists only with the 1000-sample window.</figcaption>
+</figure>
+
+<p>The reason is extreme-value statistics. <code>dev</code> is the maximum over roughly 3000 samples, so even pure Gaussian noise lands around <code>ratio ~ 3&ndash;8</code> (<code>log10</code> 0.5&ndash;0.9), not near 1. A trace only reaches <code>ratio ~ 1</code> if its own <code>bstd</code> is inflated, i.e. its pretrigger window already contains part of a pulse or a slow drift. <strong>The low-ratio spike is contamination, not quiet noise</strong> &mdash; the naive &ldquo;smaller ratio means quieter&rdquo; expectation is backwards.</p>
+
+<h2>Branch 1: the 1000-sample window</h2>
+<p>Widening the near-zero slice to <code>log10(ratio)</code> in [&minus;0.05, 0.48) gives &ldquo;Cut A&rdquo; (417 traces); the broad hump [0.5, 1.0) on the same window gives &ldquo;Cut B&rdquo; (892 traces).</p>
+
+<div class="grid2">
+  <figure><img src="img/dump1_cutA.png" alt="Cut A example traces, mostly showing a real pulse"><figcaption>Cut A: mostly traces with an obvious real pulse.</figcaption></figure>
+  <figure><img src="img/dump1_cutB.png" alt="Cut B example traces, mostly flat noise"><figcaption>Cut B: mostly flat noise (30 of 892 shown).</figcaption></figure>
+</div>
+
+<div class="callout">
+  <strong class="tag">Unverified.</strong>
+  The rise-time result in this subsection rests on <code>pulse_quantities.rise_sample</code>, a half-maximum-crossing heuristic that is tagged <code>under_development</code> and has only been used on this one analysis. Treat it as a working hypothesis. In the notebook this section is collapsed by default and carries the same warning.
+</div>
+
+<p>Hypothesis: if the Cut A pulses have similar amplitude, then the later a pulse rises, the less of the pretrigger window it contaminates, so <code>bstd</code> is smaller and <code>ratio</code> larger. Estimating a rise sample per trace (first post-pretrigger sample crossing half of <code>dev</code>) over all 417 traces gives a Pearson correlation of <strong>0.45</strong> between <code>ratio</code> and rise sample, with rise samples spanning 1000&ndash;2698. The scatter has two components: a floor at exactly 1000 (pulses that already crossed half-maximum inside the pretrigger window, so the method reports the window boundary), and a genuine rising trend above it (<code>ratio</code> 1.3&ndash;2.9 with rise sample 1200&ndash;2700). Consistent with the hypothesis, but not independently verified.</p>
+
+<figure>
+  <img src="img/dump1_rise_scatter.png" alt="Rise sample versus ratio across Cut A">
+  <figcaption>Cut A: estimated rise sample vs. <code>ratio</code>; correlation 0.45. Unverified &mdash; see the warning above.</figcaption>
+</figure>
+
+<h2>Branch 2: cut on the 500-sample window</h2>
+<p>Instead of refining Branch 1, cut directly on the clean hump of the 500-sample window. All of these use the 500-sample pretrigger window and <code>dev &gt; 0</code>.</p>
+
+<div class="table-scroll" style="max-width: 720px;">
+<table class="compact">
+  <thead><tr><th>Cut</th><th>Window</th><th><code>log10(ratio)</code></th><th class="num">Traces (of 1517)</th></tr></thead>
+  <tbody>
+    <tr><td>&ldquo;Good noise&rdquo; (first cut)</td><td>1000</td><td><code>bstd</code> &lt; 32.48 (p75) and <code>ratio</code> &lt; 1.93 (p25), i.e. <code>log10(ratio)</code> &lt; 0.29</td><td class="num">41</td></tr>
+    <tr><td>Cut A (widened)</td><td>1000</td><td>[&minus;0.05, 0.48)</td><td class="num">417</td></tr>
+    <tr><td>Cut B</td><td>1000</td><td>[0.5, 1.0)</td><td class="num">892</td></tr>
+    <tr><td>Branch 2</td><td>500</td><td>[0.5, 1.4)</td><td class="num">1012</td></tr>
+    <tr><td>&nbsp;&nbsp;shoulder</td><td>500</td><td>[1.0, 1.4)</td><td class="num">268</td></tr>
+    <tr><td>&nbsp;&nbsp;high tail</td><td>500</td><td>&ge; 2.0</td><td class="num">346</td></tr>
+    <tr><td>Loose</td><td>500</td><td>[0.5, 1.0)</td><td class="num">744</td></tr>
+    <tr><td>Tight</td><td>500</td><td>[0.5, 0.7)</td><td class="num">192</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Cut B and Loose cover the same <code>log10(ratio)</code> range, [0.5, 1.0), but on different pretrigger windows: Cut B uses 1000 samples (892 traces), Loose uses 500 (744 traces). Within Branch 2, <strong>Loose</strong> is the wider of two narrowed cuts: it stops short of the shoulder, [1.0, 1.4), where contamination starts creeping in, but keeps the most traces. <strong>Tight</strong>, [0.5, 0.7), is narrower still and cleaner, at the cost of statistics. They are the library&rsquo;s <code>excursion_band_loose</code> and <code>excursion_band</code>. Neither is claimed to be the ideal noise selection; the names only say how wide the slice is.</p>
+
+<div class="grid2">
+  <figure><img src="img/dump1_branch2.png" alt="Branch 2 example traces"><figcaption>Branch 2, [0.5, 1.4): 1012 traces (30 shown).</figcaption></figure>
+  <figure><img src="img/dump1_shoulder.png" alt="Branch 2 shoulder example traces"><figcaption>Shoulder, [1.0, 1.4): contamination starts creeping in.</figcaption></figure>
+  <figure><img src="img/dump1_high_tail.png" alt="Branch 2 high tail example traces"><figcaption>High tail, &ge; 2.0: dominated by real pulses.</figcaption></figure>
+  <figure><img src="img/dump1_loose.png" alt="Loose cut example traces, log10(ratio) in [0.5, 1.0), 500-sample window"><figcaption>Loose, [0.5, 1.0): 744 traces (30 shown); stops short of the contaminated shoulder.</figcaption></figure>
+  <figure><img src="img/dump1_tight.png" alt="Tight cut example traces"><figcaption>Tight, [0.5, 0.7): 192 traces, the cleanest slice.</figcaption></figure>
+</div>
+
+<p>Moving down in <code>ratio</code> makes the selection cleaner: contamination increases toward the shoulder, and the high tail is real pulses. The Tight slice is the cleanest, but even it lets a few real pulses and drifts through: 13 of its 192 traces, called &ldquo;the 13 pulse-like traces&rdquo; below. <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> describes how they were identified (by pulse shape).</p>
+
+<h3>Restricting <code>bstd</code> in Branch 2</h3>
+<p>Branch 2&rsquo;s cuts so far look only at <code>ratio</code>. The first cut of this note also capped <code>bstd</code> (<code>bstd &lt; 32.48</code>, the 75th percentile of the 1000-sample <code>bstd</code>). Applying the same number as a cap on Branch 2&rsquo;s own 500-sample <code>bstd</code>, on top of the Tight cut, keeps <strong>189</strong> of the 192 Tight traces (and 738 of the 744 Loose ones). The plot below shows the same 30 traces as the Tight plot above, minus any the cap removes; none of the three removed traces were in that sample, so it looks the same.</p>
+
+<p><strong>Does the cap remove the obvious green trace? No.</strong> That trace (event 11539: a baseline decaying from about +33 to &minus;30 across the pretrigger window, then a pulse rising near sample 500) has a 500-sample <code>bstd</code> of 18.05, well under the cap, so it is kept. The three traces the cap does remove have <code>bstd</code> of 33 to 72: two large drifts and one large pulse.</p>
+
+<div class="grid2">
+  <figure><img src="img/dump1_tight_bstdcap.png" alt="Tight cut plus bstd below 32.48: 30 of 189 example traces, including the large green trace"><figcaption>Tight + <code>bstd</code> &lt; 32.48: 189 traces (30 shown, the same sample as the Tight plot). The large green trace is still there.</figcaption></figure>
+  <figure><img src="img/dump1_removed_by_bstdcap.png" alt="The three Tight traces removed by the bstd cap"><figcaption>The 3 traces the cap removes (events 10164, 10714, 10919). Colors are per plot, so the green line here is not the green trace at left.</figcaption></figure>
+</div>
+
+<h3>Histogram of <code>bstd</code> for the 500-sample window</h3>
+<p>We use the plot below to see whether adjusting the <code>bstd</code> cut is worth it: a <code>bstd</code> threshold can only help if the traces we want to remove sit apart from the ones we want to keep. It shows all Detector 0 / Channel 0 traces (1517) as a histogram of <code>log10(bstd)</code> on the 500-sample window, with the Tight selection overlaid in orange, the 1000-sample <code>bstd</code> as a black outline for comparison, and the 32.48 cap as a dashed line. The count axis is logarithmic because the quiet population dominates and the interesting part is the tail.</p>
+
+<figure>
+  <img src="img/dump1_bstd_hist_500.png" alt="Histogram of log10(bstd) for the 500-sample window with the Tight selection, the 1000-sample distribution as an outline, and the 32.48 cap">
+  <figcaption><code>log10(bstd)</code>, Detector 0 / Channel 0: all 1517 traces on the 500-sample window (blue), the 192 Tight traces (orange), the 1000-sample window (black outline), and the 32.48 cap (dashed). Log count axis.</figcaption>
+</figure>
+
+<div class="table-scroll" style="max-width: 640px;">
+<table class="compact">
+  <thead><tr><th>Window</th><th class="num">p50</th><th class="num">p75</th><th class="num">p90</th><th class="num">p95</th><th class="num">p98</th><th class="num">max</th></tr></thead>
+  <tbody>
+    <tr><td>500-sample</td><td class="num">1.54</td><td class="num">1.69</td><td class="num">3.42</td><td class="num">10.53</td><td class="num">33.39</td><td class="num">179</td></tr>
+    <tr><td>1000-sample</td><td class="num">1.88</td><td class="num">32.48</td><td class="num">124.91</td><td class="num">149.76</td><td class="num">170.51</td><td class="num">199</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="table-scroll" style="max-width: 520px;">
+<table class="compact">
+  <thead><tr><th>500-sample <code>bstd</code></th><th class="num">All traces</th><th class="num">In Tight</th></tr></thead>
+  <tbody>
+    <tr><td>0 to 2</td><td class="num">1249</td><td class="num">175</td></tr>
+    <tr><td>2 to 5</td><td class="num">158</td><td class="num">5</td></tr>
+    <tr><td>5 to 32.48</td><td class="num">78</td><td class="num">9</td></tr>
+    <tr><td>&ge; 32.48</td><td class="num">32</td><td class="num">3</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>The 500-sample <code>bstd</code> is sharply peaked near 1.5 (median 1.54; 1249 of the 1517 traces are below 2) with a sparse tail out to 179. The 1000-sample <code>bstd</code> (black outline) has a second population at <code>bstd</code> of roughly 80 to 180 (<code>log10</code> about 1.9 to 2.25): the pulse-contaminated baselines discussed above, pulses that start between samples 500 and 1000. That population is why its 75th percentile is 32.48 and its 90th is 125. It is largely gone in the 500-sample window (32 traces, 2%, at or above 32.48), so the same number that sat in the valley between the two populations for the 1000-sample window now sits in a sparse tail.</p>
+
+<h3>A separate <code>bstd</code> cut: <code>log10(bstd) &lt; 0.5</code></h3>
+<p>We add a separate cut on the baseline scatter alone, independent of <code>ratio</code>: <code>log10(bstd) &lt; 0.5</code> on the 500-sample window. The quantity being cut on, <code>log10(bstd)</code>, is the horizontal axis of the histogram above; in terms of <code>bstd</code> itself, it selects traces with <code>bstd</code> below 3.16 (10<sup>0.5</sup>). On its own, this cut keeps 1355 of the 1517 traces (89%). When applied after the Tight cut, it keeps <strong>179</strong> traces and removes 13. The plot shows the same 30 traces as the Tight plot above, minus the one that this cut removes, so the two compare directly.</p>
+
+<figure>
+  <img src="img/dump1_tight_quiet_bstd.png" alt="Tight cut plus log10(bstd) below 0.5: 29 of 179 example traces, all flat noise">
+  <figcaption>Tight + <code>log10(bstd)</code> &lt; 0.5: 179 traces (29 shown: the Tight sample minus the one trace removed). Compare the Tight plot above.</figcaption>
+</figure>
+
+<p>The large green trace of the Tight plot (event 11539, <code>bstd</code> 18.05) <strong>is removed</strong>. What is left in the sample is flat noise with no pulses or drifts; a few traces show brief stretches of somewhat larger scatter, up to about 7 counts. The 13 removed traces are exactly the 13 pulse-like traces, and the 179 retained are exactly the rest of the Tight cut (checked in the notebook). The 13 were identified in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> from their pulse shape, not from their baseline scatter.</p>
+
+<p>The exact match is a meaningful agreement between two different criteria, though not a full test of the <code>bstd</code> cut. The threshold 0.5 was chosen from the histogram alone, where the distribution starts to rise sharply, without reference to the pulse-like traces, and it removes exactly the 13 that were identified from their pulse shape. The match is also not sensitive to the exact value: among the Tight traces, the 179 that are not pulse-like have <code>bstd</code> up to 2.83 and the 13 pulse-like traces start at 4.65, so any threshold in that gap, 3.16 included, gives the same result. It is not a full test because the pulse-like classification is itself a heuristic, and because this is one detector and channel: it shows that baseline scatter alone separates the two groups within the Tight cut, not that the cut would work on another selection.</p>
+
+<p>Applied to the Loose cut, the same <code>bstd</code> cut removes 53 of the 744 traces (691 kept); how many of those 53 are pulse-like has not been checked.</p>
+
+<h2>Status / Next Steps</h2>
+<ul>
+  <li>The Tight cut is now a library function (<code>excursion_band</code>), and the Loose cut is <code>excursion_band_loose</code>; see <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</li>
+  <li>The 13 pulse-like traces in the Tight selection are identified and removed in <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>.</li>
+  <li>The rise-time hypothesis (Branch 1) is still unverified; <code>rise_sample</code> needs checking against noisy and multi-peak traces first.</li>
+  <li>Everything here is one detector and one channel of one dump. Other channels and other dumps have not been done (Channel 2 was 100% dead in this dump, so it needs a separate look).</li>
+  <li>The cut boundaries (0.5, 0.7, 1.0, 1.4) were chosen by looking at plots, not derived from a model of the noise.</li>
+  <li>Choose the <code>bstd</code> cap for Branch 2: 32.48 is loose in the 500-sample window, and any value between 2.83 and 4.65 (the largest <code>bstd</code> among the Tight traces that are not pulse-like and the smallest among the 13 that are) removes exactly the 13 pulse-like traces on this dataset. But the overall 500-sample <code>bstd</code> distribution has no natural break between about 2 and 30 (see the histogram), so the value needs another justification. The next attempt, <code>log10(bstd) &lt; 0.5</code>, was chosen from the histogram alone and removes exactly those 13 from the Tight cut. It has mostly been examined on the Tight cut.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

@@ -31,7 +31,9 @@ If your note does not answer these, it is not finished, however long it is.
 
 ## The parts of a note
 
-Every note has the same parts, in this order. Each main part becomes a section with a heading and an outline link.
+**Only the header is required.** Every other section is a suggestion. Use the sections that help your reader, and leave out the ones that do not apply. A short note with a header and one clear result is complete. A long note with no caveats is not.
+
+The table below lists the sections most notes use, in a sensible order. Each one you use becomes a heading, with an outline link.
 
 | Section | What goes in it | Length |
 |---|---|---|
@@ -45,8 +47,8 @@ Every note has the same parts, in this order. Each main part becomes a section w
 | **Caveats** | What could be wrong. Small sample? One channel only? A cut you chose by eye? | a short list |
 | **Next steps** | Concrete things to do next. | a short list |
 
-::: careful
-Do not skip **Caveats**. Notes that state their limits are trusted. Notes without them are not, however good the plots look.
+::: tip
+**Caveats are strongly suggested.** A note that states its limits is trusted more than one that does not, however good the plots look. If you leave caveats out, be sure there is nothing you would want a reader to know about your result.
 :::
 
 ## Which file to write in
@@ -114,7 +116,7 @@ Open `my-note.md` in a plain text editor. Every section title you styled as Head
 
 **Step 4. Add the header.** Open `my-note.md` and add the header block (see *The header* above) at the very top. Conversion does not add it for you.
 
-**Step 5. Check it.** Go through the checklist at the end of this guide. Check every number, every heading and every figure path. Figures must still exist in the `img` folder after you move the note.
+**Step 5. Check it.** Go through the checklist at the end of this guide. Check every number, every heading you did use and every figure path. Figures must still exist in the `img` folder after you move the note.
 
 ::: careful
 Do not convert a PDF. The text of a PDF cannot be recovered reliably, so write the note again in a `.md` file, or copy the text from the PDF into your editor and check it carefully.
@@ -172,19 +174,20 @@ Say in the note which commit you pinned.
 
 ## Outline and links
 
-Put a short outline near the top of your note, with a link to each main section. Readers use it to jump to what they need. Use one `##` heading for each main section, so that the outline can be built from your headings.
+If your note has more than two or three sections, add a short outline near the top, with a link to each one. Readers use it to jump to what they need. The site builds the outline from your `##` headings, so use one `##` heading for each section. A note with no `##` headings simply has no outline.
 
 ## Checking your note before you submit
 
 Go through this list before you ask for review:
 
 - [ ] The title is a question.
-- [ ] The header has author, date, status, keywords and description.
 - [ ] Every number in the text can be found in your notebook output.
 - [ ] Every figure has a caption with units and a sentence on what to look for.
 - [ ] Every notebook link is pinned to a commit.
-- [ ] Caveats are written, and you have said what you did *not* check.
-- [ ] Next steps are concrete.
+- [ ] The header is complete.
+- [ ] Any section you use says something a reader needs. Empty or filler sections are removed.
+- [ ] You have said what you did *not* check, if the note makes a claim.
+- [ ] If you wrote next steps, they are concrete.
 - [ ] You have read it aloud once, looking for a word a newcomer would not know.
 
 ## Session Info

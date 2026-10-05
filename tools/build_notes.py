@@ -57,8 +57,6 @@ def check_note(path, header, body, taken_ids, strict):
         problems.append(f"id must look like S1, S2, or TBD, not {nid!r}")
     elif nid in taken_ids:
         problems.append(f"id {nid} is already used by another note")
-    if not re.search(r"^## ", body, re.M):
-        problems.append("no section headings: use '## Section name' lines")
     for tag in FORBIDDEN_HTML.findall(body):
         problems.append(f"raw HTML tag <{tag}> in the text: remove the formatting (see student guide 3)")
     for ref in PIN.findall(body):
@@ -87,6 +85,12 @@ def to_html(body):
 def page(header, slug, body_html):
     h2 = re.findall(r'<h2 id="([^"]+)">(.*?)</h2>', body_html, re.S)
     outline = "\n".join(f'  <li><a href="#{i}">{t}</a></li>' for i, t in h2)
+    outline_block = f"""<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ol>
+{outline}
+</ol>
+</nav>""" if h2 else ""
     status_class = STATUSES[header["status"]]
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -104,12 +108,7 @@ def page(header, slug, body_html):
 <h1>{html.escape(header['title'])}</h1>
 <p class="meta"><strong>{html.escape(header['id'])}</strong> &middot; Author(s): {html.escape(header['author'])} &middot; {html.escape(header['date'])} &middot; Status: <span class="status {status_class}">{html.escape(header['status'])}</span></p>
 
-<nav class="outline" aria-label="Outline">
-<strong>Outline</strong>
-<ol>
-{outline}
-</ol>
-</nav>
+{outline_block}
 
 {body_html}
 

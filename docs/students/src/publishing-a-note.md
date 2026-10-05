@@ -73,7 +73,6 @@ The check starts automatically and takes less than a minute. When it finishes, c
 | `header field 'X' is missing or empty` | Fill in that line of the header. |
 | `status must be one of ...` | Use exactly *In progress*, *Complete* or *Outdated*. |
 | `id must look like S1, S2, or TBD` | Leave `id: "TBD"`. |
-| `no section headings` | Add `## Section name` lines. |
 | `raw HTML tag <u>` (or `<sup>`, `<sub>`, `<span>`) | Remove the formatting and keep the words. |
 | `notebook link pinned to 'master'` | Replace `master` with the commit hash you committed the notebook at. |
 | `placeholder COMMIT is still in the note` | Put the real commit hash in place of `COMMIT`. |

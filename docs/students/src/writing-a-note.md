@@ -1,8 +1,12 @@
 ---
 title: "Writing a note"
-subtitle: "NSDF-Data student guide 3 — for every computer"
-date: "Version 4 · 5 October 2026"
+subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
+date: "Version 5 · 5 October 2026"
 ---
+
+::: tip
+**This is guide 3 of 5.** It is about *writing* the note. Guide 4 covers *publishing* it, and guide 5 covers publishing with an AI assistant.
+:::
 
 ::: tip
 **What a note is.** A note is a short, honest write-up of one question you investigated: what you asked, what you did, what you found, and how sure you are. Notes are how the lab keeps a record that someone else can follow and check. You do not need to be an expert to write one. You do need to be specific.
@@ -27,7 +31,9 @@ If your note does not answer these, it is not finished, however long it is.
 
 ## The parts of a note
 
-Every note has the same parts, in this order. Each main part becomes a section with a heading and an outline link.
+**Only the header is required.** Every other section is a suggestion. Use the sections that help your reader, and leave out the ones that do not apply. A short note with a header and one clear result is complete. A long note with no caveats is not.
+
+The table below lists the sections most notes use, in a sensible order. Each one you use becomes a heading, with an outline link.
 
 | Section | What goes in it | Length |
 |---|---|---|
@@ -41,8 +47,8 @@ Every note has the same parts, in this order. Each main part becomes a section w
 | **Caveats** | What could be wrong. Small sample? One channel only? A cut you chose by eye? | a short list |
 | **Next steps** | Concrete things to do next. | a short list |
 
-::: careful
-Do not skip **Caveats**. Notes that state their limits are trusted. Notes without them are not, however good the plots look.
+::: tip
+**Caveats are strongly suggested.** A note that states its limits is trusted more than one that does not, however good the plots look. If you leave caveats out, be sure there is nothing you would want a reader to know about your result.
 :::
 
 ## Which file to write in
@@ -110,7 +116,7 @@ Open `my-note.md` in a plain text editor. Every section title you styled as Head
 
 **Step 4. Add the header.** Open `my-note.md` and add the header block (see *The header* above) at the very top. Conversion does not add it for you.
 
-**Step 5. Check it.** Go through the checklist at the end of this guide. Check every number, every heading and every figure path. Figures must still exist in the `img` folder after you move the note.
+**Step 5. Check it.** Go through the checklist at the end of this guide. Check every number, every heading you did use and every figure path. Figures must still exist in the `img` folder after you move the note.
 
 ::: careful
 Do not convert a PDF. The text of a PDF cannot be recovered reliably, so write the note again in a `.md` file, or copy the text from the PDF into your editor and check it carefully.
@@ -168,39 +174,29 @@ Say in the note which commit you pinned.
 
 ## Outline and links
 
-Put a short outline near the top of your note, with a link to each main section. Readers use it to jump to what they need. Use one `##` heading for each main section, so that the outline can be built from your headings.
+If your note has more than two or three sections, add a short outline near the top, with a link to each one. Readers use it to jump to what they need. The site builds the outline from your `##` headings, so use one `##` heading for each section. A note with no `##` headings simply has no outline.
 
 ## Checking your note before you submit
 
 Go through this list before you ask for review:
 
 - [ ] The title is a question.
-- [ ] The header has author, date, status, keywords and description.
 - [ ] Every number in the text can be found in your notebook output.
 - [ ] Every figure has a caption with units and a sentence on what to look for.
 - [ ] Every notebook link is pinned to a commit.
-- [ ] Caveats are written, and you have said what you did *not* check.
-- [ ] Next steps are concrete.
+- [ ] The header is complete.
+- [ ] Any section you use says something a reader needs. Empty or filler sections are removed.
+- [ ] You have said what you did *not* check, if the note makes a claim.
+- [ ] If you wrote next steps, they are concrete.
 - [ ] You have read it aloud once, looking for a word a newcomer would not know.
-
-## How your note gets published
-
-::: tip
-The check does the tedious part for you. If it reports nothing, the note is structurally sound. The numbers and the reading are still your responsibility.
-:::
-
-The workflow works like this:
-
-1. You write your note as a `.md` file (see *Which file to write in*) in the `notes/src/` folder of the repository, starting from `_template.md`. Put pictures in `notes/src/img/`.
-2. You open a **pull request**: a request to add your change to the project. An automatic check runs at once and lists anything to fix, such as a missing picture, a raw HTML tag or a notebook link that is not pinned to a commit. Fix each item and the check runs again.
-3. Your lead reviews the note, gives it its number, and merges it.
-4. After the merge, the site builds your note into a page and adds it to the list of student notes on the front page. This takes a few minutes.
-
-Whatever tool you use, you are responsible for the words and numbers in your note. If something you wrote turns out to be wrong, say so in the note and tell your lead.
 
 ## Session Info
 
-Guide version 4, 5 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 5, 5 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+
+## Next
+
+When the note is written and checked, go to **student guide 4: publishing a note**.
 
 ## Where to get help
 

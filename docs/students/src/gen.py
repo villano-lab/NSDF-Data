@@ -14,6 +14,7 @@ OS = {
   LISTCMD="dir",
   FILEMGR="File Explorer",
   IDX="`C:\\Users\\YourName\\idx`",
+  GOHOME="cd %USERPROFILE%",
   HOMEEX="`C:\\Users\\YourName`",
   NEWLINE_NOTE="",
   CAREFUL_EXTRA="Windows may show a blue warning box when you run an installer (\"Windows protected your PC\"). Click **More info**, then **Run anyway**, only if you downloaded the file from the link in this guide.",
@@ -33,6 +34,7 @@ OS = {
   LISTCMD="ls",
   FILEMGR="Finder",
   IDX="`~/idx`",
+  GOHOME="cd ~",
   HOMEEX="`/Users/YourName`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="macOS may say an app is from an unidentified developer when you open it. You do not need to open any app in this guide, so you can ignore this.",
 ),
@@ -51,6 +53,7 @@ OS = {
   LISTCMD="ls",
   FILEMGR="Files (the file manager)",
   IDX="`~/idx`",
+  GOHOME="cd ~",
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.",
 ),
@@ -229,7 +232,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 ## Rules for keeping your work safe
 
 - **Never work on `master`.** That is the shared main version. Work only on your `student-` branch.
-- **Never commit data.** The raw files in the `idx` folder are large and not part of the project.
+- **Never commit data.** The raw files in the `idx` folder are large and not part of the project. Download only from your home folder, never from inside `NSDF-Data`.
 - **Do not run `07221203_2025_dump1_noise.ipynb`** unless the project lead says it is fine. It overwrites a shared archive file.
 - **Save often,** and commit your work when a piece is finished (see the first analysis guide).
 
@@ -311,13 +314,23 @@ You do **not** need to follow every number. Just learn the words in the table ab
 
 ## Step 2. Download the data
 
-In the terminal, type this and press Enter:
+First go to your home folder, so the data lands in the right place. Type this, then press Enter:
+
+```
+@GOHOME@
+```
+
+Now download the data:
 
 ```
 nsdf-cli download 07221203_2025_F0001
 ```
 
-The data (about 34 MB) goes into the folder @IDX@, inside a folder named `07221203_2025_F0001`. Wait until the prompt comes back.
+The download puts the data in an `idx` folder **in the folder you are in**. Because you went to your home folder first, it lands in @IDX@, inside a folder named `07221203_2025_F0001`. The data is about 34 MB. Wait until the prompt comes back.
+
+::: careful
+Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit inside the project, where Git can pick it up. If you have already downloaded there, move the `idx` folder to your home folder, and tell your lead.
+:::
 
 ::: careful
 Do not move or edit the downloaded files, and do not add them to Git. They are not part of the project.
@@ -471,7 +484,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip())
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w").write(s)

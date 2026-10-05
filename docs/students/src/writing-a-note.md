@@ -1,8 +1,12 @@
 ---
 title: "Writing a note"
-subtitle: "NSDF-Data student guide 3 — for every computer"
-date: "Version 4 · 5 October 2026"
+subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
+date: "Version 5 · 5 October 2026"
 ---
+
+::: tip
+**This is guide 3 of 5.** It is about *writing* the note. Guide 4 covers *publishing* it, and guide 5 covers publishing with an AI assistant.
+:::
 
 ::: tip
 **What a note is.** A note is a short, honest write-up of one question you investigated: what you asked, what you did, what you found, and how sure you are. Notes are how the lab keeps a record that someone else can follow and check. You do not need to be an expert to write one. You do need to be specific.
@@ -183,24 +187,13 @@ Go through this list before you ask for review:
 - [ ] Next steps are concrete.
 - [ ] You have read it aloud once, looking for a word a newcomer would not know.
 
-## How your note gets published
-
-::: tip
-The check does the tedious part for you. If it reports nothing, the note is structurally sound. The numbers and the reading are still your responsibility.
-:::
-
-The workflow works like this:
-
-1. You write your note as a `.md` file (see *Which file to write in*) in the `notes/src/` folder of the repository, starting from `_template.md`. Put pictures in `notes/src/img/`.
-2. You open a **pull request**: a request to add your change to the project. An automatic check runs at once and lists anything to fix, such as a missing picture, a raw HTML tag or a notebook link that is not pinned to a commit. Fix each item and the check runs again.
-3. Your lead reviews the note, gives it its number, and merges it.
-4. After the merge, the site builds your note into a page and adds it to the list of student notes on the front page. This takes a few minutes.
-
-Whatever tool you use, you are responsible for the words and numbers in your note. If something you wrote turns out to be wrong, say so in the note and tell your lead.
-
 ## Session Info
 
-Guide version 4, 5 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 5, 5 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+
+## Next
+
+When the note is written and checked, go to **student guide 4: publishing a note**.
 
 ## Where to get help
 

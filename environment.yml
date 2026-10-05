@@ -47,7 +47,7 @@ dependencies:
       - mdurl==0.1.2
       - nest-asyncio==1.6.0
       - nsdf-dark-matter==0.3.0
-      - nsdf-dark-matter-cli==0.3.1
+      - nsdf-dark-matter-cli==0.5.0
       - numpy==2.2.6
       - openvisusnogui==2.2.138
       - packaging==25.0

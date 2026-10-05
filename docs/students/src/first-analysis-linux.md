@@ -40,13 +40,23 @@ You do **not** need to follow every number. Just learn the words in the table ab
 
 ## Step 2. Download the data
 
-In the terminal, type this and press Enter:
+First go to your home folder, so the data lands in the right place. Type this, then press Enter:
+
+```
+cd ~
+```
+
+Now download the data:
 
 ```
 nsdf-cli download 07221203_2025_F0001
 ```
 
-The data (about 34 MB) goes into the folder `~/idx`, inside a folder named `07221203_2025_F0001`. Wait until the prompt comes back.
+The download puts the data in an `idx` folder **in the folder you are in**. Because you went to your home folder first, it lands in `~/idx`, inside a folder named `07221203_2025_F0001`. The data is about 34 MB. Wait until the prompt comes back.
+
+::: careful
+Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit inside the project, where Git can pick it up. If you have already downloaded there, move the `idx` folder to your home folder, and tell your lead.
+:::
 
 ::: careful
 Do not move or edit the downloaded files, and do not add them to Git. They are not part of the project.

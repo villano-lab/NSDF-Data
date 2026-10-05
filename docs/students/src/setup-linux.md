@@ -108,7 +108,7 @@ An environment is a sealed box of programs with fixed versions. We make one for 
 ```
 conda create -n darkmatter_cli_env python=3.10 -y
 conda activate darkmatter_cli_env
-python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.3.1
+python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
 python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
 ```
 

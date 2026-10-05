@@ -7,6 +7,7 @@ Each note is one Markdown file with a YAML header. The header fields are
 listed in REQUIRED. The output is docs/notes/student-<slug>.html, its figures
 in docs/notes/img/student-<slug>/, and a table of student notes between the
 markers in docs/index.html. Hand-written notes are never touched.
+Run by .github/workflows/student-notes.yml.
 """
 import html
 import re

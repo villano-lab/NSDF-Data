@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 5 · 6 October 2026"
+date: "Version 6 · 6 October 2026"
 ---
 
 ::: tip
@@ -58,6 +58,8 @@ The download puts the data in an `idx` folder **in the folder you are in**. Beca
 Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit inside the project, where Git can pick it up. If you have already downloaded there, move the `idx` folder to your home folder, and tell your lead.
 :::
 
+**What these lines do:** the first one moves you to your home folder (the `cd` line). The second, `nsdf-cli download`, fetches the data set from the NSDF servers over the internet and puts it in a new `idx` folder.
+
 ::: careful
 Do not move or edit the downloaded files, and do not add them to Git. They are not part of the project.
 :::
@@ -75,6 +77,8 @@ conda activate darkmatter_cli_env
 cd %USERPROFILE%\Research\NSDF-Data\R76\analysis_notes
 jupyter lab
 ```
+
+**What these lines do:** `conda activate` switches your environment on, `cd` moves you into the folder where the notebooks live, and `jupyter lab` starts the notebook program. **Leave this terminal window open while you work**: closing it stops Jupyter.
 
 Your web browser opens a Jupyter page. Click **File**, then **New**, then **Notebook**. If it asks which kernel to use, choose **darkmatter_cli_env**.
 
@@ -163,6 +167,8 @@ git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
 ```
 
+**What these lines do:** `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
+
 ::: careful
 Commit only your notebook. Check the list before committing with `git status`. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::
@@ -196,7 +202,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 5, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 6, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

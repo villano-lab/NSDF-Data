@@ -14,7 +14,7 @@ OS = {
   LISTCMD="dir",
   NEW_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
   OPEN_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
-  HOME_NOTE="`%USERPROFILE%` stands for your own user folder (for example `C:\\Users\\YourName`), so you can type the lines exactly as written. Do not replace it.",
+  HOME_NOTE="::: tip\n**What is `%USERPROFILE%`?** It is a shortcut that Windows understands. It stands for your own personal folder on this computer, the one named after you (for example `C:\\Users\\YourName`). Type it **exactly as written**, with the two percent signs. Do not replace it with your name: Windows fills it in for you.\n:::",
   FILEMGR="File Explorer",
   IDX="`C:\\Users\\YourName\\idx`",
   GOHOME="cd %USERPROFILE%",
@@ -88,7 +88,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 5 · 6 October 2026"
+date: "Version 6 · 6 October 2026"
 ---
 
 ::: tip
@@ -100,6 +100,7 @@ date: "Version 5 · 6 October 2026"
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
+- **Nothing to be afraid of:** the commands in this guide install software and make new folders. None of them deletes your files. If you are not sure what a line does, there is a short table after each group of commands.
 - **When something goes wrong:** do not guess. Copy the message, note the step you were on, and ask the project lead. See *If something goes wrong* at the end.
 
 ## Words you will meet
@@ -140,6 +141,8 @@ Open @NEW_TERM@ and type `conda --version`, then press Enter. You should see `co
 
 ## Step 4. Download the NSDF-Data code
 
+@HOME_NOTE@
+
 Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
 
 ```
@@ -151,7 +154,13 @@ git clone https://github.com/villano-lab/NSDF-Data.git
 
 Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
 
-@HOME_NOTE@
+**What these lines do**
+
+| Line starts with | What it does |
+|---|---|
+| `mkdir` | Makes a new folder called `Research`. |
+| `cd` | Moves you into a folder. `cd` stands for *change directory*, which is the same as opening a folder in a file window. |
+| `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
 Type `@LISTCMD@` and press Enter. You should see `NSDF-Data` in the list.
@@ -169,8 +178,18 @@ python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
 python -m pip install jupyterlab
 ```
 
+**What these lines do**
+
+| Line | What it does |
+|---|---|
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 inside it. |
+| `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
+| `pip install nsdf-dark-matter...` | Installs the software that reads the detector data. |
+| `pip install numpy...` | Installs software for numbers, plots and checking that everything works. |
+| `pip install jupyterlab` | Installs Jupyter, the notebook program you will use later. |
+
 ::: careful
-Do **not** use the file `environment.yml` from the project. It was made on a Mac for Mac only, and it will fail on other computers. The three lines above install the same versions.
+Do **not** use the file `environment.yml` from the project. It was made on a Mac for Mac only, and it will fail on other computers. The lines above install the same software versions.
 :::
 
 ::: tip
@@ -215,6 +234,15 @@ jupyter lab --version
 It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
 :::
 
+**What these commands do**
+
+| Line | What it does |
+|---|---|
+| `conda activate` | Switches your environment on. Do this in every new terminal. |
+| `cd` | Moves into the `python` folder of the project. |
+| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `52 passed` means every check worked. |
+| `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
+
 ## Step 7. Let Jupyter notebooks use your environment
 
 Jupyter is the notebook program you will use. Register your environment with it once:
@@ -233,14 +261,14 @@ You will not change the main project. You will save your work on your own **bran
 
 1. Make a free account at [github.com](https://github.com) if you do not have one.
 2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
-3. Once you have accepted the invitation, set your name and email for Git. Use your own details:
+3. Once you have accepted the invitation, tell Git your name and email, so your work is labelled as yours. Use your own details:
 
 ```
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-4. Create your personal branch. Use your own name, without spaces, in place of `yourname`:
+4. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
 
 ```
 @CD_REPO@
@@ -285,7 +313,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 5, 6 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 6, 6 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -298,7 +326,7 @@ Guide version 5, 6 October 2026, @NAME@ edition. Written for beginners; please t
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 5 · 6 October 2026"
+date: "Version 6 · 6 October 2026"
 ---
 
 ::: tip
@@ -355,6 +383,8 @@ The download puts the data in an `idx` folder **in the folder you are in**. Beca
 Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit inside the project, where Git can pick it up. If you have already downloaded there, move the `idx` folder to your home folder, and tell your lead.
 :::
 
+**What these lines do:** the first one moves you to your home folder (the `cd` line). The second, `nsdf-cli download`, fetches the data set from the NSDF servers over the internet and puts it in a new `idx` folder.
+
 ::: careful
 Do not move or edit the downloaded files, and do not add them to Git. They are not part of the project.
 :::
@@ -372,6 +402,8 @@ conda activate darkmatter_cli_env
 @CD_NOTES@
 jupyter lab
 ```
+
+**What these lines do:** `conda activate` switches your environment on, `cd` moves you into the folder where the notebooks live, and `jupyter lab` starts the notebook program. **Leave this terminal window open while you work**: closing it stops Jupyter.
 
 Your web browser opens a Jupyter page. Click **File**, then **New**, then **Notebook**. If it asks which kernel to use, choose **darkmatter_cli_env**.
 
@@ -460,6 +492,8 @@ git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
 ```
 
+**What these lines do:** `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
+
 ::: careful
 Commit only your notebook. Check the list before committing with `git status`. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::
@@ -493,7 +527,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 5, 6 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 6, 6 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

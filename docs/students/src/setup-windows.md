@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 4 · 6 October 2026"
+date: "Version 5 · 6 October 2026"
 ---
 
 ::: tip
@@ -56,13 +56,22 @@ In the terminal, type `git --version` and press Enter. You should see a line sta
 
 Miniforge installs Python and the other packages the analysis needs. Its download file is **Miniforge3-Windows-x86_64.exe**.
 
-Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, so it can take a few minutes. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer:
+Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, so it can take a few minutes. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:
 
-- choose **Just Me**;
-- keep the default install folder;
-- **leave the box "Add Miniforge to my PATH" unticked.** The Miniforge Prompt works without it.
+- When it asks who to install for, choose **Just Me**.
+- Keep the default install folder.
+- On the **Advanced Installation Options** screen, set the four boxes exactly as in the table. They are the installer's defaults, so you may not need to change anything, but check each one:
 
-When it finishes, close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.
+| Box | Set it to |
+|---|---|
+| Create shortcuts (supported packages only) | **Ticked.** This creates the *Miniforge Prompt* you will use from Step 4. |
+| Add installation to my PATH environment variable | **Unticked.** The installer says "not recommended", and the Miniforge Prompt works without it. |
+| Register Miniforge3 as my default Python | **Unticked.** |
+| Clear the package cache upon completion | **Unticked.** (Ticking it also works. It only saves a little disk space.) |
+
+Then click **Install**, wait until it finishes, and click **Finish**.
+
+Now close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.
 
 ::: checkpoint
 Open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**) and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
@@ -219,7 +228,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 4, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 5, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

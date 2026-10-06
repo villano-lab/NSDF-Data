@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Linux edition"
-date: "Version 4 · 6 October 2026"
+date: "Version 5 · 6 October 2026"
 ---
 
 ::: tip
@@ -231,7 +231,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 4, 6 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 5, 6 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

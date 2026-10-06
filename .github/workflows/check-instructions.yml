@@ -41,13 +41,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: 
-      include:
-        - startdir: "%USERPROFILE%"
-          ls: dir
-          os: windows-11-arm
-        - startdir: "~"
-          ls: ls
-          os: macos-latest
+        include:
+          - startdir: "%USERPROFILE%"
+            ls: dir
+            os: windows-11-arm
+          - startdir: "~"
+            ls: ls
+            os: macos-latest
     steps:
       - name: download nsdf data
         run: |

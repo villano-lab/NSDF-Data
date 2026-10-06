@@ -14,16 +14,18 @@ jobs:
     steps:
       - name: git install
         run: | 
-          wget https://github.com/git-for-windows/git/releases/download/v2.56.0.windows.2/Git-2.56.0.2-64-bit.exe
+          $client = new-object System.Net.WebClient
+          $client.DownloadFile("https://github.com/git-for-windows/git/releases/download/v2.56.0.windows.2/Git-2.56.0.2-64-bit.exe")
           start Git-2.56.0.2-64-bit.exe
       - name: Miniforge install
         run: |
-          wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe
+          $client = new-object System.Net.WebClient
+          $client.DownloadFile("https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe")
           start Miniforge3-Windows-x86_64.exe
           # That's all we can do for now folks
           # I have to figure out how to go through the installer from the cli...
 
-  setup-mac:
+  setup-unix:
     runs-on: [ubuntu-slim,macos-latest]
     steps:
       - name: git install
@@ -51,6 +53,8 @@ jobs:
     steps:
       - name: download nsdf data
         run: |
+          #ls for debug
+          ls
           conda --version
 
           mkdir $startdir/Research

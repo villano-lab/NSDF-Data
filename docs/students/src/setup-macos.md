@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 3 · 6 October 2026"
+date: "Version 4 · 6 October 2026"
 ---
 
 ::: tip
@@ -62,7 +62,7 @@ Miniforge installs Python and the other packages the analysis needs. Its downloa
 
 First find out which chip your Mac has: click the Apple menu, then **About This Mac**. If it says **Chip: Apple M**something, use the **arm64** file. If it says **Processor: Intel**, use the **x86_64** file.
 
-Download the file from **github.com/conda-forge/miniforge** into your **Downloads** folder. Then, in the Terminal, run the command below (use the file name you downloaded):
+Download the file into your **Downloads** folder: [Miniforge3-MacOSX-arm64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh) (Apple chip) or [Miniforge3-MacOSX-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-x86_64.sh) (Intel chip). If your browser asks whether to keep the file, choose **Keep**. Then, in the Terminal, run the command below (use the file name you downloaded):
 
 ```
 bash ~/Downloads/Miniforge3-MacOSX-arm64.sh
@@ -171,7 +171,7 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at **github.com** if you do not have one.
+1. Make a free account at [github.com](https://github.com) if you do not have one.
 2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
 3. Once you have accepted the invitation, set your name and email for Git. Use your own details:
 
@@ -219,13 +219,13 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the step number, the command you typed, and the last few lines the computer printed. A screenshot helps. Nobody will be annoyed by a question about a step that did not work.
 
 ## Session Info
 
-Guide version 3, 6 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 4, 6 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

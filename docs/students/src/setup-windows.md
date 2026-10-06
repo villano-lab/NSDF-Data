@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 3 · 6 October 2026"
+date: "Version 4 · 6 October 2026"
 ---
 
 ::: tip
@@ -44,7 +44,7 @@ You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo he
 
 ## Step 2. Install Git
 
-Go to **git-scm.com**, choose the **Windows** download, and run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.
+Go to [git-scm.com/download/win](https://git-scm.com/download/win). The download of the installer starts by itself; if it does not, click the link on that page to download it. Run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.
 
 When it finishes, **close the Command Prompt and open a new one** (the old window does not know about Git yet).
 
@@ -56,7 +56,7 @@ In the terminal, type `git --version` and press Enter. You should see a line sta
 
 Miniforge installs Python and the other packages the analysis needs. Its download file is **Miniforge3-Windows-x86_64.exe**.
 
-Go to **github.com/conda-forge/miniforge**, find the file **Miniforge3-Windows-x86_64.exe**, and download it. Double-click it and follow the installer:
+Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, so it can take a few minutes. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer:
 
 - choose **Just Me**;
 - keep the default install folder;
@@ -165,7 +165,7 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at **github.com** if you do not have one.
+1. Make a free account at [github.com](https://github.com) if you do not have one.
 2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
 3. Once you have accepted the invitation, set your name and email for Git. Use your own details:
 
@@ -213,13 +213,13 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the step number, the command you typed, and the last few lines the computer printed. A screenshot helps. Nobody will be annoyed by a question about a step that did not work.
 
 ## Session Info
 
-Guide version 3, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 4, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

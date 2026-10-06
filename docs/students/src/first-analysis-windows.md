@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 3 · 6 October 2026"
+date: "Version 4 · 6 October 2026"
 ---
 
 ::: tip
@@ -30,7 +30,7 @@ date: "Version 3 · 6 October 2026"
 
 ## Step 1. Read three notes first (about 30 minutes)
 
-Open the notes site at **villano-lab.github.io/NSDF-Data** and read these, in order:
+Open the notes site at [villano-lab.github.io/NSDF-Data](https://villano-lab.github.io/NSDF-Data/) and read these, in order:
 
 1. **Note 1**, *Run76 series catalog*: what a series and a dump are.
 2. **Note 1a**, *python library structure*: what each part of the code does.
@@ -190,13 +190,13 @@ Do not run `07221203_2025_dump1_noise.ipynb` unless the project lead says it is 
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the step number, the command you typed, and the last few lines the computer printed. A screenshot helps. Nobody will be annoyed by a question about a step that did not work.
 
 ## Session Info
 
-Guide version 3, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 4, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

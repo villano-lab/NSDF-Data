@@ -1,17 +1,20 @@
 OS = {
 "windows": dict(
   NAME="Windows", FILE="windows", SHORT="Windows",
-  TERMINAL="Click the **Start** button, type `Miniforge Prompt`, and press **Enter**. A black window with white text opens. This is the terminal for everything in this guide.",
-  PASTE="In the Miniforge Prompt, **right-click** the window to paste. `Ctrl+V` often does not work there.",
-  GIT="Go to **git-scm.com**, choose the **Windows** download, and run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.",
+  TERMINAL="Click the **Start** button, type `Command Prompt`, and press **Enter**. A black window with white text opens. This is the terminal you will use for Steps 1 to 3. Miniforge (Step 3) adds a second terminal, the **Miniforge Prompt**, and from Step 4 on you must use that one instead: only it knows the `conda` command.",
+  PASTE="In both windows, **right-click** the window to paste. `Ctrl+V` often does not work there.",
+  GIT="Go to **git-scm.com**, choose the **Windows** download, and run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.\n\nWhen it finishes, **close the Command Prompt and open a new one** (the old window does not know about Git yet).",
   MINIFORGE_FILE="Miniforge3-Windows-x86_64.exe",
-  MINIFORGE="Go to **github.com/conda-forge/miniforge**, find the file **Miniforge3-Windows-x86_64.exe**, and download it. Double-click it and follow the installer:\n\n- choose **Just Me**;\n- keep the default install folder;\n- **leave the box \"Add Miniforge to my PATH\" unticked.** The Miniforge Prompt works without it.\n\nWhen it finishes, close any open Miniforge Prompt and open a new one.",
-  FOLDER="C:\\Users\\YourName\\Research",
-  CD_REPO="cd C:\\Users\\YourName\\Research\\NSDF-Data",
-  CD_PYTHON="cd C:\\Users\\YourName\\Research\\NSDF-Data\\python",
-  CD_NOTES="cd C:\\Users\\YourName\\Research\\NSDF-Data\\R76\\analysis_notes",
-  MKDIR="mkdir C:\\Users\\YourName\\Research",
+  MINIFORGE="Go to **github.com/conda-forge/miniforge**, find the file **Miniforge3-Windows-x86_64.exe**, and download it. Double-click it and follow the installer:\n\n- choose **Just Me**;\n- keep the default install folder;\n- **leave the box \"Add Miniforge to my PATH\" unticked.** The Miniforge Prompt works without it.\n\nWhen it finishes, close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.",
+  FOLDER="%USERPROFILE%\\Research",
+  CD_REPO="cd %USERPROFILE%\\Research\\NSDF-Data",
+  CD_PYTHON="cd %USERPROFILE%\\Research\\NSDF-Data\\python",
+  CD_NOTES="cd %USERPROFILE%\\Research\\NSDF-Data\\R76\\analysis_notes",
+  MKDIR="mkdir %USERPROFILE%\\Research",
   LISTCMD="dir",
+  NEW_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
+  OPEN_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
+  HOME_NOTE="`%USERPROFILE%` stands for your own user folder (for example `C:\\Users\\YourName`), so you can type the lines exactly as written. Do not replace it.",
   FILEMGR="File Explorer",
   IDX="`C:\\Users\\YourName\\idx`",
   GOHOME="cd %USERPROFILE%",
@@ -32,6 +35,9 @@ OS = {
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  NEW_TERM="a **new** terminal",
+  OPEN_TERM="a terminal (Step 1 of the setup guide)",
+  HOME_NOTE="",
   FILEMGR="Finder",
   IDX="`~/idx`",
   GOHOME="cd ~",
@@ -51,6 +57,9 @@ OS = {
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  NEW_TERM="a **new** terminal",
+  OPEN_TERM="a terminal (Step 1 of the setup guide)",
+  HOME_NOTE="",
   FILEMGR="Files (the file manager)",
   IDX="`~/idx`",
   GOHOME="cd ~",
@@ -79,7 +88,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 3 · 6 October 2026"
 ---
 
 ::: tip
@@ -122,7 +131,7 @@ Miniforge installs Python and the other packages the analysis needs. Its downloa
 @MINIFORGE@
 
 ::: checkpoint
-Open a **new** terminal and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
+Open @NEW_TERM@ and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
 :::
 
 ::: careful
@@ -142,6 +151,8 @@ git clone https://github.com/villano-lab/NSDF-Data.git
 
 Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
 
+@HOME_NOTE@
+
 ::: checkpoint
 Type `@LISTCMD@` and press Enter. You should see `NSDF-Data` in the list.
 :::
@@ -155,6 +166,7 @@ conda create -n darkmatter_cli_env python=3.10 -y
 conda activate darkmatter_cli_env
 python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
 python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+python -m pip install jupyterlab
 ```
 
 ::: careful
@@ -191,6 +203,16 @@ nsdf-cli version
 
 ::: checkpoint
 It prints `NSDF Dark Matter CLI: 0.5.0` (or a later version).
+:::
+
+Finally, the notebook program:
+
+```
+jupyter lab --version
+```
+
+::: checkpoint
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
 :::
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -243,6 +265,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] The `NSDF-Data` folder is in `@FOLDER@`.
 - [ ] `python -m pytest -q` in the `python` folder ends with `52 passed`.
 - [ ] `nsdf-cli version` prints a version.
+- [ ] `jupyter lab --version` prints a version.
 - [ ] Your Jupyter kernel `darkmatter_cli_env` is installed.
 - [ ] You have a `student-` branch (after access is granted).
 
@@ -262,7 +285,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 2, 5 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 3, 6 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -275,7 +298,7 @@ Guide version 2, 5 October 2026, @NAME@ edition. Written for beginners; please t
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 3 · 6 October 2026"
 ---
 
 ::: tip
@@ -286,7 +309,7 @@ date: "Version 2 · 5 October 2026"
 
 - **Time:** about two hours.
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
-- **Check:** open a terminal (Step 1 of the setup guide), and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
+- **Check:** open @OPEN_TERM@, and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
 
 ## Words you will meet
 
@@ -470,7 +493,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 2, 5 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 3, 6 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -484,8 +507,8 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip())
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
-        open(f"{kind}-{key}.md", "w").write(s)
+        open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)
         print(kind, key, len(s))

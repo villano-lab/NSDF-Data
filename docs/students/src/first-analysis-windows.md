@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 3 · 6 October 2026"
 ---
 
 ::: tip
@@ -12,7 +12,7 @@ date: "Version 2 · 5 October 2026"
 
 - **Time:** about two hours.
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
-- **Check:** open a terminal (Step 1 of the setup guide), and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
+- **Check:** open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**), and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
 
 ## Words you will meet
 
@@ -72,7 +72,7 @@ Notebooks must be opened from the folder `R76/analysis_notes`, inside the projec
 
 ```
 conda activate darkmatter_cli_env
-cd C:\Users\YourName\Research\NSDF-Data\R76\analysis_notes
+cd %USERPROFILE%\Research\NSDF-Data\R76\analysis_notes
 jupyter lab
 ```
 
@@ -157,7 +157,7 @@ Save with **Command + S** (macOS) or **Ctrl + S** (Windows and Linux).
 Once your branch exists (setup guide, Step 8), save your notebook to Git:
 
 ```
-cd C:\Users\YourName\Research\NSDF-Data
+cd %USERPROFILE%\Research\NSDF-Data
 git add R76/analysis_notes/first-analysis-yourname.ipynb
 git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
@@ -196,7 +196,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 2, 5 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 3, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

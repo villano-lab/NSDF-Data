@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 3 · 6 October 2026"
 ---
 
 ::: tip
@@ -91,6 +91,8 @@ cd ~/Research/NSDF-Data
 
 Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
 
+
+
 ::: checkpoint
 Type `ls` and press Enter. You should see `NSDF-Data` in the list.
 :::
@@ -104,6 +106,7 @@ conda create -n darkmatter_cli_env python=3.10 -y
 conda activate darkmatter_cli_env
 python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
 python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+python -m pip install jupyterlab
 ```
 
 ::: careful
@@ -140,6 +143,16 @@ nsdf-cli version
 
 ::: checkpoint
 It prints `NSDF Dark Matter CLI: 0.5.0` (or a later version).
+:::
+
+Finally, the notebook program:
+
+```
+jupyter lab --version
+```
+
+::: checkpoint
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
 :::
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -192,6 +205,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] The `NSDF-Data` folder is in `~/Research`.
 - [ ] `python -m pytest -q` in the `python` folder ends with `52 passed`.
 - [ ] `nsdf-cli version` prints a version.
+- [ ] `jupyter lab --version` prints a version.
 - [ ] Your Jupyter kernel `darkmatter_cli_env` is installed.
 - [ ] You have a `student-` branch (after access is granted).
 
@@ -211,7 +225,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 2, 5 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 3, 6 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

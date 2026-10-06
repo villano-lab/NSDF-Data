@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Linux edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 3 · 6 October 2026"
 ---
 
 ::: tip
@@ -196,7 +196,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 2, 5 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 3, 6 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

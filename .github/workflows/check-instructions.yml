@@ -1,9 +1,6 @@
 name: Check instructions
 
-on:
-  pull_request: [**]
-  push:
-    branches: [**]
+on: [push, pull_request]
   
 jobs:
   setup-universal:

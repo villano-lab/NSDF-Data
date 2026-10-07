@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 2 · 6 October 2026"
+date: "Version 3 · 7 October 2026"
 ---
 
 ::: tip
@@ -58,7 +58,7 @@ Look at the list that `git status` prints before the commit. It should contain o
 
 On [github.com](https://github.com), open the repository. GitHub shows a yellow banner saying your branch had recent pushes. Click **Compare & pull request**. Check that:
 
-- the **base** is `master` and the **compare** branch is `student-yourname`;
+- the **base** is `develop` and the **compare** branch is `student-yourname`;
 - the title says what the note is about;
 - the description says, in one sentence, what question the note answers.
 
@@ -90,7 +90,7 @@ Your lead reads the note, may comment on the pull request, and may ask you for c
 
 ## After the merge
 
-- The site builds your page automatically. Check the front page after a few minutes: your note appears in the **Student notes** table at the bottom.
+- The site builds your page automatically, usually within two minutes. Check the front page: your note appears in the **Student notes** table at the bottom.
 - The page is at `notes/student-<name>.html` on the site.
 
 ## Changing a note later
@@ -99,7 +99,7 @@ Make the change on your branch, open a new pull request (or add to the open one)
 
 ## Session Info
 
-Guide version 2, 6 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 3, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

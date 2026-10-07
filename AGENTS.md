@@ -25,13 +25,13 @@ The maintainer is Anthony Villano (@villaa).
 
 The repository uses **Git Flow** and **semantic versioning**. The full procedure is in `RELEASING.md`; the rules an agent must follow are:
 
-- **Branches:** `master` holds released code only (every commit is tagged `vX.Y.Z`, and the live site and guide PDFs are served from it). `develop` is the integration branch. Work happens on `feature/<name>` branches **from `develop`**, which open pull requests **into `develop`**. Releases use `release/X.Y.Z` and urgent fixes use `hotfix/X.Y.Z`; both target `master`.
+- **Branches:** `master` holds released code only (every commit is tagged `vX.Y.Z`). `develop` is the integration branch, **and the live site and guide PDFs are served from `develop`**, so a merged change there is live in about two minutes. Work happens on `feature/<name>` branches **from `develop`**, which open pull requests **into `develop`**. Releases use `release/X.Y.Z` and urgent fixes use `hotfix/X.Y.Z`; both target `master`.
 - **Never commit directly to `master` or `develop`.** This applies to the maintainer too. Make a branch and open a pull request.
-- **Reviewers** are requested automatically from `.github/CODEOWNERS`. Do not merge your own PR. Feature PRs into `develop` may be merged by the maintainer or by Kitty Mickelson (@nuclearGoblin) after review by someone else; release and hotfix PRs into `master` are merged only by the maintainer. **An agent never merges a PR without the maintainer's explicit go-ahead**, even if every check is green.
+- **Reviews:** GitHub automatically requests the maintainer (@villaa) on PRs that other people open (`.github/CODEOWNERS`). Anyone else, such as Kitty Mickelson (@nuclearGoblin), is added by hand under **Reviewers** when their review is wanted. Contributors do not merge their own PR. The maintainer may merge their own PRs. Feature PRs into `develop` may also be merged by Kitty Mickelson after review by someone else; release and hotfix PRs into `master` are merged only by the maintainer. **An agent never merges a PR without the maintainer's explicit go-ahead**, even if every check is green.
 - Use merge commits (not squash or rebase) to finish a branch.
 - Never force-push. `master` is protected against deletion and non-fast-forward pushes. Delete only branches you created, and only after they are merged.
 - **Add an entry under `[Unreleased]` in `CHANGELOG.md`** for any change a user or student would notice. Only a `release/*` or `hotfix/*` branch changes `VERSION` or renames `[Unreleased]`.
-- Student notes (`notes/src/**`), `tools/build_notes.py` and the student-notes workflow always go through a PR into `develop`. A note appears on the live site at the next release.
+- Student notes (`notes/src/**`), `tools/build_notes.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it an S-number and merges it; nothing is published before that.
 - Write commit messages that say what changed and why. If an AI assistant helped, add a `Co-Authored-By:` trailer naming it.
 - Never commit raw data, credentials or tokens.
 
@@ -40,11 +40,11 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 | You change | Also do |
 |---|---|
 | A function in `python/` (add, rename, remove) | Add or update tests in `python/tests/`. Tag it `@status(DONE)` or `@status(UNDER_DEVELOPMENT, note=...)`. Note 1a (the library reference) is regenerated from the library, never hand-edited. A **breaking** change (rename/removal) means updating the notebooks that use it, or marking them deprecated (see "Notebooks and deprecation" on `docs/index.html`). Additive changes need no notebook edits. |
-| A hand-written note page `docs/notes/note-NN-*.html` | Keep exactly one row for it in `docs/index.html`, newest note number first. Notes marked **Complete** are left alone, apart from a minimal correction when a library rename makes them wrong. New or In-progress notes get an `id` on each `<h2>` and a `<nav class="outline">`. Pin notebooks and `python/` to the exact commit sha that produced the results. |
+| A hand-written note page `docs/notes/note-NN-*.html` (live as soon as it is merged into `develop`) | Keep exactly one row for it in `docs/index.html`, newest note number first. Notes marked **Complete** are left alone, apart from a minimal correction when a library rename makes them wrong. New or In-progress notes get an `id` on each `<h2>` and a `<nav class="outline">`. Pin notebooks and `python/` to the exact commit sha that produced the results. |
 | A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Rebuild (below), commit sources **and** the rebuilt PDFs together, and bump the version and date in the guide's header and its *Session Info*. |
 | `requirements.txt`, package pins, or the Python version | Keep the setup guide's Step 5 commands, `.devcontainer/devcontainer.json` and `.github/workflows/check-instructions.yml` in step with each other. |
 | `.github/workflows/*` | Test on a branch (a push runs the workflow). Keep it working on Windows, macOS and Linux if it checks the guides. |
-| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live at the next release. |
+| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it. |
 | Anything a user or student would notice | A line under `[Unreleased]` in `CHANGELOG.md`. |
 
 ## Building the student guides

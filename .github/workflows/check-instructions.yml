@@ -23,9 +23,8 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: git install
-        run: |
-          xcode-select --install
-          git --version
+        run: xcode-select --help
+        #Can't really check if it can be installed, since it comes pre-installed...
   check-downloads-unix:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -34,6 +33,7 @@ jobs:
     steps:
       - name: Miniforge install
         run: | 
+          mkdir Downloads
           cd Downloads
           wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
           bash ~/Downloads/Miniforge3-$(uname)-$(uname -m).sh
@@ -82,7 +82,11 @@ jobs:
           ${{ matrix.ls }}
 
       - name: create conda env
-        run: conda create -n darkmatter_cli_env -f requirements.txt
+        run: |
+          cd ${{ matrix.stardir }}/Research/NSDF-Data
+          pwd
+          ls
+          conda create -n darkmatter_cli_env -f requirements.txt
       - name: test env
         run: |
           conda activate darkmatter_cli_env

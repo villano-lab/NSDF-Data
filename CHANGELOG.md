@@ -4,7 +4,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
-## [0.2.1] - 2026-10-07
+## [0.3.0] - 2026-10-07
 
 Commands in the guides can now be copied reliably (web pages with Copy buttons, and PDFs that copy clean), plus a corrected setup checkpoint.
 
@@ -67,7 +67,7 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.1...develop
-[0.2.1]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.2.1
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...develop
+[0.3.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/villano-lab/NSDF-Data/releases/tag/v0.1.0

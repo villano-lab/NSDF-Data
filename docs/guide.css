@@ -56,6 +56,7 @@
 .guide button.copy:hover, .guide button.copy:focus-visible { border-color: var(--link); }
 .guide button.copy.done { color: var(--complete); border-color: var(--complete); }
 .guide button.copy-line { position: sticky; right: 0; flex: 0 0 auto; }
+.guide button.copy-inline { margin-left: 5px; padding: 0 7px; font-size: 0.72rem; vertical-align: 1px; }
 
 .guide blockquote { margin: 4px 0 18px; padding: 6px 14px; border-left: 4px solid var(--border); background: var(--row-alt); border-radius: 0 6px 6px 0; }
 .guide blockquote > :last-child { margin-bottom: 0; }

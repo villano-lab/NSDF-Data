@@ -88,7 +88,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 9 · 7 October 2026"
+date: "Version 10 · 7 October 2026"
 ---
 
 ::: tip
@@ -114,7 +114,7 @@ date: "Version 9 · 7 October 2026"
 @PASTE@
 
 ::: checkpoint
-You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo hello` and press Enter: the word `hello` should appear under it.
+You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo hello`{.cmd} and press Enter: the word `hello` should appear under it.
 :::
 
 ## Step 2. Install Git
@@ -122,7 +122,7 @@ You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo he
 @GIT@
 
 ::: checkpoint
-In the terminal, type `git --version` and press Enter. You should see a line starting with `git version`.
+In the terminal, type `git --version`{.cmd} and press Enter. You should see a line starting with `git version`.
 :::
 
 ## Step 3. Install Miniforge
@@ -132,7 +132,7 @@ Miniforge installs Python and the other packages the analysis needs. Its downloa
 @MINIFORGE@
 
 ::: checkpoint
-Open @NEW_TERM@ and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
+Open @NEW_TERM@ and type `conda --version`{.cmd}, then press Enter. You should see `conda` followed by a version number.
 :::
 
 ::: careful
@@ -163,7 +163,7 @@ Downloading with `git clone` does not need a GitHub account. It makes a full cop
 | `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
-Type `@LISTCMD@` and press Enter. You are now inside the `NSDF-Data` folder (your prompt mentions it), so the list shows the project's own folders and files, such as `python`, `R76`, `docs` and `README.md`.
+Type `@LISTCMD@`{.cmd} and press Enter. You are now inside the `NSDF-Data` folder (your prompt mentions it), so the list shows the project's own folders and files, such as `python`, `R76`, `docs` and `README.md`.
 :::
 
 ## Step 5. Create your analysis environment
@@ -193,7 +193,7 @@ The project folder also has a file called `requirements.txt` that lists the same
 :::
 
 ::: tip
-Every time you open a new terminal, run `conda activate darkmatter_cli_env` first. When it is active, the start of each line shows `(darkmatter_cli_env)`.
+Every time you open a new terminal, run `conda activate darkmatter_cli_env`{.cmd} first. When it is active, the start of each line shows `(darkmatter_cli_env)`.
 :::
 
 ::: checkpoint
@@ -231,7 +231,7 @@ jupyter lab --version
 ```
 
 ::: checkpoint
-It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab`{.cmd} and try again.
 :::
 
 **What these commands do**
@@ -288,21 +288,21 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 ## You are done when
 
-- [ ] Your terminal opens and `git --version` prints a version.
-- [ ] `conda --version` prints a version, in a new terminal.
-- [ ] The `NSDF-Data` folder is in `@FOLDER@`.
-- [ ] `python -m pytest -q` in the `python` folder ends with `52 passed`.
-- [ ] `nsdf-cli version` prints a version.
-- [ ] `jupyter lab --version` prints a version.
-- [ ] Your Jupyter kernel `darkmatter_cli_env` is installed.
-- [ ] You have a `student-` branch (after access is granted).
+- [ ] Your terminal opens and `git --version`{.cmd} prints a version.
+- [ ] `conda --version`{.cmd} prints a version, in a new terminal.
+- [ ] `@LISTCMD@ @FOLDER@`{.cmd} lists `NSDF-Data`.
+- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `52 passed`.
+- [ ] `nsdf-cli version`{.cmd} prints a version.
+- [ ] `jupyter lab --version`{.cmd} prints a version.
+- [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
+- [ ] `git branch`{.cmd} shows `* student-yourname` (after access is granted).
 
 **Next:** *First analysis* (the guide for @NAME@).
 
 ## If something goes wrong
 
 1. Read the **last line** of the message. It usually says what is wrong.
-2. Close the terminal, open a new one, and run `conda activate darkmatter_cli_env` again. Many problems are just the wrong environment.
+2. Close the terminal, open a new one, and run `conda activate darkmatter_cli_env`{.cmd} again. Many problems are just the wrong environment.
 3. Copy the command you ran and the message it printed, and send them to the project lead. A screenshot is also fine.
 
 ## Where to get help
@@ -313,7 +313,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 9, 7 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 10, 7 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -337,7 +337,7 @@ date: "Version 6 · 6 October 2026"
 
 - **Time:** about two hours.
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
-- **Check:** open @OPEN_TERM@, and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
+- **Check:** open @OPEN_TERM@, and run `conda activate darkmatter_cli_env`{.cmd}. The start of the line should show `(darkmatter_cli_env)`.
 
 ## Words you will meet
 
@@ -509,7 +509,7 @@ Commit only your notebook. Check the list before committing with `git status`. I
 
 | What you see | What to do |
 |---|---|
-| `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
+| `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
 | `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from `R76/analysis_notes`. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |

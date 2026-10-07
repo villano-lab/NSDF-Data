@@ -157,9 +157,39 @@
     for (var i = 0; i < blocks.length; i++) { enhance(blocks[i]); }
     var quotes = document.querySelectorAll('.guide blockquote');
     for (var k = 0; k < quotes.length; k++) { enhanceQuote(quotes[k]); }
-    /* the checklists ("You are done when") are meant to be ticked */
-    var boxes = document.querySelectorAll('.guide input[type="checkbox"][disabled]');
-    for (var j = 0; j < boxes.length; j++) { boxes[j].removeAttribute('disabled'); }
+    var inline = document.querySelectorAll('.guide code.cmd');
+    for (var m = 0; m < inline.length; m++) { enhanceInline(inline[m]); }
+    rememberTicks();
+  }
+
+  /* A command written inside a sentence (a "type this" step, or an item of a checklist) gets a small
+     Copy button after it. The source marks such commands with the class "cmd". */
+  function enhanceInline(code) {
+    var command = code.textContent.trim();
+    code.parentNode.insertBefore(
+      makeButton('Copy', 'Copy this command: ' + command, function () { return command; }, 'copy-inline'),
+      code.nextSibling
+    );
+  }
+
+  /* The checklists ("You are done when") are meant to be ticked. The ticks are remembered in this
+     browser, per page, so they are still there after a reload. They are never sent anywhere. */
+  function rememberTicks() {
+    var boxes = document.querySelectorAll('.guide input[type="checkbox"]');
+    if (!boxes.length) { return; }
+    var key = 'nsdf-guide-ticks:' + location.pathname;
+    var saved = [];
+    try { saved = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { saved = []; }
+    function save() {
+      var ticked = [];
+      for (var b = 0; b < boxes.length; b++) { if (boxes[b].checked) { ticked.push(b); } }
+      try { localStorage.setItem(key, JSON.stringify(ticked)); } catch (e) { /* private mode: ignore */ }
+    }
+    for (var j = 0; j < boxes.length; j++) {
+      boxes[j].removeAttribute('disabled');
+      if (saved.indexOf(j) !== -1) { boxes[j].checked = true; }
+      boxes[j].addEventListener('change', save);
+    }
   }
 
   if (document.readyState === 'loading') {

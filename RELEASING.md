@@ -2,7 +2,7 @@
 
 This repository uses **Git Flow** branching and **semantic versioning** (https://semver.org). One version number describes the whole repository: the `python/` library, the notebooks, the notes site, the student guides and the CI checks together. The guides also carry their own document versions (in their headers); those are separate and are not the repository version.
 
-The current version is in the `VERSION` file, and its history is in `CHANGELOG.md`.
+The current version is in the `VERSION` file, and its history is in `CHANGELOG.md`. A one-page summary with diagrams is on the notes site: `docs/developers/developer-workflow.pdf` (source in `docs/developers/src/`, rebuilt with `sh docs/developers/src/build.sh`).
 
 ## Branches
 

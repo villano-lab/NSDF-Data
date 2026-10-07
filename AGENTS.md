@@ -23,7 +23,7 @@ The maintainer is Anthony Villano (@villaa).
 
 ## Git rules
 
-The repository uses **Git Flow** and **semantic versioning**. The full procedure is in `RELEASING.md`; the rules an agent must follow are:
+The repository uses **Git Flow** and **semantic versioning**. The full procedure is in `RELEASING.md` (a one-page summary with diagrams: `docs/developers/developer-workflow.pdf`); the rules an agent must follow are:
 
 - **Branches:** `master` holds released code only (every commit is tagged `vX.Y.Z`). `develop` is the integration branch, **and the live site and guide PDFs are served from `develop`**, so a merged change there is live in about two minutes. Work happens on `feature/<name>` branches **from `develop`**, which open pull requests **into `develop`**. Releases use `release/X.Y.Z` and urgent fixes use `hotfix/X.Y.Z`; both target `master`.
 - **Never commit directly to `master` or `develop`.** This applies to the maintainer too. Make a branch and open a pull request.

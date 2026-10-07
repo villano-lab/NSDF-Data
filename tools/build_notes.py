@@ -79,7 +79,7 @@ def slug_of(path):
 
 def to_html(body):
     out = subprocess.run(["pandoc", "-f", "markdown", "-t", "html5", "--no-highlight"],
-                         input=body, capture_output=True, text=True, check=True)
+                         input=body, capture_output=True, text=True, encoding="utf-8", check=True)
     return out.stdout
 
 

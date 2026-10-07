@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 9 · 7 October 2026"
+date: "Version 10 · 7 October 2026"
 ---
 
 ::: tip
@@ -40,7 +40,7 @@ Press **Command + Space**, type `Terminal`, and press **Return**. A window with 
 Paste with **Command + V**.
 
 ::: checkpoint
-You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo hello` and press Enter: the word `hello` should appear under it.
+You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo hello`{.cmd} and press Enter: the word `hello` should appear under it.
 :::
 
 ## Step 2. Install Git
@@ -54,7 +54,7 @@ xcode-select --install
 A pop-up appears. Click **Install**, agree to the licence, and wait. It can take 15 minutes or more. If the message says the tools are already installed, that is fine.
 
 ::: checkpoint
-In the terminal, type `git --version` and press Enter. You should see a line starting with `git version`.
+In the terminal, type `git --version`{.cmd} and press Enter. You should see a line starting with `git version`.
 :::
 
 ## Step 3. Install Miniforge
@@ -72,7 +72,7 @@ bash ~/Downloads/Miniforge3-MacOSX-arm64.sh
 Press **Return** to read the licence, type `yes` and press **Return**, accept the default location, and when it asks *"Do you wish the installer to initialize Miniforge3 by running conda init?"* type `yes`. Then **quit Terminal completely** (Command + Q) and open it again.
 
 ::: checkpoint
-Open a **new** terminal and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
+Open a **new** terminal and type `conda --version`{.cmd}, then press Enter. You should see `conda` followed by a version number.
 :::
 
 ::: careful
@@ -103,7 +103,7 @@ Downloading with `git clone` does not need a GitHub account. It makes a full cop
 | `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
-Type `ls` and press Enter. You are now inside the `NSDF-Data` folder (your prompt mentions it), so the list shows the project's own folders and files, such as `python`, `R76`, `docs` and `README.md`.
+Type `ls`{.cmd} and press Enter. You are now inside the `NSDF-Data` folder (your prompt mentions it), so the list shows the project's own folders and files, such as `python`, `R76`, `docs` and `README.md`.
 :::
 
 ## Step 5. Create your analysis environment
@@ -133,7 +133,7 @@ The project folder also has a file called `requirements.txt` that lists the same
 :::
 
 ::: tip
-Every time you open a new terminal, run `conda activate darkmatter_cli_env` first. When it is active, the start of each line shows `(darkmatter_cli_env)`.
+Every time you open a new terminal, run `conda activate darkmatter_cli_env`{.cmd} first. When it is active, the start of each line shows `(darkmatter_cli_env)`.
 :::
 
 ::: checkpoint
@@ -171,7 +171,7 @@ jupyter lab --version
 ```
 
 ::: checkpoint
-It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab`{.cmd} and try again.
 :::
 
 **What these commands do**
@@ -228,21 +228,21 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 ## You are done when
 
-- [ ] Your terminal opens and `git --version` prints a version.
-- [ ] `conda --version` prints a version, in a new terminal.
-- [ ] The `NSDF-Data` folder is in `~/Research`.
-- [ ] `python -m pytest -q` in the `python` folder ends with `52 passed`.
-- [ ] `nsdf-cli version` prints a version.
-- [ ] `jupyter lab --version` prints a version.
-- [ ] Your Jupyter kernel `darkmatter_cli_env` is installed.
-- [ ] You have a `student-` branch (after access is granted).
+- [ ] Your terminal opens and `git --version`{.cmd} prints a version.
+- [ ] `conda --version`{.cmd} prints a version, in a new terminal.
+- [ ] `ls ~/Research`{.cmd} lists `NSDF-Data`.
+- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `52 passed`.
+- [ ] `nsdf-cli version`{.cmd} prints a version.
+- [ ] `jupyter lab --version`{.cmd} prints a version.
+- [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
+- [ ] `git branch`{.cmd} shows `* student-yourname` (after access is granted).
 
 **Next:** *First analysis* (the guide for macOS).
 
 ## If something goes wrong
 
 1. Read the **last line** of the message. It usually says what is wrong.
-2. Close the terminal, open a new one, and run `conda activate darkmatter_cli_env` again. Many problems are just the wrong environment.
+2. Close the terminal, open a new one, and run `conda activate darkmatter_cli_env`{.cmd} again. Many problems are just the wrong environment.
 3. Copy the command you ran and the message it printed, and send them to the project lead. A screenshot is also fine.
 
 ## Where to get help
@@ -253,7 +253,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 9, 7 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 10, 7 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

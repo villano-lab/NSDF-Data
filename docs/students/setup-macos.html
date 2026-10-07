@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — macOS
-edition &middot; Version 9 · 7 October 2026</p>
+edition &middot; Version 10 · 7 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -164,8 +164,9 @@ This is the terminal for everything in this guide.</p>
 <p>Paste with <strong>Command + V</strong>.</p>
 <div class="checkpoint">
 <p>You see a line of text ending in a symbol such as <code>&gt;</code>,
-<code>$</code> or <code>%</code>. Type <code>echo hello</code> and press
-Enter: the word <code>hello</code> should appear under it.</p>
+<code>$</code> or <code>%</code>. Type <code
+class="cmd">echo hello</code> and press Enter: the word
+<code>hello</code> should appear under it.</p>
 </div>
 <h2 id="step-2.-install-git">Step 2. Install Git</h2>
 <p>Type this in the Terminal and press <strong>Return</strong>:</p>
@@ -174,8 +175,9 @@ Enter: the word <code>hello</code> should appear under it.</p>
 licence, and wait. It can take 15 minutes or more. If the message says
 the tools are already installed, that is fine.</p>
 <div class="checkpoint">
-<p>In the terminal, type <code>git --version</code> and press Enter. You
-should see a line starting with <code>git version</code>.</p>
+<p>In the terminal, type <code class="cmd">git --version</code> and
+press Enter. You should see a line starting with
+<code>git version</code>.</p>
 </div>
 <h2 id="step-3.-install-miniforge">Step 3. Install Miniforge</h2>
 <p>Miniforge installs Python and the other packages the analysis needs.
@@ -201,8 +203,8 @@ Miniforge3 by running conda init?”</em> type <code>yes</code>. Then
 <strong>quit Terminal completely</strong> (Command + Q) and open it
 again.</p>
 <div class="checkpoint">
-<p>Open a <strong>new</strong> terminal and type
-<code>conda --version</code>, then press Enter. You should see
+<p>Open a <strong>new</strong> terminal and type <code
+class="cmd">conda --version</code>, then press Enter. You should see
 <code>conda</code> followed by a version number.</p>
 </div>
 <div class="careful">
@@ -255,8 +257,8 @@ called <code>NSDF-Data</code>.</td>
 </table>
 </div>
 <div class="checkpoint">
-<p>Type <code>ls</code> and press Enter. You are now inside the
-<code>NSDF-Data</code> folder (your prompt mentions it), so the list
+<p>Type <code class="cmd">ls</code> and press Enter. You are now inside
+the <code>NSDF-Data</code> folder (your prompt mentions it), so the list
 shows the project’s own folders and files, such as <code>python</code>,
 <code>R76</code>, <code>docs</code> and <code>README.md</code>.</p>
 </div>
@@ -319,9 +321,10 @@ do <strong>not</strong> need it: the lines above do the whole job, and
 they work the same on every computer.</p>
 </div>
 <div class="tip">
-<p>Every time you open a new terminal, run
-<code>conda activate darkmatter_cli_env</code> first. When it is active,
-the start of each line shows <code>(darkmatter_cli_env)</code>.</p>
+<p>Every time you open a new terminal, run <code
+class="cmd">conda activate darkmatter_cli_env</code> first. When it is
+active, the start of each line shows
+<code>(darkmatter_cli_env)</code>.</p>
 </div>
 <div class="checkpoint">
 <p>The last line of the output is a message, not an error, and the
@@ -350,8 +353,8 @@ version).</p>
 <pre><code>jupyter lab --version</code></pre>
 <div class="checkpoint">
 <p>It prints a version number, such as <code>4.4.0</code>. If it says
-<code>jupyter-lab</code> is not found, run
-<code>python -m pip install jupyterlab</code> and try again.</p>
+<code>jupyter-lab</code> is not found, run <code
+class="cmd">python -m pip install jupyterlab</code> and try again.</p>
 </div>
 <p><strong>What these commands do</strong></p>
 <div class="table-scroll">
@@ -443,23 +446,27 @@ finished (see the first analysis guide).</li>
 </ul>
 <h2 id="you-are-done-when">You are done when</h2>
 <ul class="task-list">
-<li><label><input type="checkbox" />Your terminal opens and
-<code>git --version</code> prints a version.</label></li>
-<li><label><input type="checkbox" /><code>conda --version</code> prints
-a version, in a new terminal.</label></li>
-<li><label><input type="checkbox" />The <code>NSDF-Data</code> folder is
-in <code>~/Research</code>.</label></li>
-<li><label><input type="checkbox" /><code>python -m pytest -q</code> in
-the <code>python</code> folder ends with
-<code>52 passed</code>.</label></li>
-<li><label><input type="checkbox" /><code>nsdf-cli version</code> prints
-a version.</label></li>
-<li><label><input type="checkbox" /><code>jupyter lab --version</code>
-prints a version.</label></li>
-<li><label><input type="checkbox" />Your Jupyter kernel
-<code>darkmatter_cli_env</code> is installed.</label></li>
-<li><label><input type="checkbox" />You have a <code>student-</code>
-branch (after access is granted).</label></li>
+<li><label><input type="checkbox" />Your terminal opens and <code
+class="cmd">git --version</code> prints a version.</label></li>
+<li><label><input type="checkbox" /><code
+class="cmd">conda --version</code> prints a version, in a new
+terminal.</label></li>
+<li><label><input type="checkbox" /><code
+class="cmd">ls ~/Research</code> lists
+<code>NSDF-Data</code>.</label></li>
+<li><label><input type="checkbox" /><code
+class="cmd">python -m pytest -q</code> in the <code>python</code> folder
+ends with <code>52 passed</code>.</label></li>
+<li><label><input type="checkbox" /><code
+class="cmd">nsdf-cli version</code> prints a version.</label></li>
+<li><label><input type="checkbox" /><code
+class="cmd">jupyter lab --version</code> prints a version.</label></li>
+<li><label><input type="checkbox" /><code
+class="cmd">jupyter kernelspec list</code> lists
+<code>darkmatter_cli_env</code>.</label></li>
+<li><label><input type="checkbox" /><code class="cmd">git branch</code>
+shows <code>* student-yourname</code> (after access is
+granted).</label></li>
 </ul>
 <p><strong>Next:</strong> <em>First analysis</em> (the guide for
 macOS).</p>
@@ -467,9 +474,9 @@ macOS).</p>
 <ol type="1">
 <li>Read the <strong>last line</strong> of the message. It usually says
 what is wrong.</li>
-<li>Close the terminal, open a new one, and run
-<code>conda activate darkmatter_cli_env</code> again. Many problems are
-just the wrong environment.</li>
+<li>Close the terminal, open a new one, and run <code
+class="cmd">conda activate darkmatter_cli_env</code> again. Many
+problems are just the wrong environment.</li>
 <li>Copy the command you ran and the message it printed, and send them
 to the project lead. A screenshot is also fine.</li>
 </ol>
@@ -481,7 +488,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 9, 7 October 2026, macOS edition. Written for
+<p>Guide version 10, 7 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

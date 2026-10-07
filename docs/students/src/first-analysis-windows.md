@@ -12,7 +12,7 @@ date: "Version 6 · 6 October 2026"
 
 - **Time:** about two hours.
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
-- **Check:** open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**), and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
+- **Check:** open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**), and run `conda activate darkmatter_cli_env`{.cmd}. The start of the line should show `(darkmatter_cli_env)`.
 
 ## Words you will meet
 
@@ -184,7 +184,7 @@ Commit only your notebook. Check the list before committing with `git status`. I
 
 | What you see | What to do |
 |---|---|
-| `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
+| `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
 | `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from `R76/analysis_notes`. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |

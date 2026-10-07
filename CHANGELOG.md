@@ -4,6 +4,15 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Added
+
+- Small **Copy buttons on commands written inside a sentence** in the guides' web pages (the "type this" steps, the checkpoints and every item of the "You are done when" checklist), not only in code blocks. The source marks such a command with the class `cmd`; the PDF ignores it.
+- The **ticks in the checklists are remembered** in the browser, per page, so they are still there after a reload (kept only in that browser, never sent anywhere).
+
+### Fixed
+
+- **Setup guides, "You are done when": two items gave no way to check them.** "Your Jupyter kernel is installed" and "You have a student- branch" now say how: `jupyter kernelspec list` lists `darkmatter_cli_env`, and `git branch` shows `* student-yourname`. The folder item now has a command too (`dir %USERPROFILE%\Research` on Windows, `ls ~/Research` on macOS and Linux). Setup guides are version 10.
+
 ## [0.3.0] - 2026-10-07
 
 Commands in the guides can now be copied reliably (web pages with Copy buttons, and PDFs that copy clean), plus a corrected setup checkpoint.

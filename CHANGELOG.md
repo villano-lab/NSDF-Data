@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Fixed
+
+- **Commands pasted from the guides failed on Windows.** The PDFs built on a Windows PC with Consolas copied `-` out as the look-alike character U+2010, so `git clone https://github.com/villano-lab/NSDF-Data.git` (and every other command with a hyphen) was not found when pasted. All guide, cheat-sheet and developer PDFs are rebuilt with Latin Modern Mono, and the "Check instructions" workflow now fails if any PDF contains such a character.
+
 ## [0.2.0] - 2026-10-07
 
 Developer and student quick-sheets, a safer note-publishing pipeline, and guidance for updating notes.

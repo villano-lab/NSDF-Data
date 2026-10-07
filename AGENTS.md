@@ -53,10 +53,10 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 sh docs/students/src/build.sh
 ```
 
-Needs python, pandoc, and a LaTeX install with xelatex, tcolorbox and titlesec. On Windows, set the Mac-only fonts and the Python explicitly:
+Needs python, pandoc, and a LaTeX install with xelatex, tcolorbox and titlesec. On Windows, set the Mac-only fonts and the Python explicitly. **Never use Consolas**: its hyphen copies out of the PDF as a look-alike character (U+2010), so a command pasted from a guide fails (the CI check "PDFs copy as plain text" catches this):
 
 ```
-PYTHON=python MAINFONT=Arial MONOFONT=Consolas sh docs/students/src/build.sh
+PYTHON=python MAINFONT=Arial MONOFONT="Latin Modern Mono" sh docs/students/src/build.sh
 ```
 
 Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDFs whose source did not change (`git checkout -- <pdf>`) before committing. Every guide has a "Where to get help" section naming the project lead. Check the rebuilt pages for text running past the margin and for `?`/replacement characters (the sources must be written as UTF-8).

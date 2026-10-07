@@ -6,7 +6,8 @@
 #   2. pandoc turns each Markdown file into a PDF, using boxes.lua (coloured
 #      Tip / Careful / Checkpoint boxes) and style.tex (headings, colours).
 # Needs: python3, pandoc, and a LaTeX install with xelatex, tcolorbox and titlesec.
-# Optional overrides (e.g. on Windows): PYTHON=python MAINFONT=Arial MONOFONT=Consolas sh build.sh
+# Optional overrides (e.g. on Windows): PYTHON=python MAINFONT=Arial MONOFONT="Latin Modern Mono" sh build.sh
+# Do not use Consolas: its hyphen copies out of the PDF as U+2010, so a pasted command fails.
 set -e
 cd "$(dirname "$0")"
 OUT=..

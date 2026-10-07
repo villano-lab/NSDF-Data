@@ -1,5 +1,5 @@
 ---
-id: "TBD"
+id: "S999"
 title: "TEST NOTE, to be removed: does the student-notes pipeline publish?"
 author: "Pipeline test (not a student)"
 date: "2026-10-07"

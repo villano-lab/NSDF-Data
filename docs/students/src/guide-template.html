@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$if(html-title)$$html-title$$else$$title$$endif$$if(subtitle)$ ($subtitle$)$endif$</title>
+<link rel="stylesheet" href="$root$/style.css">
+<link rel="stylesheet" href="$root$/guide.css">
+<script src="$root$/guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="$root$/index.html">&larr; All notes and guides</a> <a class="pdf-link" href="$pdf$">PDF version (download or print)</a></nav></header>
+
+<h1>$if(html-title)$$html-title$$else$$title$$endif$</h1>
+<p class="meta">$if(html-subtitle)$$html-subtitle$$else$$if(subtitle)$$subtitle$$endif$$if(date)$ &middot; $date$$endif$$endif$</p>
+
+$if(toc)$
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+$table-of-contents$
+</nav>
+$endif$
+
+$body$
+
+<footer>This guide is also available as a <a href="$pdf$">PDF</a>, for printing or offline use. <a href="$root$/index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

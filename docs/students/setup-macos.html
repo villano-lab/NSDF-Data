@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setting up your computer (NSDF-Data student guide 1 — macOS
+edition)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="setup-macos.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Setting up your computer</h1>
+<p class="meta">NSDF-Data student guide 1 — macOS
+edition &middot; Version 8 · 7 October 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#before-you-start" id="toc-before-you-start">Before you
+start</a></li>
+<li><a href="#words-you-will-meet" id="toc-words-you-will-meet">Words
+you will meet</a></li>
+<li><a href="#step-1.-open-a-terminal"
+id="toc-step-1.-open-a-terminal">Step 1. Open a terminal</a></li>
+<li><a href="#step-2.-install-git" id="toc-step-2.-install-git">Step 2.
+Install Git</a></li>
+<li><a href="#step-3.-install-miniforge"
+id="toc-step-3.-install-miniforge">Step 3. Install Miniforge</a></li>
+<li><a href="#step-4.-download-the-nsdf-data-code"
+id="toc-step-4.-download-the-nsdf-data-code">Step 4. Download the
+NSDF-Data code</a></li>
+<li><a href="#step-5.-create-your-analysis-environment"
+id="toc-step-5.-create-your-analysis-environment">Step 5. Create your
+analysis environment</a></li>
+<li><a href="#step-6.-check-that-everything-works"
+id="toc-step-6.-check-that-everything-works">Step 6. Check that
+everything works</a></li>
+<li><a href="#step-7.-let-jupyter-notebooks-use-your-environment"
+id="toc-step-7.-let-jupyter-notebooks-use-your-environment">Step 7. Let
+Jupyter notebooks use your environment</a></li>
+<li><a href="#step-8.-get-permission-to-save-your-work"
+id="toc-step-8.-get-permission-to-save-your-work">Step 8. Get permission
+to save your work</a></li>
+<li><a href="#rules-for-keeping-your-work-safe"
+id="toc-rules-for-keeping-your-work-safe">Rules for keeping your work
+safe</a></li>
+<li><a href="#you-are-done-when" id="toc-you-are-done-when">You are done
+when</a></li>
+<li><a href="#if-something-goes-wrong"
+id="toc-if-something-goes-wrong">If something goes wrong</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>Who this is for.</strong> You are starting from little or no
+computing experience. You will paste some commands into a terminal and
+read the answers. You do <strong>not</strong> need to know any
+programming. Work through the steps in order. Each step ends with a
+<strong>Checkpoint</strong>: if it does not match, stop there.</p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li><strong>Time:</strong> about one hour. Most of it is waiting for
+downloads and installers.</li>
+<li><strong>You need:</strong> an internet connection, the password for
+your computer, and about 3 GB of free disk space.</li>
+<li><strong>Rule of thumb:</strong> type or paste commands
+<strong>exactly</strong> as written. Capitals and spaces matter.</li>
+<li><strong>Nothing to be afraid of:</strong> the commands in this guide
+install software and make new folders. None of them deletes your files.
+If you are not sure what a line does, there is a short table after each
+group of commands.</li>
+<li><strong>When something goes wrong:</strong> do not guess. Copy the
+message, note the step you were on, and ask the project lead. See <em>If
+something goes wrong</em> at the end.</li>
+</ul>
+<h2 id="words-you-will-meet">Words you will meet</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Word</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terminal</strong></td>
+<td>A window where you type commands and the computer answers in
+text.</td>
+</tr>
+<tr>
+<td><strong>Command</strong></td>
+<td>One line you type in the terminal, followed by
+<strong>Enter</strong> (or <strong>Return</strong>).</td>
+</tr>
+<tr>
+<td><strong>Folder</strong> (or directory)</td>
+<td>A place on your computer that holds files and other folders.</td>
+</tr>
+<tr>
+<td><strong>Path</strong></td>
+<td>The address of a folder, such as
+<code>C:\Users\YourName\Research</code>.</td>
+</tr>
+<tr>
+<td><strong>Git</strong></td>
+<td>A program that downloads and keeps track of versions of code.</td>
+</tr>
+<tr>
+<td><strong>Repository</strong> (repo)</td>
+<td>A project folder that Git tracks. Here, <code>NSDF-Data</code>.</td>
+</tr>
+<tr>
+<td><strong>Python</strong></td>
+<td>The programming language the analysis is written in. You will not
+need to write Python to finish these guides.</td>
+</tr>
+<tr>
+<td><strong>Conda / Miniforge</strong></td>
+<td>A tool that installs Python and packages in separate, named
+<em>environments</em>.</td>
+</tr>
+<tr>
+<td><strong>Environment</strong></td>
+<td>A sealed set of programs and versions, so this project’s software
+does not clash with others.</td>
+</tr>
+<tr>
+<td><strong>Package</strong></td>
+<td>A piece of ready-made software (for example
+<code>numpy</code>).</td>
+</tr>
+<tr>
+<td><strong>Jupyter notebook</strong></td>
+<td>A document that mixes text, code and plots, run one piece
+(<em>cell</em>) at a time.</td>
+</tr>
+<tr>
+<td><strong>Branch</strong></td>
+<td>A separate line of work in Git, so your changes do not touch the
+main code.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="step-1.-open-a-terminal">Step 1. Open a terminal</h2>
+<p>Press <strong>Command + Space</strong>, type <code>Terminal</code>,
+and press <strong>Return</strong>. A window with a text prompt opens.
+This is the terminal for everything in this guide.</p>
+<p>Paste with <strong>Command + V</strong>.</p>
+<div class="checkpoint">
+<p>You see a line of text ending in a symbol such as <code>&gt;</code>,
+<code>$</code> or <code>%</code>. Type <code>echo hello</code> and press
+Enter: the word <code>hello</code> should appear under it.</p>
+</div>
+<h2 id="step-2.-install-git">Step 2. Install Git</h2>
+<p>Type this in the Terminal and press <strong>Return</strong>:</p>
+<pre><code>xcode-select --install</code></pre>
+<p>A pop-up appears. Click <strong>Install</strong>, agree to the
+licence, and wait. It can take 15 minutes or more. If the message says
+the tools are already installed, that is fine.</p>
+<div class="checkpoint">
+<p>In the terminal, type <code>git --version</code> and press Enter. You
+should see a line starting with <code>git version</code>.</p>
+</div>
+<h2 id="step-3.-install-miniforge">Step 3. Install Miniforge</h2>
+<p>Miniforge installs Python and the other packages the analysis needs.
+Its download file is <strong>Miniforge3-MacOSX-arm64.sh (Apple chip) or
+Miniforge3-MacOSX-x86_64.sh (Intel chip)</strong>.</p>
+<p>First find out which chip your Mac has: click the Apple menu, then
+<strong>About This Mac</strong>. If it says <strong>Chip: Apple
+M</strong>something, use the <strong>arm64</strong> file. If it says
+<strong>Processor: Intel</strong>, use the <strong>x86_64</strong>
+file.</p>
+<p>Download the file into your <strong>Downloads</strong> folder: <a
+href="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh">Miniforge3-MacOSX-arm64.sh</a>
+(Apple chip) or <a
+href="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-x86_64.sh">Miniforge3-MacOSX-x86_64.sh</a>
+(Intel chip). If your browser asks whether to keep the file, choose
+<strong>Keep</strong>. Then, in the Terminal, run the command below (use
+the file name you downloaded):</p>
+<pre><code>bash ~/Downloads/Miniforge3-MacOSX-arm64.sh</code></pre>
+<p>Press <strong>Return</strong> to read the licence, type
+<code>yes</code> and press <strong>Return</strong>, accept the default
+location, and when it asks <em>“Do you wish the installer to initialize
+Miniforge3 by running conda init?”</em> type <code>yes</code>. Then
+<strong>quit Terminal completely</strong> (Command + Q) and open it
+again.</p>
+<div class="checkpoint">
+<p>Open a <strong>new</strong> terminal and type
+<code>conda --version</code>, then press Enter. You should see
+<code>conda</code> followed by a version number.</p>
+</div>
+<div class="careful">
+<p>macOS may say an app is from an unidentified developer when you open
+it. You do not need to open any app in this guide, so you can ignore
+this.</p>
+</div>
+<h2 id="step-4.-download-the-nsdf-data-code">Step 4. Download the
+NSDF-Data code</h2>
+<p>Your project will live in a folder called <code>Research</code>.
+Create it, go into it, and download the code. Type each line and press
+Enter:</p>
+<pre><code>mkdir -p ~/Research
+cd ~/Research
+git clone https://github.com/villano-lab/NSDF-Data.git
+cd ~/Research/NSDF-Data</code></pre>
+<p>Downloading with <code>git clone</code> does not need a GitHub
+account. It makes a full copy of the project in a folder named
+<code>NSDF-Data</code>.</p>
+<p><strong>What these lines do</strong></p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Line starts with</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mkdir</code></td>
+<td>Makes a new folder called <code>Research</code>.</td>
+</tr>
+<tr>
+<td><code>cd</code></td>
+<td>Moves you into a folder. <code>cd</code> stands for <em>change
+directory</em>, which is the same as opening a folder in a file
+window.</td>
+</tr>
+<tr>
+<td><code>git clone</code></td>
+<td>Downloads a copy of the project from the internet into a new folder
+called <code>NSDF-Data</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="checkpoint">
+<p>Type <code>ls</code> and press Enter. You should see
+<code>NSDF-Data</code> in the list.</p>
+</div>
+<h2 id="step-5.-create-your-analysis-environment">Step 5. Create your
+analysis environment</h2>
+<p>An environment is a sealed box of programs with fixed versions. We
+make one for this project, called <code>darkmatter_cli_env</code>. Type
+these lines one at a time, pressing Enter after each. The third line
+takes several minutes and prints a lot of text: wait for the prompt to
+come back.</p>
+<pre><code>conda create -n darkmatter_cli_env python=3.10 -y
+conda activate darkmatter_cli_env
+python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
+python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+python -m pip install jupyterlab</code></pre>
+<p><strong>What these lines do</strong></p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Line</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>conda create</code></td>
+<td>Makes a new, empty environment called
+<code>darkmatter_cli_env</code>, with Python 3.10 inside it.</td>
+</tr>
+<tr>
+<td><code>conda activate</code></td>
+<td>Switches that environment on. While it is on, your prompt starts
+with <code>(darkmatter_cli_env)</code>.</td>
+</tr>
+<tr>
+<td><code>pip install nsdf-dark-matter...</code></td>
+<td>Installs the software that reads the detector data.</td>
+</tr>
+<tr>
+<td><code>pip install numpy...</code></td>
+<td>Installs software for numbers, plots and checking that everything
+works.</td>
+</tr>
+<tr>
+<td><code>pip install jupyterlab</code></td>
+<td>Installs Jupyter, the notebook program you will use later.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip">
+<p>The project folder also has a file called
+<code>requirements.txt</code> that lists the same software versions. You
+do <strong>not</strong> need it: the lines above do the whole job, and
+they work the same on every computer.</p>
+</div>
+<div class="tip">
+<p>Every time you open a new terminal, run
+<code>conda activate darkmatter_cli_env</code> first. When it is active,
+the start of each line shows <code>(darkmatter_cli_env)</code>.</p>
+</div>
+<div class="checkpoint">
+<p>The last line of the output is a message, not an error, and the
+<code>(darkmatter_cli_env)</code> label is at the start of your
+prompt.</p>
+</div>
+<h2 id="step-6.-check-that-everything-works">Step 6. Check that
+everything works</h2>
+<p>First, the tests. They use made-up data, so they need no download.
+Type each line and press Enter:</p>
+<pre><code>conda activate darkmatter_cli_env
+cd ~/Research/NSDF-Data/python
+python -m pytest -q</code></pre>
+<div class="checkpoint">
+<p>The last line says <code>52 passed</code> (it can be a larger number
+later, which is also fine). If it says <code>failed</code>, stop and ask
+the project lead, and do not change any files.</p>
+</div>
+<p>Then, the data tool:</p>
+<pre><code>nsdf-cli version</code></pre>
+<div class="checkpoint">
+<p>It prints <code>NSDF Dark Matter CLI: 0.5.0</code> (or a later
+version).</p>
+</div>
+<p>Finally, the notebook program:</p>
+<pre><code>jupyter lab --version</code></pre>
+<div class="checkpoint">
+<p>It prints a version number, such as <code>4.4.0</code>. If it says
+<code>jupyter-lab</code> is not found, run
+<code>python -m pip install jupyterlab</code> and try again.</p>
+</div>
+<p><strong>What these commands do</strong></p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Line</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>conda activate</code></td>
+<td>Switches your environment on. Do this in every new terminal.</td>
+</tr>
+<tr>
+<td><code>cd</code></td>
+<td>Moves into the <code>python</code> folder of the project.</td>
+</tr>
+<tr>
+<td><code>python -m pytest -q</code></td>
+<td>Runs the project’s built-in self-checks. The <code>-q</code> just
+means “keep the output short”. <code>52 passed</code> means every check
+worked.</td>
+</tr>
+<tr>
+<td><code>nsdf-cli version</code>,
+<code>jupyter lab --version</code></td>
+<td>Each one only asks a program to say which version it is. If it
+answers, it is installed.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="step-7.-let-jupyter-notebooks-use-your-environment">Step 7. Let
+Jupyter notebooks use your environment</h2>
+<p>Jupyter is the notebook program you will use. Register your
+environment with it once:</p>
+<pre><code>python -m ipykernel install --user --name darkmatter_cli_env</code></pre>
+<div class="checkpoint">
+<p>It prints a line that starts with
+<code>Installed kernelspec darkmatter_cli_env</code>.</p>
+</div>
+<h2 id="step-8.-get-permission-to-save-your-work">Step 8. Get permission
+to save your work</h2>
+<p>You will not change the main project. You will save your work on your
+own <strong>branch</strong>, and for that the lead must give you
+access:</p>
+<ol type="1">
+<li>Make a free account at <a href="https://github.com">github.com</a>
+if you do not have one.</li>
+<li>Send your GitHub username to the project lead. They will add you to
+the project as a collaborator.</li>
+<li>Once you have accepted the invitation, tell Git your name and email,
+so your work is labelled as yours. Use your own details:</li>
+</ol>
+<pre><code>git config --global user.name &quot;Your Name&quot;
+git config --global user.email &quot;you@example.com&quot;</code></pre>
+<ol start="4" type="1">
+<li>Create your personal branch (your own space to save work, separate
+from the main project). Use your own name, without spaces, in place of
+<code>yourname</code>:</li>
+</ol>
+<pre><code>cd ~/Research/NSDF-Data
+git checkout -b student-yourname</code></pre>
+<div class="checkpoint">
+<p>The terminal shows
+<code>Switched to a new branch 'student-yourname'</code>.</p>
+</div>
+<h2 id="rules-for-keeping-your-work-safe">Rules for keeping your work
+safe</h2>
+<ul>
+<li><strong>Never work on <code>master</code> or
+<code>develop</code>.</strong> Those are the shared versions. Work only
+on your <code>student-</code> branch.</li>
+<li><strong>Never commit data.</strong> The raw files in the
+<code>idx</code> folder are large and not part of the project. Download
+only from your home folder, never from inside
+<code>NSDF-Data</code>.</li>
+<li><strong>Do not run
+<code>07221203_2025_dump1_noise.ipynb</code></strong> unless the project
+lead says it is fine. It overwrites a shared archive file.</li>
+<li><strong>Save often,</strong> and commit your work when a piece is
+finished (see the first analysis guide).</li>
+</ul>
+<h2 id="you-are-done-when">You are done when</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />Your terminal opens and
+<code>git --version</code> prints a version.</label></li>
+<li><label><input type="checkbox" /><code>conda --version</code> prints
+a version, in a new terminal.</label></li>
+<li><label><input type="checkbox" />The <code>NSDF-Data</code> folder is
+in <code>~/Research</code>.</label></li>
+<li><label><input type="checkbox" /><code>python -m pytest -q</code> in
+the <code>python</code> folder ends with
+<code>52 passed</code>.</label></li>
+<li><label><input type="checkbox" /><code>nsdf-cli version</code> prints
+a version.</label></li>
+<li><label><input type="checkbox" /><code>jupyter lab --version</code>
+prints a version.</label></li>
+<li><label><input type="checkbox" />Your Jupyter kernel
+<code>darkmatter_cli_env</code> is installed.</label></li>
+<li><label><input type="checkbox" />You have a <code>student-</code>
+branch (after access is granted).</label></li>
+</ul>
+<p><strong>Next:</strong> <em>First analysis</em> (the guide for
+macOS).</p>
+<h2 id="if-something-goes-wrong">If something goes wrong</h2>
+<ol type="1">
+<li>Read the <strong>last line</strong> of the message. It usually says
+what is wrong.</li>
+<li>Close the terminal, open a new one, and run
+<code>conda activate darkmatter_cli_env</code> again. Many problems are
+just the wrong environment.</li>
+<li>Copy the command you ran and the message it printed, and send them
+to the project lead. A screenshot is also fine.</li>
+</ol>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, include the step number, the command you typed, and
+the last few lines the computer printed. A screenshot helps. Nobody will
+be annoyed by a question about a step that did not work.</p>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 8, 7 October 2026, macOS edition. Written for
+beginners; please tell the project lead where a step was unclear, so the
+guide can be fixed.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Notes site: <a href="https://villano-lab.github.io/NSDF-Data/"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+<li>Miniforge downloads: <a
+href="https://github.com/conda-forge/miniforge"
+class="uri">https://github.com/conda-forge/miniforge</a></li>
+<li>Git downloads: <a href="https://git-scm.com"
+class="uri">https://git-scm.com</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="setup-macos.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

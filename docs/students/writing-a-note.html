@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing a note (NSDF-Data student guide 3 — writing a note, for
+every computer)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="writing-a-note.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Writing a note</h1>
+<p class="meta">NSDF-Data student guide 3 — writing a note, for every
+computer &middot; Version 7 · 7 October 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#before-you-start" id="toc-before-you-start">Before you
+start</a></li>
+<li><a href="#what-a-note-is-for" id="toc-what-a-note-is-for">What a
+note is for</a></li>
+<li><a href="#the-parts-of-a-note" id="toc-the-parts-of-a-note">The
+parts of a note</a></li>
+<li><a href="#which-file-to-write-in"
+id="toc-which-file-to-write-in">Which file to write in</a></li>
+<li><a href="#converting-a-word-or-google-docs-file"
+id="toc-converting-a-word-or-google-docs-file">Converting a Word or
+Google Docs file</a></li>
+<li><a href="#the-header" id="toc-the-header">The header</a></li>
+<li><a href="#writing-the-body" id="toc-writing-the-body">Writing the
+body</a></li>
+<li><a href="#figures-and-tables" id="toc-figures-and-tables">Figures
+and tables</a></li>
+<li><a href="#pinning-your-code" id="toc-pinning-your-code">Pinning your
+code</a></li>
+<li><a href="#outline-and-links" id="toc-outline-and-links">Outline and
+links</a></li>
+<li><a href="#checking-your-note-before-you-submit"
+id="toc-checking-your-note-before-you-submit">Checking your note before
+you submit</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#next" id="toc-next">Next</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>This is guide 3 of 5.</strong> It is about <em>writing</em>
+the note. Guide 4 covers <em>publishing</em> it, and guide 5 covers
+publishing with an AI assistant.</p>
+</div>
+<div class="tip">
+<p><strong>What a note is.</strong> A note is a short, honest write-up
+of one question you investigated: what you asked, what you did, what you
+found, and how sure you are. Notes are how the lab keeps a record that
+someone else can follow and check. You do not need to be an expert to
+write one. You do need to be specific.</p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>You have finished the setup guide and the first analysis for your
+computer.</li>
+<li>You know which question you are answering. If you do not, pick a
+small one from the project’s <em>Next steps</em> sections (for example,
+a number you can reproduce from a note).</li>
+<li>You have a notebook (<code>.ipynb</code>) or a script that produces
+the numbers and figures you will show. Keep it. The note points to
+it.</li>
+</ul>
+<h2 id="what-a-note-is-for">What a note is for</h2>
+<p>A reader should be able to answer four questions after reading your
+note:</p>
+<ol type="1">
+<li><strong>What was the question?</strong></li>
+<li><strong>What data and code did you use?</strong></li>
+<li><strong>What did you find, and how sure are you?</strong></li>
+<li><strong>What would you do next?</strong></li>
+</ol>
+<p>If your note does not answer these, it is not finished, however long
+it is.</p>
+<h2 id="the-parts-of-a-note">The parts of a note</h2>
+<p><strong>Only the header is required.</strong> Every other section is
+a suggestion. Use the sections that help your reader, and leave out the
+ones that do not apply. A short note with a header and one clear result
+is complete. A long note with no caveats is not.</p>
+<p>The table below lists the sections most notes use, in a sensible
+order. Each one you use becomes a heading, with an outline link.</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Section</th>
+<th>What goes in it</th>
+<th>Length</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Title</strong></td>
+<td>The question, as a sentence. “Why does X happen in Y?” is better
+than “Analysis of X.”</td>
+<td>one line</td>
+</tr>
+<tr>
+<td><strong>Header</strong></td>
+<td>Author, date, status, and one-sentence description (see below).</td>
+<td>a few lines</td>
+</tr>
+<tr>
+<td><strong>Code repository</strong></td>
+<td>The notebook and library files you used, each pinned to the commit
+that produced the results.</td>
+<td>a short list</td>
+</tr>
+<tr>
+<td><strong>Data and setup</strong></td>
+<td>Which series, dump and detector; which quantities; which windows and
+cuts. Define any word a newcomer would not know.</td>
+<td>one or two paragraphs</td>
+</tr>
+<tr>
+<td><strong>The question</strong></td>
+<td>The question again, and why it matters.</td>
+<td>a paragraph</td>
+</tr>
+<tr>
+<td><strong>Results</strong></td>
+<td>Your figures and tables, each with a caption that says what the
+reader is looking at.</td>
+<td>as needed</td>
+</tr>
+<tr>
+<td><strong>Reading</strong></td>
+<td>What you think the results mean, and what they do <em>not</em>
+show.</td>
+<td>a few bullets</td>
+</tr>
+<tr>
+<td><strong>Caveats</strong></td>
+<td>What could be wrong. Small sample? One channel only? A cut you chose
+by eye?</td>
+<td>a short list</td>
+</tr>
+<tr>
+<td><strong>Next steps</strong></td>
+<td>Concrete things to do next.</td>
+<td>a short list</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip">
+<p><strong>Caveats are strongly suggested.</strong> A note that states
+its limits is trusted more than one that does not, however good the
+plots look. If you leave caveats out, be sure there is nothing you would
+want a reader to know about your result.</p>
+</div>
+<h2 id="which-file-to-write-in">Which file to write in</h2>
+<p>Write your note in a <strong>plain text file</strong> with the
+extension <code>.md</code>. The name matters: <code>my-note.md</code>,
+not <code>my-note.md.txt</code> and not <code>my-note.docx</code>.</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Option</th>
+<th>Use it when</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GitHub web editor</strong> (any computer)</td>
+<td>You want no install at all</td>
+<td>Open the file in the repository on <a
+href="https://github.com">github.com</a> and click the pencil icon.
+Choose a new file named <code>notes/src/your-note.md</code>.</td>
+</tr>
+<tr>
+<td><strong>VS Code</strong> (any computer)</td>
+<td>You want a comfortable editor</td>
+<td>Install VS Code, open the <code>NSDF-Data</code> folder, click
+<strong>New File</strong>, and name it <code>your-note.md</code>.</td>
+</tr>
+<tr>
+<td><strong>Notepad</strong> (Windows)</td>
+<td>You only want something simple</td>
+<td>Open Notepad, write, then <strong>File</strong>, <strong>Save
+As</strong>. Set <em>Save as type</em> to <strong>All Files</strong> and
+name the file <code>your-note.md</code>. In Notepad, leave the encoding
+as <strong>UTF-8</strong>.</td>
+</tr>
+<tr>
+<td><strong>TextEdit</strong> (macOS)</td>
+<td>You only want something simple</td>
+<td>Open TextEdit, choose <strong>Format</strong>, then <strong>Make
+Plain Text</strong> before typing. Save as <code>your-note.md</code>. If
+it offers <code>.txt</code>, pick <em>Use .md</em> when asked.</td>
+</tr>
+<tr>
+<td><strong>gedit or Text Editor</strong> (Linux)</td>
+<td>You use a standard desktop</td>
+<td>Open the editor, write, and save as <code>your-note.md</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="careful">
+<p><strong>Do not write your note in Word or Google Docs.</strong> Word
+adds hidden formatting, turns straight quotes into curly ones, and
+changes characters in code. Those changes break the page and the code
+you paste in. If you already wrote in Word, convert it (see the next
+section).</p>
+</div>
+<p>To see the full file name on Windows, open File Explorer, then
+<strong>View</strong>, then tick <strong>File name extensions</strong>.
+Check that the name ends in <code>.md</code>.</p>
+<h2 id="converting-a-word-or-google-docs-file">Converting a Word or
+Google Docs file</h2>
+<p>If your draft is in Word or Google Docs, convert it to Markdown with
+a program called <strong>pandoc</strong>. It is free and runs from the
+terminal you already know from the setup guide.</p>
+<p><strong>Step 1. Export your draft.</strong> - In
+<strong>Word</strong>: <strong>File</strong>, then <strong>Save
+As</strong>, and choose <strong>Word Document (.docx)</strong>. - In
+<strong>Google Docs</strong>: <strong>File</strong>, then
+<strong>Download</strong>, then <strong>Microsoft Word
+(.docx)</strong>.</p>
+<p>Before you export, check the three things that convert badly:</p>
+<ul>
+<li><strong>Use Word’s Heading styles for section titles.</strong> In
+Word, select a section title and choose <strong>Home</strong>, then
+<strong>Heading 1</strong> (main sections) or <strong>Heading 2</strong>
+(sub-sections). Do not just make the title bold or bigger. Pandoc only
+turns Heading-styled text into <code>#</code> headings. Bold text stays
+plain text, and your outline will be missing.</li>
+<li><strong>Remove underline and superscript formatting.</strong>
+Underlined text becomes raw HTML tags such as
+<code>&lt;u&gt;…&lt;/u&gt;</code>, and superscripts such as
+<code>5&lt;sup&gt;th&lt;/sup&gt;</code> do the same. Use plain text
+instead, or write <code>5th</code> and <code>^th^</code> by hand
+afterwards.</li>
+<li><strong>Put figures in the document, not as text.</strong> Insert
+each picture with <strong>Insert</strong>, then
+<strong>Pictures</strong>. Pandoc can only save pictures that are
+embedded in the file.</li>
+</ul>
+<p>Save the document in your <code>Research</code> folder, next to
+<code>NSDF-Data</code>, as <code>my-note.docx</code>. Put any separate
+figure files you want to keep in that folder too.</p>
+<p><strong>Step 2. Install pandoc once.</strong> In the terminal, with
+your environment active:</p>
+<pre><code>conda activate darkmatter_cli_env
+conda install -c conda-forge pandoc -y</code></pre>
+<p>On macOS you can also use <code>brew install pandoc</code>. On
+Windows, the <a href="https://pandoc.org/installing.html">pandoc
+website</a> has an installer.</p>
+<p><strong>Step 3. Convert.</strong> Go to the folder that holds the
+<code>.docx</code> and run:</p>
+<pre><code>pandoc my-note.docx -t gfm --extract-media=img -o my-note.md</code></pre>
+<p>This writes <code>my-note.md</code> and saves any pictures from the
+document into an <code>img</code> folder.</p>
+<div class="checkpoint">
+<p>Open <code>my-note.md</code> in a plain text editor. Every section
+title you styled as Heading 1 or Heading 2 should start with
+<code>#</code> or <code>##</code>. Every picture you inserted should
+appear as a line starting <code>![</code>, and its file should be in the
+<code>img</code> folder. If you see no <code>#</code> lines at all, your
+titles were not Heading-styled. If the file is one long line of symbols,
+you saved the wrong type of file: check that it is a <code>.docx</code>,
+not a <code>.doc</code> or a PDF.</p>
+</div>
+<div class="careful">
+<p><strong>Look for leftover HTML.</strong> Search the file for
+<code>&lt;u&gt;</code>, <code>&lt;sup&gt;</code>,
+<code>&lt;sub&gt;</code> and <code>&lt;span</code>. Each one is
+formatting that did not convert. Delete the tags and keep the words, or
+rewrite them in plain text. A note with raw HTML tags in it will look
+broken on the site.</p>
+</div>
+<div class="tip">
+<p><strong>Test a conversion before you rely on it.</strong> Convert a
+short two-section draft with one picture first. If the headings and the
+picture both come through, convert the full note.</p>
+</div>
+<p><strong>Step 4. Add the header.</strong> Open <code>my-note.md</code>
+and add the header block (see <em>The header</em> above) at the very
+top. Conversion does not add it for you.</p>
+<p><strong>Step 5. Check it.</strong> Go through the checklist at the
+end of this guide. Check every number, every heading you did use and
+every figure path. Figures must still exist in the <code>img</code>
+folder after you move the note.</p>
+<div class="careful">
+<p>Do not convert a PDF. The text of a PDF cannot be recovered reliably,
+so write the note again in a <code>.md</code> file, or copy the text
+from the PDF into your editor and check it carefully.</p>
+</div>
+<h2 id="the-header">The header</h2>
+<p>Start your note file with a short block like this. These are the
+fields the site will read:</p>
+<pre><code>---
+id: &quot;TBD&quot;
+title: &quot;Why does the 1000-sample window see more pulses?&quot;
+author: &quot;Your Name&quot;
+date: &quot;2026-10-05&quot;
+status: &quot;In progress&quot;
+keywords: &quot;baseline, pretrigger window, dump 1&quot;
+description: &quot;One sentence: what you did and what you found.&quot;
+---</code></pre>
+<p>Leave <code>id</code> as <code>TBD</code>. The reviewer gives your
+note its number (S1, S2, …) before it is published.</p>
+<p><strong>Status</strong> is one of: <em>In progress</em> (you are
+still working on it), <em>Complete</em> (the question is answered and
+you are not going to change it), or <em>Outdated</em> (a later note or a
+fix has superseded it). New notes start as <em>In progress</em>.</p>
+<h2 id="writing-the-body">Writing the body</h2>
+<ul>
+<li><strong>Say what you did in order,</strong> with enough detail that
+someone could repeat it: the file, the detector, the window length, the
+cut.</li>
+<li><strong>Use the project’s words.</strong> A <em>segment</em> is a
+stretch of consecutive events with the same trigger type. A <em>run</em>
+is a whole data-taking period. Do not use <em>run</em> for a
+segment.</li>
+<li><strong>Define each quantity once,</strong> in the <em>Data and
+setup</em> section, and use the same name every time after. If you call
+it <code>bstd</code> in one place and “baseline noise” in another, the
+reader will think they are different things.</li>
+<li><strong>Write short sentences.</strong> Put the number first, then
+what it means: “The median is 1.53 counts, so a typical trace is flat
+noise.”</li>
+<li><strong>Say how sure you are.</strong> “The two groups look the
+same” is weaker than “the medians are 1.51 and 1.58, from 141 and 38
+traces.” Give the counts.</li>
+<li><strong>Separate what you measured from what you think.</strong> A
+sentence in <em>Results</em> states a number. A sentence in
+<em>Reading</em> says what it might mean.</li>
+</ul>
+<div class="tip">
+<p>If you change your mind, say so. Notes that show a correction are
+more useful than notes that pretend nothing went wrong. Put the
+correction in a clearly labelled box, with the date.</p>
+</div>
+<h2 id="figures-and-tables">Figures and tables</h2>
+<ul>
+<li><strong>Every figure needs a caption</strong> that says what is
+plotted, for which data, and what to look for. “Bstd against event
+number, dump 1. Grey: trigger type Unknown.” is a good caption.</li>
+<li><strong>Label the axes with units.</strong> ADC counts,
+microseconds, or samples. Do not leave the units out.</li>
+<li><strong>Save figures as PNG</strong> from your notebook, at a
+readable size, into the note’s image folder.</li>
+<li><strong>Use a table</strong> when you are comparing numbers. Use a
+figure when you are showing shape.</li>
+</ul>
+<h2 id="pinning-your-code">Pinning your code</h2>
+<p>A note is only useful if the reader can find the code that made its
+numbers. Link to your notebook and library files at a <strong>specific
+commit</strong>, not at a branch name such as <code>develop</code> or
+<code>master</code>, because branches keep changing:</p>
+<ol type="1">
+<li>Commit your notebook to your branch (see the first analysis
+guide).</li>
+<li>Find the commit’s short code, for example <code>a1b2c3d</code>.</li>
+<li>Link to
+<code>https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/R76/analysis_notes/your-notebook.ipynb</code>.</li>
+</ol>
+<p>Say in the note which commit you pinned.</p>
+<h2 id="outline-and-links">Outline and links</h2>
+<p>If your note has more than two or three sections, add a short outline
+near the top, with a link to each one. Readers use it to jump to what
+they need. The site builds the outline from your <code>##</code>
+headings, so use one <code>##</code> heading for each section. A note
+with no <code>##</code> headings simply has no outline.</p>
+<h2 id="checking-your-note-before-you-submit">Checking your note before
+you submit</h2>
+<p>Go through this list before you ask for review:</p>
+<ul class="task-list">
+<li><label><input type="checkbox" />The title is a
+question.</label></li>
+<li><label><input type="checkbox" />Every number in the text can be
+found in your notebook output.</label></li>
+<li><label><input type="checkbox" />Every figure has a caption with
+units and a sentence on what to look for.</label></li>
+<li><label><input type="checkbox" />Every notebook link is pinned to a
+commit.</label></li>
+<li><label><input type="checkbox" />The header is complete.</label></li>
+<li><label><input type="checkbox" />Any section you use says something a
+reader needs. Empty or filler sections are removed.</label></li>
+<li><label><input type="checkbox" />You have said what you did
+<em>not</em> check, if the note makes a claim.</label></li>
+<li><label><input type="checkbox" />If you wrote next steps, they are
+concrete.</label></li>
+<li><label><input type="checkbox" />You have read it aloud once, looking
+for a word a newcomer would not know.</label></li>
+</ul>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 7, 7 October 2026. Written for every computer. Please
+tell the project lead where a step was unclear.</p>
+<h2 id="next">Next</h2>
+<p>When the note is written and checked, go to <strong>student guide 4:
+publishing a note</strong>.</p>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, include the note’s title, the step or section you are
+stuck on, and the sentence or number that worries you. Nobody will be
+annoyed by a question about a note that is not finished.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Notes site: <a href="https://villano-lab.github.io/NSDF-Data/"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+<li>Example of a good note with a correction box: <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="writing-a-note.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

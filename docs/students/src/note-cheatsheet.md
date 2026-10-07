@@ -1,6 +1,8 @@
 ---
 title-meta: "From note to live page"
 author-meta: "NSDF-Data"
+html-title: "From note to live page"
+html-subtitle: "NSDF-Data student cheat-sheet · version 2, 7 October 2026"
 ---
 
 ```{=latex}
@@ -16,12 +18,15 @@ author-meta: "NSDF-Data"
 \vspace{0.3em}
 ```
 
-A one-page reminder. The full steps are in [guide 3, writing a note](https://villano-lab.github.io/NSDF-Data/students/writing-a-note.pdf) and [guide 4, publishing a note](https://villano-lab.github.io/NSDF-Data/students/publishing-a-note.pdf). **Nothing is public until your lead merges your pull request (PR).**
+A one-page reminder. The full steps are in [guide 3, writing a note](https://villano-lab.github.io/NSDF-Data/students/writing-a-note.html) and [guide 4, publishing a note](https://villano-lab.github.io/NSDF-Data/students/publishing-a-note.html). **Nothing is public until your lead merges your pull request (PR).**
 
 ![](img/note-path.png){width=100%}
 
 ```{=latex}
 {\footnotesize\textit{Blue: you. Teal: GitHub, automatically. Amber: your lead. A PR is a page on GitHub that asks to add your branch to the project.}}
+```
+```{=html}
+<p class="caption">Blue: you. Teal: GitHub, automatically. Amber: your lead. A PR is a page on GitHub that asks to add your branch to the project.</p>
 ```
 
 **Before you push**

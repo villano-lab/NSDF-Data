@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Publishing a note (NSDF-Data student guide 4 — for every
+computer)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="publishing-a-note.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Publishing a note</h1>
+<p class="meta">NSDF-Data student guide 4 — for every
+computer &middot; Version 4 · 7 October 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#what-happens-when-you-publish"
+id="toc-what-happens-when-you-publish">What happens when you
+publish</a></li>
+<li><a href="#before-you-start" id="toc-before-you-start">Before you
+start</a></li>
+<li><a href="#step-1.-put-your-note-in-the-right-place"
+id="toc-step-1.-put-your-note-in-the-right-place">Step 1. Put your note
+in the right place</a></li>
+<li><a href="#step-2.-commit-to-your-branch"
+id="toc-step-2.-commit-to-your-branch">Step 2. Commit to your
+branch</a></li>
+<li><a href="#step-3.-open-the-pull-request"
+id="toc-step-3.-open-the-pull-request">Step 3. Open the pull
+request</a></li>
+<li><a href="#step-4.-read-the-check"
+id="toc-step-4.-read-the-check">Step 4. Read the check</a></li>
+<li><a href="#step-5.-wait-for-review"
+id="toc-step-5.-wait-for-review">Step 5. Wait for review</a></li>
+<li><a href="#after-the-merge" id="toc-after-the-merge">After the
+merge</a></li>
+<li><a href="#changing-a-note-later"
+id="toc-changing-a-note-later">Changing a note later</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>This is guide 4 of 5.</strong> It is about getting a finished
+note onto the site. Guide 3 covers writing the note; guide 5 covers
+doing this with an AI assistant.</p>
+</div>
+<h2 id="what-happens-when-you-publish">What happens when you
+publish</h2>
+<p>Your note goes through four stages. You do the first two, the
+automatic check does the third, and your lead does the fourth:</p>
+<ol type="1">
+<li><strong>You</strong> write the note as a <code>.md</code> file in
+the <code>notes/src/</code> folder, on your own branch.</li>
+<li><strong>You</strong> open a <strong>pull request</strong>: a request
+to add your work to the project.</li>
+<li><strong>The check</strong> runs at once. It lists anything wrong
+with the note.</li>
+<li><strong>Your lead</strong> reviews the note, gives it a number (S1,
+S2, …), and merges it. After the merge the site builds your page. This
+takes a few minutes.</li>
+</ol>
+<p>Nothing reaches the public site until the merge.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li><strong>You have write access.</strong> Your lead adds you to the
+project on GitHub. You need this to push a branch.</li>
+<li><strong>Your note is written and checked</strong> against guide 3,
+and the notebook it uses is committed to your branch.</li>
+<li><strong>You know your branch name.</strong> It is
+<code>student-yourname</code>, from the setup guide.</li>
+</ul>
+<h2 id="step-1.-put-your-note-in-the-right-place">Step 1. Put your note
+in the right place</h2>
+<p>Your note goes in the <code>notes/src/</code> folder:</p>
+<ul>
+<li><code>notes/src/your-note-name.md</code> is the note. Start from
+<code>_template.md</code> and keep the header.</li>
+<li><code>notes/src/img/</code> holds the pictures. Refer to them as
+<code>img/your-picture.png</code>.</li>
+</ul>
+<div class="careful">
+<p>The template has a line that points to <code>img/example.png</code>.
+Delete that line, or replace it with one of your own pictures. The check
+reports a missing picture otherwise.</p>
+</div>
+<p>Leave <code>id: "TBD"</code> in the header. Your lead will replace it
+with a number.</p>
+<h2 id="step-2.-commit-to-your-branch">Step 2. Commit to your
+branch</h2>
+<p>In the terminal, from the <code>NSDF-Data</code> folder:</p>
+<pre><code>git checkout student-yourname
+git add notes/src/your-note-name.md notes/src/img
+git status
+git commit -m &quot;Add note: your title&quot;
+git push -u origin student-yourname</code></pre>
+<div class="checkpoint">
+<p>Look at the list that <code>git status</code> prints before the
+commit. It should contain only your note and its pictures. If it shows
+<code>.bin</code> files, anything from the <code>idx</code> folder, or
+changes to other people’s notes, stop and ask your lead.</p>
+</div>
+<h2 id="step-3.-open-the-pull-request">Step 3. Open the pull
+request</h2>
+<p>On <a href="https://github.com">github.com</a>, open the repository.
+GitHub shows a yellow banner saying your branch had recent pushes. Click
+<strong>Compare &amp; pull request</strong>. Check that:</p>
+<ul>
+<li>the <strong>base</strong> is <code>develop</code> and the
+<strong>compare</strong> branch is <code>student-yourname</code>;</li>
+<li>the title says what the note is about;</li>
+<li>the description says, in one sentence, what question the note
+answers.</li>
+</ul>
+<p>Click <strong>Create pull request</strong>.</p>
+<h2 id="step-4.-read-the-check">Step 4. Read the check</h2>
+<p>The check starts automatically and takes less than a minute. When it
+finishes, click <strong>Details</strong> on the check, and read its
+messages. Each message names the file and the problem. Here are the
+common ones and what to do:</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Message says</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>header field 'X' is missing or empty</code></td>
+<td>Fill in that line of the header.</td>
+</tr>
+<tr>
+<td><code>status must be one of ...</code></td>
+<td>Use exactly <em>In progress</em>, <em>Complete</em> or
+<em>Outdated</em>.</td>
+</tr>
+<tr>
+<td><code>id must look like S1, S2, or TBD</code></td>
+<td>Leave <code>id: "TBD"</code>.</td>
+</tr>
+<tr>
+<td><code>raw HTML tag &lt;u&gt;</code> (or <code>&lt;sup&gt;</code>,
+<code>&lt;sub&gt;</code>, <code>&lt;span&gt;</code>)</td>
+<td>Remove the formatting and keep the words.</td>
+</tr>
+<tr>
+<td><code>notebook link pinned to 'master'</code></td>
+<td>Replace <code>master</code> with the commit hash you committed the
+notebook at.</td>
+</tr>
+<tr>
+<td><code>placeholder COMMIT is still in the note</code></td>
+<td>Put the real commit hash in place of <code>COMMIT</code>.</td>
+</tr>
+<tr>
+<td><code>picture not found</code></td>
+<td>Check the file name and that the picture is in
+<code>notes/src/img/</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>To fix a problem: edit the file on your branch and commit again. The
+pull request updates itself, and the check runs again.</p>
+<div class="tip">
+<p>If the check passes, the structure is right. It cannot tell whether
+your numbers are right or your reading is fair. Check those yourself,
+and ask your lead if you are unsure.</p>
+</div>
+<h2 id="step-5.-wait-for-review">Step 5. Wait for review</h2>
+<p>Your lead reads the note, may comment on the pull request, and may
+ask you for changes. Answer each comment in the pull request. When the
+note is ready, your lead gives it a number and merges it.</p>
+<h2 id="after-the-merge">After the merge</h2>
+<ul>
+<li>The site builds your page automatically, usually within two minutes.
+Check the front page: your note appears in the <strong>Student
+notes</strong> table at the bottom.</li>
+<li>The page is at <code>notes/student-&lt;name&gt;.html</code> on the
+site.</li>
+</ul>
+<h2 id="changing-a-note-later">Changing a note later</h2>
+<p>Start from the latest version of your branch. Your lead gave your
+note its number (S1, S2, …) on the pull request, and your own copy of
+the file may still say <code>TBD</code>:</p>
+<pre><code>git switch student-yourname
+git pull origin develop</code></pre>
+<p>Open <code>notes/src/your-note-name.md</code> and look at the header.
+It should say your note’s number, for example <code>id: "S3"</code>.
+<strong>Keep that number.</strong> If it says <code>TBD</code>, stop and
+ask your lead: the check does not mind <code>TBD</code>, but the site
+cannot publish a note with it, and nothing is published until it is
+fixed.</p>
+<p>Then make the change, commit, push, and open a new pull request (or
+add to the open one). Let the check run again. Update the
+<strong>date</strong> line and, if the conclusion has changed, the
+<strong>Status</strong> line. If a result was wrong, say so in the note,
+with the date, as guide 3 explains. Do not delete a published note to
+hide a mistake.</p>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 4, 7 October 2026. Written for every computer. Please
+tell the project lead where a step was unclear.</p>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, include the pull request number, the message the
+check gave, and the step you are stuck on.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Pull requests: <a
+href="https://github.com/villano-lab/NSDF-Data/pulls"
+class="uri">https://github.com/villano-lab/NSDF-Data/pulls</a></li>
+<li>Notes site: <a href="https://villano-lab.github.io/NSDF-Data/"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="publishing-a-note.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

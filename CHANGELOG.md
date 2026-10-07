@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Added
+
+- `tools/build_notes.py` removes generated student pages and figures whose note has been deleted (and figures no longer in `notes/src/img`), so deleting a note's source is enough to take it off the site. Found while removing the pipeline test note, which needed its generated files deleted by hand.
+
 ### Fixed
 
 - `tools/build_notes.py` now passes text to pandoc as UTF-8. On Windows it used the system code page, which garbled non-ASCII characters (an em dash, `µ`) in a note when it was built locally. The Linux build that publishes notes was not affected.

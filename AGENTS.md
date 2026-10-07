@@ -44,7 +44,7 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 | A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Rebuild (below), commit sources **and** the rebuilt PDFs together, and bump the version and date in the guide's header and its *Session Info*. |
 | `requirements.txt`, package pins, or the Python version | Keep the setup guide's Step 5 commands, `.devcontainer/devcontainer.json` and `.github/workflows/check-instructions.yml` in step with each other. |
 | `.github/workflows/*` | Test on a branch (a push runs the workflow). Keep it working on Windows, macOS and Linux if it checks the guides. |
-| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it. |
+| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it (about 2 to 3 minutes). To remove a note, delete its source in a PR; the build prunes the generated page. |
 | Anything a user or student would notice | A line under `[Unreleased]` in `CHANGELOG.md`. |
 
 ## Building the student guides

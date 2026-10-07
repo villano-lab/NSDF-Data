@@ -7,6 +7,8 @@ Each note is one Markdown file with a YAML header. The header fields are
 listed in REQUIRED. The output is docs/notes/student-<slug>.html, its figures
 in docs/notes/img/student-<slug>/, and a table of student notes between the
 markers in docs/index.html. Hand-written notes are never touched.
+A build also removes generated pages and figures whose note is gone (see prune()), so
+deleting notes/src/<name>.md is enough to take a note off the site.
 Run by .github/workflows/student-notes.yml.
 """
 import html
@@ -169,6 +171,35 @@ def load_all(strict):
     return notes, problems
 
 
+def prune(notes):
+    """Delete generated student pages and figures that no longer have a note.
+
+    Only names starting with "student-" are ever touched (hand-written notes are
+    "note-NN-..."), and prune runs only after every note has validated, so one broken
+    note cannot remove the others. Returns the paths removed, relative to the repo.
+    """
+    out_dir = DOCS / "notes"
+    keep = {slug for slug, _, _ in notes}
+    src_images = {f.name for f in (SRC / "img").iterdir() if f.is_file()} if (SRC / "img").is_dir() else set()
+    removed = []
+    for page_path in sorted(out_dir.glob("student-*.html")):
+        if page_path.stem[len("student-"):] not in keep:
+            page_path.unlink()
+            removed.append(page_path)
+    img_root = out_dir / "img"
+    if img_root.is_dir():
+        for folder in sorted(p for p in img_root.glob("student-*") if p.is_dir()):
+            if folder.name[len("student-"):] not in keep:
+                shutil.rmtree(folder)
+                removed.append(folder)
+            else:
+                for f in sorted(folder.iterdir()):
+                    if f.is_file() and f.name not in src_images:
+                        f.unlink()
+                        removed.append(f)
+    return [p.relative_to(ROOT).as_posix() for p in removed]
+
+
 def build(notes):
     out_dir = DOCS / "notes"
     for slug, h, body in notes:
@@ -188,6 +219,8 @@ def build(notes):
     else:
         text = text.replace("<footer>", block + "\n\n<footer>", 1)
     INDEX.write_text(text, encoding="utf-8")
+    for path in prune(notes):
+        print(f"removed stale file: {path}")
 
 
 def main(mode):

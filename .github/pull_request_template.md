@@ -1,3 +1,5 @@
+> **Target branch:** open feature PRs against **`develop`**. Only `release/*` and `hotfix/*` branches target `master`. See `RELEASING.md`.
+
 ## What and why
 
 <!-- One or two sentences: what this changes, and why. Link an issue if there is one. -->
@@ -22,6 +24,7 @@ Tick what applies, and say "n/a" for the rest. See `AGENTS.md` for the details o
 - [ ] Guides: bumped the version and date in the header and *Session Info*
 - [ ] Changed package pins? Updated the guide's Step 5, `requirements.txt` and `.devcontainer/` together
 - [ ] Student note: left `id: "TBD"` and ran `python tools/build_notes.py check`
+- [ ] Added a line under `[Unreleased]` in `CHANGELOG.md` for anything a user or student would notice
 - [ ] No raw data, credentials or tokens committed
 - [ ] If an AI assistant helped: a `Co-Authored-By:` trailer is in the commit messages
 

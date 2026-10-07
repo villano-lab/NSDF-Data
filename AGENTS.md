@@ -17,16 +17,21 @@ The maintainer is Anthony Villano (@villaa).
 
 ## Before you change anything
 
-1. `git status` and `git log --oneline -3`. Pull first. Confirm the tree is clean and in sync.
+1. `git status` and `git log --oneline -3`. Pull first. Confirm the tree is clean and in sync, and that you are on a `feature/*` branch made from an up-to-date `develop`.
 2. Run the tests: `cd python && python -m pytest -q` (52 or more should pass).
 3. Run `git status` again before any `checkout`, `reset` or `clean`. Two notebooks (`07221203_2025_dump1_bstd_time.ipynb`, `good_pulses_overlay.ipynb`) often show as modified after re-execution; check whether the source really changed before committing.
 
 ## Git rules
 
-- **The maintainer** commits ordinary work (notes, notebooks, library code, guides, docs) straight to `master`.
-- **Everyone else works on a branch and opens a pull request.** Reviewers are requested automatically from `.github/CODEOWNERS`. Do not merge your own PR. The maintainer merges, and **an agent never merges a PR without the maintainer's explicit go-ahead**, even if every check is green.
+The repository uses **Git Flow** and **semantic versioning**. The full procedure is in `RELEASING.md`; the rules an agent must follow are:
+
+- **Branches:** `master` holds released code only (every commit is tagged `vX.Y.Z`, and the live site and guide PDFs are served from it). `develop` is the integration branch. Work happens on `feature/<name>` branches **from `develop`**, which open pull requests **into `develop`**. Releases use `release/X.Y.Z` and urgent fixes use `hotfix/X.Y.Z`; both target `master`.
+- **Never commit directly to `master` or `develop`.** This applies to the maintainer too. Make a branch and open a pull request.
+- **Reviewers** are requested automatically from `.github/CODEOWNERS`. Do not merge your own PR. Feature PRs into `develop` may be merged by the maintainer or by Kitty Mickelson (@nuclearGoblin) after review by someone else; release and hotfix PRs into `master` are merged only by the maintainer. **An agent never merges a PR without the maintainer's explicit go-ahead**, even if every check is green.
+- Use merge commits (not squash or rebase) to finish a branch.
 - Never force-push. `master` is protected against deletion and non-fast-forward pushes. Delete only branches you created, and only after they are merged.
-- Student notes (`notes/src/**`), `tools/build_notes.py` and the student-notes workflow always go through a PR.
+- **Add an entry under `[Unreleased]` in `CHANGELOG.md`** for any change a user or student would notice. Only a `release/*` or `hotfix/*` branch changes `VERSION` or renames `[Unreleased]`.
+- Student notes (`notes/src/**`), `tools/build_notes.py` and the student-notes workflow always go through a PR into `develop`. A note appears on the live site at the next release.
 - Write commit messages that say what changed and why. If an AI assistant helped, add a `Co-Authored-By:` trailer naming it.
 - Never commit raw data, credentials or tokens.
 
@@ -39,7 +44,8 @@ The maintainer is Anthony Villano (@villaa).
 | A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Rebuild (below), commit sources **and** the rebuilt PDFs together, and bump the version and date in the guide's header and its *Session Info*. |
 | `requirements.txt`, package pins, or the Python version | Keep the setup guide's Step 5 commands, `.devcontainer/devcontainer.json` and `.github/workflows/check-instructions.yml` in step with each other. |
 | `.github/workflows/*` | Test on a branch (a push runs the workflow). Keep it working on Windows, macOS and Linux if it checks the guides. |
-| A student note (`notes/src/*.md`) | PR only. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. |
+| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live at the next release. |
+| Anything a user or student would notice | A line under `[Unreleased]` in `CHANGELOG.md`. |
 
 ## Building the student guides
 

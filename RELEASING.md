@@ -1,0 +1,68 @@
+# Branching, versions and releases
+
+This repository uses **Git Flow** branching and **semantic versioning** (https://semver.org). One version number describes the whole repository: the `python/` library, the notebooks, the notes site, the student guides and the CI checks together. The guides also carry their own document versions (in their headers); those are separate and are not the repository version.
+
+The current version is in the `VERSION` file, and its history is in `CHANGELOG.md`.
+
+## Branches
+
+| Branch | Purpose | Branches from | Merges into |
+|---|---|---|---|
+| `master` | Released code only. Every commit on it is a release, tagged `vX.Y.Z`. **The notes site and the student guide PDFs are served from here**, so they change only at a release. | | |
+| `develop` | Integration branch: the next release, in progress. | | |
+| `feature/<short-name>` | One piece of work (a function, a note, a guide change, a CI change). | `develop` | `develop` (pull request) |
+| `release/X.Y.Z` | Prepares a release: version number, changelog and last fixes only. | `develop` | `master` (pull request), then back into `develop` |
+| `hotfix/X.Y.Z` | An urgent fix to what is released (a broken guide step, a broken site page). | `master` | `master` (pull request), then back into `develop` |
+
+Student branches (`student-<name>`, from the student guides) are feature branches: they branch from `develop` and open pull requests into `develop`.
+
+## Rules
+
+- **Never commit directly to `master` or `develop`.** Work on a branch and open a pull request, except for the merge commits that finish a release or hotfix.
+- Use **merge commits** (not squash or rebase) when finishing a feature, release or hotfix, so the branch history stays visible.
+- **Who merges:** feature pull requests into `develop` may be merged by the maintainer (@villaa) or by Kitty Mickelson (@nuclearGoblin), after review by someone other than the author. Release and hotfix pull requests into `master` are merged **only by the maintainer**. An AI agent never merges any pull request without the maintainer's explicit go-ahead.
+- Never force-push to `master` or `develop`. Delete a branch only after it is merged, and only if you created it.
+- Open pull requests **against `develop`**, except `release/*` and `hotfix/*`, which target `master`.
+
+## Choosing the next version
+
+The version is `MAJOR.MINOR.PATCH`. While the major version is 0, the library is still changing; a breaking change then raises the minor number instead.
+
+| Bump | When | Examples |
+|---|---|---|
+| **MAJOR** (X) | A breaking change to the `python/` library (a function renamed or removed, or a changed signature) or to the repository layout that existing notebooks or guides rely on. Not used while the version is 0.x. | Renaming `bstd`; moving the library into a package. |
+| **MINOR** (Y) | New backwards-compatible capability. | A new library function or module; a new student guide; a new CI check; a new notes feature. While 0.x: also a breaking change. |
+| **PATCH** (Z) | Fixes and content changes with no new capability. | A corrected guide step; a new or revised note; a CI fix; a typo. |
+
+If a release contains changes of several kinds, use the highest bump.
+
+## Making a release
+
+1. Make sure `develop` is green (CI passing) and every finished feature is merged.
+2. `git switch develop && git pull`, then `git switch -c release/X.Y.Z`.
+3. On that branch:
+   - set the number in `VERSION`;
+   - in `CHANGELOG.md`, rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and start a new empty `[Unreleased]` section;
+   - rebuild any student guide PDFs whose source changed (see `AGENTS.md`) and commit sources and PDFs together;
+   - only small fixes. No new features.
+4. Open a pull request from `release/X.Y.Z` into `master`. The maintainer merges it (a merge commit).
+5. Tag the merge commit: `git tag -a vX.Y.Z -m "Release X.Y.Z"` and `git push origin vX.Y.Z`.
+6. Merge `master` back into `develop` (a pull request or a merge commit) so `develop` has the release commit and the tag's history.
+7. Delete the `release/X.Y.Z` branch. The notes site and the PDFs update when GitHub Pages rebuilds `master` (about 30 seconds).
+
+## Making a hotfix
+
+1. `git switch master && git pull`, then `git switch -c hotfix/X.Y.Z` (X.Y.Z is the next patch number).
+2. Fix it, set `VERSION`, and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
+3. Open a pull request into `master`. The maintainer merges it, then tags `vX.Y.Z` as above.
+4. Merge `master` back into `develop`.
+
+## Student notes
+
+Student notes (`notes/src/*.md`) are feature work: they go through a pull request into `develop`, and the maintainer assigns the S-number before merging. The generated pages and index row are built by the student-notes workflow when `master` is updated, so **a note appears on the live site at the next release**, not when its pull request merges. The student guides about writing and publishing a note need to say this.
+
+## One-time repository settings (maintainer)
+
+- Make `develop` the default branch, so new pull requests and clones start there.
+- Keep a ruleset on `master` against deletion and force-push, naming `refs/heads/master` explicitly: the existing `protect-master` ruleset targets the *default* branch, so it would move to `develop` when the default changes. Add the same protection for `develop`.
+- GitHub Pages stays on `master`, `/docs`.

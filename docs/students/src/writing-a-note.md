@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 6 · 6 October 2026"
+date: "Version 7 · 7 October 2026"
 ---
 
 ::: tip
@@ -164,7 +164,7 @@ If you change your mind, say so. Notes that show a correction are more useful th
 
 ## Pinning your code
 
-A note is only useful if the reader can find the code that made its numbers. Link to your notebook and library files at a **specific commit**, not at the `master` branch, because `master` changes:
+A note is only useful if the reader can find the code that made its numbers. Link to your notebook and library files at a **specific commit**, not at a branch name such as `develop` or `master`, because branches keep changing:
 
 1. Commit your notebook to your branch (see the first analysis guide).
 2. Find the commit's short code, for example `a1b2c3d`.
@@ -192,7 +192,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 6, 6 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 7, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

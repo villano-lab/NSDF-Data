@@ -1,7 +1,7 @@
 ---
 title: "Working in your browser with GitHub Codespaces"
 subtitle: "NSDF-Data student guide 6 — no install, for every computer"
-date: "Version 2 · 6 October 2026"
+date: "Version 3 · 7 October 2026"
 ---
 
 ::: tip
@@ -32,7 +32,7 @@ date: "Version 2 · 6 October 2026"
 
 1. Go to [github.com/villano-lab/NSDF-Data](https://github.com/villano-lab/NSDF-Data).
 2. Click the green **Code** button, then the **Codespaces** tab.
-3. Click **Create codespace on master**.
+3. Click **Create codespace on develop**. (The button names the project's main working branch.)
 
 A new browser tab opens with a code editor and a terminal at the bottom. The first start takes several minutes while the environment is prepared. Wait until the page stops changing.
 
@@ -109,7 +109,7 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## You are done when
 
-- [ ] A codespace starts from the project's `master` branch.
+- [ ] A codespace starts from the project's `develop` branch.
 - [ ] The Step 2 checks pass.
 - [ ] The data is in your home folder, and `(1517, 4096)` and `179` are printed.
 - [ ] Your notebook is committed through Source Control.
@@ -117,7 +117,7 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## Session Info
 
-Guide version 2, 6 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 3, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

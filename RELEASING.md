@@ -69,6 +69,8 @@ Student notes (`notes/src/*.md`) are feature work: a student branches from `deve
 3. The merge pushes to `develop`, which starts the student-notes workflow. It builds `docs/notes/student-<name>.html`, the images and the index row, and the bot commits them to `develop`.
 4. GitHub Pages rebuilds from `develop`. The note is live about one to two minutes after the merge.
 
+To **take a note off the site**, delete `notes/src/<name>.md` (and any picture only it used) in a pull request into `develop`. The next build removes the generated page and figures itself (`prune()` in `tools/build_notes.py`), and the front-page table is regenerated. It only ever removes files named `student-*`, and only when every remaining note validates.
+
 The bot commits directly to `develop`, so a ruleset on `develop` must not require pull requests (deletion and force-push blocks are fine).
 
 ## One-time repository settings (maintainer)

@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 6 · 6 October 2026"
+date: "Version 7 · 7 October 2026"
 ---
 
 ::: tip
@@ -133,8 +133,8 @@ python -m pip install jupyterlab
 | `pip install numpy...` | Installs software for numbers, plots and checking that everything works. |
 | `pip install jupyterlab` | Installs Jupyter, the notebook program you will use later. |
 
-::: careful
-Do **not** use the file `environment.yml` from the project. It was made on a Mac for Mac only, and it will fail on other computers. The lines above install the same software versions.
+::: tip
+The project folder also has a file called `requirements.txt` that lists the same software versions. You do **not** need it: the lines above do the whole job, and they work the same on every computer.
 :::
 
 ::: tip
@@ -258,7 +258,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 6, 6 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 7, 7 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

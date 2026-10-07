@@ -21,6 +21,7 @@ First release (0.1.0). It gathers the state of the repository when semantic vers
 
 - Student guides are at setup version 8 and first-analysis version 6: direct Miniforge download links, installer options spelled out, plain-language explanations of each command, Command Prompt before the Miniforge Prompt on Windows, `jupyterlab` installed, and the data downloaded from the home folder.
 - The notes site and student guides are served by GitHub Pages from `develop` (`/docs`), so guide fixes and notes are live on merge and do not wait for a release. The student-notes workflow builds on pushes to `develop` as well as `master`. Guides 1, 3, 4, 5 and 6 now say `develop` where they named `master`.
+- Pull request reviews: GitHub requests only the maintainer automatically (`.github/CODEOWNERS`); other reviewers are added by hand. The maintainer may merge their own pull requests.
 
 ### Removed
 

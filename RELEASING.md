@@ -20,7 +20,7 @@ Student branches (`student-<name>`, from the student guides) are feature branche
 
 - **Never commit directly to `master` or `develop`.** Work on a branch and open a pull request, except for the merge commits that finish a release or hotfix.
 - Use **merge commits** (not squash or rebase) when finishing a feature, release or hotfix, so the branch history stays visible.
-- **Who merges:** feature pull requests into `develop` may be merged by the maintainer (@villaa) or by Kitty Mickelson (@nuclearGoblin), after review by someone other than the author. Release and hotfix pull requests into `master` are merged **only by the maintainer**. An AI agent never merges any pull request without the maintainer's explicit go-ahead.
+- **Reviews and who merges:** GitHub automatically requests the maintainer (@villaa) as reviewer on pull requests that other people open (see `.github/CODEOWNERS`); other reviewers are added by hand under **Reviewers**. The maintainer may merge their own pull requests. Feature pull requests into `develop` may also be merged by Kitty Mickelson (@nuclearGoblin), after review by someone other than the author. Release and hotfix pull requests into `master` are merged **only by the maintainer**. An AI agent never merges any pull request without the maintainer's explicit go-ahead.
 - Never force-push to `master` or `develop`. Delete a branch only after it is merged, and only if you created it.
 - Open pull requests **against `develop`**, except `release/*` and `hotfix/*`, which target `master`.
 - **The site and the guides do not wait for a release.** Fix a guide, add a note or correct a page with an ordinary feature PR into `develop`; it is live about two minutes after the merge. A release only marks a version (`vX.Y.Z`).

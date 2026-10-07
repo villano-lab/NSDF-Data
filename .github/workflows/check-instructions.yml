@@ -41,9 +41,9 @@ jobs:
 
   check-universal:
     runs-on: ${{ matrix.os }}
-      strategy:
-        matrix:
-          os: [ubuntu-slim,macos-latest,windows-latest]
+    strategy:
+      matrix:
+        os: [ubuntu-slim,macos-latest,windows-latest]
     steps:
       - name: terminal verification
         run: echo hello

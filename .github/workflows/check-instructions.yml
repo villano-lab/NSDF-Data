@@ -1,0 +1,105 @@
+name: Check instructions
+
+on: [push, pull_request]
+  
+jobs:
+  check-downloads-windows:
+    runs-on: windows-latest
+    steps:
+      - name: git install
+        run: | 
+          $client = new-object System.Net.WebClient
+          $client.DownloadFile("https://github.com/git-for-windows/git/releases/download/v2.56.0.windows.2/Git-2.56.0.2-64-bit.exe","Git-2.56.0.2-64-bit.exe")
+          start Git-2.56.0.2-64-bit.exe
+      - name: Miniforge install
+        run: |
+          $client = new-object System.Net.WebClient
+          $client.DownloadFile("https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe","Miniforge3-Windows-x86_64.exe")
+          start Miniforge3-Windows-x86_64.exe
+          # That's all we can do for now folks
+          # I have to figure out how to go through the installer from the cli...
+
+  check-downloads-mac:
+    runs-on: macos-latest
+    steps:
+      - name: git install
+        run: |
+          xcode-select --install
+          git --version
+  check-downloads-unix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest,ubuntu-slim]
+    steps:
+      - name: Miniforge install
+        run: | 
+          cd Downloads
+          wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+          bash ~/Downloads/Miniforge3-$(uname)-$(uname -m).sh
+          ~/miniforge3/bin/conda init
+
+  check-universal:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-slim,macos-latest,windows-latest]
+    steps:
+      - name: terminal verification
+        run: echo hello
+      - name: git verification
+        run: git --version
+
+  download-nsdf-data:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: 
+        include:
+          - startdir: "%USERPROFILE%"
+            ls: dir
+            os: windows-latest
+          - startdir: "~"
+            ls: ls
+            os: macos-latest
+          - startdir: "~"
+            ls: ls
+            os: ubuntu-slim
+    steps:
+      - name: Set up miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          auto-activate-base: false
+
+      - name: download nsdf data
+        run: |
+          conda --version
+
+          mkdir ${{ matrix.startdir }}/Research
+          cd ${{ matrix.startdir }}/Research
+          git clone https://github.com/villano-lab/NSDF-Data.git
+          cd ${{ matrix.startdir }}/Research/NSDF-Data
+          ${{ matrix.ls }}
+
+      - name: create conda env
+        run: conda create -n darkmatter_cli_env -f requirements.txt
+      - name: test env
+        run: |
+          conda activate darkmatter_cli_env
+          cd ${{ matrix.startdir }}/Research/NSDF-Data/python
+          python -m pytest -q
+
+          nsdf-cli version
+
+          jupyter lab --version
+
+      - name: set up j kernel
+        run: python -m ipykernel install --user --name darkmatter_cli_env
+
+      - name: create branch
+        run: |
+          git config --global user.name "Your Name"
+          git config --global user.email "you@example.com"
+          cd ${{ matrix.stardir }}/Research/NSDF-Data
+          git checkout -b student-yourname
+

@@ -1,0 +1,9 @@
+python==3.10
+nsdf-dark-matter==0.3.0
+nsdf-dark-matter-cli==0.5.0
+numpy==2.2.6
+matplotlib==3.10.7
+h5py
+pytest
+ipykernel
+jupyterlab

@@ -11,7 +11,7 @@ author-meta: "NSDF-Data"
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} From note to live page}\\[0.2em]
-{\small NSDF-Data student cheat-sheet \textperiodcentered{} version 1, 7 October 2026}
+{\small NSDF-Data student cheat-sheet \textperiodcentered{} version 2, 7 October 2026}
 \end{center}
 \vspace{0.3em}
 ```
@@ -62,6 +62,6 @@ Then open the repository on [github.com](https://github.com), click **Compare & 
 
 Fix it on your branch, commit and push again. The PR updates itself and the check runs again.
 
-**After that.** Your lead reads the note, may comment on the PR (answer there), and gives it an S-number when it is ready. About two minutes after the merge your page is live at `notes/student-<name>.html`, and your note is in the **Student notes** table on the front page. To change a published note, commit to your branch and open a new PR; update the date, and never delete a note to hide a mistake.
+**After that.** Your lead reads the note, may comment on the PR (answer there), and gives it an S-number when it is ready. About two minutes after the merge your page is live, in the **Student notes** table on the front page. To change a published note, first run `git switch student-yourname && git pull origin develop` and check that the header still has your S-number (not `TBD`); then commit, push and open a new PR, update the date, and never delete a note to hide a mistake.
 
 **Never** work on `master` or `develop`, or commit data (`.bin` files, the `idx` folder) or other people's notes. Stuck? Write to Anthony Villano, <anthony.villano@ucdenver.edu>, with the PR number, the check's message and the step you are on.

@@ -13,6 +13,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Fixed
 
+- Updating a published student note: guide 4 and the student cheat-sheet now say to run `git pull origin develop` first and to keep the note's S-number. A student's old branch still said `id: "TBD"`; the PR check accepts that, but the build refuses it, so the note's update could not be published and the maintainer had to catch it before merging. The developer quick-sheet "Creating a note" now covers updating a note, and warns reviewers to check for `TBD`.
 - `tools/build_notes.py` now passes text to pandoc as UTF-8. On Windows it used the system code page, which garbled non-ASCII characters (an em dash, `µ`) in a note when it was built locally. The Linux build that publishes notes was not affected.
 
 ### Changed

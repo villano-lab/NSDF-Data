@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 8 · 7 October 2026"
+date: "Version 9 · 7 October 2026"
 ---
 
 ::: tip
@@ -103,7 +103,7 @@ Downloading with `git clone` does not need a GitHub account. It makes a full cop
 | `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
-Type `ls` and press Enter. You should see `NSDF-Data` in the list.
+Type `ls` and press Enter. You are now inside the `NSDF-Data` folder (your prompt mentions it), so the list shows the project's own folders and files, such as `python`, `R76`, `docs` and `README.md`.
 :::
 
 ## Step 5. Create your analysis environment
@@ -253,7 +253,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 8, 7 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 9, 7 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

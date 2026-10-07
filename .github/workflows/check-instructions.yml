@@ -14,7 +14,7 @@ on:
       - ".github/workflows/check-instructions.yml"
       - ".github/scripts/**"
   push:
-    branches: [master]
+    branches: [develop, master]
     paths:
       - "docs/students/**"
       - "python/**"

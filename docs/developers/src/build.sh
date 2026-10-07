@@ -5,7 +5,8 @@
 #   2. pandoc turns developer-workflow.md into a one-page PDF, using the student guides'
 #      style.tex (heading colour, tcolorbox) so the guides look alike.
 # Needs: python3 with matplotlib, pandoc, and a LaTeX install with xelatex.
-# Optional overrides (e.g. on Windows): PYTHON=python MAINFONT=Arial MONOFONT=Consolas sh build.sh
+# Optional overrides (e.g. on Windows): PYTHON=python MAINFONT=Arial MONOFONT="Latin Modern Mono" sh build.sh
+# Do not use Consolas: its hyphen copies out of the PDF as U+2010, so a pasted command fails.
 set -e
 cd "$(dirname "$0")"
 OUT=..

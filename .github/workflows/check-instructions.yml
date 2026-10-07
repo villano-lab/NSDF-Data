@@ -8,6 +8,7 @@ on:
   pull_request:
     paths:
       - "docs/students/**"
+      - "docs/developers/**"
       - "python/**"
       - "requirements.txt"
       - ".devcontainer/**"
@@ -17,6 +18,7 @@ on:
     branches: [develop, master]
     paths:
       - "docs/students/**"
+      - "docs/developers/**"
       - "python/**"
       - "requirements.txt"
       - ".devcontainer/**"
@@ -55,6 +57,25 @@ jobs:
               print(f"{pin} is in requirements.txt but not in the {name}")
           print(f"checked {len(pins)} pins")
           sys.exit(1 if missing else 0)
+          EOF
+
+      - name: PDFs copy as plain text (no look-alike hyphens)
+        run: |
+          python3 -m pip install --quiet pymupdf
+          python3 - <<'EOF'
+          import glob, sys, pymupdf
+          LOOKALIKES = {"\u2010": "U+2010 hyphen", "\u2011": "U+2011 non-breaking hyphen", "\u2212": "U+2212 minus"}
+          failed = False
+          pdfs = sorted(glob.glob("docs/**/*.pdf", recursive=True))
+          for f in pdfs:
+              text = "".join(p.get_text() for p in pymupdf.open(f))
+              for ch, name in LOOKALIKES.items():
+                  if ch in text:
+                      print(f"{f}: {text.count(ch)} x {name}. A student who copies a command from this PDF gets a command that fails. "
+                            "Rebuild with a monospace font whose hyphen copies as '-' (Latin Modern Mono on Windows; never Consolas).")
+                      failed = True
+          print(f"checked {len(pdfs)} PDFs")
+          sys.exit(1 if failed else 0)
           EOF
 
       - name: Installer and download links in the guides still work

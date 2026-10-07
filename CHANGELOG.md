@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-07
+
+Developer and student quick-sheets, a safer note-publishing pipeline, and guidance for updating notes.
+
 ### Added
 
 - `docs/developers/note-creation.pdf` and `docs/developers/note-creation-ai.pdf`: two one-page developer quick-sheets, for creating a hand-written note (notebook, figures, page, index row, pinned links, PR) and for doing it with an AI agent (a starting brief, what the agent may and must never do, the checks you still do yourself). Both also cover reviewing a student note. Linked from the front page under "Developer guides". Sources and the figure script are in `docs/developers/src/`.
@@ -49,5 +53,6 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...develop
+[0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/villano-lab/NSDF-Data/releases/tag/v0.1.0

@@ -4,7 +4,9 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
-First release (0.1.0). It gathers the state of the repository when semantic versioning and Git Flow began, on 2026-10-07.
+## [0.1.0] - 2026-10-07
+
+First release. It gathers the state of the repository when semantic versioning and Git Flow began.
 
 ### Added
 
@@ -30,3 +32,6 @@ First release (0.1.0). It gathers the state of the repository when semantic vers
 ### Fixed
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
+
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...develop
+[0.1.0]: https://github.com/villano-lab/NSDF-Data/releases/tag/v0.1.0

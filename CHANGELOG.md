@@ -6,6 +6,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Added
 
+- `docs/developers/note-creation.pdf` and `docs/developers/note-creation-ai.pdf`: two one-page developer quick-sheets, for creating a hand-written note (notebook, figures, page, index row, pinned links, PR) and for doing it with an AI agent (a starting brief, what the agent may and must never do, the checks you still do yourself). Both also cover reviewing a student note. Linked from the front page under "Developer guides". Sources and the figure script are in `docs/developers/src/`.
 - `docs/students/note-cheatsheet.pdf`: a one-page student cheat-sheet, "From note to live page", that summarises and links to guides 3 and 4 (the commands, a checklist, what the PR check's messages mean). Linked from the front page. Source in `docs/students/src/`.
 - `docs/developers/developer-workflow.pdf`: a one-page developer workflow (the daily pull request loop, how branches relate, releases), linked from the front page under "Developer guides". Source and figure script in `docs/developers/src/`.
 - `tools/build_notes.py` removes generated student pages and figures whose note has been deleted (and figures no longer in `notes/src/img`), so deleting a note's source is enough to take it off the site. Found while removing the pipeline test note, which needed its generated files deleted by hand.

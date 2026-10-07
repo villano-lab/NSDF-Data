@@ -10,9 +10,11 @@ set -e
 cd "$(dirname "$0")"
 OUT=..
 "${PYTHON:-python3}" make_figures.py
-for f in developer-workflow; do
-  pandoc "$f.md" -o "$OUT/$f.pdf" --pdf-engine=xelatex -H ../../students/src/style.tex \
-    -V geometry:margin=0.6in -V fontsize=11pt -V mainfont="${MAINFONT:-Helvetica}" -V monofont="${MONOFONT:-Menlo}" \
+"${PYTHON:-python3}" make_note_figures.py
+for f in developer-workflow note-creation note-creation-ai; do
+  SIZE=11pt
+  pandoc "$f.md" -o "$OUT/$f.pdf" --pdf-engine=xelatex --lua-filter=../../students/src/boxes.lua -H ../../students/src/style.tex \
+    -V geometry:margin=0.6in -V fontsize=$SIZE -V mainfont="${MAINFONT:-Helvetica}" -V monofont="${MONOFONT:-Menlo}" \
     -V colorlinks=true -V linkcolor=brand -V urlcolor=brand --highlight-style=tango
   echo "built $f.pdf"
 done

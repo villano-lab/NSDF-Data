@@ -11,7 +11,7 @@ author-meta: "NSDF-Data maintainers"
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} Creating a note}\\[0.2em]
-{\small Developer quick-sheet \textperiodcentered{} hand-written notes in \texttt{docs/notes/} \textperiodcentered{} version 1, 7 October 2026}
+{\small Developer quick-sheet \textperiodcentered{} hand-written notes in \texttt{docs/notes/} \textperiodcentered{} version 2, 7 October 2026}
 \end{center}
 \vspace{0.2em}
 ```
@@ -36,8 +36,10 @@ For a note you write yourself: an HTML page in `docs/notes/` and one row in the 
 \normalsize
 ```
 
-**Rules.** A note marked **Complete** is left alone, apart from a minimal correction when a library rename makes it wrong; In-progress notes can change freely. A breaking library change means updating the notebooks that use it, or marking them deprecated (the red box described on the front page). Any whole-trace spectrum must skip the leading glitch samples. A *segment* is a run of same-trigger events; a *run* is a whole data-taking period.
+**Updating a note** is the same loop, on a new branch from `develop`. Check its status first: a **Complete** note is left alone (a follow-up takes a letter, like 2a after 2), an **In progress** note can change freely, and a note that a later one replaces becomes **Outdated** with a link to the newer one. If you re-ran anything, re-pin the links to the new hash and replace the PNGs. Update the date and status in the page's meta line **and** in its row of `docs/index.html` (the row is hand-edited, so the two can drift). A wrong result stays in the note, corrected and dated; never delete a published note.
+
+**Rules.** A **Complete** note gets only a minimal correction, and only when a library rename makes it wrong. A breaking library change means updating the notebooks that use it, or marking them deprecated (the red box described on the front page). Any whole-trace spectrum must skip the leading glitch samples. A *segment* is a run of same-trigger events; a *run* is a whole data-taking period.
 
 ::: tip
-**Reviewing a student note.** The PR into `develop` shows a green check and nothing is public. Change `id: "TBD"` to the next S-number (S1, S2, ...), commit it to the PR branch, and merge. The bot builds the page and the index row, and it is live in 2 to 3 minutes. To remove a note, delete its source file in a PR; the next build removes the page.
+**Reviewing a student note.** The PR into `develop` shows a green check and nothing is public. Change `id: "TBD"` to the next S-number (S1, S2, ...), commit it to the PR branch, and merge. The bot builds the page and the index row, and it is live in 2 to 3 minutes. When a student updates a published note, check the header still has its S-number: `TBD` passes the PR check, but the build refuses it and nothing is published until you fix it. To remove a note, delete its source file in a PR; the next build removes the page.
 :::

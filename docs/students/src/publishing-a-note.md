@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 3 · 7 October 2026"
+date: "Version 4 · 7 October 2026"
 ---
 
 ::: tip
@@ -95,11 +95,20 @@ Your lead reads the note, may comment on the pull request, and may ask you for c
 
 ## Changing a note later
 
-Make the change on your branch, open a new pull request (or add to the open one), and let the check run again. Update the **date** line and, if the conclusion has changed, the **Status** line. If a result was wrong, say so in the note, with the date, as guide 3 explains. Do not delete a published note to hide a mistake.
+Start from the latest version of your branch. Your lead gave your note its number (S1, S2, …) on the pull request, and your own copy of the file may still say `TBD`:
+
+```
+git switch student-yourname
+git pull origin develop
+```
+
+Open `notes/src/your-note-name.md` and look at the header. It should say your note's number, for example `id: "S3"`. **Keep that number.** If it says `TBD`, stop and ask your lead: the check does not mind `TBD`, but the site cannot publish a note with it, and nothing is published until it is fixed.
+
+Then make the change, commit, push, and open a new pull request (or add to the open one). Let the check run again. Update the **date** line and, if the conclusion has changed, the **Status** line. If a result was wrong, say so in the note, with the date, as guide 3 explains. Do not delete a published note to hide a mistake.
 
 ## Session Info
 
-Guide version 3, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 4, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

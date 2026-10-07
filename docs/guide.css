@@ -1,0 +1,73 @@
+/* Extra styles for the guide and quick-sheet pages (the HTML files in docs/students and docs/developers).
+   Used together with style.css (colours, light and dark mode). The pages are generated from the
+   Markdown sources in the src folders by build.sh; edit this file, not the HTML. */
+
+:root {
+  --tip-bg: #e6f4f1;   --tip-border: #0f6e56;
+  --careful-bg: #fdecec; --careful-border: #b3261e;
+  --check-bg: #e9f6ec;  --check-border: #1a7f37;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tip-bg: #15302b;   --tip-border: #4fb59a;
+    --careful-bg: #381c1e; --careful-border: #f08a8a;
+    --check-bg: #17301f;  --check-border: #56c271;
+  }
+}
+
+.guide .pdf-link { font-weight: 600; }
+.guide p.meta { margin: 2px 0 20px; }
+.guide p.caption { margin: 6px 0 18px; }
+.guide img { max-width: 100%; height: auto; }
+.guide li { margin: 3px 0; }
+.guide .table-scroll { margin: 12px 0 22px; }
+.guide nav.outline ol, .guide nav.outline ul { margin: 4px 0 2px; padding-left: 22px; }
+.guide nav.outline ul ul { display: none; }
+
+/* Tip, Careful, Checkpoint boxes (the same three as in the PDFs) */
+.guide div.tip, .guide div.careful, .guide div.checkpoint {
+  border: 1px solid; border-left-width: 6px; border-radius: 6px; padding: 8px 14px; margin: 16px 0;
+}
+.guide div.tip::before, .guide div.careful::before, .guide div.checkpoint::before {
+  display: block; font-weight: 700; margin-bottom: 2px;
+}
+.guide div.tip        { background: var(--tip-bg);     border-color: var(--tip-border); }
+.guide div.careful    { background: var(--careful-bg); border-color: var(--careful-border); }
+.guide div.checkpoint { background: var(--check-bg);   border-color: var(--check-border); }
+.guide div.tip::before        { content: "Tip";        color: var(--tip-border); }
+.guide div.careful::before    { content: "Careful";    color: var(--careful-border); }
+.guide div.checkpoint::before { content: "Checkpoint"; color: var(--check-border); }
+.guide div.tip > :last-child, .guide div.careful > :last-child, .guide div.checkpoint > :last-child { margin-bottom: 0; }
+
+/* Command blocks and their copy buttons */
+.guide .codeblock { margin: 12px 0 20px; }
+.guide .codeblock pre { margin: 0; padding: 8px 10px; }
+.guide .codebar {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  font-size: 0.82rem; color: var(--muted); padding: 0 2px 4px;
+}
+.guide .cl { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 1.9em; }
+.guide .ct { flex: 1 1 auto; white-space: pre; }
+.guide .cl.nocopy .ct { color: var(--muted); }
+.guide button.copy {
+  font: inherit; font-size: 0.78rem; line-height: 1.4; padding: 1px 9px; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--link);
+}
+.guide button.copy:hover, .guide button.copy:focus-visible { border-color: var(--link); }
+.guide button.copy.done { color: var(--complete); border-color: var(--complete); }
+.guide button.copy-line { position: sticky; right: 0; flex: 0 0 auto; }
+
+.guide blockquote { margin: 4px 0 18px; padding: 6px 14px; border-left: 4px solid var(--border); background: var(--row-alt); border-radius: 0 6px 6px 0; }
+.guide blockquote > :last-child { margin-bottom: 0; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+@media print {
+  .guide button.copy, .guide .pdf-link, .guide .codebar span { display: none; }
+}
+@media (max-width: 560px) {
+  .wrap.guide { padding: 16px 12px 48px; }
+}

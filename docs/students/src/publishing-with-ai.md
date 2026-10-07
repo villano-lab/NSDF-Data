@@ -37,6 +37,7 @@ date: "Version 3 · 7 October 2026"
 Start with a brief like this, and fill in the brackets:
 
 > I am a student writing a note for the NSDF-Data site. My draft is `[path to your .docx or .md]`, my notebook is `[path to the notebook]`, and I committed it at `[commit hash]`. Please:
+>
 > 1. If the draft is a `.docx`, convert it to Markdown as in student guide 3, Step 3 onward, and put the result in `notes/src/`. Keep the header block and set `id: "TBD"`.
 > 2. Check every number in the text against the notebook output, and list any number that does not match or that I have not shown.
 > 3. Pin every notebook link to the commit above.

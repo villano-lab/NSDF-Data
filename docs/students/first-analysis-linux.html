@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your first analysis (NSDF-Data student guide 2 — Linux
+edition)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="first-analysis-linux.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Your first analysis</h1>
+<p class="meta">NSDF-Data student guide 2 — Linux
+edition &middot; Version 6 · 6 October 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#before-you-start" id="toc-before-you-start">Before you
+start</a></li>
+<li><a href="#words-you-will-meet" id="toc-words-you-will-meet">Words
+you will meet</a></li>
+<li><a href="#step-1.-read-three-notes-first-about-30-minutes"
+id="toc-step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
+three notes first (about 30 minutes)</a></li>
+<li><a href="#step-2.-download-the-data"
+id="toc-step-2.-download-the-data">Step 2. Download the data</a></li>
+<li><a href="#step-3.-open-jupyter-in-the-right-folder"
+id="toc-step-3.-open-jupyter-in-the-right-folder">Step 3. Open Jupyter
+in the right folder</a></li>
+<li><a href="#step-4.-load-the-data-and-count-the-traces"
+id="toc-step-4.-load-the-data-and-count-the-traces">Step 4. Load the
+data and count the traces</a></li>
+<li><a href="#step-5.-look-at-a-trace"
+id="toc-step-5.-look-at-a-trace">Step 5. Look at a trace</a></li>
+<li><a href="#step-6.-reproduce-a-number-from-note-2"
+id="toc-step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce a
+number from Note 2</a></li>
+<li><a href="#step-7.-write-down-what-you-did"
+id="toc-step-7.-write-down-what-you-did">Step 7. Write down what you
+did</a></li>
+<li><a href="#you-are-done-when" id="toc-you-are-done-when">You are done
+when</a></li>
+<li><a href="#common-problems" id="toc-common-problems">Common
+problems</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>What you will do.</strong> Download one set of real detector
+data, open it in a notebook, look at it, and reproduce one number from
+an existing note. You will need the setup guide for Linux finished
+first.</p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li><strong>Time:</strong> about two hours.</li>
+<li><strong>You need:</strong> the setup guide finished (your
+environment <code>darkmatter_cli_env</code> exists and works).</li>
+<li><strong>Check:</strong> open a terminal (Step 1 of the setup guide),
+and run <code>conda activate darkmatter_cli_env</code>. The start of the
+line should show <code>(darkmatter_cli_env)</code>.</li>
+</ul>
+<h2 id="words-you-will-meet">Words you will meet</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Word</th>
+<th>What it means here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Series</strong></td>
+<td>One data-taking session, named like <code>07221203_2025</code>.</td>
+</tr>
+<tr>
+<td><strong>Dump</strong></td>
+<td>One file set taken from a series, numbered <code>F0001</code>,
+<code>F0002</code>, …</td>
+</tr>
+<tr>
+<td><strong>Event</strong></td>
+<td>One trigger of the detector. Events are numbered in time order.</td>
+</tr>
+<tr>
+<td><strong>Detector / channel</strong></td>
+<td>One physical detector, and one of its four sensor channels. We use
+detector 0, channel 0.</td>
+</tr>
+<tr>
+<td><strong>Trace</strong></td>
+<td>The recorded signal for one channel in one event: 4096 numbers, one
+per sample.</td>
+</tr>
+<tr>
+<td><strong>Sample</strong></td>
+<td>One reading. Each sample is 1.6 microseconds long.</td>
+</tr>
+<tr>
+<td><strong>ADC counts</strong></td>
+<td>The unit of the numbers in a trace.</td>
+</tr>
+<tr>
+<td><strong>Baseline</strong></td>
+<td>The flat level a trace sits at when nothing happens.</td>
+</tr>
+<tr>
+<td><strong>Pretrigger window</strong></td>
+<td>The first samples of a trace, used to measure the baseline.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
+three notes first (about 30 minutes)</h2>
+<p>Open the notes site at <a
+href="https://villano-lab.github.io/NSDF-Data/">villano-lab.github.io/NSDF-Data</a>
+and read these, in order:</p>
+<ol type="1">
+<li><strong>Note 1</strong>, <em>Run76 series catalog</em>: what a
+series and a dump are.</li>
+<li><strong>Note 1a</strong>, <em>python library structure</em>: what
+each part of the code does.</li>
+<li><strong>Note 2</strong>, <em>Noise-pulse selection</em>: how we pick
+quiet traces.</li>
+</ol>
+<p>You do <strong>not</strong> need to follow every number. Just learn
+the words in the table above.</p>
+<h2 id="step-2.-download-the-data">Step 2. Download the data</h2>
+<p>First go to your home folder, so the data lands in the right place.
+Type this, then press Enter:</p>
+<pre><code>cd ~</code></pre>
+<p>Now download the data:</p>
+<pre><code>nsdf-cli download 07221203_2025_F0001</code></pre>
+<p>The download puts the data in an <code>idx</code> folder <strong>in
+the folder you are in</strong>. Because you went to your home folder
+first, it lands in <code>~/idx</code>, inside a folder named
+<code>07221203_2025_F0001</code>. The data is about 34 MB. Wait until
+the prompt comes back.</p>
+<div class="careful">
+<p>Never download from inside the <code>NSDF-Data</code> folder. Its
+<code>idx</code> folder would sit inside the project, where Git can pick
+it up. If you have already downloaded there, move the <code>idx</code>
+folder to your home folder, and tell your lead.</p>
+</div>
+<p><strong>What these lines do:</strong> the first one moves you to your
+home folder (the <code>cd</code> line). The second,
+<code>nsdf-cli download</code>, fetches the data set from the NSDF
+servers over the internet and puts it in a new <code>idx</code>
+folder.</p>
+<div class="careful">
+<p>Do not move or edit the downloaded files, and do not add them to Git.
+They are not part of the project.</p>
+</div>
+<div class="tip">
+<p>If the message says the folder already exists, the data may already
+be there. Ask the project lead before you delete anything.</p>
+</div>
+<h2 id="step-3.-open-jupyter-in-the-right-folder">Step 3. Open Jupyter
+in the right folder</h2>
+<p>Notebooks must be opened from the folder
+<code>R76/analysis_notes</code>, inside the project. In the terminal,
+type these lines:</p>
+<pre><code>conda activate darkmatter_cli_env
+cd ~/Research/NSDF-Data/R76/analysis_notes
+jupyter lab</code></pre>
+<p><strong>What these lines do:</strong> <code>conda activate</code>
+switches your environment on, <code>cd</code> moves you into the folder
+where the notebooks live, and <code>jupyter lab</code> starts the
+notebook program. <strong>Leave this terminal window open while you
+work</strong>: closing it stops Jupyter.</p>
+<p>Your web browser opens a Jupyter page. Click <strong>File</strong>,
+then <strong>New</strong>, then <strong>Notebook</strong>. If it asks
+which kernel to use, choose <strong>darkmatter_cli_env</strong>.</p>
+<div class="tip">
+<p>A notebook is a list of boxes called <strong>cells</strong>. Type
+code in a cell and press <strong>Shift + Enter</strong> to run it. The
+result appears under the cell. Press <strong>Enter</strong> (without
+Shift) to keep typing in the same cell.</p>
+</div>
+<p>Give your notebook a name: click the name at the top, type
+<code>first-analysis-yourname</code>, and press Enter.</p>
+<h2 id="step-4.-load-the-data-and-count-the-traces">Step 4. Load the
+data and count the traces</h2>
+<p>Copy this into the first cell and press <strong>Shift +
+Enter</strong>:</p>
+<pre class="python"><code>import sys
+from pathlib import Path
+
+# Tell Python where the pulse library (the python folder) is.
+# This notebook is in R76/analysis_notes, so it is two folders up.
+sys.path.insert(0, str(Path.cwd().parents[1] / &quot;python&quot;))
+
+from nsdf_dark_matter.idx import load_all_data
+import pulse_io as pio
+
+# Open the dump you downloaded.
+cdms = load_all_data(str(Path.home() / &quot;idx&quot; / &quot;07221203_2025_F0001&quot;))
+
+# Take every trace from detector 0, channel 0, into one table.
+ids, pulses = pio.load_channel_batch(
+    cdms, pio.filter_by_detector(cdms.get_detector_ids(), 0), 0)
+
+print(pulses.shape)</code></pre>
+<div class="checkpoint">
+<p>The output is <code>(1517, 4096)</code>: 1517 traces, each with 4096
+samples. If you get a different number, stop and check the dump name and
+the folder in Step 2.</p>
+</div>
+<h2 id="step-5.-look-at-a-trace">Step 5. Look at a trace</h2>
+<p>Put this in a new cell (click <strong>+</strong> in the toolbar, or
+use the menu <strong>Insert</strong>, then <strong>Insert Cell
+Below</strong>), and run it:</p>
+<pre class="python"><code>import matplotlib.pyplot as plt
+
+plt.plot(pulses[0])
+plt.xlabel(&quot;sample (1.6 microseconds each)&quot;)
+plt.ylabel(&quot;ADC counts&quot;)
+plt.show()</code></pre>
+<p>Now change the <code>0</code> to <code>1</code>, <code>2</code>,
+<code>3</code> and run again. Most traces look like flat noise, with a
+little jitter.</p>
+<h2 id="step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce a
+number from Note 2</h2>
+<p>Note 2 says that for this dump, a strict selection leaves <strong>179
+quiet traces</strong>. Run this in a new cell:</p>
+<pre class="python"><code>from dataclasses import replace
+from pulse_config import DEFAULT_CONFIG
+import pulse_quantities as pq
+import pulse_cuts as pc
+import numpy as np
+
+c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)
+quiet = pc.excursion_band(pulses, c500) &amp; (np.log10(pq.bstd(pulses)) &lt; 0.5)
+print(quiet.sum())</code></pre>
+<div class="checkpoint">
+<p>The output is <strong>179</strong>. If you see a different number,
+that is worth knowing. Write down the number you got and the steps you
+took, and tell the project lead. Do not change the project’s code to
+make the number match.</p>
+</div>
+<h2 id="step-7.-write-down-what-you-did">Step 7. Write down what you
+did</h2>
+<p>In Jupyter, click <strong>+</strong> to add a cell and change its
+type from <em>Code</em> to <strong>Markdown</strong> in the toolbar. In
+that cell, write a few sentences in plain English: what you loaded, what
+you plotted, and what number you got. Then press <strong>Shift +
+Enter</strong>.</p>
+<p>Save with <strong>Command + S</strong> (macOS) or <strong>Ctrl +
+S</strong> (Windows and Linux).</p>
+<p>Once your branch exists (setup guide, Step 8), save your notebook to
+Git:</p>
+<pre><code>cd ~/Research/NSDF-Data
+git add R76/analysis_notes/first-analysis-yourname.ipynb
+git commit -m &quot;First analysis: load dump 1 and count the quiet traces&quot;
+git push -u origin student-yourname</code></pre>
+<p><strong>What these lines do:</strong> <code>git add</code> picks the
+file you want to save, <code>git commit</code> saves a snapshot of it
+with your short message, and <code>git push</code> uploads that snapshot
+to GitHub, to your own branch.</p>
+<div class="careful">
+<p>Commit only your notebook. Check the list before committing with
+<code>git status</code>. If you see <code>.bin</code> files or anything
+from the <code>idx</code> folder, do not add them.</p>
+</div>
+<h2 id="you-are-done-when">You are done when</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" /><code>(1517, 4096)</code> printed
+after loading the data.</label></li>
+<li><label><input type="checkbox" />You plotted at least three traces
+and can say what the flat ones look like.</label></li>
+<li><label><input type="checkbox" />You got 179 from the selection, or
+wrote down what you got and why you think it differs.</label></li>
+<li><label><input type="checkbox" />Your notebook is saved, and
+committed to your branch if you have access.</label></li>
+</ul>
+<h2 id="common-problems">Common problems</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>What you see</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ModuleNotFoundError: No module named 'nsdf_dark_matter'</code></td>
+<td>You are not in the environment. Run
+<code>conda activate darkmatter_cli_env</code>, then restart the
+notebook kernel (<strong>Kernel</strong>, then <strong>Restart
+Kernel</strong>).</td>
+</tr>
+<tr>
+<td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
+<td>Jupyter was started from the wrong folder. Close it and start it
+again from <code>R76/analysis_notes</code>.</td>
+</tr>
+<tr>
+<td><code>FileNotFoundError</code> on the dump folder</td>
+<td>The download did not finish, or it went somewhere else. Check the
+folder in Step 2.</td>
+</tr>
+<tr>
+<td>A huge spike at the very start of traces</td>
+<td>This is a real electronics glitch in the first few samples, not a
+bug. It is explained in Note 2a.</td>
+</tr>
+<tr>
+<td>The kernel is not <code>darkmatter_cli_env</code></td>
+<td>Click the kernel name at the top right and choose
+<strong>darkmatter_cli_env</strong>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="careful">
+<p>Do not run <code>07221203_2025_dump1_noise.ipynb</code> unless the
+project lead says it is fine. It overwrites a shared archive file.</p>
+</div>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, include the step number, the command you typed, and
+the last few lines the computer printed. A screenshot helps. Nobody will
+be annoyed by a question about a step that did not work.</p>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 6, 6 October 2026, Linux edition. Written for
+beginners; please tell the project lead where a step was unclear.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Note 1: <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html</a></li>
+<li>Note 1a: <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html</a></li>
+<li>Note 2: <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html</a></li>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="first-analysis-linux.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

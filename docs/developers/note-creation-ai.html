@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creating a note with an AI agent</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="note-creation-ai.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Creating a note with an AI agent</h1>
+<p class="meta">Developer quick-sheet · Claude Code or a similar agent ·
+version 1, 7 October 2026</p>
+
+
+<p>The agent does the mechanical work. <strong>You own every number,
+every reading and every conclusion.</strong> Start it in the
+<code>NSDF-Data</code> folder and it reads <code>CLAUDE.md</code> and
+<code>AGENTS.md</code>, so it already knows the branch and pull request
+rules. This sheet pairs with the developer sheet, <a
+href="https://villano-lab.github.io/NSDF-Data/developers/note-creation.html">creating
+a note</a>. Students use <a
+href="https://villano-lab.github.io/NSDF-Data/students/publishing-with-ai.html">guide
+5</a>.</p>
+<p><img src="src/img/note-ai-steps.png" style="width:100.0%"
+alt="Six steps for creating a note with an AI agent: you write the brief, the agent drafts, you verify the numbers, the agent wires up the index and changelog, you read the diff, then pull request and merge." /></p>
+<p class="caption">Blue: you. Purple: the agent. Teal: GitHub. Every hand-over is a point where you check its work.</p>
+<p><strong>Before you start:</strong>
+<code>git switch develop &amp;&amp; git pull</code>, then a clean
+<code>git status</code> on a <code>feature/note-NN-short-name</code>
+branch. The notebook is run and committed; you have its short hash.</p>
+<p><strong>A starting brief</strong> (fill in the brackets):</p>
+<blockquote>
+<p>Write note <code>[NN]</code> from <code>[notebook]</code>, committed
+at <code>[hash]</code>. Copy the structure of
+<code>docs/notes/note-02a-bstd-vs-time.html</code>. Save the figures
+from the executed notebook into <code>docs/notes/img/</code>. Pin every
+notebook and <code>python/</code> link to the hash and verify each with
+<code>git cat-file -e</code>. Add the index row, newest first, and a
+line under <code>[Unreleased]</code> in <code>CHANGELOG.md</code>. Every
+number must come from the notebook output: list any number you cannot
+find there. Leave the Reading and Next steps sections for me. Show me
+the diff and stop; do not commit or push.</p>
+</blockquote>
+<p><strong>The agent may</strong> draft the page from the newest note,
+extract figures, pin and verify links, add the index row and the
+changelog line, run <code>python -m pytest -q</code>, and, once you say
+so, commit with a <code>Co-Authored-By:</code> trailer and open the PR
+with <code>gh pr create --base develop</code>.</p>
+<div class="careful">
+<p><strong>The agent must never</strong> invent, round or “fix” a
+number; write the Reading or the conclusion; edit a
+<strong>Complete</strong> note, another note, or their figures; run
+<code>07221203_2025_dump1_noise.ipynb</code>; commit data
+(<code>.bin</code> files, the <code>idx</code> folder); push to
+<code>master</code> or <code>develop</code>; or <strong>merge a pull
+request</strong>. These are the rules in <code>AGENTS.md</code>.</p>
+</div>
+<p><strong>Your checks, before you let it commit</strong></p>
+<ul class="task-list">
+<li><label><input type="checkbox" />Read the new page from top to
+bottom. Does every sentence say what you mean?</label></li>
+<li><label><input type="checkbox" />Pick three numbers at random and
+find each in the notebook output.</label></li>
+<li><label><input type="checkbox" />Does each figure look the way its
+caption says?</label></li>
+<li><label><input type="checkbox" />The diff touches only: the new page,
+its images, one row of <code>docs/index.html</code>, one line of
+<code>CHANGELOG.md</code>, and the notebook. Anything else: ask why, and
+revert it.</label></li>
+<li><label><input
+type="checkbox" /><code>git cat-file -e &lt;hash&gt;:&lt;path&gt;</code>
+passes for every pinned link, and the page opens from disk with working
+figures and links.</label></li>
+</ul>
+<p><strong>When it goes wrong.</strong> It says a number is checked but
+you cannot find it: ask for the line of output it used, and if it has
+none, the number is wrong. It turns your sentence into a different
+claim: revert that sentence and say so. It wants to edit a Complete note
+or generated files: refuse. A check keeps failing: paste the message,
+not a summary. Then push the branch, let the checks run, and merge the
+PR yourself. For a <strong>student</strong> note, the agent can run
+<code>python tools/build_notes.py check</code> and report, but you give
+the S-number and merge.</p>
+
+<footer>This guide is also available as a <a href="note-creation-ai.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Working in your browser with GitHub Codespaces (NSDF-Data student
+guide 6 — no install, for every computer)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="codespaces.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Working in your browser with GitHub Codespaces</h1>
+<p class="meta">NSDF-Data student guide 6 — no install, for every
+computer &middot; Version 3 · 7 October 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#before-you-start" id="toc-before-you-start">Before you
+start</a></li>
+<li><a href="#words-you-will-meet" id="toc-words-you-will-meet">Words
+you will meet</a></li>
+<li><a href="#step-1.-start-a-codespace"
+id="toc-step-1.-start-a-codespace">Step 1. Start a codespace</a></li>
+<li><a href="#step-2.-check-the-environment"
+id="toc-step-2.-check-the-environment">Step 2. Check the
+environment</a></li>
+<li><a href="#step-3.-download-the-data"
+id="toc-step-3.-download-the-data">Step 3. Download the data</a></li>
+<li><a href="#step-4.-open-the-first-analysis-notebook"
+id="toc-step-4.-open-the-first-analysis-notebook">Step 4. Open the
+first-analysis notebook</a></li>
+<li><a href="#step-5.-save-your-work"
+id="toc-step-5.-save-your-work">Step 5. Save your work</a></li>
+<li><a href="#step-6.-stop-the-codespace"
+id="toc-step-6.-stop-the-codespace">Step 6. Stop the codespace</a></li>
+<li><a href="#if-the-environment-is-missing"
+id="toc-if-the-environment-is-missing">If the environment is
+missing</a></li>
+<li><a href="#you-are-done-when" id="toc-you-are-done-when">You are done
+when</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>What this is.</strong> GitHub Codespaces gives you a complete
+Linux computer in your web browser, already set up for this project. You
+do not install Python, Git or anything else on your own machine. This
+works on Windows, macOS, Linux and Chromebooks, as long as you have a
+web browser and a GitHub account.</p>
+</div>
+<div class="careful">
+<p><strong>Status: partly tested.</strong> The setup has been tested
+once by the project lead, with the same Python and package versions as
+the lab. The automatic setup step, which runs by itself when you open a
+codespace, is still being checked. If the environment is missing when
+you open it, use the fallback in <em>If the environment is missing</em>
+below, and tell your lead.</p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>A <strong>GitHub account</strong>. Ask your lead to add you to the
+project first, so that you can save your work on a branch.</li>
+<li>A <strong>web browser</strong> (Chrome, Edge, Firefox or Safari). A
+Chromebook works well.</li>
+<li>Your lead has confirmed your <strong>usage budget</strong> for
+Codespaces. A free account gets a small monthly allowance of computing
+hours. Once it is used up, you may be billed, so stop your codespace
+when you finish.</li>
+</ul>
+<h2 id="words-you-will-meet">Words you will meet</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Word</th>
+<th>What it means here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Codespace</strong></td>
+<td>Your own Linux computer in the browser, for this project.</td>
+</tr>
+<tr>
+<td><strong>Terminal</strong></td>
+<td>A window in the codespace where you type commands.</td>
+</tr>
+<tr>
+<td><strong>Notebook</strong></td>
+<td>A document that mixes text, code and plots (a <code>.ipynb</code>
+file).</td>
+</tr>
+<tr>
+<td><strong>Stop</strong></td>
+<td>Turns the codespace off, so it stops using your hours. Your files
+are kept.</td>
+</tr>
+<tr>
+<td><strong>Delete</strong></td>
+<td>Removes the codespace and everything in it that is not saved to
+GitHub.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="step-1.-start-a-codespace">Step 1. Start a codespace</h2>
+<ol type="1">
+<li>Go to <a
+href="https://github.com/villano-lab/NSDF-Data">github.com/villano-lab/NSDF-Data</a>.</li>
+<li>Click the green <strong>Code</strong> button, then the
+<strong>Codespaces</strong> tab.</li>
+<li>Click <strong>Create codespace on develop</strong>. (The button
+names the project’s main working branch.)</li>
+</ol>
+<p>A new browser tab opens with a code editor and a terminal at the
+bottom. The first start takes several minutes while the environment is
+prepared. Wait until the page stops changing.</p>
+<div class="checkpoint">
+<p>You see the project’s files on the left, and a terminal at the
+bottom. Type <code>python3 --version</code> in the terminal and press
+Enter. You should see <code>Python 3.10</code>.</p>
+</div>
+<h2 id="step-2.-check-the-environment">Step 2. Check the
+environment</h2>
+<p>Type these lines into the terminal, one at a time, pressing Enter
+after each:</p>
+<pre><code>nsdf-cli version
+python -c &quot;import nsdf_dark_matter; print(&#39;ok&#39;)&quot;
+cd python &amp;&amp; python -m pytest -q &amp;&amp; cd ..</code></pre>
+<div class="checkpoint">
+<p>You see <code>NSDF Dark Matter CLI: 0.5.0</code>, then
+<code>ok</code>, then a line ending <code>52 passed</code> (a larger
+number is fine).</p>
+</div>
+<h2 id="step-3.-download-the-data">Step 3. Download the data</h2>
+<div class="careful">
+<p>Download from your <strong>home folder</strong>, not from inside the
+project. The project folder is tracked by Git, and the data would be
+picked up by mistake.</p>
+</div>
+<pre><code>cd ~
+nsdf-cli download 07221203_2025_F0001</code></pre>
+<p>The data (about 34 MB) goes into an <code>idx</code> folder in your
+home folder. Wait until the prompt comes back.</p>
+<h2 id="step-4.-open-the-first-analysis-notebook">Step 4. Open the
+first-analysis notebook</h2>
+<p>Follow the steps of the first analysis guide (guide 2 for your
+computer). The only changes are these:</p>
+<ul>
+<li><strong>Open a notebook</strong> from the file list on the left:
+<code>R76/analysis_notes/</code>, then click <strong>New File</strong>,
+or copy the code from the guide into a new notebook.</li>
+<li><strong>Choose the kernel</strong> when asked. Pick
+<strong>darkmatter_cli_env</strong> or the Python 3.10 kernel shown in
+the list.</li>
+<li><strong>Data path.</strong> In the codespace your home folder is
+<code>/home/vscode</code>, and the code in the guide uses
+<code>Path.home() / "idx"</code>, so it finds the data without
+changes.</li>
+<li><strong>Start the notebook from the right folder.</strong> The code
+expects to run inside <code>R76/analysis_notes</code>, so open the
+notebook from there.</li>
+</ul>
+<div class="checkpoint">
+<p>The first cell prints <code>(1517, 4096)</code> and the quiet-trace
+cell prints <code>179</code>.</p>
+</div>
+<h2 id="step-5.-save-your-work">Step 5. Save your work</h2>
+<p>Your work is kept in the codespace, but <strong>it is not part of the
+project until it is saved to GitHub</strong>. To save a notebook:</p>
+<ol type="1">
+<li>Click the <strong>Source Control</strong> icon in the left toolbar
+(it looks like a branch).</li>
+<li>Under <strong>Changes</strong>, check that only your notebook (and
+your note, if you have one) is listed. If <code>idx</code> or any
+<code>.bin</code> file appears, do not add it.</li>
+<li>Type a short message, such as
+<code>First analysis: 179 quiet traces</code>, and click
+<strong>Commit</strong>.</li>
+<li>Follow your lead’s instructions for branches and pull requests.
+Notes are published through a pull request, as guides 3 and 4
+explain.</li>
+</ol>
+<h2 id="step-6.-stop-the-codespace">Step 6. Stop the codespace</h2>
+<p>When you finish, <strong>stop</strong> the codespace so it stops
+using your hours. Click the name of the codespace at the bottom left of
+the window, then <strong>Stop Current Codespace</strong>. Or go to <a
+href="https://github.com/codespaces">github.com/codespaces</a> and use
+the menu next to it.</p>
+<div class="careful">
+<p>Do not leave a codespace running overnight. It keeps using your hours
+while it is on.</p>
+</div>
+<h2 id="if-the-environment-is-missing">If the environment is
+missing</h2>
+<p>If <code>python -c "import nsdf_dark_matter"</code> fails, the setup
+step did not run. Install the packages by hand, in the terminal:</p>
+<pre><code>python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0 numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel</code></pre>
+<p>Then run the checks in Step 2 again. If that does not work, copy the
+last lines of the message and send them to your lead.</p>
+<h2 id="you-are-done-when">You are done when</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" />A codespace starts from the
+project’s <code>develop</code> branch.</label></li>
+<li><label><input type="checkbox" />The Step 2 checks pass.</label></li>
+<li><label><input type="checkbox" />The data is in your home folder, and
+<code>(1517, 4096)</code> and <code>179</code> are printed.</label></li>
+<li><label><input type="checkbox" />Your notebook is committed through
+Source Control.</label></li>
+<li><label><input type="checkbox" />You have stopped the
+codespace.</label></li>
+</ul>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 3, 7 October 2026. Written for every computer. Please
+tell the project lead where a step was unclear.</p>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, include the codespace name (shown at the bottom
+left), the command you ran, and the last lines of its output.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+<li>Your codespaces: <a href="https://github.com/codespaces"
+class="uri">https://github.com/codespaces</a></li>
+<li>Guide 2, first analysis (choose your computer): <a
+href="https://villano-lab.github.io/NSDF-Data/"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="codespaces.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

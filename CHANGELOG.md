@@ -4,6 +4,20 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-07
+
+Commands in the guides can now be copied reliably (web pages with Copy buttons, and PDFs that copy clean), plus a corrected setup checkpoint.
+
+### Added
+
+- **Every student guide and developer sheet is now a web page with Copy buttons, and the PDF is the backup.** The 14 documents (ten guides, the student cheat-sheet and three developer sheets) are built from the same Markdown into `docs/students/*.html` and `docs/developers/*.html`, using `docs/guide.css` and `docs/guide.js`. Every command line has a Copy button, a block with several commands also has Copy all (a trailing `# comment` is left out, because Windows `cmd` does not treat `#` as a comment), a Python cell has one Copy button for the whole cell, and the AI briefs have Copy. Each page links to its PDF at the top and the bottom, and the front page links only to the pages. Works on a phone. A new check in "Check instructions" verifies that every page has its PDF, its images and no look-alike characters, and that the front page links only to existing pages.
+
+### Fixed
+
+- **Setup guides, Step 4: the checkpoint contradicted its commands.** The last command is `cd` into `NSDF-Data`, so a student is already inside the folder, but the checkpoint said that `dir` (or `ls`) would show `NSDF-Data` in the list. It now says the list shows the project's own folders and files (`python`, `R76`, `docs`, `README.md`). Setup guides are version 9. Reported by the maintainer while following the Windows guide; every other checkpoint in the guides was checked against its commands and is consistent.
+- Guide 5 (publishing a note with an AI assistant): the numbered steps of the starting brief ran together as one paragraph; they are now a list.
+- **Commands pasted from the guides failed on Windows.** The PDFs built on a Windows PC with Consolas copied `-` out as the look-alike character U+2010, so `git clone https://github.com/villano-lab/NSDF-Data.git` (and every other command with a hyphen) was not found when pasted. All guide, cheat-sheet and developer PDFs are rebuilt with Latin Modern Mono, and the "Check instructions" workflow now fails if any PDF contains such a character.
+
 ## [0.2.0] - 2026-10-07
 
 Developer and student quick-sheets, a safer note-publishing pipeline, and guidance for updating notes.
@@ -53,6 +67,7 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...develop
+[0.3.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/villano-lab/NSDF-Data/releases/tag/v0.1.0

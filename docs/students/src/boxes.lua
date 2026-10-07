@@ -1,10 +1,15 @@
 -- Turn fenced divs into coloured boxes: ::: tip / ::: careful / ::: checkpoint
+-- In a PDF (LaTeX) build they become tcolorbox boxes. In an HTML build the divs are left alone:
+-- pandoc writes <div class="tip"> and docs/guide.css draws the box.
 local boxes = {
   tip        = {"Tip", "teal"},
   careful    = {"Careful", "red"},
   checkpoint = {"Checkpoint", "green"},
 }
 function Div(el)
+  if not FORMAT:match("latex") then
+    return nil
+  end
   for cls, info in pairs(boxes) do
     if el.classes:includes(cls) then
       local out = {}

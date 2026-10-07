@@ -8,6 +8,10 @@ on:
   pull_request:
     paths:
       - "docs/students/**"
+      - "docs/developers/**"
+      - "docs/index.html"
+      - "docs/guide.css"
+      - "docs/guide.js"
       - "python/**"
       - "requirements.txt"
       - ".devcontainer/**"
@@ -17,6 +21,10 @@ on:
     branches: [develop, master]
     paths:
       - "docs/students/**"
+      - "docs/developers/**"
+      - "docs/index.html"
+      - "docs/guide.css"
+      - "docs/guide.js"
       - "python/**"
       - "requirements.txt"
       - ".devcontainer/**"
@@ -55,6 +63,58 @@ jobs:
               print(f"{pin} is in requirements.txt but not in the {name}")
           print(f"checked {len(pins)} pins")
           sys.exit(1 if missing else 0)
+          EOF
+
+      - name: PDFs copy as plain text (no look-alike hyphens)
+        run: |
+          python3 -m pip install --quiet pymupdf
+          python3 - <<'EOF'
+          import glob, sys, pymupdf
+          LOOKALIKES = {"\u2010": "U+2010 hyphen", "\u2011": "U+2011 non-breaking hyphen", "\u2212": "U+2212 minus"}
+          failed = False
+          pdfs = sorted(glob.glob("docs/**/*.pdf", recursive=True))
+          for f in pdfs:
+              text = "".join(p.get_text() for p in pymupdf.open(f))
+              for ch, name in LOOKALIKES.items():
+                  if ch in text:
+                      print(f"{f}: {text.count(ch)} x {name}. A student who copies a command from this PDF gets a command that fails. "
+                            "Rebuild with a monospace font whose hyphen copies as '-' (Latin Modern Mono on Windows; never Consolas).")
+                      failed = True
+          print(f"checked {len(pdfs)} PDFs")
+          sys.exit(1 if failed else 0)
+          EOF
+
+      - name: Guides are web pages with a PDF backup, and the front page links to the pages
+        run: |
+          python3 - <<'EOF'
+          import glob, os, re, sys
+          problems = []
+          pages = sorted(glob.glob("docs/students/*.html") + glob.glob("docs/developers/*.html"))
+          for page in pages:
+              html = open(page, encoding="utf-8").read()
+              name = os.path.basename(page)[:-5]
+              if not os.path.exists(page[:-5] + ".pdf"):
+                  problems.append(f"{page}: no PDF backup next to it")
+              if f'href="{name}.pdf"' not in html:
+                  problems.append(f"{page}: does not link to its PDF")
+              if "guide.js" not in html or "guide.css" not in html:
+                  problems.append(f"{page}: missing the copy-button script or the stylesheet")
+              for ch in "\u2010\u2011\u2212":
+                  if ch in html:
+                      problems.append(f"{page}: contains the look-alike character U+{ord(ch):04X}")
+              for img in re.findall(r'<img src="([^"]+)"', html):
+                  if not os.path.exists(os.path.join(os.path.dirname(page), img)):
+                      problems.append(f"{page}: missing image {img}")
+          index = open("docs/index.html", encoding="utf-8").read()
+          for link in re.findall(r'href="((?:students|developers)/[^"#]+)"', index):
+              if link.endswith(".pdf"):
+                  problems.append(f"docs/index.html links straight to a PDF: {link} (link the page; the PDF is linked inside it)")
+              if not os.path.exists(os.path.join("docs", link)):
+                  problems.append(f"docs/index.html links to a missing file: {link}")
+          print(f"checked {len(pages)} guide pages")
+          for p in problems:
+              print(p)
+          sys.exit(1 if problems else 0)
           EOF
 
       - name: Installer and download links in the guides still work

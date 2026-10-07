@@ -1,6 +1,8 @@
 ---
 title-meta: "Developer quick-sheet: creating a note with an AI agent"
 author-meta: "NSDF-Data maintainers"
+html-title: "Creating a note with an AI agent"
+html-subtitle: "Developer quick-sheet · Claude Code or a similar agent · version 1, 7 October 2026"
 ---
 
 ```{=latex}
@@ -16,12 +18,15 @@ author-meta: "NSDF-Data maintainers"
 \vspace{0.2em}
 ```
 
-The agent does the mechanical work. **You own every number, every reading and every conclusion.** Start it in the `NSDF-Data` folder and it reads `CLAUDE.md` and `AGENTS.md`, so it already knows the branch and pull request rules. This sheet pairs with the developer sheet, [creating a note](https://villano-lab.github.io/NSDF-Data/developers/note-creation.pdf). Students use [guide 5](https://villano-lab.github.io/NSDF-Data/students/publishing-with-ai.pdf).
+The agent does the mechanical work. **You own every number, every reading and every conclusion.** Start it in the `NSDF-Data` folder and it reads `CLAUDE.md` and `AGENTS.md`, so it already knows the branch and pull request rules. This sheet pairs with the developer sheet, [creating a note](https://villano-lab.github.io/NSDF-Data/developers/note-creation.html). Students use [guide 5](https://villano-lab.github.io/NSDF-Data/students/publishing-with-ai.html).
 
 ![](img/note-ai-steps.png){width=100%}
 
 ```{=latex}
 {\footnotesize\textit{Blue: you. Purple: the agent. Teal: GitHub. Every hand-over is a point where you check its work.}}
+```
+```{=html}
+<p class="caption">Blue: you. Purple: the agent. Teal: GitHub. Every hand-over is a point where you check its work.</p>
 ```
 
 **Before you start:** `git switch develop && git pull`, then a clean `git status` on a `feature/note-NN-short-name` branch. The notebook is run and committed; you have its short hash.

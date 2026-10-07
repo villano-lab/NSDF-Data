@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 1 · 5 October 2026"
+date: "Version 2 · 6 October 2026"
 ---
 
 ::: tip
@@ -56,7 +56,7 @@ Look at the list that `git status` prints before the commit. It should contain o
 
 ## Step 3. Open the pull request
 
-On github.com, open the repository. GitHub shows a yellow banner saying your branch had recent pushes. Click **Compare & pull request**. Check that:
+On [github.com](https://github.com), open the repository. GitHub shows a yellow banner saying your branch had recent pushes. Click **Compare & pull request**. Check that:
 
 - the **base** is `master` and the **compare** branch is `student-yourname`;
 - the title says what the note is about;
@@ -99,11 +99,11 @@ Make the change on your branch, open a new pull request (or add to the open one)
 
 ## Session Info
 
-Guide version 1, 5 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 2, 6 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the pull request number, the message the check gave, and the step you are stuck on.
 

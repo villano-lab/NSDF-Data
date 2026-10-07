@@ -1,7 +1,7 @@
 ---
 title: "Working in your browser with GitHub Codespaces"
 subtitle: "NSDF-Data student guide 6 — no install, for every computer"
-date: "Version 1 · 5 October 2026"
+date: "Version 2 · 6 October 2026"
 ---
 
 ::: tip
@@ -30,7 +30,7 @@ date: "Version 1 · 5 October 2026"
 
 ## Step 1. Start a codespace
 
-1. Go to **github.com/villano-lab/NSDF-Data**.
+1. Go to [github.com/villano-lab/NSDF-Data](https://github.com/villano-lab/NSDF-Data).
 2. Click the green **Code** button, then the **Codespaces** tab.
 3. Click **Create codespace on master**.
 
@@ -91,7 +91,7 @@ Your work is kept in the codespace, but **it is not part of the project until it
 
 ## Step 6. Stop the codespace
 
-When you finish, **stop** the codespace so it stops using your hours. Click the name of the codespace at the bottom left of the window, then **Stop Current Codespace**. Or go to **github.com/codespaces** and use the menu next to it.
+When you finish, **stop** the codespace so it stops using your hours. Click the name of the codespace at the bottom left of the window, then **Stop Current Codespace**. Or go to [github.com/codespaces](https://github.com/codespaces) and use the menu next to it.
 
 ::: careful
 Do not leave a codespace running overnight. It keeps using your hours while it is on.
@@ -117,11 +117,11 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## Session Info
 
-Guide version 1, 5 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 2, 6 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the codespace name (shown at the bottom left), the command you ran, and the last lines of its output.
 

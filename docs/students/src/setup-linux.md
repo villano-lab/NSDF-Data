@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Linux edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 7 · 7 October 2026"
 ---
 
 ::: tip
@@ -13,6 +13,7 @@ date: "Version 2 · 5 October 2026"
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
+- **Nothing to be afraid of:** the commands in this guide install software and make new folders. None of them deletes your files. If you are not sure what a line does, there is a short table after each group of commands.
 - **When something goes wrong:** do not guess. Copy the message, note the step you were on, and ask the project lead. See *If something goes wrong* at the end.
 
 ## Words you will meet
@@ -68,7 +69,7 @@ uname -m
 
 `x86_64` means the file below. `aarch64` means an ARM computer: use **Miniforge3-Linux-aarch64.sh** instead.
 
-Open **github.com/conda-forge/miniforge** in your web browser and download the file into your **Downloads** folder. Then install it with this command (use the file name you downloaded):
+Download the file into your **Downloads** folder: [Miniforge3-Linux-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh), or [Miniforge3-Linux-aarch64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh) for an ARM computer. Then install it with this command (use the file name you downloaded):
 
 ```
 bash ~/Downloads/Miniforge3-Linux-x86_64.sh
@@ -86,6 +87,8 @@ Use `sudo` only for the one command that installs Git. Other commands in this gu
 
 ## Step 4. Download the NSDF-Data code
 
+
+
 Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
 
 ```
@@ -96,6 +99,14 @@ cd ~/Research/NSDF-Data
 ```
 
 Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
+
+**What these lines do**
+
+| Line starts with | What it does |
+|---|---|
+| `mkdir` | Makes a new folder called `Research`. |
+| `cd` | Moves you into a folder. `cd` stands for *change directory*, which is the same as opening a folder in a file window. |
+| `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
 Type `ls` and press Enter. You should see `NSDF-Data` in the list.
@@ -110,10 +121,21 @@ conda create -n darkmatter_cli_env python=3.10 -y
 conda activate darkmatter_cli_env
 python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
 python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+python -m pip install jupyterlab
 ```
 
-::: careful
-Do **not** use the file `environment.yml` from the project. It was made on a Mac for Mac only, and it will fail on other computers. The three lines above install the same versions.
+**What these lines do**
+
+| Line | What it does |
+|---|---|
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 inside it. |
+| `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
+| `pip install nsdf-dark-matter...` | Installs the software that reads the detector data. |
+| `pip install numpy...` | Installs software for numbers, plots and checking that everything works. |
+| `pip install jupyterlab` | Installs Jupyter, the notebook program you will use later. |
+
+::: tip
+The project folder also has a file called `requirements.txt` that lists the same software versions. You do **not** need it: the lines above do the whole job, and they work the same on every computer.
 :::
 
 ::: tip
@@ -148,6 +170,25 @@ nsdf-cli version
 It prints `NSDF Dark Matter CLI: 0.5.0` (or a later version).
 :::
 
+Finally, the notebook program:
+
+```
+jupyter lab --version
+```
+
+::: checkpoint
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
+:::
+
+**What these commands do**
+
+| Line | What it does |
+|---|---|
+| `conda activate` | Switches your environment on. Do this in every new terminal. |
+| `cd` | Moves into the `python` folder of the project. |
+| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `52 passed` means every check worked. |
+| `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
+
 ## Step 7. Let Jupyter notebooks use your environment
 
 Jupyter is the notebook program you will use. Register your environment with it once:
@@ -164,16 +205,16 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at **github.com** if you do not have one.
+1. Make a free account at [github.com](https://github.com) if you do not have one.
 2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
-3. Once you have accepted the invitation, set your name and email for Git. Use your own details:
+3. Once you have accepted the invitation, tell Git your name and email, so your work is labelled as yours. Use your own details:
 
 ```
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-4. Create your personal branch. Use your own name, without spaces, in place of `yourname`:
+4. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
 
 ```
 cd ~/Research/NSDF-Data
@@ -198,6 +239,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] The `NSDF-Data` folder is in `~/Research`.
 - [ ] `python -m pytest -q` in the `python` folder ends with `52 passed`.
 - [ ] `nsdf-cli version` prints a version.
+- [ ] `jupyter lab --version` prints a version.
 - [ ] Your Jupyter kernel `darkmatter_cli_env` is installed.
 - [ ] You have a `student-` branch (after access is granted).
 
@@ -211,13 +253,13 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the step number, the command you typed, and the last few lines the computer printed. A screenshot helps. Nobody will be annoyed by a question about a step that did not work.
 
 ## Session Info
 
-Guide version 2, 5 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 7, 7 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

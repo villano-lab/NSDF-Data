@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 5 · 5 October 2026"
+date: "Version 6 · 6 October 2026"
 ---
 
 ::: tip
@@ -57,7 +57,7 @@ Write your note in a **plain text file** with the extension `.md`. The name matt
 
 | Option | Use it when | What to do |
 |---|---|---|
-| **GitHub web editor** (any computer) | You want no install at all | Open the file in the repository on github.com and click the pencil icon. Choose a new file named `notes/src/your-note.md`. |
+| **GitHub web editor** (any computer) | You want no install at all | Open the file in the repository on [github.com](https://github.com) and click the pencil icon. Choose a new file named `notes/src/your-note.md`. |
 | **VS Code** (any computer) | You want a comfortable editor | Install VS Code, open the `NSDF-Data` folder, click **New File**, and name it `your-note.md`. |
 | **Notepad** (Windows) | You only want something simple | Open Notepad, write, then **File**, **Save As**. Set *Save as type* to **All Files** and name the file `your-note.md`. In Notepad, leave the encoding as **UTF-8**. |
 | **TextEdit** (macOS) | You only want something simple | Open TextEdit, choose **Format**, then **Make Plain Text** before typing. Save as `your-note.md`. If it offers `.txt`, pick *Use .md* when asked. |
@@ -92,7 +92,7 @@ conda activate darkmatter_cli_env
 conda install -c conda-forge pandoc -y
 ```
 
-On macOS you can also use `brew install pandoc`. On Windows, the pandoc website has an installer.
+On macOS you can also use `brew install pandoc`. On Windows, the [pandoc website](https://pandoc.org/installing.html) has an installer.
 
 **Step 3. Convert.** Go to the folder that holds the `.docx` and run:
 
@@ -192,7 +192,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 5, 5 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 6, 6 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 
@@ -200,7 +200,7 @@ When the note is written and checked, go to **student guide 4: publishing a note
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the note's title, the step or section you are stuck on, and the sentence or number that worries you. Nobody will be annoyed by a question about a note that is not finished.
 

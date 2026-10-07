@@ -1,17 +1,20 @@
 OS = {
 "windows": dict(
   NAME="Windows", FILE="windows", SHORT="Windows",
-  TERMINAL="Click the **Start** button, type `Miniforge Prompt`, and press **Enter**. A black window with white text opens. This is the terminal for everything in this guide.",
-  PASTE="In the Miniforge Prompt, **right-click** the window to paste. `Ctrl+V` often does not work there.",
-  GIT="Go to **git-scm.com**, choose the **Windows** download, and run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.",
+  TERMINAL="Click the **Start** button, type `Command Prompt`, and press **Enter**. A black window with white text opens. This is the terminal you will use for Steps 1 to 3. Miniforge (Step 3) adds a second terminal, the **Miniforge Prompt**, and from Step 4 on you must use that one instead: only it knows the `conda` command.",
+  PASTE="In both windows, **right-click** the window to paste. `Ctrl+V` often does not work there.",
+  GIT="Go to [git-scm.com/download/win](https://git-scm.com/download/win). The download of the installer starts by itself; if it does not, click the link on that page to download it. Run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.\n\nWhen it finishes, **close the Command Prompt and open a new one** (the old window does not know about Git yet).",
   MINIFORGE_FILE="Miniforge3-Windows-x86_64.exe",
-  MINIFORGE="Go to **github.com/conda-forge/miniforge**, find the file **Miniforge3-Windows-x86_64.exe**, and download it. Double-click it and follow the installer:\n\n- choose **Just Me**;\n- keep the default install folder;\n- **leave the box \"Add Miniforge to my PATH\" unticked.** The Miniforge Prompt works without it.\n\nWhen it finishes, close any open Miniforge Prompt and open a new one.",
-  FOLDER="C:\\Users\\YourName\\Research",
-  CD_REPO="cd C:\\Users\\YourName\\Research\\NSDF-Data",
-  CD_PYTHON="cd C:\\Users\\YourName\\Research\\NSDF-Data\\python",
-  CD_NOTES="cd C:\\Users\\YourName\\Research\\NSDF-Data\\R76\\analysis_notes",
-  MKDIR="mkdir C:\\Users\\YourName\\Research",
+  MINIFORGE="Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, so it can take a few minutes. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:\n\n- When it asks who to install for, choose **Just Me**.\n- Keep the default install folder.\n- On the **Advanced Installation Options** screen, set the four boxes exactly as in the table. They are the installer's defaults, so you may not need to change anything, but check each one:\n\n| Box | Set it to |\n|---|---|\n| Create shortcuts (supported packages only) | **Ticked.** This creates the *Miniforge Prompt* you will use from Step 4. |\n| Add installation to my PATH environment variable | **Unticked.** The installer says \"not recommended\", and the Miniforge Prompt works without it. |\n| Register Miniforge3 as my default Python | **Unticked.** |\n| Clear the package cache upon completion | **Unticked.** (Ticking it also works. It only saves a little disk space.) |\n\nThen click **Install**, wait until it finishes, and click **Finish**.\n\nNow close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.",
+  FOLDER="%USERPROFILE%\\Research",
+  CD_REPO="cd %USERPROFILE%\\Research\\NSDF-Data",
+  CD_PYTHON="cd %USERPROFILE%\\Research\\NSDF-Data\\python",
+  CD_NOTES="cd %USERPROFILE%\\Research\\NSDF-Data\\R76\\analysis_notes",
+  MKDIR="mkdir %USERPROFILE%\\Research",
   LISTCMD="dir",
+  NEW_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
+  OPEN_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
+  HOME_NOTE="::: tip\n**What is `%USERPROFILE%`?** It is a shortcut that Windows understands. It stands for your own personal folder on this computer, the one named after you (for example `C:\\Users\\YourName`). Type it **exactly as written**, with the two percent signs. Do not replace it with your name: Windows fills it in for you.\n:::",
   FILEMGR="File Explorer",
   IDX="`C:\\Users\\YourName\\idx`",
   GOHOME="cd %USERPROFILE%",
@@ -25,13 +28,16 @@ OS = {
   PASTE="Paste with **Command + V**.",
   GIT="Type this in the Terminal and press **Return**:\n\n```\nxcode-select --install\n```\n\nA pop-up appears. Click **Install**, agree to the licence, and wait. It can take 15 minutes or more. If the message says the tools are already installed, that is fine.",
   MINIFORGE_FILE="Miniforge3-MacOSX-arm64.sh (Apple chip) or Miniforge3-MacOSX-x86_64.sh (Intel chip)",
-  MINIFORGE="First find out which chip your Mac has: click the Apple menu, then **About This Mac**. If it says **Chip: Apple M**something, use the **arm64** file. If it says **Processor: Intel**, use the **x86_64** file.\n\nDownload the file from **github.com/conda-forge/miniforge** into your **Downloads** folder. Then, in the Terminal, run the command below (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-MacOSX-arm64.sh\n```\n\nPress **Return** to read the licence, type `yes` and press **Return**, accept the default location, and when it asks *\"Do you wish the installer to initialize Miniforge3 by running conda init?\"* type `yes`. Then **quit Terminal completely** (Command + Q) and open it again.",
+  MINIFORGE="First find out which chip your Mac has: click the Apple menu, then **About This Mac**. If it says **Chip: Apple M**something, use the **arm64** file. If it says **Processor: Intel**, use the **x86_64** file.\n\nDownload the file into your **Downloads** folder: [Miniforge3-MacOSX-arm64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh) (Apple chip) or [Miniforge3-MacOSX-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-x86_64.sh) (Intel chip). If your browser asks whether to keep the file, choose **Keep**. Then, in the Terminal, run the command below (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-MacOSX-arm64.sh\n```\n\nPress **Return** to read the licence, type `yes` and press **Return**, accept the default location, and when it asks *\"Do you wish the installer to initialize Miniforge3 by running conda init?\"* type `yes`. Then **quit Terminal completely** (Command + Q) and open it again.",
   FOLDER="~/Research",
   CD_REPO="cd ~/Research/NSDF-Data",
   CD_PYTHON="cd ~/Research/NSDF-Data/python",
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  NEW_TERM="a **new** terminal",
+  OPEN_TERM="a terminal (Step 1 of the setup guide)",
+  HOME_NOTE="",
   FILEMGR="Finder",
   IDX="`~/idx`",
   GOHOME="cd ~",
@@ -44,13 +50,16 @@ OS = {
   PASTE="Paste with **Ctrl + Shift + V** (plain Ctrl+V does not work in most terminals).",
   GIT="This guide uses Ubuntu or Debian commands. If you use another distribution, use its package manager instead. Type:\n\n```\nsudo apt install git\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. Press **Return**, then type `y` and press **Return** if it asks to continue.",
   MINIFORGE_FILE="Miniforge3-Linux-x86_64.sh (most PCs)",
-  MINIFORGE="Check your computer type with this command, which prints one word:\n\n```\nuname -m\n```\n\n`x86_64` means the file below. `aarch64` means an ARM computer: use **Miniforge3-Linux-aarch64.sh** instead.\n\nOpen **github.com/conda-forge/miniforge** in your web browser and download the file into your **Downloads** folder. Then install it with this command (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-Linux-x86_64.sh\n```\n\nPress **Return** to read the licence, type `yes`, accept the default location, and when it asks about running `conda init`, type `yes`. Then **close the terminal and open a new one**.",
+  MINIFORGE="Check your computer type with this command, which prints one word:\n\n```\nuname -m\n```\n\n`x86_64` means the file below. `aarch64` means an ARM computer: use **Miniforge3-Linux-aarch64.sh** instead.\n\nDownload the file into your **Downloads** folder: [Miniforge3-Linux-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh), or [Miniforge3-Linux-aarch64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh) for an ARM computer. Then install it with this command (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-Linux-x86_64.sh\n```\n\nPress **Return** to read the licence, type `yes`, accept the default location, and when it asks about running `conda init`, type `yes`. Then **close the terminal and open a new one**.",
   FOLDER="~/Research",
   CD_REPO="cd ~/Research/NSDF-Data",
   CD_PYTHON="cd ~/Research/NSDF-Data/python",
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  NEW_TERM="a **new** terminal",
+  OPEN_TERM="a terminal (Step 1 of the setup guide)",
+  HOME_NOTE="",
   FILEMGR="Files (the file manager)",
   IDX="`~/idx`",
   GOHOME="cd ~",
@@ -79,7 +88,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 7 · 7 October 2026"
 ---
 
 ::: tip
@@ -91,6 +100,7 @@ date: "Version 2 · 5 October 2026"
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
+- **Nothing to be afraid of:** the commands in this guide install software and make new folders. None of them deletes your files. If you are not sure what a line does, there is a short table after each group of commands.
 - **When something goes wrong:** do not guess. Copy the message, note the step you were on, and ask the project lead. See *If something goes wrong* at the end.
 
 ## Words you will meet
@@ -122,7 +132,7 @@ Miniforge installs Python and the other packages the analysis needs. Its downloa
 @MINIFORGE@
 
 ::: checkpoint
-Open a **new** terminal and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
+Open @NEW_TERM@ and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
 :::
 
 ::: careful
@@ -130,6 +140,8 @@ Open a **new** terminal and type `conda --version`, then press Enter. You should
 :::
 
 ## Step 4. Download the NSDF-Data code
+
+@HOME_NOTE@
 
 Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
 
@@ -141,6 +153,14 @@ git clone https://github.com/villano-lab/NSDF-Data.git
 ```
 
 Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
+
+**What these lines do**
+
+| Line starts with | What it does |
+|---|---|
+| `mkdir` | Makes a new folder called `Research`. |
+| `cd` | Moves you into a folder. `cd` stands for *change directory*, which is the same as opening a folder in a file window. |
+| `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
 Type `@LISTCMD@` and press Enter. You should see `NSDF-Data` in the list.
@@ -155,10 +175,21 @@ conda create -n darkmatter_cli_env python=3.10 -y
 conda activate darkmatter_cli_env
 python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
 python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+python -m pip install jupyterlab
 ```
 
-::: careful
-Do **not** use the file `environment.yml` from the project. It was made on a Mac for Mac only, and it will fail on other computers. The three lines above install the same versions.
+**What these lines do**
+
+| Line | What it does |
+|---|---|
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 inside it. |
+| `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
+| `pip install nsdf-dark-matter...` | Installs the software that reads the detector data. |
+| `pip install numpy...` | Installs software for numbers, plots and checking that everything works. |
+| `pip install jupyterlab` | Installs Jupyter, the notebook program you will use later. |
+
+::: tip
+The project folder also has a file called `requirements.txt` that lists the same software versions. You do **not** need it: the lines above do the whole job, and they work the same on every computer.
 :::
 
 ::: tip
@@ -193,6 +224,25 @@ nsdf-cli version
 It prints `NSDF Dark Matter CLI: 0.5.0` (or a later version).
 :::
 
+Finally, the notebook program:
+
+```
+jupyter lab --version
+```
+
+::: checkpoint
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
+:::
+
+**What these commands do**
+
+| Line | What it does |
+|---|---|
+| `conda activate` | Switches your environment on. Do this in every new terminal. |
+| `cd` | Moves into the `python` folder of the project. |
+| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `52 passed` means every check worked. |
+| `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
+
 ## Step 7. Let Jupyter notebooks use your environment
 
 Jupyter is the notebook program you will use. Register your environment with it once:
@@ -209,16 +259,16 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at **github.com** if you do not have one.
+1. Make a free account at [github.com](https://github.com) if you do not have one.
 2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
-3. Once you have accepted the invitation, set your name and email for Git. Use your own details:
+3. Once you have accepted the invitation, tell Git your name and email, so your work is labelled as yours. Use your own details:
 
 ```
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-4. Create your personal branch. Use your own name, without spaces, in place of `yourname`:
+4. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
 
 ```
 @CD_REPO@
@@ -243,6 +293,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] The `NSDF-Data` folder is in `@FOLDER@`.
 - [ ] `python -m pytest -q` in the `python` folder ends with `52 passed`.
 - [ ] `nsdf-cli version` prints a version.
+- [ ] `jupyter lab --version` prints a version.
 - [ ] Your Jupyter kernel `darkmatter_cli_env` is installed.
 - [ ] You have a `student-` branch (after access is granted).
 
@@ -256,13 +307,13 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the step number, the command you typed, and the last few lines the computer printed. A screenshot helps. Nobody will be annoyed by a question about a step that did not work.
 
 ## Session Info
 
-Guide version 2, 5 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 7, 7 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -275,7 +326,7 @@ Guide version 2, 5 October 2026, @NAME@ edition. Written for beginners; please t
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 6 · 6 October 2026"
 ---
 
 ::: tip
@@ -286,7 +337,7 @@ date: "Version 2 · 5 October 2026"
 
 - **Time:** about two hours.
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
-- **Check:** open a terminal (Step 1 of the setup guide), and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
+- **Check:** open @OPEN_TERM@, and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
 
 ## Words you will meet
 
@@ -304,7 +355,7 @@ date: "Version 2 · 5 October 2026"
 
 ## Step 1. Read three notes first (about 30 minutes)
 
-Open the notes site at **villano-lab.github.io/NSDF-Data** and read these, in order:
+Open the notes site at [villano-lab.github.io/NSDF-Data](https://villano-lab.github.io/NSDF-Data/) and read these, in order:
 
 1. **Note 1**, *Run76 series catalog*: what a series and a dump are.
 2. **Note 1a**, *python library structure*: what each part of the code does.
@@ -332,6 +383,8 @@ The download puts the data in an `idx` folder **in the folder you are in**. Beca
 Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit inside the project, where Git can pick it up. If you have already downloaded there, move the `idx` folder to your home folder, and tell your lead.
 :::
 
+**What these lines do:** the first one moves you to your home folder (the `cd` line). The second, `nsdf-cli download`, fetches the data set from the NSDF servers over the internet and puts it in a new `idx` folder.
+
 ::: careful
 Do not move or edit the downloaded files, and do not add them to Git. They are not part of the project.
 :::
@@ -349,6 +402,8 @@ conda activate darkmatter_cli_env
 @CD_NOTES@
 jupyter lab
 ```
+
+**What these lines do:** `conda activate` switches your environment on, `cd` moves you into the folder where the notebooks live, and `jupyter lab` starts the notebook program. **Leave this terminal window open while you work**: closing it stops Jupyter.
 
 Your web browser opens a Jupyter page. Click **File**, then **New**, then **Notebook**. If it asks which kernel to use, choose **darkmatter_cli_env**.
 
@@ -437,6 +492,8 @@ git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
 ```
 
+**What these lines do:** `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
+
 ::: careful
 Commit only your notebook. Check the list before committing with `git status`. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::
@@ -464,13 +521,13 @@ Do not run `07221203_2025_dump1_noise.ipynb` unless the project lead says it is 
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the step number, the command you typed, and the last few lines the computer printed. A screenshot helps. Nobody will be annoyed by a question about a step that did not work.
 
 ## Session Info
 
-Guide version 2, 5 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 6, 6 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -484,8 +541,8 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip())
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
-        open(f"{kind}-{key}.md", "w").write(s)
+        open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)
         print(kind, key, len(s))

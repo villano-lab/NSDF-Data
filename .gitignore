@@ -208,3 +208,6 @@ __marimo__/
 
 # Raw detector data downloaded with nsdf-cli (large; never commit)
 /idx/
+
+# Claude Code: per-user local settings (permissions etc.) are not shared
+.claude/settings.local.json

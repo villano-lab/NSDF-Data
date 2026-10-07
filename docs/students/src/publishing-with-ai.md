@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note with an AI assistant"
 subtitle: "NSDF-Data student guide 5 — with Claude Code or a similar assistant"
-date: "Version 1 · 5 October 2026"
+date: "Version 2 · 6 October 2026"
 ---
 
 ::: tip
@@ -66,11 +66,11 @@ Once you are satisfied, follow guide 4 from Step 2 onward. You can ask the assis
 
 ## Session Info
 
-Guide version 1, 5 October 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
+Guide version 2, 6 October 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 Include the brief you gave the assistant, what it changed, and the check's last message.
 

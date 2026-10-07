@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 2 · 5 October 2026"
+date: "Version 7 · 7 October 2026"
 ---
 
 ::: tip
@@ -13,6 +13,7 @@ date: "Version 2 · 5 October 2026"
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
+- **Nothing to be afraid of:** the commands in this guide install software and make new folders. None of them deletes your files. If you are not sure what a line does, there is a short table after each group of commands.
 - **When something goes wrong:** do not guess. Copy the message, note the step you were on, and ask the project lead. See *If something goes wrong* at the end.
 
 ## Words you will meet
@@ -34,9 +35,9 @@ date: "Version 2 · 5 October 2026"
 
 ## Step 1. Open a terminal
 
-Click the **Start** button, type `Miniforge Prompt`, and press **Enter**. A black window with white text opens. This is the terminal for everything in this guide.
+Click the **Start** button, type `Command Prompt`, and press **Enter**. A black window with white text opens. This is the terminal you will use for Steps 1 to 3. Miniforge (Step 3) adds a second terminal, the **Miniforge Prompt**, and from Step 4 on you must use that one instead: only it knows the `conda` command.
 
-In the Miniforge Prompt, **right-click** the window to paste. `Ctrl+V` often does not work there.
+In both windows, **right-click** the window to paste. `Ctrl+V` often does not work there.
 
 ::: checkpoint
 You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo hello` and press Enter: the word `hello` should appear under it.
@@ -44,7 +45,9 @@ You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo he
 
 ## Step 2. Install Git
 
-Go to **git-scm.com**, choose the **Windows** download, and run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.
+Go to [git-scm.com/download/win](https://git-scm.com/download/win). The download of the installer starts by itself; if it does not, click the link on that page to download it. Run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.
+
+When it finishes, **close the Command Prompt and open a new one** (the old window does not know about Git yet).
 
 ::: checkpoint
 In the terminal, type `git --version` and press Enter. You should see a line starting with `git version`.
@@ -54,16 +57,25 @@ In the terminal, type `git --version` and press Enter. You should see a line sta
 
 Miniforge installs Python and the other packages the analysis needs. Its download file is **Miniforge3-Windows-x86_64.exe**.
 
-Go to **github.com/conda-forge/miniforge**, find the file **Miniforge3-Windows-x86_64.exe**, and download it. Double-click it and follow the installer:
+Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, so it can take a few minutes. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:
 
-- choose **Just Me**;
-- keep the default install folder;
-- **leave the box "Add Miniforge to my PATH" unticked.** The Miniforge Prompt works without it.
+- When it asks who to install for, choose **Just Me**.
+- Keep the default install folder.
+- On the **Advanced Installation Options** screen, set the four boxes exactly as in the table. They are the installer's defaults, so you may not need to change anything, but check each one:
 
-When it finishes, close any open Miniforge Prompt and open a new one.
+| Box | Set it to |
+|---|---|
+| Create shortcuts (supported packages only) | **Ticked.** This creates the *Miniforge Prompt* you will use from Step 4. |
+| Add installation to my PATH environment variable | **Unticked.** The installer says "not recommended", and the Miniforge Prompt works without it. |
+| Register Miniforge3 as my default Python | **Unticked.** |
+| Clear the package cache upon completion | **Unticked.** (Ticking it also works. It only saves a little disk space.) |
+
+Then click **Install**, wait until it finishes, and click **Finish**.
+
+Now close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.
 
 ::: checkpoint
-Open a **new** terminal and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
+Open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**) and type `conda --version`, then press Enter. You should see `conda` followed by a version number.
 :::
 
 ::: careful
@@ -72,16 +84,28 @@ Windows may show a blue warning box when you run an installer ("Windows protecte
 
 ## Step 4. Download the NSDF-Data code
 
+::: tip
+**What is `%USERPROFILE%`?** It is a shortcut that Windows understands. It stands for your own personal folder on this computer, the one named after you (for example `C:\Users\YourName`). Type it **exactly as written**, with the two percent signs. Do not replace it with your name: Windows fills it in for you.
+:::
+
 Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
 
 ```
-mkdir C:\Users\YourName\Research
-cd C:\Users\YourName\Research
+mkdir %USERPROFILE%\Research
+cd %USERPROFILE%\Research
 git clone https://github.com/villano-lab/NSDF-Data.git
-cd C:\Users\YourName\Research\NSDF-Data
+cd %USERPROFILE%\Research\NSDF-Data
 ```
 
 Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
+
+**What these lines do**
+
+| Line starts with | What it does |
+|---|---|
+| `mkdir` | Makes a new folder called `Research`. |
+| `cd` | Moves you into a folder. `cd` stands for *change directory*, which is the same as opening a folder in a file window. |
+| `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
 Type `dir` and press Enter. You should see `NSDF-Data` in the list.
@@ -96,10 +120,21 @@ conda create -n darkmatter_cli_env python=3.10 -y
 conda activate darkmatter_cli_env
 python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
 python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+python -m pip install jupyterlab
 ```
 
-::: careful
-Do **not** use the file `environment.yml` from the project. It was made on a Mac for Mac only, and it will fail on other computers. The three lines above install the same versions.
+**What these lines do**
+
+| Line | What it does |
+|---|---|
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 inside it. |
+| `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
+| `pip install nsdf-dark-matter...` | Installs the software that reads the detector data. |
+| `pip install numpy...` | Installs software for numbers, plots and checking that everything works. |
+| `pip install jupyterlab` | Installs Jupyter, the notebook program you will use later. |
+
+::: tip
+The project folder also has a file called `requirements.txt` that lists the same software versions. You do **not** need it: the lines above do the whole job, and they work the same on every computer.
 :::
 
 ::: tip
@@ -116,7 +151,7 @@ First, the tests. They use made-up data, so they need no download. Type each lin
 
 ```
 conda activate darkmatter_cli_env
-cd C:\Users\YourName\Research\NSDF-Data\python
+cd %USERPROFILE%\Research\NSDF-Data\python
 python -m pytest -q
 ```
 
@@ -134,6 +169,25 @@ nsdf-cli version
 It prints `NSDF Dark Matter CLI: 0.5.0` (or a later version).
 :::
 
+Finally, the notebook program:
+
+```
+jupyter lab --version
+```
+
+::: checkpoint
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab` and try again.
+:::
+
+**What these commands do**
+
+| Line | What it does |
+|---|---|
+| `conda activate` | Switches your environment on. Do this in every new terminal. |
+| `cd` | Moves into the `python` folder of the project. |
+| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `52 passed` means every check worked. |
+| `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
+
 ## Step 7. Let Jupyter notebooks use your environment
 
 Jupyter is the notebook program you will use. Register your environment with it once:
@@ -150,19 +204,19 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at **github.com** if you do not have one.
+1. Make a free account at [github.com](https://github.com) if you do not have one.
 2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
-3. Once you have accepted the invitation, set your name and email for Git. Use your own details:
+3. Once you have accepted the invitation, tell Git your name and email, so your work is labelled as yours. Use your own details:
 
 ```
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-4. Create your personal branch. Use your own name, without spaces, in place of `yourname`:
+4. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
 
 ```
-cd C:\Users\YourName\Research\NSDF-Data
+cd %USERPROFILE%\Research\NSDF-Data
 git checkout -b student-yourname
 ```
 
@@ -181,9 +235,10 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 - [ ] Your terminal opens and `git --version` prints a version.
 - [ ] `conda --version` prints a version, in a new terminal.
-- [ ] The `NSDF-Data` folder is in `C:\Users\YourName\Research`.
+- [ ] The `NSDF-Data` folder is in `%USERPROFILE%\Research`.
 - [ ] `python -m pytest -q` in the `python` folder ends with `52 passed`.
 - [ ] `nsdf-cli version` prints a version.
+- [ ] `jupyter lab --version` prints a version.
 - [ ] Your Jupyter kernel `darkmatter_cli_env` is installed.
 - [ ] You have a `student-` branch (after access is granted).
 
@@ -197,13 +252,13 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 
 ## Where to get help
 
-**Anthony Villano**, project lead: anthony.villano@ucdenver.edu
+**Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
 
 When you write, include the step number, the command you typed, and the last few lines the computer printed. A screenshot helps. Nobody will be annoyed by a question about a step that did not work.
 
 ## Session Info
 
-Guide version 2, 5 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 7, 7 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

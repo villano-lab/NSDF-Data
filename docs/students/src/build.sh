@@ -17,3 +17,10 @@ for f in setup-windows setup-macos setup-linux first-analysis-windows first-anal
     -V colorlinks=true -V linkcolor=brand -V urlcolor=brand --highlight-style=tango
   echo "built $f.pdf"
 done
+# The one-page note cheat-sheet: its figure is drawn by make_cheatsheet_figure.py (needs matplotlib),
+# and it uses tighter margins than the guides.
+"${PYTHON:-python3}" make_cheatsheet_figure.py
+pandoc note-cheatsheet.md -o "$OUT/note-cheatsheet.pdf" --pdf-engine=xelatex -H style.tex \
+  -V geometry:margin=0.6in -V fontsize=11pt -V mainfont="${MAINFONT:-Helvetica}" -V monofont="${MONOFONT:-Menlo}" \
+  -V colorlinks=true -V linkcolor=brand -V urlcolor=brand --highlight-style=tango
+echo "built note-cheatsheet.pdf"

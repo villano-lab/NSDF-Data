@@ -2,7 +2,7 @@
 
 This repository uses **Git Flow** branching and **semantic versioning** (https://semver.org). One version number describes the whole repository: the `python/` library, the notebooks, the notes site, the student guides and the CI checks together. The guides also carry their own document versions (in their headers); those are separate and are not the repository version.
 
-The current version is in the `VERSION` file, and its history is in `CHANGELOG.md`.
+The current version is in the `VERSION` file, and its history is in `CHANGELOG.md`. A one-page summary with diagrams is on the notes site: `docs/developers/developer-workflow.pdf` (source in `docs/developers/src/`, rebuilt with `sh docs/developers/src/build.sh`).
 
 ## Branches
 
@@ -68,6 +68,8 @@ Student notes (`notes/src/*.md`) are feature work: a student branches from `deve
 2. The maintainer reviews it, gives it an S-number (replacing `TBD`), and merges. **Nothing is published without this approval**: the build refuses a note whose id is still `TBD`.
 3. The merge pushes to `develop`, which starts the student-notes workflow. It builds `docs/notes/student-<name>.html`, the images and the index row, and the bot commits them to `develop`.
 4. GitHub Pages rebuilds from `develop`. The note is live about one to two minutes after the merge.
+
+To **take a note off the site**, delete `notes/src/<name>.md` (and any picture only it used) in a pull request into `develop`. The next build removes the generated page and figures itself (`prune()` in `tools/build_notes.py`), and the front-page table is regenerated. It only ever removes files named `student-*`, and only when every remaining note validates.
 
 The bot commits directly to `develop`, so a ruleset on `develop` must not require pull requests (deletion and force-push blocks are fine).
 

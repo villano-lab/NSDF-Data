@@ -23,7 +23,7 @@ The maintainer is Anthony Villano (@villaa).
 
 ## Git rules
 
-The repository uses **Git Flow** and **semantic versioning**. The full procedure is in `RELEASING.md`; the rules an agent must follow are:
+The repository uses **Git Flow** and **semantic versioning**. The full procedure is in `RELEASING.md` (a one-page summary with diagrams: `docs/developers/developer-workflow.pdf`); the rules an agent must follow are:
 
 - **Branches:** `master` holds released code only (every commit is tagged `vX.Y.Z`). `develop` is the integration branch, **and the live site and guide PDFs are served from `develop`**, so a merged change there is live in about two minutes. Work happens on `feature/<name>` branches **from `develop`**, which open pull requests **into `develop`**. Releases use `release/X.Y.Z` and urgent fixes use `hotfix/X.Y.Z`; both target `master`.
 - **Never commit directly to `master` or `develop`.** This applies to the maintainer too. Make a branch and open a pull request.
@@ -40,11 +40,11 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 | You change | Also do |
 |---|---|
 | A function in `python/` (add, rename, remove) | Add or update tests in `python/tests/`. Tag it `@status(DONE)` or `@status(UNDER_DEVELOPMENT, note=...)`. Note 1a (the library reference) is regenerated from the library, never hand-edited. A **breaking** change (rename/removal) means updating the notebooks that use it, or marking them deprecated (see "Notebooks and deprecation" on `docs/index.html`). Additive changes need no notebook edits. |
-| A hand-written note page `docs/notes/note-NN-*.html` (live as soon as it is merged into `develop`) | Keep exactly one row for it in `docs/index.html`, newest note number first. Notes marked **Complete** are left alone, apart from a minimal correction when a library rename makes them wrong. New or In-progress notes get an `id` on each `<h2>` and a `<nav class="outline">`. Pin notebooks and `python/` to the exact commit sha that produced the results. |
+| A hand-written note page `docs/notes/note-NN-*.html` (live as soon as it is merged into `develop`; quick-sheets: `docs/developers/note-creation.pdf`, and `note-creation-ai.pdf` for an agent) | Keep exactly one row for it in `docs/index.html`, newest note number first. Notes marked **Complete** are left alone, apart from a minimal correction when a library rename makes them wrong. New or In-progress notes get an `id` on each `<h2>` and a `<nav class="outline">`. Pin notebooks and `python/` to the exact commit sha that produced the results. |
 | A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Rebuild (below), commit sources **and** the rebuilt PDFs together, and bump the version and date in the guide's header and its *Session Info*. |
 | `requirements.txt`, package pins, or the Python version | Keep the setup guide's Step 5 commands, `.devcontainer/devcontainer.json` and `.github/workflows/check-instructions.yml` in step with each other. |
 | `.github/workflows/*` | Test on a branch (a push runs the workflow). Keep it working on Windows, macOS and Linux if it checks the guides. |
-| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it. |
+| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it (about 2 to 3 minutes). To remove a note, delete its source in a PR; the build prunes the generated page. |
 | Anything a user or student would notice | A line under `[Unreleased]` in `CHANGELOG.md`. |
 
 ## Building the student guides
@@ -80,4 +80,4 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 ## Checks that run automatically
 
 - **Student notes** (`.github/workflows/student-notes.yml`): validates `notes/src/**` on pull requests and builds the pages on push to `master`.
-- **Check instructions** (`.github/workflows/check-instructions.yml`): repeats the guides' setup steps on Windows, macOS and Linux.
+- **Check instructions** (`.github/workflows/check-instructions.yml`): repeats the guides' setup steps on Windows, macOS and Linux. It runs on pull requests, on pushes to `develop` and `master`, and weekly.

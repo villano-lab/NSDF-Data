@@ -4,6 +4,26 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-07
+
+Developer and student quick-sheets, a safer note-publishing pipeline, and guidance for updating notes.
+
+### Added
+
+- `docs/developers/note-creation.pdf` and `docs/developers/note-creation-ai.pdf`: two one-page developer quick-sheets, for creating a hand-written note (notebook, figures, page, index row, pinned links, PR) and for doing it with an AI agent (a starting brief, what the agent may and must never do, the checks you still do yourself). Both also cover reviewing a student note. Linked from the front page under "Developer guides". Sources and the figure script are in `docs/developers/src/`.
+- `docs/students/note-cheatsheet.pdf`: a one-page student cheat-sheet, "From note to live page", that summarises and links to guides 3 and 4 (the commands, a checklist, what the PR check's messages mean). Linked from the front page. Source in `docs/students/src/`.
+- `docs/developers/developer-workflow.pdf`: a one-page developer workflow (the daily pull request loop, how branches relate, releases), linked from the front page under "Developer guides". Source and figure script in `docs/developers/src/`.
+- `tools/build_notes.py` removes generated student pages and figures whose note has been deleted (and figures no longer in `notes/src/img`), so deleting a note's source is enough to take it off the site. Found while removing the pipeline test note, which needed its generated files deleted by hand.
+
+### Fixed
+
+- Updating a published student note: guide 4 and the student cheat-sheet now say to run `git pull origin develop` first and to keep the note's S-number. A student's old branch still said `id: "TBD"`; the PR check accepts that, but the build refuses it, so the note's update could not be published and the maintainer had to catch it before merging. The developer quick-sheet "Creating a note" now covers updating a note, and warns reviewers to check for `TBD`.
+- `tools/build_notes.py` now passes text to pandoc as UTF-8. On Windows it used the system code page, which garbled non-ASCII characters (an em dash, `µ`) in a note when it was built locally. The Linux build that publishes notes was not affected.
+
+### Changed
+
+- The "Check instructions" workflow also runs on pushes to `develop`, so every merge into the branch the site is served from is checked.
+
 ## [0.1.0] - 2026-10-07
 
 First release. It gathers the state of the repository when semantic versioning and Git Flow began.
@@ -33,5 +53,6 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...develop
+[0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/villano-lab/NSDF-Data/releases/tag/v0.1.0

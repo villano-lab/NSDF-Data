@@ -10,6 +10,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Fixed
 
+- **Setup guides, Step 4: the checkpoint contradicted its commands.** The last command is `cd` into `NSDF-Data`, so a student is already inside the folder, but the checkpoint said that `dir` (or `ls`) would show `NSDF-Data` in the list. It now says the list shows the project's own folders and files (`python`, `R76`, `docs`, `README.md`). Setup guides are version 9. Reported by the maintainer while following the Windows guide; every other checkpoint in the guides was checked against its commands and is consistent.
 - Guide 5 (publishing a note with an AI assistant): the numbered steps of the starting brief ran together as one paragraph; they are now a list.
 - **Commands pasted from the guides failed on Windows.** The PDFs built on a Windows PC with Consolas copied `-` out as the look-alike character U+2010, so `git clone https://github.com/villano-lab/NSDF-Data.git` (and every other command with a hyphen) was not found when pasted. All guide, cheat-sheet and developer PDFs are rebuilt with Latin Modern Mono, and the "Check instructions" workflow now fails if any PDF contains such a character.
 

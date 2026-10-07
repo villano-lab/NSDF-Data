@@ -41,13 +41,15 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 |---|---|
 | A function in `python/` (add, rename, remove) | Add or update tests in `python/tests/`. Tag it `@status(DONE)` or `@status(UNDER_DEVELOPMENT, note=...)`. Note 1a (the library reference) is regenerated from the library, never hand-edited. A **breaking** change (rename/removal) means updating the notebooks that use it, or marking them deprecated (see "Notebooks and deprecation" on `docs/index.html`). Additive changes need no notebook edits. |
 | A hand-written note page `docs/notes/note-NN-*.html` (live as soon as it is merged into `develop`; quick-sheets: `docs/developers/note-creation.pdf`, and `note-creation-ai.pdf` for an agent) | Keep exactly one row for it in `docs/index.html`, newest note number first. Notes marked **Complete** are left alone, apart from a minimal correction when a library rename makes them wrong. New or In-progress notes get an `id` on each `<h2>` and a `<nav class="outline">`. Pin notebooks and `python/` to the exact commit sha that produced the results. |
-| A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Rebuild (below), commit sources **and** the rebuilt PDFs together, and bump the version and date in the guide's header and its *Session Info*. |
+| A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Never edit the generated `.html` pages or PDFs. Rebuild (below), commit sources **and** the rebuilt HTML pages and PDFs together, and bump the version and date in the guide's header and its *Session Info*. The front page links only to the HTML pages; each page links to its PDF. |
 | `requirements.txt`, package pins, or the Python version | Keep the setup guide's Step 5 commands, `.devcontainer/devcontainer.json` and `.github/workflows/check-instructions.yml` in step with each other. |
 | `.github/workflows/*` | Test on a branch (a push runs the workflow). Keep it working on Windows, macOS and Linux if it checks the guides. |
 | A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it (about 2 to 3 minutes). To remove a note, delete its source in a PR; the build prunes the generated page. |
 | Anything a user or student would notice | A line under `[Unreleased]` in `CHANGELOG.md`. |
 
-## Building the student guides
+## Building the student guides and quick-sheets
+
+Every guide and quick-sheet is built from one Markdown source into **two** files: a web page (`.html`, with a Copy button on every command, styled by `docs/guide.css` and `docs/guide.js`) and a PDF backup. `sh docs/students/src/build.sh` builds the student ones and `sh docs/developers/src/build.sh` the developer ones. The HTML needs only pandoc; the PDF also needs LaTeX. Commands are meant to be copied from the web page, so keep each command on its own line in a plain code block.
 
 ```
 sh docs/students/src/build.sh

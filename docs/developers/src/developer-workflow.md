@@ -1,6 +1,8 @@
 ---
 title-meta: "Developer workflow"
 author-meta: "NSDF-Data maintainers"
+html-title: "Developer workflow"
+html-subtitle: "NSDF-Data · Git Flow and semantic versioning · version 1, 7 October 2026"
 ---
 
 ```{=latex}
@@ -22,6 +24,9 @@ author-meta: "NSDF-Data maintainers"
 
 ```{=latex}
 {\footnotesize\textit{The loop for every change. Blue: on your computer. Teal: on GitHub. A check turns red? Fix it on the same branch and push again; the PR updates.}}
+```
+```{=html}
+<p class="caption">The loop for every change. Blue: on your computer. Teal: on GitHub. A check turns red? Fix it on the same branch and push again; the PR updates.</p>
 ```
 
 ```{=latex}
@@ -46,6 +51,9 @@ git switch develop && git pull && git branch -d feature/my-change   # 10
 
 ```{=latex}
 {\footnotesize\textit{Branches over time. A feature merges into \texttt{develop} through a PR. A release goes to \texttt{master}, is tagged, and \texttt{master} is merged back.}}
+```
+```{=html}
+<p class="caption">Branches over time. A feature merges into <code>develop</code> through a PR. A release goes to <code>master</code>, is tagged, and <code>master</code> is merged back.</p>
 ```
 
 **Making a release**, when there is something to version: branch `release/X.Y.Z` from `develop`, set `VERSION` and date `CHANGELOG.md`, open a PR into `master` and merge it, tag `vX.Y.Z` on the merge commit, merge `master` back into `develop`, publish the GitHub release, delete the branch. Bump **major** for a breaking library change (not while 0.x), **minor** for a new capability, **patch** for fixes and content. A guide or site fix is an ordinary feature PR. A **hotfix** is only for a bug in a released version.

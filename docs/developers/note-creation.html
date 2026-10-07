@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creating a note</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="note-creation.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Creating a note</h1>
+<p class="meta">Developer quick-sheet · hand-written notes in
+docs/notes/ · version 2, 7 October 2026</p>
+
+
+<p>For a note you write yourself: an HTML page in
+<code>docs/notes/</code> and one row in the front-page table. (Student
+notes are Markdown in <code>notes/src/</code>; see the box at the bottom
+and the <a
+href="https://villano-lab.github.io/NSDF-Data/students/note-cheatsheet.html">student
+cheat-sheet</a>.) Start from <code>develop</code>, on a branch:
+<code>git switch -c feature/note-NN-short-name</code> (NN is the next
+note number; a follow-up takes a letter, like 2a).</p>
+<p><img src="src/img/note-steps.png" style="width:100.0%"
+alt="Six steps for creating a note: notebook, figures, page, index row, check, pull request and merge." /></p>
+<ol type="1">
+<li><strong>Notebook.</strong> Do the analysis in
+<code>R76/analysis_notes/</code>, run it top to bottom, and commit it
+with any library change. Note the short hash:
+<code>git rev-parse --short HEAD</code>. Re-running some notebooks
+leaves metadata churn, so read <code>git diff</code> before committing.
+Never run <code>07221203_2025_dump1_noise.ipynb</code> without approval
+(it rewrites <code>archives/good_noise.h5</code>).</li>
+<li><strong>Figures.</strong> Save the PNGs from the executed notebook
+into <code>docs/notes/img/</code>, named for the series and the content,
+for example <code>dump1_bstd_time.png</code>.</li>
+<li><strong>Page.</strong> Copy the newest note,
+<code>note-02a-bstd-vs-time.html</code>, to
+<code>docs/notes/note-NN-slug.html</code>. Edit the
+<code>&lt;title&gt;</code>, the <code>&lt;h1&gt;</code> (write it as a
+question), the meta line
+(<code>Note NN · Author(s) · date · Status</code>), and the
+<code>&lt;nav class="outline"&gt;</code> with an <code>id</code> on
+every <code>&lt;h2&gt;</code>. Sections: Code Repository, Data and
+setup, The question, one section per result
+(<code>&lt;figure&gt;</code>, alt text, caption), Reading, Caveats, Next
+steps.</li>
+<li><strong>Pin the code.</strong> Every link to a notebook or to
+<code>python/</code> uses the commit hash, never a branch name: under
+the repository URL, <code>blob/&lt;hash&gt;/&lt;path&gt;</code> for a
+file and <code>tree/&lt;hash&gt;/&lt;folder&gt;</code> for a folder.
+Check each one: <code>git cat-file -e &lt;hash&gt;:&lt;path&gt;</code>
+prints nothing when the file exists.</li>
+<li><strong>Index row.</strong> Add one <code>&lt;tr&gt;</code> to the
+Analysis Notes table in <code>docs/index.html</code>, <strong>newest
+note first</strong>. Columns: Note #, Link, Date, Author, Title,
+Description, Keywords, Status, Presentation. The status badge is
+<code>&lt;span class="status in-progress"&gt;</code> (or
+<code>complete</code>, <code>outdated</code>, <code>abandoned</code>,
+<code>brainstorm</code>).</li>
+<li><strong>Changelog and checks.</strong> Add a line under
+<code>[Unreleased]</code> in <code>CHANGELOG.md</code> (a new note is a
+patch-level change). Open the page from disk in a browser: figures show,
+links work. If you touched <code>python/</code>, run
+<code>cd python &amp;&amp; python -m pytest -q</code>.</li>
+<li><strong>PR.</strong>
+<code>git push -u origin feature/note-NN-short-name</code>, then
+<code>gh pr create --base develop --fill</code>. When the checks are
+green, merge: the page is live in about two minutes.</li>
+</ol>
+<p><strong>Updating a note</strong> is the same loop, on a new branch
+from <code>develop</code>. Check its status first: a
+<strong>Complete</strong> note is left alone (a follow-up takes a
+letter, like 2a after 2), an <strong>In progress</strong> note can
+change freely, and a note that a later one replaces becomes
+<strong>Outdated</strong> with a link to the newer one. If you re-ran
+anything, re-pin the links to the new hash and replace the PNGs. Update
+the date and status in the page’s meta line <strong>and</strong> in its
+row of <code>docs/index.html</code> (the row is hand-edited, so the two
+can drift). A wrong result stays in the note, corrected and dated; never
+delete a published note.</p>
+<p><strong>Rules.</strong> A <strong>Complete</strong> note gets only a
+minimal correction, and only when a library rename makes it wrong. A
+breaking library change means updating the notebooks that use it, or
+marking them deprecated (the red box described on the front page). Any
+whole-trace spectrum must skip the leading glitch samples. A
+<em>segment</em> is a run of same-trigger events; a <em>run</em> is a
+whole data-taking period.</p>
+<div class="tip">
+<p><strong>Reviewing a student note.</strong> The PR into
+<code>develop</code> shows a green check and nothing is public. Change
+<code>id: "TBD"</code> to the next S-number (S1, S2, …), commit it to
+the PR branch, and merge. The bot builds the page and the index row, and
+it is live in 2 to 3 minutes. When a student updates a published note,
+check the header still has its S-number: <code>TBD</code> passes the PR
+check, but the build refuses it and nothing is published until you fix
+it. To remove a note, delete its source file in a PR; the next build
+removes the page.</p>
+</div>
+
+<footer>This guide is also available as a <a href="note-creation.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From note to live page</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="note-cheatsheet.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>From note to live page</h1>
+<p class="meta">NSDF-Data student cheat-sheet · version 2, 7 October
+2026</p>
+
+
+<p>A one-page reminder. The full steps are in <a
+href="https://villano-lab.github.io/NSDF-Data/students/writing-a-note.html">guide
+3, writing a note</a> and <a
+href="https://villano-lab.github.io/NSDF-Data/students/publishing-a-note.html">guide
+4, publishing a note</a>. <strong>Nothing is public until your lead
+merges your pull request (PR).</strong></p>
+<p><img src="src/img/note-path.png" style="width:100.0%"
+alt="Six steps from a written note to a live page: write, commit and push, open a pull request, the check runs, your lead reviews and gives an S-number, live in about two minutes." /></p>
+<p class="caption">Blue: you. Teal: GitHub, automatically. Amber: your lead. A PR is a page on GitHub that asks to add your branch to the project.</p>
+<p><strong>Before you push</strong></p>
+<ul>
+<li>Your note is <code>notes/src/your-note-name.md</code>, your pictures
+are in <code>notes/src/img/</code>, the header is complete, and it says
+<code>id: "TBD"</code>.</li>
+<li>Every link to your code is pinned to a <strong>commit hash</strong>:
+not <code>develop</code>, <code>master</code> or <code>COMMIT</code>.
+Remove the template’s <code>img/example.png</code> line, and any
+<code>&lt;u&gt;</code>, <code>&lt;sup&gt;</code>,
+<code>&lt;sub&gt;</code> or <code>&lt;span&gt;</code> tags.</li>
+<li>Optional: with your environment active, run
+<code>python tools/build_notes.py check</code>. It finds the problems
+the PR check would.</li>
+</ul>
+<p><strong>Commands</strong>, from the <code>NSDF-Data</code> folder, on
+your own branch:</p>
+<pre class="bash"><code>git checkout student-yourname
+git add notes/src/your-note-name.md notes/src/img
+git status             # only your note and its pictures? no .bin files, no idx folder?
+git commit -m &quot;Add note: your title&quot;
+git push -u origin student-yourname</code></pre>
+<p>Then open the repository on <a
+href="https://github.com">github.com</a>, click <strong>Compare &amp;
+pull request</strong>, check that the <strong>base</strong> is
+<code>develop</code>, and click <strong>Create pull
+request</strong>.</p>
+<p><strong>If the check says…</strong> (click <strong>Details</strong>
+on the check to read it)</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Message</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>header field 'X' is missing or empty</code></td>
+<td>Fill in that line of the header.</td>
+</tr>
+<tr>
+<td><code>status must be one of ...</code></td>
+<td>Use exactly <em>In progress</em>, <em>Complete</em> or
+<em>Outdated</em>.</td>
+</tr>
+<tr>
+<td><code>notebook link pinned to 'master'</code>, or
+<code>placeholder COMMIT is still in the note</code></td>
+<td>Use the real commit hash.</td>
+</tr>
+<tr>
+<td><code>raw HTML tag &lt;u&gt;</code> (or <code>&lt;sup&gt;</code>,
+<code>&lt;sub&gt;</code>, <code>&lt;span&gt;</code>)</td>
+<td>Remove the formatting, keep the words.</td>
+</tr>
+<tr>
+<td><code>picture not found</code></td>
+<td>Check the file name, and that it is in
+<code>notes/src/img/</code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Fix it on your branch, commit and push again. The PR updates itself
+and the check runs again.</p>
+<p><strong>After that.</strong> Your lead reads the note, may comment on
+the PR (answer there), and gives it an S-number when it is ready. About
+two minutes after the merge your page is live, in the <strong>Student
+notes</strong> table on the front page. To change a published note,
+first run
+<code>git switch student-yourname &amp;&amp; git pull origin develop</code>
+and check that the header still has your S-number (not
+<code>TBD</code>); then commit, push and open a new PR, update the date,
+and never delete a note to hide a mistake.</p>
+<p><strong>Never</strong> work on <code>master</code> or
+<code>develop</code>, or commit data (<code>.bin</code> files, the
+<code>idx</code> folder) or other people’s notes. Stuck? Write to
+Anthony Villano, <a href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a>, with the PR number, the
+check’s message and the step you are on.</p>
+
+<footer>This guide is also available as a <a href="note-cheatsheet.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

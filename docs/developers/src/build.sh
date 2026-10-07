@@ -19,3 +19,12 @@ for f in developer-workflow note-creation note-creation-ai; do
     -V colorlinks=true -V linkcolor=brand -V urlcolor=brand --highlight-style=tango
   echo "built $f.pdf"
 done
+
+# The same sources, as web pages with copy buttons (the PDF is linked from inside each page).
+# The template, filters and styles are shared with the student guides.
+S=../../students/src
+for f in developer-workflow note-creation note-creation-ai; do
+  pandoc "$f.md" -o "$OUT/$f.html" -s -f markdown -t html5 --template=$S/guide-template.html \
+    --lua-filter=$S/boxes.lua --lua-filter=$S/htmlfix.lua --no-highlight -V root=.. -V pdf="$f.pdf"
+  echo "built $f.html"
+done

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Developer workflow</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="developer-workflow.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Developer workflow</h1>
+<p class="meta">NSDF-Data · Git Flow and semantic versioning · version
+1, 7 October 2026</p>
+
+
+<p><strong>A pull request (PR)</strong> is a page on GitHub that says
+“please merge branch X into branch Y”. It shows the changes, runs the
+automatic checks, and keeps the discussion in one place. <strong>Nothing
+reaches <code>develop</code> until you press Merge.</strong>
+<code>develop</code> is where work lands and what the live site is
+served from; <code>master</code> holds tagged releases only.</p>
+<p><img src="src/img/loop.png" style="width:100.0%"
+alt="The ten steps of the daily loop: update develop, make a branch, work and commit, push, open a pull request, checks run, review, merge, live in about two minutes, clean up." /></p>
+<p class="caption">The loop for every change. Blue: on your computer. Teal: on GitHub. A check turns red? Fix it on the same branch and push again; the PR updates.</p>
+<pre class="bash"><code>git switch develop &amp;&amp; git pull                      # 1  start from the latest develop
+git switch -c feature/my-change                     # 2  your branch
+git add &lt;files&gt; &amp;&amp; git commit -m &quot;What and why&quot;     # 3  small commits; update CHANGELOG.md
+git push -u origin feature/my-change               # 4
+gh pr create --base develop --fill                  # 5  or &quot;Compare &amp; pull request&quot; on GitHub
+# 6-9: checks run, optional review, press Merge (merge commit), the site updates
+git switch develop &amp;&amp; git pull &amp;&amp; git branch -d feature/my-change   # 10</code></pre>
+<p><img src="src/img/branches.png" style="width:100.0%"
+alt="The branches over time: a feature branch splits off develop and merges back through a pull request; later a release goes to master, is tagged v0.1.0, and master is merged back into develop." /></p>
+<p class="caption">Branches over time. A feature merges into <code>develop</code> through a PR. A release goes to <code>master</code>, is tagged, and <code>master</code> is merged back.</p>
+<p><strong>Making a release</strong>, when there is something to
+version: branch <code>release/X.Y.Z</code> from <code>develop</code>,
+set <code>VERSION</code> and date <code>CHANGELOG.md</code>, open a PR
+into <code>master</code> and merge it, tag <code>vX.Y.Z</code> on the
+merge commit, merge <code>master</code> back into <code>develop</code>,
+publish the GitHub release, delete the branch. Bump
+<strong>major</strong> for a breaking library change (not while 0.x),
+<strong>minor</strong> for a new capability, <strong>patch</strong> for
+fixes and content. A guide or site fix is an ordinary feature PR. A
+<strong>hotfix</strong> is only for a bug in a released version.</p>
+<p><strong>Special cases.</strong> <em>A student note:</em> the PR into
+<code>develop</code> runs the check only, and nothing is visible; you
+replace <code>TBD</code> with an S-number and merge, the bot builds the
+page, and it is live in 2 to 3 minutes (delete the source file to remove
+a note). <em>A contributor such as Kitty:</em> they open a PR into
+<code>develop</code>, you are requested automatically, and you add other
+reviewers by hand. <em>An AI agent:</em> may open PRs, and never merges
+without your go-ahead.</p>
+<p><strong>Never</strong> commit directly to <code>master</code> or
+<code>develop</code>, and never force-push (the rulesets block
+both).<br />
+Details are in the repository: <code>RELEASING.md</code>,
+<code>AGENTS.md</code>, <code>CHANGELOG.md</code>.</p>
+
+<footer>This guide is also available as a <a href="developer-workflow.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

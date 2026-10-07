@@ -1,6 +1,8 @@
 ---
 title-meta: "Developer quick-sheet: creating a note"
 author-meta: "NSDF-Data maintainers"
+html-title: "Creating a note"
+html-subtitle: "Developer quick-sheet · hand-written notes in docs/notes/ · version 2, 7 October 2026"
 ---
 
 ```{=latex}
@@ -16,7 +18,7 @@ author-meta: "NSDF-Data maintainers"
 \vspace{0.2em}
 ```
 
-For a note you write yourself: an HTML page in `docs/notes/` and one row in the front-page table. (Student notes are Markdown in `notes/src/`; see the box at the bottom and the [student cheat-sheet](https://villano-lab.github.io/NSDF-Data/students/note-cheatsheet.pdf).) Start from `develop`, on a branch: `git switch -c feature/note-NN-short-name` (NN is the next note number; a follow-up takes a letter, like 2a).
+For a note you write yourself: an HTML page in `docs/notes/` and one row in the front-page table. (Student notes are Markdown in `notes/src/`; see the box at the bottom and the [student cheat-sheet](https://villano-lab.github.io/NSDF-Data/students/note-cheatsheet.html).) Start from `develop`, on a branch: `git switch -c feature/note-NN-short-name` (NN is the next note number; a follow-up takes a letter, like 2a).
 
 ![](img/note-steps.png){width=100%}
 

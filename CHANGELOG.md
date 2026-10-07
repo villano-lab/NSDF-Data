@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Fixed
+
+- `tools/build_notes.py` now passes text to pandoc as UTF-8. On Windows it used the system code page, which garbled non-ASCII characters (an em dash, `µ`) in a note when it was built locally. The Linux build that publishes notes was not affected.
+
 ### Changed
 
 - The "Check instructions" workflow also runs on pushes to `develop`, so every merge into the branch the site is served from is checked.

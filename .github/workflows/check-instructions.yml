@@ -1,105 +1,186 @@
 name: Check instructions
 
-on: [push, pull_request]
-  
+# Repeats what the student guides tell a student to do, on Windows, macOS and Linux, so a guide
+# that stops working is caught here and not by a student. Keep the commands below in step with
+# docs/students/src/gen.py (setup Steps 3-7, first-analysis Steps 2-6) and requirements.txt.
+
+on:
+  pull_request:
+    paths:
+      - "docs/students/**"
+      - "python/**"
+      - "requirements.txt"
+      - ".devcontainer/**"
+      - ".github/workflows/check-instructions.yml"
+      - ".github/scripts/**"
+  push:
+    branches: [master]
+    paths:
+      - "docs/students/**"
+      - "python/**"
+      - "requirements.txt"
+      - ".devcontainer/**"
+      - ".github/workflows/check-instructions.yml"
+      - ".github/scripts/**"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 14 * * 1" # weekly: installer links and package releases change
+
+concurrency:
+  group: check-instructions-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  check-downloads-windows:
-    runs-on: windows-latest
+  consistency:
+    name: Pins and links
+    runs-on: ubuntu-latest
     steps:
-      - name: git install
-        run: | 
-          $client = new-object System.Net.WebClient
-          $client.DownloadFile("https://github.com/git-for-windows/git/releases/download/v2.56.0.windows.2/Git-2.56.0.2-64-bit.exe","Git-2.56.0.2-64-bit.exe")
-          start Git-2.56.0.2-64-bit.exe
-      - name: Miniforge install
+      - uses: actions/checkout@v4
+
+      - name: Package pins agree (requirements.txt, setup guide, dev container)
         run: |
-          $client = new-object System.Net.WebClient
-          $client.DownloadFile("https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe","Miniforge3-Windows-x86_64.exe")
-          start Miniforge3-Windows-x86_64.exe
-          # That's all we can do for now folks
-          # I have to figure out how to go through the installer from the cli...
+          python3 - <<'EOF'
+          import pathlib, sys
+          lines = [l.split("#")[0].strip() for l in pathlib.Path("requirements.txt").read_text().splitlines()]
+          pins = [l for l in lines if "==" in l and not l.startswith("python")]
+          places = {
+              "setup guide": pathlib.Path("docs/students/src/setup-linux.md").read_text(encoding="utf-8"),
+              "dev container": pathlib.Path(".devcontainer/devcontainer.json").read_text(),
+          }
+          missing = [(p, name) for p in pins for name, text in places.items() if p not in text]
+          for pin, name in missing:
+              print(f"{pin} is in requirements.txt but not in the {name}")
+          print(f"checked {len(pins)} pins")
+          sys.exit(1 if missing else 0)
+          EOF
 
-  check-downloads-mac:
-    runs-on: macos-latest
-    steps:
-      - name: git install
+      - name: Installer and download links in the guides still work
         run: |
-          xcode-select --install
-          git --version
-  check-downloads-unix:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest,ubuntu-slim]
-    steps:
-      - name: Miniforge install
-        run: | 
-          cd Downloads
-          wget "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-          bash ~/Downloads/Miniforge3-$(uname)-$(uname -m).sh
-          ~/miniforge3/bin/conda init
+          urls=$(grep -ohE 'https://(github\.com/conda-forge/miniforge/releases/latest/download|git-scm\.com/download)/[^ )>"`]*' docs/students/src/*.md | sort -u)
+          test -n "$urls"
+          fail=0
+          for u in $urls; do
+            code=$(curl -s -o /dev/null -L -I -w '%{http_code}' "$u" || true)
+            echo "$code $u"
+            [ "$code" = "200" ] || fail=1
+          done
+          exit $fail
 
-  check-universal:
-    runs-on: ${{ matrix.os }}
+  installers:
+    name: Miniforge installer (${{ matrix.os }})
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-slim,macos-latest,windows-latest]
-    steps:
-      - name: terminal verification
-        run: echo hello
-      - name: git verification
-        run: git --version
-
-  download-nsdf-data:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix: 
         include:
-          - startdir: "%USERPROFILE%"
-            ls: dir
-            os: windows-latest
-          - startdir: "~"
-            ls: ls
-            os: macos-latest
-          - startdir: "~"
-            ls: ls
-            os: ubuntu-slim
+          - os: ubuntu-latest
+            file: Miniforge3-Linux-x86_64.sh
+          - os: macos-latest
+            file: Miniforge3-MacOSX-arm64.sh
+          - os: windows-latest
+            file: Miniforge3-Windows-x86_64.exe
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Set up miniforge
-        uses: conda-incubator/setup-miniconda@v3
+      - name: Download the installer the guide links to
+        shell: bash
+        run: curl -fL -o "$RUNNER_TEMP/${{ matrix.file }}" "https://github.com/conda-forge/miniforge/releases/latest/download/${{ matrix.file }}"
+
+      - name: Install it (macOS and Linux, batch mode)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash "$RUNNER_TEMP/${{ matrix.file }}" -b -p "$RUNNER_TEMP/miniforge3"
+
+      - name: Install it (Windows, with the guide's choices - Just Me, no PATH, no default Python)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $installer = Join-Path $env:RUNNER_TEMP "${{ matrix.file }}"
+          $p = Start-Process -FilePath $installer -ArgumentList '/InstallationType=JustMe','/AddToPath=0','/RegisterPython=0','/S',"/D=$env:RUNNER_TEMP\miniforge3" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "installer exit code $($p.ExitCode)" }
+
+      - name: conda runs
+        shell: bash
+        run: |
+          T="$RUNNER_TEMP"
+          if [ "$RUNNER_OS" = Windows ]; then
+            T=$(cygpath -u "$RUNNER_TEMP")
+            "$T/miniforge3/Scripts/conda.exe" --version
+          else
+            "$T/miniforge3/bin/conda" --version
+          fi
+
+  guide-steps:
+    name: Guide steps (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      # The checkout is this commit's code, which the steps below test. The `git clone`
+      # step repeats the guide's own command (it clones master).
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           miniforge-version: latest
           auto-activate-base: false
 
-      - name: download nsdf data
+      - name: Setup Step 3 - conda is installed
+        run: conda --version
+
+      - name: Setup Step 4 - download the code
         run: |
-          conda --version
-
-          mkdir ${{ matrix.startdir }}/Research
-          cd ${{ matrix.startdir }}/Research
+          mkdir -p ~/Research
+          cd ~/Research
           git clone https://github.com/villano-lab/NSDF-Data.git
-          cd ${{ matrix.startdir }}/Research/NSDF-Data
-          ${{ matrix.ls }}
+          cd NSDF-Data
+          ls
 
-      - name: create conda env
-        run: conda create -n darkmatter_cli_env -f requirements.txt
-      - name: test env
+      - name: Setup Step 5 - create the environment
+        run: |
+          conda create -n darkmatter_cli_env python=3.10 -y
+          conda activate darkmatter_cli_env
+          python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
+          python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+          python -m pip install jupyterlab
+
+      - name: Setup Step 6 - tests and tool versions
         run: |
           conda activate darkmatter_cli_env
-          cd ${{ matrix.startdir }}/Research/NSDF-Data/python
+          cd python
           python -m pytest -q
-
           nsdf-cli version
-
           jupyter lab --version
 
-      - name: set up j kernel
-        run: python -m ipykernel install --user --name darkmatter_cli_env
-
-      - name: create branch
+      - name: Setup Step 7 - register the Jupyter kernel
         run: |
-          git config --global user.name "Your Name"
-          git config --global user.email "you@example.com"
-          cd ${{ matrix.stardir }}/Research/NSDF-Data
+          conda activate darkmatter_cli_env
+          python -m ipykernel install --user --name darkmatter_cli_env
+
+      - name: Setup Step 8 - create a personal branch
+        run: |
+          cd ~/Research/NSDF-Data
+          git config user.name "Your Name"
+          git config user.email "you@example.com"
           git checkout -b student-yourname
 
+      - name: First analysis Step 2 - download the data, from the home folder
+        run: |
+          conda activate darkmatter_cli_env
+          cd ~
+          nsdf-cli download 07221203_2025_F0001
+          ls idx
+
+      - name: First analysis Steps 4-6 - run the guide's own code
+        env:
+          MPLBACKEND: Agg
+        run: |
+          conda activate darkmatter_cli_env
+          cd R76/analysis_notes
+          python ../../.github/scripts/run_guide_code.py ../../docs/students/src/first-analysis-linux.md

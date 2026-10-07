@@ -1,6 +1,7 @@
-# Review requests. GitHub asks these people to review every pull request.
-# @nuclearGoblin (Kitty Mickelson) is a reviewer on all PRs; @villaa (Anthony Villano) is the
-# maintainer and also owns everything, so a PR opened by Kitty still gets a reviewer.
+# Review requests. GitHub asks these people to review pull requests that someone else opens.
+# @villaa (Anthony Villano) is the maintainer. A pull request that @villaa opens requests nobody
+# (GitHub never requests the author); add reviewers by hand under "Reviewers" when you want one,
+# for example @nuclearGoblin (Kitty Mickelson).
 # (Owners need write access to the repository. Requests do not block merging unless branch
 # protection is set to require a code-owner review.)
-*  @nuclearGoblin @villaa
+*  @villaa

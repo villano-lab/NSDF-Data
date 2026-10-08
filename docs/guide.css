@@ -76,3 +76,12 @@
 @media (max-width: 560px) {
   .wrap.guide { padding: 16px 12px 48px; }
 }
+
+/* "Work with an AI agent" page: the assistant and Codespaces buttons */
+.guide p.agent-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+.guide p.agent-buttons a {
+  display: inline-block; padding: 6px 14px; border: 1px solid var(--link); border-radius: 6px;
+  text-decoration: none; font-weight: 600;
+}
+.guide p.agent-buttons a:hover, .guide p.agent-buttons a:focus-visible { background: var(--head-bg); }
+.guide button.copy#copy-brief { font-size: 0.95rem; padding: 6px 14px; }

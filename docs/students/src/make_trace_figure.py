@@ -1,11 +1,11 @@
 """Draw the two figures of student guide 2: img/trace-pulse.png (a quiet trace and a trace with a pulse) and
 img/channels.png (how one event is organised: detectors and channels).
 
-Run it from R76/analysis_notes with the data downloaded as in the guide (needs the dump
+Run it from anywhere inside the project, with the data downloaded as in the guide (needs the dump
 07221203_2025_F0001 in ~/idx, nsdf_dark_matter and matplotlib):
 
-    cd R76/analysis_notes
-    python ../../docs/students/src/make_trace_figure.py
+    cd NSDF-Data
+    python docs/students/src/make_trace_figure.py
 
 It is NOT run by build.sh, because it needs the data; the picture is committed. It prints the row
 numbers of the two traces, which guide 2 (Step 5) quotes.
@@ -13,7 +13,8 @@ numbers of the two traces, which guide 2 (Step 5) quotes.
 import sys
 from pathlib import Path
 
-ROOT = Path.cwd().parents[1]
+_here = Path.cwd().resolve()
+ROOT = next(p for p in [_here, *_here.parents] if (p / "python" / "pulse_io.py").exists())
 sys.path.insert(0, str(ROOT / "python"))
 
 import matplotlib

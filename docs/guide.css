@@ -80,8 +80,11 @@
 /* "Work with an AI agent" page: the assistant and Codespaces buttons */
 .guide p.agent-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
 .guide p.agent-buttons a {
-  display: inline-block; padding: 6px 14px; border: 1px solid var(--link); border-radius: 6px;
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--link); border-radius: 6px;
   text-decoration: none; font-weight: 600;
 }
 .guide p.agent-buttons a:hover, .guide p.agent-buttons a:focus-visible { background: var(--head-bg); }
 .guide button.copy#copy-brief { font-size: 0.95rem; padding: 6px 14px; }
+
+.guide h3 .ico { margin-right: 6px; }
+.guide p.logo-note { font-size: 0.85rem; color: var(--muted); }

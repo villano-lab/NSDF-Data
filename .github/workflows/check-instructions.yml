@@ -213,6 +213,9 @@ jobs:
           conda create -n darkmatter_cli_env python=3.10 pip -y
           conda activate darkmatter_cli_env
           cd ~/Research/NSDF-Data
+          # Step 4's git clone fetched the default branch. Use this commit's requirements.txt, so a
+          # pull request tests its own version of the file (the same file once it is merged).
+          cp "$GITHUB_WORKSPACE/requirements.txt" requirements.txt
           python -m pip install -r requirements.txt
 
       - name: Setup Step 6 - tests and tool versions

@@ -141,6 +141,10 @@ jobs:
                   for ch in "\u2010\u2011\u2212":
                       if ch in text:
                           problems.append(f"{f} contains the look-alike character U+{ord(ch):04X}")
+              css = open("docs/style.css", encoding="utf-8").read()
+              for icon in re.findall(r'url\((img/agents/[^)]+)\)', css):
+                  if not os.path.exists(os.path.join("docs", icon)):
+                      problems.append(f"docs/style.css uses a missing icon: {icon}")
               for link in re.findall(r'href="((?!https?:|#|mailto:)[^"]+)"', page):
                   if not os.path.exists(os.path.join("docs", link.split("#")[0])):
                       problems.append(f"docs/agents.html links to a missing file: {link}")

@@ -154,13 +154,40 @@ nav.outline li { break-inside: avoid; }
 @media (max-width: 720px) { nav.outline ol { columns: 1; } }
 h2[id] { scroll-margin-top: 12px; }
 
-/* Small link at the top right of the front page */
+/* Icons for the AI agent links. Each is a mask, so it takes its color from the page and works in dark mode.
+   The files are in img/agents/ (see the README there for their sources and licenses). */
+.ico {
+  display: inline-block; width: 1.3em; height: 1.3em; vertical-align: -0.28em; flex: none;
+  background-color: var(--ico, currentColor);
+  -webkit-mask: var(--mask) center / contain no-repeat; mask: var(--mask) center / contain no-repeat;
+}
+.ico-claude     { --mask: url(img/agents/claude.svg);        --ico: #d97757; }
+.ico-claudecode { --mask: url(img/agents/claudecode.svg);    --ico: #d97757; }
+.ico-gemini     { --mask: url(img/agents/googlegemini.svg);  --ico: #8e75b2; }
+.ico-perplexity { --mask: url(img/agents/perplexity.svg);    --ico: #1fb8cd; }
+.ico-cursor     { --mask: url(img/agents/cursor.svg); }
+.ico-github     { --mask: url(img/agents/github.svg); }
+.ico-copilot    { --mask: url(img/agents/githubcopilot.svg); }
+.ico-chat       { --mask: url(img/agents/chat.svg); }
+.ico-terminal   { --mask: url(img/agents/terminal.svg); }
+.ico-assistant  { --mask: url(img/agents/assistant.svg); }
+
+/* The "AI Agents" button at the top right of the front page: a collage of the agents' icons */
 header.site { position: relative; }
 a.agent-link {
-  position: absolute; top: 0; right: 0; font-size: 0.85rem; text-decoration: none;
-  border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px;
+  position: absolute; top: 0; right: 0; display: inline-flex; align-items: center; gap: 10px;
+  padding: 4px 12px 4px 8px; border: 1px solid var(--border); border-radius: 999px;
+  text-decoration: none; font-weight: 700; font-size: 1.05rem; background: var(--bg);
 }
-a.agent-link:hover, a.agent-link:focus-visible { border-color: var(--link); }
+a.agent-link:hover, a.agent-link:focus-visible { border-color: var(--link); background: var(--head-bg); }
+.agent-stack { display: inline-flex; align-items: center; }
+.agent-stack .badge {
+  display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem;
+  margin-left: -0.7rem; border-radius: 50%; background: var(--bg); box-shadow: 0 0 0 1px var(--border);
+  color: var(--fg);
+}
+.agent-stack .badge:first-child { margin-left: 0; }
+.agent-stack .badge .ico { width: 1.4rem; height: 1.4rem; vertical-align: 0; }
 @media (max-width: 640px) {
-  a.agent-link { position: static; display: inline-block; margin-bottom: 8px; }
+  a.agent-link { position: static; margin-bottom: 8px; }
 }

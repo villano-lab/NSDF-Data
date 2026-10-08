@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Linux edition"
-date: "Version 10 · 7 October 2026"
+date: "Version 11 · 9 October 2026"
 ---
 
 ::: tip
@@ -114,28 +114,26 @@ Type `ls`{.cmd} and press Enter. You are now inside the `NSDF-Data` folder (your
 
 ## Step 5. Create your analysis environment
 
-An environment is a sealed box of programs with fixed versions. We make one for this project, called `darkmatter_cli_env`. Type these lines one at a time, pressing Enter after each. The third line takes several minutes and prints a lot of text: wait for the prompt to come back.
+An environment is a sealed box of programs with fixed versions. We make one for this project, called `darkmatter_cli_env`. Type these lines one at a time, pressing Enter after each. The last line takes several minutes and prints a lot of text: wait for the prompt to come back.
 
 ```
-conda create -n darkmatter_cli_env python=3.10 -y
+conda create -n darkmatter_cli_env python=3.10 pip -y
 conda activate darkmatter_cli_env
-python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
-python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
-python -m pip install jupyterlab
+cd ~/Research/NSDF-Data
+python -m pip install -r requirements.txt
 ```
 
 **What these lines do**
 
 | Line | What it does |
 |---|---|
-| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 inside it. |
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 and the package installer `pip` inside it. |
 | `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
-| `pip install nsdf-dark-matter...` | Installs the software that reads the detector data. |
-| `pip install numpy...` | Installs software for numbers, plots and checking that everything works. |
-| `pip install jupyterlab` | Installs Jupyter, the notebook program you will use later. |
+| `cd` | Moves you into the `NSDF-Data` folder, where the file `requirements.txt` is. |
+| `pip install -r requirements.txt` | Installs every program on the project's list, at the exact versions in that file: the software that reads the detector data, numbers and plots, the test tool, and Jupyter, the notebook program you will use later. |
 
 ::: tip
-The project folder also has a file called `requirements.txt` that lists the same software versions. You do **not** need it: the lines above do the whole job, and they work the same on every computer.
+`requirements.txt` is a plain text file in the project folder. It is the single list of what the project needs, so when a version changes, only that file changes. You can open it in any text editor to see the list.
 :::
 
 ::: tip
@@ -177,7 +175,7 @@ jupyter lab --version
 ```
 
 ::: checkpoint
-It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab`{.cmd} and try again.
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, check that your prompt starts with `(darkmatter_cli_env)`, go to the `NSDF-Data` folder and run `python -m pip install -r requirements.txt`{.cmd} again.
 :::
 
 **What these commands do**
@@ -259,7 +257,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 10, 7 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 11, 9 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Linux
-edition &middot; Version 10 · 7 October 2026</p>
+edition &middot; Version 11 · 9 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -265,14 +265,13 @@ shows the project’s own folders and files, such as <code>python</code>,
 analysis environment</h2>
 <p>An environment is a sealed box of programs with fixed versions. We
 make one for this project, called <code>darkmatter_cli_env</code>. Type
-these lines one at a time, pressing Enter after each. The third line
+these lines one at a time, pressing Enter after each. The last line
 takes several minutes and prints a lot of text: wait for the prompt to
 come back.</p>
-<pre><code>conda create -n darkmatter_cli_env python=3.10 -y
+<pre><code>conda create -n darkmatter_cli_env python=3.10 pip -y
 conda activate darkmatter_cli_env
-python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
-python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
-python -m pip install jupyterlab</code></pre>
+cd ~/Research/NSDF-Data
+python -m pip install -r requirements.txt</code></pre>
 <p><strong>What these lines do</strong></p>
 <div class="table-scroll">
 <table>
@@ -290,7 +289,8 @@ python -m pip install jupyterlab</code></pre>
 <tr>
 <td><code>conda create</code></td>
 <td>Makes a new, empty environment called
-<code>darkmatter_cli_env</code>, with Python 3.10 inside it.</td>
+<code>darkmatter_cli_env</code>, with Python 3.10 and the package
+installer <code>pip</code> inside it.</td>
 </tr>
 <tr>
 <td><code>conda activate</code></td>
@@ -298,26 +298,25 @@ python -m pip install jupyterlab</code></pre>
 with <code>(darkmatter_cli_env)</code>.</td>
 </tr>
 <tr>
-<td><code>pip install nsdf-dark-matter...</code></td>
-<td>Installs the software that reads the detector data.</td>
+<td><code>cd</code></td>
+<td>Moves you into the <code>NSDF-Data</code> folder, where the file
+<code>requirements.txt</code> is.</td>
 </tr>
 <tr>
-<td><code>pip install numpy...</code></td>
-<td>Installs software for numbers, plots and checking that everything
-works.</td>
-</tr>
-<tr>
-<td><code>pip install jupyterlab</code></td>
-<td>Installs Jupyter, the notebook program you will use later.</td>
+<td><code>pip install -r requirements.txt</code></td>
+<td>Installs every program on the project’s list, at the exact versions
+in that file: the software that reads the detector data, numbers and
+plots, the test tool, and Jupyter, the notebook program you will use
+later.</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="tip">
-<p>The project folder also has a file called
-<code>requirements.txt</code> that lists the same software versions. You
-do <strong>not</strong> need it: the lines above do the whole job, and
-they work the same on every computer.</p>
+<p><code>requirements.txt</code> is a plain text file in the project
+folder. It is the single list of what the project needs, so when a
+version changes, only that file changes. You can open it in any text
+editor to see the list.</p>
 </div>
 <div class="tip">
 <p>Every time you open a new terminal, run <code
@@ -352,8 +351,10 @@ version).</p>
 <pre><code>jupyter lab --version</code></pre>
 <div class="checkpoint">
 <p>It prints a version number, such as <code>4.4.0</code>. If it says
-<code>jupyter-lab</code> is not found, run <code
-class="cmd">python -m pip install jupyterlab</code> and try again.</p>
+<code>jupyter-lab</code> is not found, check that your prompt starts
+with <code>(darkmatter_cli_env)</code>, go to the <code>NSDF-Data</code>
+folder and run <code
+class="cmd">python -m pip install -r requirements.txt</code> again.</p>
 </div>
 <p><strong>What these commands do</strong></p>
 <div class="table-scroll">
@@ -487,7 +488,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 10, 7 October 2026, Linux edition. Written for
+<p>Guide version 11, 9 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

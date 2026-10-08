@@ -2,7 +2,7 @@ name: Check instructions
 
 # Repeats what the student guides tell a student to do, on Windows, macOS and Linux, so a guide
 # that stops working is caught here and not by a student. Keep the commands below in step with
-# docs/students/src/gen.py (setup Steps 3-7, first-analysis Steps 2-6) and requirements.txt.
+# docs/students/src/gen.py (setup Steps 3-7, first-analysis Steps 2-6). Setup Step 5 installs from requirements.txt.
 
 on:
   pull_request:
@@ -48,21 +48,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Package pins agree (requirements.txt, setup guide, dev container)
+      - name: requirements.txt is installable and used by the setup guide and dev container
         run: |
           python3 - <<'EOF'
           import pathlib, sys
-          lines = [l.split("#")[0].strip() for l in pathlib.Path("requirements.txt").read_text().splitlines()]
-          pins = [l for l in lines if "==" in l and not l.startswith("python")]
-          places = {
-              "setup guide": pathlib.Path("docs/students/src/setup-linux.md").read_text(encoding="utf-8"),
-              "dev container": pathlib.Path(".devcontainer/devcontainer.json").read_text(),
-          }
-          missing = [(p, name) for p in pins for name, text in places.items() if p not in text]
-          for pin, name in missing:
-              print(f"{pin} is in requirements.txt but not in the {name}")
-          print(f"checked {len(pins)} pins")
-          sys.exit(1 if missing else 0)
+          req = pathlib.Path("requirements.txt").read_text().splitlines()
+          names = [l.split("#")[0].strip() for l in req if l.split("#")[0].strip()]
+          problems = []
+          # pip cannot install a "python==..." line, so the Python version lives in the guide, not here
+          problems += [f"requirements.txt line is not installable by pip: {n}" for n in names if n.lower().startswith("python")]
+          guide = pathlib.Path("docs/students/src/setup-linux.md").read_text(encoding="utf-8")
+          dev = pathlib.Path(".devcontainer/devcontainer.json").read_text()
+          if "pip install -r requirements.txt" not in guide:
+              problems.append("the setup guide does not install from requirements.txt")
+          if "python=3.10" not in guide:
+              problems.append("the setup guide does not create the environment with python=3.10")
+          if "-r requirements.txt" not in dev:
+              problems.append("the dev container does not install from requirements.txt")
+          for p in problems:
+              print(p)
+          print(f"requirements.txt has {len(names)} packages")
+          sys.exit(1 if problems else 0)
           EOF
 
       - name: PDFs copy as plain text (no look-alike hyphens)
@@ -204,11 +210,13 @@ jobs:
 
       - name: Setup Step 5 - create the environment
         run: |
-          conda create -n darkmatter_cli_env python=3.10 -y
+          conda create -n darkmatter_cli_env python=3.10 pip -y
           conda activate darkmatter_cli_env
-          python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
-          python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
-          python -m pip install jupyterlab
+          cd ~/Research/NSDF-Data
+          # Step 4's git clone fetched the default branch. Use this commit's requirements.txt, so a
+          # pull request tests its own version of the file (the same file once it is merged).
+          cp "$GITHUB_WORKSPACE/requirements.txt" requirements.txt
+          python -m pip install -r requirements.txt
 
       - name: Setup Step 6 - tests and tool versions
         run: |

@@ -73,6 +73,7 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 
 ## Analysis pitfalls
 
+- Notebooks and scripts must find the `python/` library by looking upward for `python/pulse_io.py` (the snippet in `python/README.md`), never with `Path.cwd().parents[N]`. A fixed depth breaks as soon as a notebook is moved.
 - A trace's first ~10 samples can carry an electronics glitch of hundreds of counts. Skip `config.glitch_samples` (or use `pulse_operations.trim_glitch`) before any full-trace operation such as an FFT; `bstd` and `bline` already skip them.
 - Event numbers restart in every dump, so they are not globally unique.
 - A *segment* is a stretch of consecutive same-trigger-type events. A *run* is a whole data-taking period (for example Run 76). Do not mix the words up.

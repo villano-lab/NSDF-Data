@@ -5,6 +5,21 @@ factored out of the exploratory work in `R76/analysis_notes/`. Flat modules
 (no package/`__init__.py`), imported by adding this directory to `sys.path` --
 same convention as `nrFanoII_paper2022`'s `python/ba_bknd_lines.py`.
 
+From a notebook anywhere inside the project, find the library by looking upward,
+so the code does not depend on how deep the notebook is:
+
+```python
+import sys
+from pathlib import Path
+
+_here = Path.cwd().resolve()
+REPO = next((p for p in [_here, *_here.parents] if (p / "python" / "pulse_io.py").exists()), None)
+assert REPO, "Start Jupyter from inside the NSDF-Data folder."
+sys.path.insert(0, str(REPO / "python"))
+```
+
+From anywhere else, add the folder by hand:
+
 ```python
 import sys
 sys.path.insert(0, "/path/to/NSDF-Data/python")

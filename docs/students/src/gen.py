@@ -332,7 +332,7 @@ Guide version 10, 7 October 2026, @NAME@ edition. Written for beginners; please 
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 10 · 8 October 2026"
+date: "Version 11 · 8 October 2026"
 ---
 
 ::: tip
@@ -435,8 +435,12 @@ import sys
 from pathlib import Path
 
 # Tell Python where the pulse library (the python folder) is.
-# This notebook is in R76/analysis_notes, so it is two folders up.
-sys.path.insert(0, str(Path.cwd().parents[1] / "python"))
+# This looks upward from the notebook's folder until it finds the project,
+# so it works wherever in the project your notebook is.
+here = Path.cwd().resolve()
+REPO = next((p for p in [here, *here.parents] if (p / "python" / "pulse_io.py").exists()), None)
+assert REPO, "Start Jupyter from inside the NSDF-Data folder."
+sys.path.insert(0, str(REPO / "python"))
 
 from nsdf_dark_matter.idx import load_all_data
 import pulse_io as pio
@@ -556,7 +560,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 10, 8 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 11, 8 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

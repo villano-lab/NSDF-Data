@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Linux
-edition &middot; Version 11 · 9 October 2026</p>
+edition &middot; Version 12 · 9 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -221,8 +221,8 @@ cd ~/Research
 git clone https://github.com/villano-lab/NSDF-Data.git
 cd ~/Research/NSDF-Data</code></pre>
 <p>Downloading with <code>git clone</code> does not need a GitHub
-account. It makes a full copy of the project in a folder named
-<code>NSDF-Data</code>.</p>
+account (saving your work online later does: Step 8). It makes a full
+copy of the project in a folder named <code>NSDF-Data</code>.</p>
 <p><strong>What these lines do</strong></p>
 <div class="table-scroll">
 <table>
@@ -418,6 +418,34 @@ so your work is labelled as yours. Use your own details:</li>
 <pre><code>git config --global user.name &quot;Your Name&quot;
 git config --global user.email &quot;you@example.com&quot;</code></pre>
 <ol start="4" type="1">
+<li>Sign in to GitHub from the terminal, so that GitHub lets your
+computer upload your work. The second line installs <code>gh</code>,
+GitHub’s own small helper program. The third starts the sign-in:</li>
+</ol>
+<pre><code>conda activate darkmatter_cli_env
+conda install gh -c conda-forge -y
+gh auth login</code></pre>
+<p><code>gh auth login</code> asks a few questions. Move with the arrow
+keys and press Enter. Choose <strong>GitHub.com</strong>, then
+<strong>HTTPS</strong>, then answer <strong>Y</strong> to “Authenticate
+Git with your GitHub credentials?”, then choose <strong>Login with a web
+browser</strong>. It prints a short one-time code such as
+<code>ABCD-1234</code>. Press Enter: your web browser opens. Type the
+code there and click <strong>Authorize</strong>. Back in the terminal,
+check it worked:</p>
+<pre><code>gh auth status</code></pre>
+<div class="checkpoint">
+<p>It says <code>Logged in to github.com account</code> followed by your
+GitHub username.</p>
+</div>
+<div class="careful">
+<p>Never type your GitHub password into the terminal. GitHub no longer
+accepts it there, and Git answers with
+<code>Password authentication is not supported</code> or
+<code>Invalid username or token</code>. If you ever see one of those
+messages, run <code class="cmd">gh auth login</code> again.</p>
+</div>
+<ol start="5" type="1">
 <li>Create your personal branch (your own space to save work, separate
 from the main project). Use your own name, without spaces, in place of
 <code>yourname</code>:</li>
@@ -464,6 +492,9 @@ class="cmd">jupyter lab --version</code> prints a version.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">jupyter kernelspec list</code> lists
 <code>darkmatter_cli_env</code>.</label></li>
+<li><label><input type="checkbox" /><code
+class="cmd">gh auth status</code> says you are logged in to github.com
+(after access is granted).</label></li>
 <li><label><input type="checkbox" /><code class="cmd">git branch</code>
 shows <code>* student-yourname</code> (after access is
 granted).</label></li>
@@ -488,7 +519,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 11, 9 October 2026, Linux edition. Written for
+<p>Guide version 12, 9 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

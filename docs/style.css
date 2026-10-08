@@ -153,3 +153,14 @@ nav.outline ol { margin: 4px 0 2px; padding-left: 22px; columns: 2; column-gap: 
 nav.outline li { break-inside: avoid; }
 @media (max-width: 720px) { nav.outline ol { columns: 1; } }
 h2[id] { scroll-margin-top: 12px; }
+
+/* Small link at the top right of the front page */
+header.site { position: relative; }
+a.agent-link {
+  position: absolute; top: 0; right: 0; font-size: 0.85rem; text-decoration: none;
+  border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px;
+}
+a.agent-link:hover, a.agent-link:focus-visible { border-color: var(--link); }
+@media (max-width: 640px) {
+  a.agent-link { position: static; display: inline-block; margin-bottom: 8px; }
+}

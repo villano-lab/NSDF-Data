@@ -123,6 +123,49 @@ jobs:
           sys.exit(1 if problems else 0)
           EOF
 
+      - name: AI agent page, brief and llms.txt are in place and their links work
+        run: |
+          python3 - <<'EOF'
+          import os, re, socket, sys, urllib.error, urllib.request
+          problems = []
+          for f in ("docs/agents.html", "docs/agent-brief.txt", "docs/llms.txt", "GEMINI.md"):
+              if not os.path.exists(f):
+                  problems.append(f"missing {f}")
+          if not problems:
+              page = open("docs/agents.html", encoding="utf-8").read()
+              index = open("docs/index.html", encoding="utf-8").read()
+              if 'href="agents.html"' not in index:
+                  problems.append("the front page does not link to agents.html")
+              for f in ("docs/agents.html", "docs/agent-brief.txt", "docs/llms.txt"):
+                  text = open(f, encoding="utf-8").read()
+                  for ch in "\u2010\u2011\u2212":
+                      if ch in text:
+                          problems.append(f"{f} contains the look-alike character U+{ord(ch):04X}")
+              for link in re.findall(r'href="((?!https?:|#|mailto:)[^"]+)"', page):
+                  if not os.path.exists(os.path.join("docs", link.split("#")[0])):
+                      problems.append(f"docs/agents.html links to a missing file: {link}")
+              # the sites behind the buttons must still exist (any HTTP answer counts: some refuse scripts)
+              origins = sorted({m.group(1) for m in re.finditer(r'href="(https://(?:chatgpt\.com|claude\.ai|gemini\.google\.com|copilot\.microsoft\.com|www\.perplexity\.ai|codespaces\.new))', page)})
+              if len(origins) != 6:
+                  problems.append(f"expected 6 assistant and Codespaces sites on the page, found {len(origins)}")
+              for o in origins:
+                  try:
+                      urllib.request.urlopen(urllib.request.Request(o + "/", headers={"User-Agent": "Mozilla/5.0"}), timeout=20)
+                      print("answers:", o)
+                  except urllib.error.HTTPError as e:
+                      print(f"answers ({e.code}):", o)
+                  except urllib.error.URLError as e:
+                      if isinstance(e.reason, socket.gaierror):
+                          problems.append(f"{o} does not resolve")
+                      else:
+                          print("no answer, not failing:", o, e.reason)
+                  except Exception as e:
+                      print("no answer, not failing:", o, e)
+          for p in problems:
+              print(p)
+          sys.exit(1 if problems else 0)
+          EOF
+
       - name: Installer and download links in the guides still work
         run: |
           urls=$(grep -ohE 'https://(github\.com/conda-forge/miniforge/releases/latest/download|git-scm\.com/download)/[^ )>"`]*' docs/students/src/*.md | sort -u)

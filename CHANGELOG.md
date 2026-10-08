@@ -8,6 +8,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 - Small **Copy buttons on commands written inside a sentence** in the guides' web pages (the "type this" steps, the checkpoints and every item of the "You are done when" checklist), not only in code blocks. The source marks such a command with the class `cmd`; the PDF ignores it.
 - The **ticks in the checklists are remembered** in the browser, per page, so they are still there after a reload (kept only in that browser, never sent anywhere).
+- **First-analysis guide (version 8):** Step 7 now says to open a second terminal for the Git commands (the first is busy running Jupyter) and moves into the project folder; "Before you start" says no folder is needed yet. The "Words you will meet" table explains series length, event, sample and ADC counts better, and has a figure of a quiet trace next to one with a pulse. A new appendix, "what an event looks like", shows how one detector's four channels are organised. Step 5 points to row 1095 for a pulse. The figures come from `docs/students/src/make_trace_figure.py`.
 
 ### Fixed
 

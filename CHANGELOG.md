@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **Setup guides (version 11), Step 5: the environment is installed from `requirements.txt`** (one command, `python -m pip install -r requirements.txt`) instead of three separate `pip install` lines, so a version changes in one place. `requirements.txt` no longer starts with a `python==3.10` line, which made `pip install -r` fail; the Python version is in the guide's `conda create` line. The dev container and the CI use the same file. Closes #4.
+
 ### Added
 
 - **Notebooks find the library at any depth.** The code at the top of the notebooks, the first-analysis guide (version 11), `make_trace_figure.py` and `nsdf_r76_availability.py` now look upward from where they run for `python/pulse_io.py`, instead of assuming the notebook is exactly two folders below the project root. If you start Jupyter outside the project, the first cell stops with "Start Jupyter from inside the NSDF-Data folder." This prepares moving the analysis files into `data_analysis/`.

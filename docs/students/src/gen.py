@@ -12,6 +12,8 @@ OS = {
   CD_NOTES="cd %USERPROFILE%\\Research\\NSDF-Data\\R76\\analysis_notes",
   MKDIR="mkdir %USERPROFILE%\\Research",
   LISTCMD="dir",
+  PWDCMD="cd",
+  PWDNOTE="With nothing after it, `cd` prints the folder you are in.",
   NEW_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
   OPEN_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
   HOME_NOTE="::: tip\n**What is `%USERPROFILE%`?** It is a shortcut that Windows understands. It stands for your own personal folder on this computer, the one named after you (for example `C:\\Users\\YourName`). Type it **exactly as written**, with the two percent signs. Do not replace it with your name: Windows fills it in for you.\n:::",
@@ -35,6 +37,8 @@ OS = {
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  PWDCMD="pwd",
+  PWDNOTE="`pwd` prints the folder you are in.",
   NEW_TERM="a **new** terminal",
   OPEN_TERM="a terminal (Step 1 of the setup guide)",
   HOME_NOTE="",
@@ -57,6 +61,8 @@ OS = {
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  PWDCMD="pwd",
+  PWDNOTE="`pwd` prints the folder you are in.",
   NEW_TERM="a **new** terminal",
   OPEN_TERM="a terminal (Step 1 of the setup guide)",
   HOME_NOTE="",
@@ -326,7 +332,7 @@ Guide version 10, 7 October 2026, @NAME@ edition. Written for beginners; please 
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 9 · 8 October 2026"
+date: "Version 10 · 8 October 2026"
 ---
 
 ::: tip
@@ -371,6 +377,7 @@ You do **not** need to follow every number. Just learn the words in the table ab
 
 ## Step 2. Download the data
 
+@NAVBOX@
 First go to your home folder, so the data lands in the right place. Type this, then press Enter:
 
 ```
@@ -549,7 +556,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 9, 8 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 10, 8 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -559,11 +566,13 @@ Guide version 9, 8 October 2026, @NAME@ edition. Written for beginners; please t
 - Repository: <https://github.com/villano-lab/NSDF-Data>
 """
 
+NAVBOX = '::: navigate\n**Where am I, and what is here?** Two commands show you. Try both now; neither changes anything.\n\n- `@PWDCMD@`{.cmd} prints the folder you are in. The prompt also names it.\n- `@LISTCMD@`{.cmd} lists the files and folders inside it.\n\nTo move, type `cd` and a folder name from the list, or `cd ..` to go back up one level.\n:::\n'
+
 for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST)):
-        s = tpl.replace("@GLOSSARY@", GLOSSARY.strip())
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE"):
+        s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","PWDCMD"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

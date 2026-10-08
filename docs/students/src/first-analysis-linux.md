@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Linux edition"
-date: "Version 8 · 8 October 2026"
+date: "Version 9 · 8 October 2026"
 ---
 
 ::: tip
@@ -22,7 +22,7 @@ date: "Version 8 · 8 October 2026"
 | **Series** | One data-taking session, named like `07221203_2025`. A typical series lasts hours; some are shorter because they are tests. |
 | **Dump** | One file set taken from a series, numbered `F0001`, `F0002`, ... |
 | **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See the picture below, and the [appendix](#appendix-what-an-event-looks-like). |
-| **Detector / channel** | One physical detector, and one of its four sensor channels. This dump has 3 detectors with 4 channels each. We use detector 0, channel 0. |
+| **Detector / channel** | The software numbers the readout units 0, 1 and 2 ("detectors"), and each has four channels. In Run 76 all three read the same physical detector, so a "detector" here means one readout unit with 4 channels. We use detector 0, channel 0. |
 | **Trace** | The recorded signal for one channel in one event: 4096 numbers, one per sample. |
 | **Sample** | One reading. Each sample is 1.6 microseconds long, and measures the average of the output (usually a voltage) over that time interval. |
 | **ADC counts** | The unit of the numbers in a trace. They are whole numbers (integers) from the analog-to-digital converter, proportional to the measured quantity (such as a voltage), but really just integers. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |
@@ -206,11 +206,11 @@ You do not need this to finish the guide. It explains the words in the table at 
 
 The detector system watches its sensors all the time. Whenever it decides that something may have happened, it saves a short recording from every sensor. That moment is one **event**. Events are numbered in time order, and the numbers restart in every dump, so an event number alone does not identify an event.
 
-Every detector has four sensor **channels**. One event therefore holds up to 3 detectors x 4 channels = 12 recordings. Each recording is a **trace**: 4096 numbers, one per sample. In this dump, 7 of the 12 slots hold a trace and the other 5 read all zeros. We follow one channel, detector 0 channel 0, through all 1517 events.
+In Run 76 one physical detector (a silicon detector, S104) is read out by three older ("legacy") electronics units, each with four **channels**, all connected to that same detector. The software calls the units detector 0, 1 and 2, and so does this guide. One event therefore holds up to 3 x 4 = 12 recordings. Each recording is a **trace**: 4096 numbers, one per sample. In this dump, 7 of the 12 slots hold a trace and the other 5 read all zeros. We follow one channel, detector 0 channel 0, through all 1517 events.
 
 ![](img/channels.png){width=90%}
 
-*Figure: one detector in one event, and its four channels. The positions of the sectors are schematic.*
+*Figure: the four channels of detector 0 in one event. It is a schematic: the four sectors only stand for the channel numbers, and it does not show where the real sensors sit. The detector's own sensor layout is similar to the SuperCDMS HV detector mask, but not the same.*
 
 A trace looks like a flat line with a little jitter (the **baseline**) until something happens. The first 500 samples, the **pretrigger window**, are used to measure the baseline. If a particle deposits energy, the trace jumps up at once and then slowly falls back: a **pulse**. In the figure in the words table, the pulse in event 11108 starts just after sample 500; in this dump, many pulses start there.
 
@@ -224,7 +224,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 8, 8 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 9, 8 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

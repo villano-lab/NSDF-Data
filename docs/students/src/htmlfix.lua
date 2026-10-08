@@ -9,7 +9,7 @@ local alt = {
   ["note-steps.png"]    = "Six steps for creating a note: notebook, figures, page, index row, check, pull request and merge.",
   ["note-ai-steps.png"] = "Six steps for creating a note with an AI agent: you write the brief, the agent drafts, you verify the numbers, the agent wires up the index and changelog, you read the diff, then pull request and merge.",
   ["trace-pulse.png"]  = "Two traces drawn on the same scale. The top one is flat noise with a little jitter. The bottom one is flat until about sample 505, then jumps up sharply and slowly falls back: that is a pulse.",
-  ["channels.png"]     = "A round detector divided into four sectors for channels 0 to 3. Channels 0, 1 and 3 hold a trace in this event and channel 2 reads all zeros. Channel 0 is outlined: it is the one this guide uses.",
+  ["channels.png"]     = "A schematic circle divided into four sectors for the four channels of detector 0 (channels 0 to 3). Channels 0, 1 and 3 hold a trace in this event and channel 2 reads all zeros. Channel 0 is outlined: it is the one this guide uses.",
 }
 
 function Image(el)

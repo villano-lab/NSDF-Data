@@ -114,11 +114,11 @@ ax.add_patch(Wedge((0, 0), R, 0, 90, fc="none", ec=RED, lw=3))
 ax.text(1.75, 0.75, "the one this guide uses:\ndetector 0, channel 0", ha="left", va="center", fontsize=9, color=RED)
 ax.annotate("", xy=(0.95, 0.62), xytext=(1.72, 0.75), arrowprops=dict(arrowstyle="->", color=RED))
 ax.text(-1.75, 0.2, "detector 0", ha="right", va="center", fontsize=10, fontweight="bold", color=GRAY)
-ax.text(-1.75, -0.15, "(a round crystal\nwith four sensor\nchannels)", ha="right", va="center", fontsize=8, color=GRAY)
+ax.text(-1.75, -0.15, "in Run 76 this is one\nelectronics unit with\nfour channels", ha="right", va="center", fontsize=8, color=GRAY)
 n_det = len(detectors)
 fig2.text(0.01, 0.02,
-          f"One detector, one event. This dump has {n_det} detectors with {N_CHANNELS} channels each ({n_det * N_CHANNELS} slots in all);\n"
-          f"{n_signal} of them hold a trace of 4096 samples, the rest read zero. Sector positions are schematic.",
+          f"One event. The data has {n_det} units of {N_CHANNELS} channels ({n_det * N_CHANNELS} slots); in Run 76 all {n_det} read the same physical detector.\n"
+          f"{n_signal} slots hold a trace of 4096 samples, the rest read zero. A schematic, not a real channel map.",
           fontsize=7.2, color=GRAY)
 fig2.tight_layout(rect=(0, 0.09, 1, 1))
 out2 = ROOT / "docs" / "students" / "src" / "img" / "channels.png"

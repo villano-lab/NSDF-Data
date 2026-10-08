@@ -7,7 +7,7 @@
 ## What changed
 
 - [ ] Library code (`python/`)
-- [ ] Notebooks (`R76/analysis_notes/`)
+- [ ] Notebooks (`data_analysis/`)
 - [ ] Notes site or hand-written notes (`docs/`)
 - [ ] Student guides (`docs/students/src/`)
 - [ ] Student note (`notes/src/`)

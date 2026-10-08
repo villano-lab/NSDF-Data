@@ -1,7 +1,7 @@
 # python/
 
 A small library of reusable pulse operations, cuts, and derived quantities,
-factored out of the exploratory work in `R76/analysis_notes/`. Flat modules
+factored out of the exploratory work in `data_analysis/R76/notebooks/`. Flat modules
 (no package/`__init__.py`), imported by adding this directory to `sys.path` --
 same convention as `nrFanoII_paper2022`'s `python/ba_bknd_lines.py`.
 
@@ -70,7 +70,7 @@ objects -- `load_channel_batch` turns a list of `detector_id`s into a plain
 `pulse_archive.py` is a fifth, separate module: it persists a cut's *result*
 (which `detector_id`s it selected, for a given series/detector/channel) to an
 HDF5 file, rather than computing something from pulse data -- see its own
-docstring and `archives/README.md` at the repo root. It's the only module
+docstring and `data_analysis/archives/README.md`. It's the only module
 that needs `h5py`.
 
 ## `PulseConfig`

@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **All analysis files moved into `data_analysis/`** (the top-level notebooks, `R76/` and `archives/`), with a README saying this is where analysis always goes. Notebooks are in `data_analysis/R76/notebooks/`, series lists in `R76/series_lists/`, students' notebooks in `R76/student/` (George's folder is `student/george/`), the archive in `data_analysis/archives/`, and the old top-level notebooks in `legacy/`. The first-analysis guide (version 12), the Codespaces guide, the note guides, the note template, CI and `AGENTS.md` use the new paths, and a CI check fails a pull request that adds a notebook outside `data_analysis/`. Published notes still link to the old paths, pinned to a commit, so those links keep working. If you had notebooks open, run `git pull` and re-open them from their new folder.
+
 ### Added
 
 - **Notebooks find the library at any depth.** The code at the top of the notebooks, the first-analysis guide (version 11), `make_trace_figure.py` and `nsdf_r76_availability.py` now look upward from where they run for `python/pulse_io.py`, instead of assuming the notebook is exactly two folders below the project root. If you start Jupyter outside the project, the first cell stops with "Start Jupyter from inside the NSDF-Data folder." This prepares moving the analysis files into `data_analysis/`.

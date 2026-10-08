@@ -9,7 +9,7 @@ OS = {
   FOLDER="%USERPROFILE%\\Research",
   CD_REPO="cd %USERPROFILE%\\Research\\NSDF-Data",
   CD_PYTHON="cd %USERPROFILE%\\Research\\NSDF-Data\\python",
-  CD_NOTES="cd %USERPROFILE%\\Research\\NSDF-Data\\R76\\analysis_notes",
+  CD_NOTES="cd %USERPROFILE%\\Research\\NSDF-Data\\data_analysis\\R76\\student",
   MKDIR="mkdir %USERPROFILE%\\Research",
   LISTCMD="dir",
   PWDCMD="cd",
@@ -34,7 +34,7 @@ OS = {
   FOLDER="~/Research",
   CD_REPO="cd ~/Research/NSDF-Data",
   CD_PYTHON="cd ~/Research/NSDF-Data/python",
-  CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
+  CD_NOTES="cd ~/Research/NSDF-Data/data_analysis/R76/student",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
   PWDCMD="pwd",
@@ -58,7 +58,7 @@ OS = {
   FOLDER="~/Research",
   CD_REPO="cd ~/Research/NSDF-Data",
   CD_PYTHON="cd ~/Research/NSDF-Data/python",
-  CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
+  CD_NOTES="cd ~/Research/NSDF-Data/data_analysis/R76/student",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
   PWDCMD="pwd",
@@ -332,7 +332,7 @@ Guide version 10, 7 October 2026, @NAME@ edition. Written for beginners; please 
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 11 · 8 October 2026"
+date: "Version 12 · 9 October 2026"
 ---
 
 ::: tip
@@ -408,7 +408,7 @@ If the message says the folder already exists, the data may already be there. As
 
 ## Step 3. Open Jupyter in the right folder
 
-Notebooks must be opened from the folder `R76/analysis_notes`, inside the project. In the terminal, type these lines:
+Notebooks must be opened from the folder `data_analysis/R76/student`, inside the project. In the terminal, type these lines:
 
 ```
 conda activate darkmatter_cli_env
@@ -504,7 +504,7 @@ Once your branch exists (setup guide, Step 8), save your notebook to Git. The fi
 
 ```
 @CD_REPO@
-git add R76/analysis_notes/first-analysis-yourname.ipynb
+git add data_analysis/R76/student/first-analysis-yourname.ipynb
 git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
 ```
@@ -527,7 +527,7 @@ Commit only your notebook. Check the list before committing with `git status`. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from `R76/analysis_notes`. |
+| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from `data_analysis/R76/student`. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |
 | The kernel is not `darkmatter_cli_env` | Click the kernel name at the top right and choose **darkmatter_cli_env**. |
@@ -560,7 +560,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 11, 8 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 12, 9 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

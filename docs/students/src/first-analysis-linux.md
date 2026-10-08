@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Linux edition"
-date: "Version 6 · 6 October 2026"
+date: "Version 9 · 8 October 2026"
 ---
 
 ::: tip
@@ -13,20 +13,26 @@ date: "Version 6 · 6 October 2026"
 - **Time:** about two hours.
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
 - **Check:** open a terminal (Step 1 of the setup guide), and run `conda activate darkmatter_cli_env`{.cmd}. The start of the line should show `(darkmatter_cli_env)`.
+- **Folder:** you do not need to be in any particular folder yet. Each step below tells you where to go.
 
 ## Words you will meet
 
 | Word | What it means here |
 |---|---|
-| **Series** | One data-taking session, named like `07221203_2025`. |
+| **Series** | One data-taking session, named like `07221203_2025`. A typical series lasts hours; some are shorter because they are tests. |
 | **Dump** | One file set taken from a series, numbered `F0001`, `F0002`, ... |
-| **Event** | One trigger of the detector. Events are numbered in time order. |
-| **Detector / channel** | One physical detector, and one of its four sensor channels. We use detector 0, channel 0. |
+| **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See the picture below, and the [appendix](#appendix-what-an-event-looks-like). |
+| **Detector / channel** | The software numbers the readout units 0, 1 and 2 ("detectors"), and each has four channels. In Run 76 all three read the same physical detector, so a "detector" here means one readout unit with 4 channels. We use detector 0, channel 0. |
 | **Trace** | The recorded signal for one channel in one event: 4096 numbers, one per sample. |
-| **Sample** | One reading. Each sample is 1.6 microseconds long. |
-| **ADC counts** | The unit of the numbers in a trace. |
+| **Sample** | One reading. Each sample is 1.6 microseconds long, and measures the average of the output (usually a voltage) over that time interval. |
+| **ADC counts** | The unit of the numbers in a trace. They are whole numbers (integers) from the analog-to-digital converter, proportional to the measured quantity (such as a voltage), but really just integers. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |
 | **Baseline** | The flat level a trace sits at when nothing happens. |
 | **Pretrigger window** | The first samples of a trace, used to measure the baseline. |
+| **Pulse** | A sudden rise above the baseline that then slowly falls back. It is what a particle leaves in a trace. |
+
+![](img/trace-pulse.png){width=100%}
+
+*Figure: two traces on the same scale. Top: noise only. Bottom: a pulse.*
 
 ## Step 1. Read three notes first (about 30 minutes)
 
@@ -130,7 +136,7 @@ plt.ylabel("ADC counts")
 plt.show()
 ```
 
-Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter.
+Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in the figure above. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
 
 ## Step 6. Reproduce a number from Note 2
 
@@ -158,7 +164,7 @@ In Jupyter, click **+** to add a cell and change its type from *Code* to **Markd
 
 Save with **Command + S** (macOS) or **Ctrl + S** (Windows and Linux).
 
-Once your branch exists (setup guide, Step 8), save your notebook to Git:
+Once your branch exists (setup guide, Step 8), save your notebook to Git. The first terminal is busy: it is still running Jupyter, so leave it open. Open a **new** terminal for the Git commands. A new terminal starts in your home folder, so the first line below moves you into the project folder from the setup guide:
 
 ```
 cd ~/Research/NSDF-Data
@@ -194,6 +200,22 @@ Commit only your notebook. Check the list before committing with `git status`. I
 Do not run `07221203_2025_dump1_noise.ipynb` unless the project lead says it is fine. It overwrites a shared archive file.
 :::
 
+## Appendix: what an event looks like
+
+You do not need this to finish the guide. It explains the words in the table at the top.
+
+The detector system watches its sensors all the time. Whenever it decides that something may have happened, it saves a short recording from every sensor. That moment is one **event**. Events are numbered in time order, and the numbers restart in every dump, so an event number alone does not identify an event.
+
+In Run 76 one physical detector (a silicon detector, S104) is read out by three older ("legacy") electronics units, each with four **channels**, all connected to that same detector. The software calls the units detector 0, 1 and 2, and so does this guide. One event therefore holds up to 3 x 4 = 12 recordings. Each recording is a **trace**: 4096 numbers, one per sample. In this dump, 7 of the 12 slots hold a trace and the other 5 read all zeros. We follow one channel, detector 0 channel 0, through all 1517 events.
+
+![](img/channels.png){width=90%}
+
+*Figure: the four channels of detector 0 in one event. It is a schematic: the four sectors only stand for the channel numbers, and it does not show where the real sensors sit. The detector's own sensor layout is similar to the SuperCDMS HV detector mask, but not the same.*
+
+A trace looks like a flat line with a little jitter (the **baseline**) until something happens. The first 500 samples, the **pretrigger window**, are used to measure the baseline. If a particle deposits energy, the trace jumps up at once and then slowly falls back: a **pulse**. In the figure in the words table, the pulse in event 11108 starts just after sample 500; in this dump, many pulses start there.
+
+The trace in the figure is row 1095 of the table `pulses` from Step 4 (the row is the position in the table, not the event number). Row 1 is a quiet trace.
+
 ## Where to get help
 
 **Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
@@ -202,7 +224,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 6, 6 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 9, 8 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

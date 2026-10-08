@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 9 · 8 October 2026"
+date: "Version 10 · 8 October 2026"
 ---
 
 ::: tip
@@ -45,6 +45,15 @@ Open the notes site at [villano-lab.github.io/NSDF-Data](https://villano-lab.git
 You do **not** need to follow every number. Just learn the words in the table above.
 
 ## Step 2. Download the data
+
+::: navigate
+**Where am I, and what is here?** Two commands show you. Try both now; neither changes anything.
+
+- `cd`{.cmd} prints the folder you are in. The prompt also names it.
+- `dir`{.cmd} lists the files and folders inside it.
+
+To move, type `cd` and a folder name from the list, or `cd ..` to go back up one level.
+:::
 
 First go to your home folder, so the data lands in the right place. Type this, then press Enter:
 
@@ -224,7 +233,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 9, 8 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 10, 8 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

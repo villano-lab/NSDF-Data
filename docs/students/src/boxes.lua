@@ -5,6 +5,7 @@ local boxes = {
   tip        = {"Tip", "teal"},
   careful    = {"Careful", "red"},
   checkpoint = {"Checkpoint", "green"},
+  navigate   = {"Navigation", "yellow"},
 }
 function Div(el)
   if not FORMAT:match("latex") then

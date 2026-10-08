@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 11 · 9 October 2026"
+date: "Version 12 · 9 October 2026"
 ---
 
 ::: tip
@@ -97,7 +97,7 @@ git clone https://github.com/villano-lab/NSDF-Data.git
 cd %USERPROFILE%\Research\NSDF-Data
 ```
 
-Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
+Downloading with `git clone` does not need a GitHub account (saving your work online later does: Step 8). It makes a full copy of the project in a folder named `NSDF-Data`.
 
 **What these lines do**
 
@@ -211,7 +211,29 @@ git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-4. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
+4. Sign in to GitHub from the terminal, so that GitHub lets your computer upload your work. The second line installs `gh`, GitHub's own small helper program. The third starts the sign-in:
+
+```
+conda activate darkmatter_cli_env
+conda install gh -c conda-forge -y
+gh auth login
+```
+
+`gh auth login` asks a few questions. Move with the arrow keys and press Enter. Choose **GitHub.com**, then **HTTPS**, then answer **Y** to "Authenticate Git with your GitHub credentials?", then choose **Login with a web browser**. It prints a short one-time code such as `ABCD-1234`. Press Enter: your web browser opens. Type the code there and click **Authorize**. Back in the terminal, check it worked:
+
+```
+gh auth status
+```
+
+::: checkpoint
+It says `Logged in to github.com account` followed by your GitHub username.
+:::
+
+::: careful
+Never type your GitHub password into the terminal. GitHub no longer accepts it there, and Git answers with `Password authentication is not supported` or `Invalid username or token`. If you ever see one of those messages, run `gh auth login`{.cmd} again.
+:::
+
+5. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
 
 ```
 cd %USERPROFILE%\Research\NSDF-Data
@@ -238,6 +260,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
+- [ ] `gh auth status`{.cmd} says you are logged in to github.com (after access is granted).
 - [ ] `git branch`{.cmd} shows `* student-yourname` (after access is granted).
 
 **Next:** *First analysis* (the guide for Windows).
@@ -256,7 +279,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 11, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 12, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

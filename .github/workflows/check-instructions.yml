@@ -228,6 +228,13 @@ jobs:
           conda activate darkmatter_cli_env
           python -m ipykernel install --user --name darkmatter_cli_env
 
+      - name: Setup Step 8 - install the GitHub helper (gh) used to sign in
+        run: |
+          conda activate darkmatter_cli_env
+          conda install gh -c conda-forge -y
+          gh --version
+          gh auth login --help > /dev/null
+
       - name: Setup Step 8 - create a personal branch
         run: |
           cd ~/Research/NSDF-Data

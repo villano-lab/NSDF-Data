@@ -6,6 +6,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Changed
 
+- **Setup guides (version 12), Step 8: students sign in to GitHub with `gh auth login`** (the helper `gh` is installed from conda-forge; browser sign-in over HTTPS) before they push, and a new checklist item runs `gh auth status`. Until now the guides never explained how to sign in, so the first `git push` could fail with `Password authentication is not supported` or `Invalid username or token`. Cloning stays over HTTPS, because an SSH key adds about ten beginner steps. Refs #5.
 - **Setup guides (version 11), Step 5: the environment is installed from `requirements.txt`** (one command, `python -m pip install -r requirements.txt`) instead of three separate `pip install` lines, so a version changes in one place. `requirements.txt` no longer starts with a `python==3.10` line, which made `pip install -r` fail; the Python version is in the guide's `conda create` line. The dev container and the CI use the same file. Closes #4.
 
 ### Added

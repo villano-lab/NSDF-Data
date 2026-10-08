@@ -18,6 +18,20 @@ This folder is expected to move to its own, separately versioned repository one 
 
 A new run gets its own folder next to `R76/`, with the same three sub-folders.
 
+## Where did a file move to?
+
+On 9 October 2026 the analysis files were moved here. Links in published notes still work, because they point at a fixed commit, but if you look for such a file in the current repository, use this table.
+
+| Old path | New path |
+|---|---|
+| `R76/analysis_notes/` (notebooks, scripts, small csv files) | `data_analysis/R76/notebooks/` |
+| `R76/DataSeriesList.xlsx`, `R76/Processing.xlsx`, `R76/am_lead_series.csv`, `R76/nsdf_r76_series.csv` | `data_analysis/R76/series_lists/` |
+| `R76/george/` | `data_analysis/R76/student/george/` |
+| `archives/` | `data_analysis/archives/` |
+| `NSDF.ipynb`, `NSDF_noise.ipynb`, `R76Noise.ipynb`, `MLmodelImplementaion.ipynb`, `Fourier Transform Analysis.ipynb`, `Optimal Filter Reference.pdf`, `Project Notes.md` (top level) | `data_analysis/legacy/` |
+
+A link to the old path at the latest version of the repository will not work. Replace the start of the path as in the table, or open the link at the commit it names.
+
 ## Rules
 
 1. **Put new analysis here.** Pick the folder in the table, or ask your lead.

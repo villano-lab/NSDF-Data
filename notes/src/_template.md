@@ -10,7 +10,7 @@ description: "One sentence: what you did and what you found."
 
 ## Code repository
 
-- [`your-notebook.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/COMMIT/data_analysis/R76/student/your-notebook.ipynb) — the notebook for everything below. Pinned to `COMMIT`.
+- [`your-notebook.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/COMMIT/data_analysis/R76/student/your-notebook.ipynb) — the notebook for everything below. Pinned to `COMMIT`: the link shows the notebook as it was at that commit, which may be older than the latest version, and the file may have moved since (see `data_analysis/README.md`).
 
 ## Data and setup
 

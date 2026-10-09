@@ -1,4 +1,4 @@
-# archives/
+# data_analysis/archives/
 
 `good_noise.h5`: a durable record of which `detector_id`s a given noise-selection
 cut kept, per `(series, detector, channel)` -- written and read with
@@ -20,4 +20,4 @@ cut's status is `under_development` (e.g. `excursion_band_AI` as of
 reader knows the archived selection may still change as the cut is refined.
 
 First entries (2026-09-23): `07221203_2025`/detector 0/channel 0, from
-`excursion_band_AI` in `R76/analysis_notes/07221203_2025_dump1_noise.ipynb`.
+`excursion_band_AI` in `data_analysis/R76/notebooks/07221203_2025_dump1_noise.ipynb`.

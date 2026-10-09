@@ -4,6 +4,34 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-09
+
+Analysis files now live in one folder, `data_analysis/`, each student works in a folder of their own, and the student guides gain a line-by-line code appendix, a GitHub sign-in step and an AI-agents page.
+
+### Changed
+
+- **Each student works in a folder of their own** inside `data_analysis/R76/student/` (for example `student/tony/`). The first-analysis guide (version 16) now has students run `mkdir yourname` and `cd yourname` before `jupyter lab` and use the longer path in `git add`; the Codespaces guide (version 4), the writing-a-note guide (version 8), the note template and `data_analysis/README.md` say the same.
+- **All analysis files moved into `data_analysis/`** (the top-level notebooks, `R76/` and `archives/`), with a README saying this is where analysis always goes. Notebooks are in `data_analysis/R76/notebooks/`, series lists in `R76/series_lists/`, students' notebooks in `R76/student/` (George's folder is `student/george/`), the archive in `data_analysis/archives/`, and the old top-level notebooks in `legacy/`. The setup guides (version 13) and the first-analysis guide (version 15), the Codespaces guide, the note guides, the note template, CI and `AGENTS.md` use the new paths, and a CI check fails a pull request that adds a notebook outside `data_analysis/`. Published notes still link to the old paths, pinned to a commit, so those links keep working; the notes index and the note template now say that such links show the file as of that commit, and `data_analysis/README.md` has a table from old paths to new ones. If you had notebooks open, run `git pull` and re-open them from their new folder.
+- **First-analysis guide (version 14):** Steps 5 and 6 now say to use the empty cell that Jupyter adds under a cell you have just run (and **+** only if there is none). Steps 4 and 6 link to a new appendix, "the code, line by line", with a plain-language explanation of each line of the Step 4 and Step 6 code. Step 7 now starts with `git branch --show-current` and `git status`, with a checkpoint, so students get used to looking at the branch and the status when they enter a repository.
+- **First-analysis guide (version 13), Step 3:** naming the notebook now says to right-click its tab (`Untitled.ipynb`), choose **Rename Notebook**, replace `Untitled` with `first-analysis-yourname`, keep `.ipynb`, and click **Rename**. The old text ("click the name at the top") describes the older Jupyter Notebook; JupyterLab has no clickable title.
+- **First-analysis guide (version 12), Step 2:** the green tip now says how to check whether the data is already there: `dir %USERPROFILE%\idx` on Windows, `ls ~/idx` on macOS and Linux, which should list a folder named `07221203_2025_F0001`; an error message means there is no `idx` folder yet.
+- **Setup guides (version 12), Step 8: students sign in to GitHub with `gh auth login`** (the helper `gh` is installed from conda-forge; browser sign-in over HTTPS) before they push, and a new checklist item runs `gh auth status`. Until now the guides never explained how to sign in, so the first `git push` could fail with `Password authentication is not supported` or `Invalid username or token`. Cloning stays over HTTPS, because an SSH key adds about ten beginner steps. Refs #5.
+- **Setup guides (version 11), Step 5: the environment is installed from `requirements.txt`** (one command, `python -m pip install -r requirements.txt`) instead of three separate `pip install` lines, so a version changes in one place. `requirements.txt` no longer starts with a `python==3.10` line, which made `pip install -r` fail; the Python version is in the guide's `conda create` line. The dev container and the CI use the same file. Closes #4.
+
+### Added
+
+- **Logos on the AI agents page and an "AI Agents" collage button.** The front-page link is now a row of overlapping icons (Claude, Gemini, Perplexity, Cursor, GitHub Copilot, GitHub) with the words "AI Agents"; each assistant, coding agent and the Codespaces button on `agents.html` has its icon. Icons are vendored in `docs/img/agents/` (Simple Icons, CC0; the brands belong to their owners) and drawn as masks, so they follow dark mode. Where the open icon set has no logo (ChatGPT, Codex, Microsoft Copilot) a plain symbol stands in. The page also explains that Claude (and possibly others) show a caution notice before running a message from a link, and what to do if the text is lost at sign-in or a page will not load.
+- **A page for working with an AI agent** (`docs/agents.html`, linked top right on the front page). Step 1 copies a short brief (`docs/agent-brief.txt`) that states what the project is and the rules an agent must follow (never commit to `develop` or `master`, never merge, never invent a number). Step 2 opens ChatGPT, Claude, Copilot or Perplexity with a first message that points at the brief (Gemini opens empty; paste the brief), gives the commands to start Claude Code, Codex CLI, Gemini CLI, Cursor or VS Code with Copilot in the cloned folder, and has an "Open in Codespaces" button (the Codespaces route is still being tested). Also `docs/llms.txt` (an index for agents that browse), `GEMINI.md` (points Gemini CLI at `AGENTS.md`), a README pointer, and a CI step that checks the page, the brief, their links, and that the six sites behind the buttons still answer.
+- **Notebooks find the library at any depth.** The code at the top of the notebooks, the first-analysis guide (version 11), `make_trace_figure.py` and `nsdf_r76_availability.py` now look upward from where they run for `python/pulse_io.py`, instead of assuming the notebook is exactly two folders below the project root. If you start Jupyter outside the project, the first cell stops with "Start Jupyter from inside the NSDF-Data folder." This prepares moving the analysis files into `data_analysis/`.
+- Small **Copy buttons on commands written inside a sentence** in the guides' web pages (the "type this" steps, the checkpoints and every item of the "You are done when" checklist), not only in code blocks. The source marks such a command with the class `cmd`; the PDF ignores it.
+- The **ticks in the checklists are remembered** in the browser, per page, so they are still there after a reload (kept only in that browser, never sent anywhere).
+- **First-analysis guide (version 9):** Step 7 now says to open a second terminal for the Git commands (the first is busy running Jupyter) and moves into the project folder; "Before you start" says no folder is needed yet. The "Words you will meet" table explains series length, event, sample and ADC counts better, and has a figure of a quiet trace next to one with a pulse. A new appendix, "what an event looks like", shows how one detector's four channels are organised. Step 5 points to row 1095 for a pulse. A note explains that in Run 76 one physical detector (S104) is read by three legacy electronics units of four channels each, which the data calls detectors 0, 1 and 2. The figures come from `docs/students/src/make_trace_figure.py`.
+- **First-analysis guide (version 10), Step 2:** a short yellow "Navigation" box shows how to print the current folder (`cd` on Windows, `pwd` on macOS and Linux) and list its contents (`dir` / `ls`). It is a new box type, available to every guide (`::: navigate`).
+
+### Fixed
+
+- **Setup guides, "You are done when": two items gave no way to check them.** "Your Jupyter kernel is installed" and "You have a student- branch" now say how: `jupyter kernelspec list` lists `darkmatter_cli_env`, and `git branch` shows `* student-yourname`. The folder item now has a command too (`dir %USERPROFILE%\Research` on Windows, `ls ~/Research` on macOS and Linux). Setup guides are version 10.
+
 ## [0.3.0] - 2026-10-07
 
 Commands in the guides can now be copied reliably (web pages with Copy buttons, and PDFs that copy clean), plus a corrected setup checkpoint.
@@ -67,7 +95,8 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.4.0...develop
+[0.4.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/villano-lab/NSDF-Data/releases/tag/v0.1.0

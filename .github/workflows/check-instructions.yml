@@ -2,7 +2,7 @@ name: Check instructions
 
 # Repeats what the student guides tell a student to do, on Windows, macOS and Linux, so a guide
 # that stops working is caught here and not by a student. Keep the commands below in step with
-# docs/students/src/gen.py (setup Steps 3-7, first-analysis Steps 2-6) and requirements.txt.
+# docs/students/src/gen.py (setup Steps 3-7, first-analysis Steps 2-6). Setup Step 5 installs from requirements.txt.
 
 on:
   pull_request:
@@ -48,21 +48,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Package pins agree (requirements.txt, setup guide, dev container)
+      - name: Analysis files live in data_analysis/
+        run: |
+          stray=$(git ls-files '*.ipynb' | grep -v '^data_analysis/' || true)
+          if [ -n "$stray" ]; then
+            echo "Notebooks must live under data_analysis/ (see data_analysis/README.md). Found:"
+            echo "$stray"
+            exit 1
+          fi
+          echo "all $(git ls-files '*.ipynb' | wc -l) notebooks are under data_analysis/"
+
+      - name: requirements.txt is installable and used by the setup guide and dev container
         run: |
           python3 - <<'EOF'
           import pathlib, sys
-          lines = [l.split("#")[0].strip() for l in pathlib.Path("requirements.txt").read_text().splitlines()]
-          pins = [l for l in lines if "==" in l and not l.startswith("python")]
-          places = {
-              "setup guide": pathlib.Path("docs/students/src/setup-linux.md").read_text(encoding="utf-8"),
-              "dev container": pathlib.Path(".devcontainer/devcontainer.json").read_text(),
-          }
-          missing = [(p, name) for p in pins for name, text in places.items() if p not in text]
-          for pin, name in missing:
-              print(f"{pin} is in requirements.txt but not in the {name}")
-          print(f"checked {len(pins)} pins")
-          sys.exit(1 if missing else 0)
+          req = pathlib.Path("requirements.txt").read_text().splitlines()
+          names = [l.split("#")[0].strip() for l in req if l.split("#")[0].strip()]
+          problems = []
+          # pip cannot install a "python==..." line, so the Python version lives in the guide, not here
+          problems += [f"requirements.txt line is not installable by pip: {n}" for n in names if n.lower().startswith("python")]
+          guide = pathlib.Path("docs/students/src/setup-linux.md").read_text(encoding="utf-8")
+          dev = pathlib.Path(".devcontainer/devcontainer.json").read_text()
+          if "pip install -r requirements.txt" not in guide:
+              problems.append("the setup guide does not install from requirements.txt")
+          if "python=3.10" not in guide:
+              problems.append("the setup guide does not create the environment with python=3.10")
+          if "-r requirements.txt" not in dev:
+              problems.append("the dev container does not install from requirements.txt")
+          for p in problems:
+              print(p)
+          print(f"requirements.txt has {len(names)} packages")
+          sys.exit(1 if problems else 0)
           EOF
 
       - name: PDFs copy as plain text (no look-alike hyphens)
@@ -112,6 +128,53 @@ jobs:
               if not os.path.exists(os.path.join("docs", link)):
                   problems.append(f"docs/index.html links to a missing file: {link}")
           print(f"checked {len(pages)} guide pages")
+          for p in problems:
+              print(p)
+          sys.exit(1 if problems else 0)
+          EOF
+
+      - name: AI agent page, brief and llms.txt are in place and their links work
+        run: |
+          python3 - <<'EOF'
+          import os, re, socket, sys, urllib.error, urllib.request
+          problems = []
+          for f in ("docs/agents.html", "docs/agent-brief.txt", "docs/llms.txt", "GEMINI.md"):
+              if not os.path.exists(f):
+                  problems.append(f"missing {f}")
+          if not problems:
+              page = open("docs/agents.html", encoding="utf-8").read()
+              index = open("docs/index.html", encoding="utf-8").read()
+              if 'href="agents.html"' not in index:
+                  problems.append("the front page does not link to agents.html")
+              for f in ("docs/agents.html", "docs/agent-brief.txt", "docs/llms.txt"):
+                  text = open(f, encoding="utf-8").read()
+                  for ch in "\u2010\u2011\u2212":
+                      if ch in text:
+                          problems.append(f"{f} contains the look-alike character U+{ord(ch):04X}")
+              css = open("docs/style.css", encoding="utf-8").read()
+              for icon in re.findall(r'url\((img/agents/[^)]+)\)', css):
+                  if not os.path.exists(os.path.join("docs", icon)):
+                      problems.append(f"docs/style.css uses a missing icon: {icon}")
+              for link in re.findall(r'href="((?!https?:|#|mailto:)[^"]+)"', page):
+                  if not os.path.exists(os.path.join("docs", link.split("#")[0])):
+                      problems.append(f"docs/agents.html links to a missing file: {link}")
+              # the sites behind the buttons must still exist (any HTTP answer counts: some refuse scripts)
+              origins = sorted({m.group(1) for m in re.finditer(r'href="(https://(?:chatgpt\.com|claude\.ai|gemini\.google\.com|copilot\.microsoft\.com|www\.perplexity\.ai|codespaces\.new))', page)})
+              if len(origins) != 6:
+                  problems.append(f"expected 6 assistant and Codespaces sites on the page, found {len(origins)}")
+              for o in origins:
+                  try:
+                      urllib.request.urlopen(urllib.request.Request(o + "/", headers={"User-Agent": "Mozilla/5.0"}), timeout=20)
+                      print("answers:", o)
+                  except urllib.error.HTTPError as e:
+                      print(f"answers ({e.code}):", o)
+                  except urllib.error.URLError as e:
+                      if isinstance(e.reason, socket.gaierror):
+                          problems.append(f"{o} does not resolve")
+                      else:
+                          print("no answer, not failing:", o, e.reason)
+                  except Exception as e:
+                      print("no answer, not failing:", o, e)
           for p in problems:
               print(p)
           sys.exit(1 if problems else 0)
@@ -204,11 +267,13 @@ jobs:
 
       - name: Setup Step 5 - create the environment
         run: |
-          conda create -n darkmatter_cli_env python=3.10 -y
+          conda create -n darkmatter_cli_env python=3.10 pip -y
           conda activate darkmatter_cli_env
-          python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
-          python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
-          python -m pip install jupyterlab
+          cd ~/Research/NSDF-Data
+          # Step 4's git clone fetched the default branch. Use this commit's requirements.txt, so a
+          # pull request tests its own version of the file (the same file once it is merged).
+          cp "$GITHUB_WORKSPACE/requirements.txt" requirements.txt
+          python -m pip install -r requirements.txt
 
       - name: Setup Step 6 - tests and tool versions
         run: |
@@ -222,6 +287,13 @@ jobs:
         run: |
           conda activate darkmatter_cli_env
           python -m ipykernel install --user --name darkmatter_cli_env
+
+      - name: Setup Step 8 - install the GitHub helper (gh) used to sign in
+        run: |
+          conda activate darkmatter_cli_env
+          conda install gh -c conda-forge -y
+          gh --version
+          gh auth login --help > /dev/null
 
       - name: Setup Step 8 - create a personal branch
         run: |
@@ -242,5 +314,5 @@ jobs:
           MPLBACKEND: Agg
         run: |
           conda activate darkmatter_cli_env
-          cd R76/analysis_notes
-          python ../../.github/scripts/run_guide_code.py ../../docs/students/src/first-analysis-linux.md
+          cd data_analysis/R76/notebooks
+          python ../../../.github/scripts/run_guide_code.py ../../../docs/students/src/first-analysis-linux.md

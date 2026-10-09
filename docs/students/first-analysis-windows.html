@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Windows
-edition &middot; Version 6 · 6 October 2026</p>
+edition &middot; Version 16 · 9 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -48,6 +48,11 @@ did</a></li>
 when</a></li>
 <li><a href="#common-problems" id="toc-common-problems">Common
 problems</a></li>
+<li><a href="#appendix-what-an-event-looks-like"
+id="toc-appendix-what-an-event-looks-like">Appendix: what an event looks
+like</a></li>
+<li><a href="#appendix-code" id="toc-appendix-code">Appendix: the code,
+line by line</a></li>
 <li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
 help</a></li>
 <li><a href="#session-info" id="toc-session-info">Session Info</a></li>
@@ -68,9 +73,11 @@ first.</p>
 environment <code>darkmatter_cli_env</code> exists and works).</li>
 <li><strong>Check:</strong> open a <strong>Miniforge Prompt</strong>
 (click <strong>Start</strong>, type <code>Miniforge Prompt</code>, press
-<strong>Enter</strong>), and run
-<code>conda activate darkmatter_cli_env</code>. The start of the line
-should show <code>(darkmatter_cli_env)</code>.</li>
+<strong>Enter</strong>), and run <code
+class="cmd">conda activate darkmatter_cli_env</code>. The start of the
+line should show <code>(darkmatter_cli_env)</code>.</li>
+<li><strong>Folder:</strong> you do not need to be in any particular
+folder yet. Each step below tells you where to go.</li>
 </ul>
 <h2 id="words-you-will-meet">Words you will meet</h2>
 <div class="table-scroll">
@@ -88,7 +95,9 @@ should show <code>(darkmatter_cli_env)</code>.</li>
 <tbody>
 <tr>
 <td><strong>Series</strong></td>
-<td>One data-taking session, named like <code>07221203_2025</code>.</td>
+<td>One data-taking session, named like <code>07221203_2025</code>. A
+typical series lasts hours; some are shorter because they are
+tests.</td>
 </tr>
 <tr>
 <td><strong>Dump</strong></td>
@@ -97,12 +106,17 @@ should show <code>(darkmatter_cli_env)</code>.</li>
 </tr>
 <tr>
 <td><strong>Event</strong></td>
-<td>One trigger of the detector. Events are numbered in time order.</td>
+<td>One moment when the system decided something might have happened and
+saved a short recording from every detector. Events are numbered in time
+order. See the picture below, and the <a
+href="#appendix-what-an-event-looks-like">appendix</a>.</td>
 </tr>
 <tr>
 <td><strong>Detector / channel</strong></td>
-<td>One physical detector, and one of its four sensor channels. We use
-detector 0, channel 0.</td>
+<td>The software numbers the readout units 0, 1 and 2 (“detectors”), and
+each has four channels. In Run 76 all three read the same physical
+detector, so a “detector” here means one readout unit with 4 channels.
+We use detector 0, channel 0.</td>
 </tr>
 <tr>
 <td><strong>Trace</strong></td>
@@ -111,11 +125,16 @@ per sample.</td>
 </tr>
 <tr>
 <td><strong>Sample</strong></td>
-<td>One reading. Each sample is 1.6 microseconds long.</td>
+<td>One reading. Each sample is 1.6 microseconds long, and measures the
+average of the output (usually a voltage) over that time interval.</td>
 </tr>
 <tr>
 <td><strong>ADC counts</strong></td>
-<td>The unit of the numbers in a trace.</td>
+<td>The unit of the numbers in a trace. They are whole numbers
+(integers) from the analog-to-digital converter, proportional to the
+measured quantity (such as a voltage), but really just integers. In this
+dump the largest are around 8000, so they need at least 13 bits; the
+exact width is not stated in this guide.</td>
 </tr>
 <tr>
 <td><strong>Baseline</strong></td>
@@ -125,9 +144,18 @@ per sample.</td>
 <td><strong>Pretrigger window</strong></td>
 <td>The first samples of a trace, used to measure the baseline.</td>
 </tr>
+<tr>
+<td><strong>Pulse</strong></td>
+<td>A sudden rise above the baseline that then slowly falls back. It is
+what a particle leaves in a trace.</td>
+</tr>
 </tbody>
 </table>
 </div>
+<p><img src="src/img/trace-pulse.png" style="width:100.0%"
+alt="Two traces drawn on the same scale. The top one is flat noise with a little jitter. The bottom one is flat until about sample 505, then jumps up sharply and slowly falls back: that is a pulse." /></p>
+<p><em>Figure: two traces on the same scale. Top: noise only. Bottom: a
+pulse.</em></p>
 <h2 id="step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
 three notes first (about 30 minutes)</h2>
 <p>Open the notes site at <a
@@ -144,6 +172,18 @@ quiet traces.</li>
 <p>You do <strong>not</strong> need to follow every number. Just learn
 the words in the table above.</p>
 <h2 id="step-2.-download-the-data">Step 2. Download the data</h2>
+<div class="navigate">
+<p><strong>Where am I, and what is here?</strong> Two commands show you.
+Try both now; neither changes anything.</p>
+<ul>
+<li><code class="cmd">cd</code> prints the folder you are in. The prompt
+also names it.</li>
+<li><code class="cmd">dir</code> lists the files and folders inside
+it.</li>
+</ul>
+<p>To move, type <code>cd</code> and a folder name from the list, or
+<code>cd ..</code> to go back up one level.</p>
+</div>
 <p>First go to your home folder, so the data lands in the right place.
 Type this, then press Enter:</p>
 <pre><code>cd %USERPROFILE%</code></pre>
@@ -171,21 +211,31 @@ They are not part of the project.</p>
 </div>
 <div class="tip">
 <p>If the message says the folder already exists, the data may already
-be there. Ask the project lead before you delete anything.</p>
+be there. To check, type <code class="cmd">dir %USERPROFILE%\idx</code>:
+if the list shows a folder named <code>07221203_2025_F0001</code>, you
+already have it, and an error message means there is no <code>idx</code>
+folder yet. Ask the project lead before you delete anything.</p>
 </div>
 <h2 id="step-3.-open-jupyter-in-the-right-folder">Step 3. Open Jupyter
 in the right folder</h2>
-<p>Notebooks must be opened from the folder
-<code>R76/analysis_notes</code>, inside the project. In the terminal,
-type these lines:</p>
+<p>Every student works in a folder of their own, inside
+<code>data_analysis/R76/student</code> in the project. Use the same name
+as in your branch name (<code>student-yourname</code>), without spaces,
+in place of <code>yourname</code>. In the terminal, type these
+lines:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd %USERPROFILE%\Research\NSDF-Data\R76\analysis_notes
+cd %USERPROFILE%\Research\NSDF-Data\data_analysis\R76\student
+mkdir yourname
+cd yourname
 jupyter lab</code></pre>
 <p><strong>What these lines do:</strong> <code>conda activate</code>
 switches your environment on, <code>cd</code> moves you into the folder
-where the notebooks live, and <code>jupyter lab</code> starts the
-notebook program. <strong>Leave this terminal window open while you
-work</strong>: closing it stops Jupyter.</p>
+where the students’ notebooks live, <code>mkdir yourname</code> makes
+your own folder there (if it says the folder already exists, that is
+fine: you made it before), <code>cd yourname</code> moves you into it,
+and <code>jupyter lab</code> starts the notebook program. <strong>Leave
+this terminal window open while you work</strong>: closing it stops
+Jupyter.</p>
 <p>Your web browser opens a Jupyter page. Click <strong>File</strong>,
 then <strong>New</strong>, then <strong>Notebook</strong>. If it asks
 which kernel to use, choose <strong>darkmatter_cli_env</strong>.</p>
@@ -195,8 +245,11 @@ code in a cell and press <strong>Shift + Enter</strong> to run it. The
 result appears under the cell. Press <strong>Enter</strong> (without
 Shift) to keep typing in the same cell.</p>
 </div>
-<p>Give your notebook a name: click the name at the top, type
-<code>first-analysis-yourname</code>, and press Enter.</p>
+<p>Give your notebook a name: right-click its tab at the top (it says
+<code>Untitled.ipynb</code>) and choose <strong>Rename
+Notebook</strong>. In the box, replace <code>Untitled</code> with
+<code>first-analysis-yourname</code> (keep <code>.ipynb</code> at the
+end) and click <strong>Rename</strong>.</p>
 <h2 id="step-4.-load-the-data-and-count-the-traces">Step 4. Load the
 data and count the traces</h2>
 <p>Copy this into the first cell and press <strong>Shift +
@@ -205,8 +258,12 @@ Enter</strong>:</p>
 from pathlib import Path
 
 # Tell Python where the pulse library (the python folder) is.
-# This notebook is in R76/analysis_notes, so it is two folders up.
-sys.path.insert(0, str(Path.cwd().parents[1] / &quot;python&quot;))
+# This looks upward from the notebook&#39;s folder until it finds the project,
+# so it works wherever in the project your notebook is.
+here = Path.cwd().resolve()
+REPO = next((p for p in [here, *here.parents] if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)
+assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;
+sys.path.insert(0, str(REPO / &quot;python&quot;))
 
 from nsdf_dark_matter.idx import load_all_data
 import pulse_io as pio
@@ -224,10 +281,13 @@ print(pulses.shape)</code></pre>
 samples. If you get a different number, stop and check the dump name and
 the folder in Step 2.</p>
 </div>
+<p>Want to know what every line did? See <a href="#code-step4">the code,
+line by line (part A)</a>.</p>
 <h2 id="step-5.-look-at-a-trace">Step 5. Look at a trace</h2>
-<p>Put this in a new cell (click <strong>+</strong> in the toolbar, or
-use the menu <strong>Insert</strong>, then <strong>Insert Cell
-Below</strong>), and run it:</p>
+<p>Click in the empty cell under the one you just ran: Jupyter adds one
+each time you press <strong>Shift + Enter</strong>. If there is none,
+click <strong>+</strong> in the toolbar to add one. Put this in it and
+run it:</p>
 <pre class="python"><code>import matplotlib.pyplot as plt
 
 plt.plot(pulses[0])
@@ -236,11 +296,15 @@ plt.ylabel(&quot;ADC counts&quot;)
 plt.show()</code></pre>
 <p>Now change the <code>0</code> to <code>1</code>, <code>2</code>,
 <code>3</code> and run again. Most traces look like flat noise, with a
-little jitter.</p>
+little jitter. Row 1 is a quiet trace like the top one in the figure
+above. To see a pulse, try row <code>1095</code>. Then see the <a
+href="#appendix-what-an-event-looks-like">appendix</a> if you want to
+know more about what you are looking at.</p>
 <h2 id="step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce a
 number from Note 2</h2>
 <p>Note 2 says that for this dump, a strict selection leaves <strong>179
-quiet traces</strong>. Run this in a new cell:</p>
+quiet traces</strong>. Run this in the next empty cell (add one with
+<strong>+</strong> if there is none):</p>
 <pre class="python"><code>from dataclasses import replace
 from pulse_config import DEFAULT_CONFIG
 import pulse_quantities as pq
@@ -256,6 +320,8 @@ that is worth knowing. Write down the number you got and the steps you
 took, and tell the project lead. Do not change the project’s code to
 make the number match.</p>
 </div>
+<p>Want to know what every line did? See <a href="#code-step6">the code,
+line by line (part B)</a>.</p>
 <h2 id="step-7.-write-down-what-you-did">Step 7. Write down what you
 did</h2>
 <p>In Jupyter, click <strong>+</strong> to add a cell and change its
@@ -266,19 +332,41 @@ Enter</strong>.</p>
 <p>Save with <strong>Command + S</strong> (macOS) or <strong>Ctrl +
 S</strong> (Windows and Linux).</p>
 <p>Once your branch exists (setup guide, Step 8), save your notebook to
-Git:</p>
+Git. The first terminal is busy: it is still running Jupyter, so leave
+it open. Open a <strong>Miniforge Prompt</strong> (click
+<strong>Start</strong>, type <code>Miniforge Prompt</code>, press
+<strong>Enter</strong>) for the Git commands. A new terminal starts in
+your home folder, so the first line below moves you into the project
+folder from the setup guide:</p>
 <pre><code>cd %USERPROFILE%\Research\NSDF-Data
-git add R76/analysis_notes/first-analysis-yourname.ipynb
+git branch --show-current
+git status
+git add data_analysis/R76/student/yourname/first-analysis-yourname.ipynb
 git commit -m &quot;First analysis: load dump 1 and count the quiet traces&quot;
 git push -u origin student-yourname</code></pre>
-<p><strong>What these lines do:</strong> <code>git add</code> picks the
-file you want to save, <code>git commit</code> saves a snapshot of it
-with your short message, and <code>git push</code> uploads that snapshot
-to GitHub, to your own branch.</p>
+<p><strong>What these lines do:</strong> the first one moves you into
+the project. <code>git branch --show-current</code> prints the name of
+the branch you are on, and <code>git status</code> lists what has
+changed since your last save. <strong>Make this a habit: every time you
+open a terminal in a project, look at the branch and the status before
+you do anything else.</strong> Then <code>git add</code> picks the file
+you want to save, <code>git commit</code> saves a snapshot of it with
+your short message, and <code>git push</code> uploads that snapshot to
+GitHub, to your own branch.</p>
+<div class="checkpoint">
+<p><code>git branch --show-current</code> prints
+<code>student-yourname</code> (your own branch), and
+<code>git status</code> starts with
+<code>On branch student-yourname</code> and lists your notebook under
+<strong>Untracked files</strong> (a new file) or <strong>Changes not
+staged for commit</strong> (a file you changed). If the branch is
+<code>develop</code> or <code>master</code>, stop and ask the project
+lead: do not commit there.</p>
+</div>
 <div class="careful">
-<p>Commit only your notebook. Check the list before committing with
-<code>git status</code>. If you see <code>.bin</code> files or anything
-from the <code>idx</code> folder, do not add them.</p>
+<p>Commit only your notebook. Check the list from
+<code>git status</code> before committing. If you see <code>.bin</code>
+files or anything from the <code>idx</code> folder, do not add them.</p>
 </div>
 <h2 id="you-are-done-when">You are done when</h2>
 <ul class="task-list">
@@ -307,15 +395,16 @@ committed to your branch if you have access.</label></li>
 <tbody>
 <tr>
 <td><code>ModuleNotFoundError: No module named 'nsdf_dark_matter'</code></td>
-<td>You are not in the environment. Run
-<code>conda activate darkmatter_cli_env</code>, then restart the
+<td>You are not in the environment. Run <code
+class="cmd">conda activate darkmatter_cli_env</code>, then restart the
 notebook kernel (<strong>Kernel</strong>, then <strong>Restart
 Kernel</strong>).</td>
 </tr>
 <tr>
 <td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
 <td>Jupyter was started from the wrong folder. Close it and start it
-again from <code>R76/analysis_notes</code>.</td>
+again from your own folder in <code>data_analysis/R76/student</code>
+(Step 3).</td>
 </tr>
 <tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
@@ -339,6 +428,121 @@ bug. It is explained in Note 2a.</td>
 <p>Do not run <code>07221203_2025_dump1_noise.ipynb</code> unless the
 project lead says it is fine. It overwrites a shared archive file.</p>
 </div>
+<h2 id="appendix-what-an-event-looks-like">Appendix: what an event looks
+like</h2>
+<p>You do not need this to finish the guide. It explains the words in
+the table at the top.</p>
+<p>The detector system watches its sensors all the time. Whenever it
+decides that something may have happened, it saves a short recording
+from every sensor. That moment is one <strong>event</strong>. Events are
+numbered in time order, and the numbers restart in every dump, so an
+event number alone does not identify an event.</p>
+<p>In Run 76 one physical detector (a silicon detector, S104) is read
+out by three older (“legacy”) electronics units, each with four
+<strong>channels</strong>, all connected to that same detector. The
+software calls the units detector 0, 1 and 2, and so does this guide.
+One event therefore holds up to 3 x 4 = 12 recordings. Each recording is
+a <strong>trace</strong>: 4096 numbers, one per sample. In this dump, 7
+of the 12 slots hold a trace and the other 5 read all zeros. We follow
+one channel, detector 0 channel 0, through all 1517 events.</p>
+<p><img src="src/img/channels.png" style="width:90.0%"
+alt="A schematic circle divided into four sectors for the four channels of detector 0 (channels 0 to 3). Channels 0, 1 and 3 hold a trace in this event and channel 2 reads all zeros. Channel 0 is outlined: it is the one this guide uses." /></p>
+<p><em>Figure: the four channels of detector 0 in one event. It is a
+schematic: the four sectors only stand for the channel numbers, and it
+does not show where the real sensors sit. The detector’s own sensor
+layout is similar to the SuperCDMS HV detector mask, but not the
+same.</em></p>
+<p>A trace looks like a flat line with a little jitter (the
+<strong>baseline</strong>) until something happens. The first 500
+samples, the <strong>pretrigger window</strong>, are used to measure the
+baseline. If a particle deposits energy, the trace jumps up at once and
+then slowly falls back: a <strong>pulse</strong>. In the figure in the
+words table, the pulse in event 11108 starts just after sample 500; in
+this dump, many pulses start there.</p>
+<p>The trace in the figure is row 1095 of the table <code>pulses</code>
+from Step 4 (the row is the position in the table, not the event
+number). Row 1 is a quiet trace.</p>
+<h2 id="appendix-code">Appendix: the code, line by line</h2>
+<p>You do not need this to finish the guide. It explains the code you
+pasted, a few lines at a time. A line that begins with <code>#</code> is
+a comment: Python ignores it, and it is there for people to read.</p>
+<h3 id="code-step4">Part A. Step 4: load the data and count the
+traces</h3>
+<ul>
+<li><code>import sys</code> and <code>from pathlib import Path</code>:
+bring in two tools. <code>sys</code> controls where Python looks for
+code. <code>Path</code> works with folder names in the same way on every
+kind of computer.</li>
+<li><code>here = Path.cwd().resolve()</code>: the folder Jupyter is
+working in, written out in full.</li>
+<li><code>REPO = next(...)</code>: look at <code>here</code> and then at
+each folder above it, one after another, and take the first one that
+contains the file <code>python/pulse_io.py</code>. That folder is the
+whole NSDF-Data project. If there is none, <code>REPO</code> is
+<code>None</code>.</li>
+<li><code>assert REPO, "Start Jupyter from inside the NSDF-Data folder."</code>:
+stop with that message if the project was not found, which means Jupyter
+was started in the wrong place.</li>
+<li><code>sys.path.insert(0, str(REPO / "python"))</code>: tell Python
+to look in the project’s <code>python</code> folder first, so that the
+next <code>import</code> lines can find the project’s own code.</li>
+<li><code>from nsdf_dark_matter.idx import load_all_data</code>: bring
+in the function, from the NSDF software, that reads a downloaded
+dump.</li>
+<li><code>import pulse_io as pio</code>: bring in the project’s helpers
+for traces. <code>as pio</code> gives it a short name.</li>
+<li><code>cdms = load_all_data(...)</code>: open the dump you downloaded
+in Step 2. <code>Path.home()</code> is your home folder, and
+<code>/ "idx" / "07221203_2025_F0001"</code> follows the path down to
+the dump, the same folder Step 2 created. The whole dump is read into
+the computer’s memory and called <code>cdms</code>.</li>
+<li><code>ids, pulses = pio.load_channel_batch(...)</code>: read it from
+the inside out. <code>cdms.get_detector_ids()</code> is the list of
+names of every group of traces (a name holds an event number and a
+detector number). <code>pio.filter_by_detector(..., 0)</code> keeps only
+the names for detector 0.
+<code>pio.load_channel_batch(cdms, ..., 0)</code> takes channel 0 from
+each of those and stacks the traces into one table. It gives back two
+things: <code>ids</code>, the names in order, and <code>pulses</code>,
+the table, with one row for each event and one column for each
+sample.</li>
+<li><code>print(pulses.shape)</code>: show the size of the table as
+(rows, columns). That is the <code>(1517, 4096)</code> you checked.</li>
+</ul>
+<h3 id="code-step6">Part B. Step 6: count the quiet traces</h3>
+<ul>
+<li><code>from dataclasses import replace</code>: a tool for making a
+copy of a group of settings with one value changed.</li>
+<li><code>from pulse_config import DEFAULT_CONFIG</code>: the project’s
+standard settings, such as how many samples at the start of a trace
+count as the baseline window (1000 by default) and how many of the very
+first samples to skip because of the electronics glitch (10).</li>
+<li><code>import pulse_quantities as pq</code>: functions that work out
+one number for each trace, such as how much its baseline wobbles.</li>
+<li><code>import pulse_cuts as pc</code>: functions that answer yes or
+no for each trace: “keep this one?”</li>
+<li><code>import numpy as np</code>: tools for working with tables of
+numbers.</li>
+<li><code>c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)</code>:
+a copy of the standard settings in which the baseline window is the
+first 500 samples, as in Note 2.</li>
+<li><code>quiet = pc.excursion_band(pulses, c500) &amp; (np.log10(pq.bstd(pulses)) &lt; 0.5)</code>:
+two yes-or-no tests joined by <code>&amp;</code>, which means “and”. The
+result, <code>quiet</code>, is a list with one <code>True</code> or
+<code>False</code> for each trace.
+<ul>
+<li><code>pc.excursion_band(pulses, c500)</code> is <code>True</code>
+when the trace’s largest swing after the baseline window, compared with
+the wobble of its own baseline, falls in the middle band chosen in Note
+2.</li>
+<li><code>pq.bstd(pulses)</code> is the wobble (the standard deviation)
+of each trace’s baseline. <code>np.log10(...) &lt; 0.5</code> keeps only
+the traces whose baseline wobbles little: under about 3 counts.</li>
+</ul></li>
+<li><code>print(quiet.sum())</code>: a <code>True</code> counts as 1 and
+a <code>False</code> as 0, so the sum is the number of traces that
+passed both tests. That is the 179 of the checkpoint.</li>
+</ul>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -347,7 +551,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 6, 6 October 2026, Windows edition. Written for
+<p>Guide version 16, 9 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>

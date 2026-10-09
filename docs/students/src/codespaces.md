@@ -1,7 +1,7 @@
 ---
 title: "Working in your browser with GitHub Codespaces"
 subtitle: "NSDF-Data student guide 6 — no install, for every computer"
-date: "Version 3 · 7 October 2026"
+date: "Version 4 · 9 October 2026"
 ---
 
 ::: tip
@@ -71,10 +71,10 @@ The data (about 34 MB) goes into an `idx` folder in your home folder. Wait until
 
 Follow the steps of the first analysis guide (guide 2 for your computer). The only changes are these:
 
-- **Open a notebook** from the file list on the left: `R76/analysis_notes/`, then click **New File**, or copy the code from the guide into a new notebook.
+- **Make your own folder, then open a notebook.** In the file list on the left, open `data_analysis/R76/student/`, right-click, choose **New Folder** and type your name (the same name as in your branch, without spaces). Open that folder, then click **New File**, or copy the code from the guide into a new notebook.
 - **Choose the kernel** when asked. Pick **darkmatter_cli_env** or the Python 3.10 kernel shown in the list.
 - **Data path.** In the codespace your home folder is `/home/vscode`, and the code in the guide uses `Path.home() / "idx"`, so it finds the data without changes.
-- **Start the notebook from the right folder.** The code expects to run inside `R76/analysis_notes`, so open the notebook from there.
+- **Start the notebook from your folder.** Keep your notebook in your own folder inside `data_analysis/R76/student`. The code finds the project by looking upward from there.
 
 ::: checkpoint
 The first cell prints `(1517, 4096)` and the quiet-trace cell prints `179`.
@@ -117,7 +117,7 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## Session Info
 
-Guide version 3, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 4, 9 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

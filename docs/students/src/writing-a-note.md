@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 7 · 7 October 2026"
+date: "Version 8 · 9 October 2026"
 ---
 
 ::: tip
@@ -168,7 +168,7 @@ A note is only useful if the reader can find the code that made its numbers. Lin
 
 1. Commit your notebook to your branch (see the first analysis guide).
 2. Find the commit's short code, for example `a1b2c3d`.
-3. Link to `https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/R76/analysis_notes/your-notebook.ipynb`.
+3. Link to `https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/data_analysis/R76/student/yourname/your-notebook.ipynb`.
 
 Say in the note which commit you pinned.
 
@@ -192,7 +192,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 7, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 8, 9 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

@@ -30,12 +30,12 @@ note number; a follow-up takes a letter, like 2a).</p>
 alt="Six steps for creating a note: notebook, figures, page, index row, check, pull request and merge." /></p>
 <ol type="1">
 <li><strong>Notebook.</strong> Do the analysis in
-<code>R76/analysis_notes/</code>, run it top to bottom, and commit it
-with any library change. Note the short hash:
+<code>data_analysis/R76/notebooks/</code>, run it top to bottom, and
+commit it with any library change. Note the short hash:
 <code>git rev-parse --short HEAD</code>. Re-running some notebooks
 leaves metadata churn, so read <code>git diff</code> before committing.
 Never run <code>07221203_2025_dump1_noise.ipynb</code> without approval
-(it rewrites <code>archives/good_noise.h5</code>).</li>
+(it rewrites <code>data_analysis/archives/good_noise.h5</code>).</li>
 <li><strong>Figures.</strong> Save the PNGs from the executed notebook
 into <code>docs/notes/img/</code>, named for the series and the content,
 for example <code>dump1_bstd_time.png</code>.</li>

@@ -6,12 +6,14 @@
   --tip-bg: #e6f4f1;   --tip-border: #0f6e56;
   --careful-bg: #fdecec; --careful-border: #b3261e;
   --check-bg: #e9f6ec;  --check-border: #1a7f37;
+  --nav-bg: #fff8dc;    --nav-border: #b8860b;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --tip-bg: #15302b;   --tip-border: #4fb59a;
     --careful-bg: #381c1e; --careful-border: #f08a8a;
     --check-bg: #17301f;  --check-border: #56c271;
+    --nav-bg: #3a3317;    --nav-border: #e0b84a;
   }
 }
 
@@ -25,19 +27,21 @@
 .guide nav.outline ul ul { display: none; }
 
 /* Tip, Careful, Checkpoint boxes (the same three as in the PDFs) */
-.guide div.tip, .guide div.careful, .guide div.checkpoint {
+.guide div.tip, .guide div.careful, .guide div.checkpoint, .guide div.navigate {
   border: 1px solid; border-left-width: 6px; border-radius: 6px; padding: 8px 14px; margin: 16px 0;
 }
-.guide div.tip::before, .guide div.careful::before, .guide div.checkpoint::before {
+.guide div.tip::before, .guide div.careful::before, .guide div.checkpoint::before, .guide div.navigate::before {
   display: block; font-weight: 700; margin-bottom: 2px;
 }
 .guide div.tip        { background: var(--tip-bg);     border-color: var(--tip-border); }
 .guide div.careful    { background: var(--careful-bg); border-color: var(--careful-border); }
 .guide div.checkpoint { background: var(--check-bg);   border-color: var(--check-border); }
+.guide div.navigate   { background: var(--nav-bg);     border-color: var(--nav-border); }
 .guide div.tip::before        { content: "Tip";        color: var(--tip-border); }
 .guide div.careful::before    { content: "Careful";    color: var(--careful-border); }
 .guide div.checkpoint::before { content: "Checkpoint"; color: var(--check-border); }
-.guide div.tip > :last-child, .guide div.careful > :last-child, .guide div.checkpoint > :last-child { margin-bottom: 0; }
+.guide div.navigate::before   { content: "Navigation";  color: var(--nav-border); }
+.guide div.tip > :last-child, .guide div.careful > :last-child, .guide div.checkpoint > :last-child, .guide div.navigate > :last-child { margin-bottom: 0; }
 
 /* Command blocks and their copy buttons */
 .guide .codeblock { margin: 12px 0 20px; }
@@ -56,6 +60,7 @@
 .guide button.copy:hover, .guide button.copy:focus-visible { border-color: var(--link); }
 .guide button.copy.done { color: var(--complete); border-color: var(--complete); }
 .guide button.copy-line { position: sticky; right: 0; flex: 0 0 auto; }
+.guide button.copy-inline { margin-left: 5px; padding: 0 7px; font-size: 0.72rem; vertical-align: 1px; }
 
 .guide blockquote { margin: 4px 0 18px; padding: 6px 14px; border-left: 4px solid var(--border); background: var(--row-alt); border-radius: 0 6px 6px 0; }
 .guide blockquote > :last-child { margin-bottom: 0; }
@@ -71,3 +76,15 @@
 @media (max-width: 560px) {
   .wrap.guide { padding: 16px 12px 48px; }
 }
+
+/* "Work with an AI agent" page: the assistant and Codespaces buttons */
+.guide p.agent-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+.guide p.agent-buttons a {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--link); border-radius: 6px;
+  text-decoration: none; font-weight: 600;
+}
+.guide p.agent-buttons a:hover, .guide p.agent-buttons a:focus-visible { background: var(--head-bg); }
+.guide button.copy#copy-brief { font-size: 0.95rem; padding: 6px 14px; }
+
+.guide h3 .ico { margin-right: 6px; }
+.guide p.logo-note { font-size: 0.85rem; color: var(--muted); }

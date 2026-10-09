@@ -1,6 +1,6 @@
 """Run the Python code blocks of the first-analysis student guide and check the numbers.
 
-Usage (from R76/analysis_notes, with the environment active and the data downloaded):
+Usage (from data_analysis/R76/notebooks, with the environment active and the data downloaded):
 
     python ../../.github/scripts/run_guide_code.py ../../docs/students/src/first-analysis-linux.md
 

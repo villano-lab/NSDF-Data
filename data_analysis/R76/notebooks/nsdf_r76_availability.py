@@ -1,7 +1,7 @@
-"""Which Run76 series does NSDF actually hold?  Writes R76/nsdf_r76_series.csv.
+"""Which Run76 series does NSDF actually hold?  Writes data_analysis/R76/series_lists/nsdf_r76_series.csv.
 
 Sources compared:
-  * the run log, sheet `Run76` of R76/DataSeriesList.xlsx (what was taken);
+  * the run log, sheet `Run76` of data_analysis/R76/series_lists/DataSeriesList.xlsx (what was taken);
   * the manifest bundled in the nsdf-cli package (nsdf_dark_matter_cli/r_dataset.csv), which is what
     `nsdf-cli ls` shows. It is frozen at package-release time and never asks the server;
   * with --probe, the live server. A 1-byte ranged GET on a dump's 0000.bin (URL from the same gen-url
@@ -23,14 +23,14 @@ from pathlib import Path
 import openpyxl
 import requests
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = next(p for p in Path(__file__).resolve().parents if (p / "python" / "pulse_io.py").exists())
 DEFAULT_MANIFEST = "/opt/anaconda3/envs/darkmatter_cli_env/lib/python3.10/site-packages/nsdf_dark_matter_cli/r_dataset.csv"
 GENURL = "https://intersect.nationalsciencedatafabric.org/nexus/api/v1/darkmatter/gen-url"
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--manifest", default=DEFAULT_MANIFEST)
 ap.add_argument("--probe", action="store_true", help="also check the live server (about 1000 small requests)")
-ap.add_argument("--out", default=str(REPO / "R76" / "nsdf_r76_series.csv"))
+ap.add_argument("--out", default=str(REPO / "data_analysis" / "R76" / "series_lists" / "nsdf_r76_series.csv"))
 args = ap.parse_args()
 
 _UNIT = {"B": 1 / 2**20, "KiB": 1 / 1024, "MiB": 1.0, "GiB": 1024.0}
@@ -45,7 +45,7 @@ def mib(s):
 # The sheet carries an Excel AutoFilter that HIDES rows (at the time of writing: the 62 DCRC3-triggered series). openpyxl
 # returns hidden rows like any other, so every series is read; the filter state is reported below and each series is
 # flagged, so a hidden series can never go unnoticed. The workbook itself is never modified.
-ws = openpyxl.load_workbook(REPO / "R76" / "DataSeriesList.xlsx", data_only=True)["Run76"]
+ws = openpyxl.load_workbook(REPO / "data_analysis" / "R76" / "series_lists" / "DataSeriesList.xlsx", data_only=True)["Run76"]
 hdr = [str(c).strip() if c else "" for c in next(ws.iter_rows(min_row=1, max_row=1, values_only=True))]
 hidden_rows = {i for i, d in ws.row_dimensions.items() if d.hidden}
 log = []

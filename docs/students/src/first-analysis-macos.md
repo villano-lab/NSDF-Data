@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — macOS edition"
-date: "Version 6 · 6 October 2026"
+date: "Version 16 · 9 October 2026"
 ---
 
 ::: tip
@@ -12,21 +12,27 @@ date: "Version 6 · 6 October 2026"
 
 - **Time:** about two hours.
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
-- **Check:** open a terminal (Step 1 of the setup guide), and run `conda activate darkmatter_cli_env`. The start of the line should show `(darkmatter_cli_env)`.
+- **Check:** open a terminal (Step 1 of the setup guide), and run `conda activate darkmatter_cli_env`{.cmd}. The start of the line should show `(darkmatter_cli_env)`.
+- **Folder:** you do not need to be in any particular folder yet. Each step below tells you where to go.
 
 ## Words you will meet
 
 | Word | What it means here |
 |---|---|
-| **Series** | One data-taking session, named like `07221203_2025`. |
+| **Series** | One data-taking session, named like `07221203_2025`. A typical series lasts hours; some are shorter because they are tests. |
 | **Dump** | One file set taken from a series, numbered `F0001`, `F0002`, ... |
-| **Event** | One trigger of the detector. Events are numbered in time order. |
-| **Detector / channel** | One physical detector, and one of its four sensor channels. We use detector 0, channel 0. |
+| **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See the picture below, and the [appendix](#appendix-what-an-event-looks-like). |
+| **Detector / channel** | The software numbers the readout units 0, 1 and 2 ("detectors"), and each has four channels. In Run 76 all three read the same physical detector, so a "detector" here means one readout unit with 4 channels. We use detector 0, channel 0. |
 | **Trace** | The recorded signal for one channel in one event: 4096 numbers, one per sample. |
-| **Sample** | One reading. Each sample is 1.6 microseconds long. |
-| **ADC counts** | The unit of the numbers in a trace. |
+| **Sample** | One reading. Each sample is 1.6 microseconds long, and measures the average of the output (usually a voltage) over that time interval. |
+| **ADC counts** | The unit of the numbers in a trace. They are whole numbers (integers) from the analog-to-digital converter, proportional to the measured quantity (such as a voltage), but really just integers. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |
 | **Baseline** | The flat level a trace sits at when nothing happens. |
 | **Pretrigger window** | The first samples of a trace, used to measure the baseline. |
+| **Pulse** | A sudden rise above the baseline that then slowly falls back. It is what a particle leaves in a trace. |
+
+![](img/trace-pulse.png){width=100%}
+
+*Figure: two traces on the same scale. Top: noise only. Bottom: a pulse.*
 
 ## Step 1. Read three notes first (about 30 minutes)
 
@@ -39,6 +45,15 @@ Open the notes site at [villano-lab.github.io/NSDF-Data](https://villano-lab.git
 You do **not** need to follow every number. Just learn the words in the table above.
 
 ## Step 2. Download the data
+
+::: navigate
+**Where am I, and what is here?** Two commands show you. Try both now; neither changes anything.
+
+- `pwd`{.cmd} prints the folder you are in. The prompt also names it.
+- `ls`{.cmd} lists the files and folders inside it.
+
+To move, type `cd` and a folder name from the list, or `cd ..` to go back up one level.
+:::
 
 First go to your home folder, so the data lands in the right place. Type this, then press Enter:
 
@@ -65,20 +80,22 @@ Do not move or edit the downloaded files, and do not add them to Git. They are n
 :::
 
 ::: tip
-If the message says the folder already exists, the data may already be there. Ask the project lead before you delete anything.
+If the message says the folder already exists, the data may already be there. To check, type `ls ~/idx`{.cmd}: if the list shows a folder named `07221203_2025_F0001`, you already have it, and an error message means there is no `idx` folder yet. Ask the project lead before you delete anything.
 :::
 
 ## Step 3. Open Jupyter in the right folder
 
-Notebooks must be opened from the folder `R76/analysis_notes`, inside the project. In the terminal, type these lines:
+Every student works in a folder of their own, inside `data_analysis/R76/student` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
 
 ```
 conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/R76/analysis_notes
+cd ~/Research/NSDF-Data/data_analysis/R76/student
+mkdir yourname
+cd yourname
 jupyter lab
 ```
 
-**What these lines do:** `conda activate` switches your environment on, `cd` moves you into the folder where the notebooks live, and `jupyter lab` starts the notebook program. **Leave this terminal window open while you work**: closing it stops Jupyter.
+**What these lines do:** `conda activate` switches your environment on, `cd` moves you into the folder where the students' notebooks live, `mkdir yourname` makes your own folder there (if it says the folder already exists, that is fine: you made it before), `cd yourname` moves you into it, and `jupyter lab` starts the notebook program. **Leave this terminal window open while you work**: closing it stops Jupyter.
 
 Your web browser opens a Jupyter page. Click **File**, then **New**, then **Notebook**. If it asks which kernel to use, choose **darkmatter_cli_env**.
 
@@ -86,7 +103,7 @@ Your web browser opens a Jupyter page. Click **File**, then **New**, then **Note
 A notebook is a list of boxes called **cells**. Type code in a cell and press **Shift + Enter** to run it. The result appears under the cell. Press **Enter** (without Shift) to keep typing in the same cell.
 :::
 
-Give your notebook a name: click the name at the top, type `first-analysis-yourname`, and press Enter.
+Give your notebook a name: right-click its tab at the top (it says `Untitled.ipynb`) and choose **Rename Notebook**. In the box, replace `Untitled` with `first-analysis-yourname` (keep `.ipynb` at the end) and click **Rename**.
 
 ## Step 4. Load the data and count the traces
 
@@ -97,8 +114,12 @@ import sys
 from pathlib import Path
 
 # Tell Python where the pulse library (the python folder) is.
-# This notebook is in R76/analysis_notes, so it is two folders up.
-sys.path.insert(0, str(Path.cwd().parents[1] / "python"))
+# This looks upward from the notebook's folder until it finds the project,
+# so it works wherever in the project your notebook is.
+here = Path.cwd().resolve()
+REPO = next((p for p in [here, *here.parents] if (p / "python" / "pulse_io.py").exists()), None)
+assert REPO, "Start Jupyter from inside the NSDF-Data folder."
+sys.path.insert(0, str(REPO / "python"))
 
 from nsdf_dark_matter.idx import load_all_data
 import pulse_io as pio
@@ -117,9 +138,11 @@ print(pulses.shape)
 The output is `(1517, 4096)`: 1517 traces, each with 4096 samples. If you get a different number, stop and check the dump name and the folder in Step 2.
 :::
 
+Want to know what every line did? See [the code, line by line (part A)](#code-step4).
+
 ## Step 5. Look at a trace
 
-Put this in a new cell (click **+** in the toolbar, or use the menu **Insert**, then **Insert Cell Below**), and run it:
+Click in the empty cell under the one you just ran: Jupyter adds one each time you press **Shift + Enter**. If there is none, click **+** in the toolbar to add one. Put this in it and run it:
 
 ```python
 import matplotlib.pyplot as plt
@@ -130,11 +153,11 @@ plt.ylabel("ADC counts")
 plt.show()
 ```
 
-Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter.
+Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in the figure above. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
 
 ## Step 6. Reproduce a number from Note 2
 
-Note 2 says that for this dump, a strict selection leaves **179 quiet traces**. Run this in a new cell:
+Note 2 says that for this dump, a strict selection leaves **179 quiet traces**. Run this in the next empty cell (add one with **+** if there is none):
 
 ```python
 from dataclasses import replace
@@ -152,25 +175,33 @@ print(quiet.sum())
 The output is **179**. If you see a different number, that is worth knowing. Write down the number you got and the steps you took, and tell the project lead. Do not change the project's code to make the number match.
 :::
 
+Want to know what every line did? See [the code, line by line (part B)](#code-step6).
+
 ## Step 7. Write down what you did
 
 In Jupyter, click **+** to add a cell and change its type from *Code* to **Markdown** in the toolbar. In that cell, write a few sentences in plain English: what you loaded, what you plotted, and what number you got. Then press **Shift + Enter**.
 
 Save with **Command + S** (macOS) or **Ctrl + S** (Windows and Linux).
 
-Once your branch exists (setup guide, Step 8), save your notebook to Git:
+Once your branch exists (setup guide, Step 8), save your notebook to Git. The first terminal is busy: it is still running Jupyter, so leave it open. Open a **new** terminal for the Git commands. A new terminal starts in your home folder, so the first line below moves you into the project folder from the setup guide:
 
 ```
 cd ~/Research/NSDF-Data
-git add R76/analysis_notes/first-analysis-yourname.ipynb
+git branch --show-current
+git status
+git add data_analysis/R76/student/yourname/first-analysis-yourname.ipynb
 git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
 ```
 
-**What these lines do:** `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
+**What these lines do:** the first one moves you into the project. `git branch --show-current` prints the name of the branch you are on, and `git status` lists what has changed since your last save. **Make this a habit: every time you open a terminal in a project, look at the branch and the status before you do anything else.** Then `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
+
+::: checkpoint
+`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
+:::
 
 ::: careful
-Commit only your notebook. Check the list before committing with `git status`. If you see `.bin` files or anything from the `idx` folder, do not add them.
+Commit only your notebook. Check the list from `git status` before committing. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::
 
 ## You are done when
@@ -184,8 +215,8 @@ Commit only your notebook. Check the list before committing with `git status`. I
 
 | What you see | What to do |
 |---|---|
-| `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from `R76/analysis_notes`. |
+| `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
+| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis/R76/student` (Step 3). |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |
 | The kernel is not `darkmatter_cli_env` | Click the kernel name at the top right and choose **darkmatter_cli_env**. |
@@ -193,6 +224,52 @@ Commit only your notebook. Check the list before committing with `git status`. I
 ::: careful
 Do not run `07221203_2025_dump1_noise.ipynb` unless the project lead says it is fine. It overwrites a shared archive file.
 :::
+
+## Appendix: what an event looks like
+
+You do not need this to finish the guide. It explains the words in the table at the top.
+
+The detector system watches its sensors all the time. Whenever it decides that something may have happened, it saves a short recording from every sensor. That moment is one **event**. Events are numbered in time order, and the numbers restart in every dump, so an event number alone does not identify an event.
+
+In Run 76 one physical detector (a silicon detector, S104) is read out by three older ("legacy") electronics units, each with four **channels**, all connected to that same detector. The software calls the units detector 0, 1 and 2, and so does this guide. One event therefore holds up to 3 x 4 = 12 recordings. Each recording is a **trace**: 4096 numbers, one per sample. In this dump, 7 of the 12 slots hold a trace and the other 5 read all zeros. We follow one channel, detector 0 channel 0, through all 1517 events.
+
+![](img/channels.png){width=90%}
+
+*Figure: the four channels of detector 0 in one event. It is a schematic: the four sectors only stand for the channel numbers, and it does not show where the real sensors sit. The detector's own sensor layout is similar to the SuperCDMS HV detector mask, but not the same.*
+
+A trace looks like a flat line with a little jitter (the **baseline**) until something happens. The first 500 samples, the **pretrigger window**, are used to measure the baseline. If a particle deposits energy, the trace jumps up at once and then slowly falls back: a **pulse**. In the figure in the words table, the pulse in event 11108 starts just after sample 500; in this dump, many pulses start there.
+
+The trace in the figure is row 1095 of the table `pulses` from Step 4 (the row is the position in the table, not the event number). Row 1 is a quiet trace.
+
+## Appendix: the code, line by line {#appendix-code}
+
+You do not need this to finish the guide. It explains the code you pasted, a few lines at a time. A line that begins with `#` is a comment: Python ignores it, and it is there for people to read.
+
+### Part A. Step 4: load the data and count the traces {#code-step4}
+
+- `import sys` and `from pathlib import Path`: bring in two tools. `sys` controls where Python looks for code. `Path` works with folder names in the same way on every kind of computer.
+- `here = Path.cwd().resolve()`: the folder Jupyter is working in, written out in full.
+- `REPO = next(...)`: look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
+- `assert REPO, "Start Jupyter from inside the NSDF-Data folder."`: stop with that message if the project was not found, which means Jupyter was started in the wrong place.
+- `sys.path.insert(0, str(REPO / "python"))`: tell Python to look in the project's `python` folder first, so that the next `import` lines can find the project's own code.
+- `from nsdf_dark_matter.idx import load_all_data`: bring in the function, from the NSDF software, that reads a downloaded dump.
+- `import pulse_io as pio`: bring in the project's helpers for traces. `as pio` gives it a short name.
+- `cdms = load_all_data(...)`: open the dump you downloaded in Step 2. `Path.home()` is your home folder, and `/ "idx" / "07221203_2025_F0001"` follows the path down to the dump, the same folder Step 2 created. The whole dump is read into the computer's memory and called `cdms`.
+- `ids, pulses = pio.load_channel_batch(...)`: read it from the inside out. `cdms.get_detector_ids()` is the list of names of every group of traces (a name holds an event number and a detector number). `pio.filter_by_detector(..., 0)` keeps only the names for detector 0. `pio.load_channel_batch(cdms, ..., 0)` takes channel 0 from each of those and stacks the traces into one table. It gives back two things: `ids`, the names in order, and `pulses`, the table, with one row for each event and one column for each sample.
+- `print(pulses.shape)`: show the size of the table as (rows, columns). That is the `(1517, 4096)` you checked.
+
+### Part B. Step 6: count the quiet traces {#code-step6}
+
+- `from dataclasses import replace`: a tool for making a copy of a group of settings with one value changed.
+- `from pulse_config import DEFAULT_CONFIG`: the project's standard settings, such as how many samples at the start of a trace count as the baseline window (1000 by default) and how many of the very first samples to skip because of the electronics glitch (10).
+- `import pulse_quantities as pq`: functions that work out one number for each trace, such as how much its baseline wobbles.
+- `import pulse_cuts as pc`: functions that answer yes or no for each trace: "keep this one?"
+- `import numpy as np`: tools for working with tables of numbers.
+- `c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)`: a copy of the standard settings in which the baseline window is the first 500 samples, as in Note 2.
+- `quiet = pc.excursion_band(pulses, c500) & (np.log10(pq.bstd(pulses)) < 0.5)`: two yes-or-no tests joined by `&`, which means "and". The result, `quiet`, is a list with one `True` or `False` for each trace.
+    - `pc.excursion_band(pulses, c500)` is `True` when the trace's largest swing after the baseline window, compared with the wobble of its own baseline, falls in the middle band chosen in Note 2.
+    - `pq.bstd(pulses)` is the wobble (the standard deviation) of each trace's baseline. `np.log10(...) < 0.5` keeps only the traces whose baseline wobbles little: under about 3 counts.
+- `print(quiet.sum())`: a `True` counts as 1 and a `False` as 0, so the sum is the number of traces that passed both tests. That is the 179 of the checkpoint.
 
 ## Where to get help
 
@@ -202,7 +279,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 6, 6 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 16, 9 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

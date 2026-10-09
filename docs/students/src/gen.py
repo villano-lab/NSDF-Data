@@ -12,6 +12,7 @@ OS = {
   CD_NOTES="cd %USERPROFILE%\\Research\\NSDF-Data\\R76\\analysis_notes",
   MKDIR="mkdir %USERPROFILE%\\Research",
   LISTCMD="dir",
+  CHECKIDX="dir %USERPROFILE%\\idx",
   PWDCMD="cd",
   PWDNOTE="With nothing after it, `cd` prints the folder you are in.",
   NEW_TERM="a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**)",
@@ -37,6 +38,7 @@ OS = {
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  CHECKIDX="ls ~/idx",
   PWDCMD="pwd",
   PWDNOTE="`pwd` prints the folder you are in.",
   NEW_TERM="a **new** terminal",
@@ -61,6 +63,7 @@ OS = {
   CD_NOTES="cd ~/Research/NSDF-Data/R76/analysis_notes",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
+  CHECKIDX="ls ~/idx",
   PWDCMD="pwd",
   PWDNOTE="`pwd` prints the folder you are in.",
   NEW_TERM="a **new** terminal",
@@ -353,7 +356,7 @@ Guide version 12, 9 October 2026, @NAME@ edition. Written for beginners; please 
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 11 · 8 October 2026"
+date: "Version 12 · 9 October 2026"
 ---
 
 ::: tip
@@ -424,7 +427,7 @@ Do not move or edit the downloaded files, and do not add them to Git. They are n
 :::
 
 ::: tip
-If the message says the folder already exists, the data may already be there. Ask the project lead before you delete anything.
+If the message says the folder already exists, the data may already be there. To check, type `@CHECKIDX@`{.cmd}: if the list shows a folder named `07221203_2025_F0001`, you already have it, and an error message means there is no `idx` folder yet. Ask the project lead before you delete anything.
 :::
 
 ## Step 3. Open Jupyter in the right folder
@@ -581,7 +584,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 11, 8 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 12, 9 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -597,7 +600,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","PWDCMD"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

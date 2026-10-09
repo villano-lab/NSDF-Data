@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 11 · 9 October 2026"
+date: "Version 13 · 9 October 2026"
 ---
 
 ::: tip
@@ -97,7 +97,7 @@ git clone https://github.com/villano-lab/NSDF-Data.git
 cd %USERPROFILE%\Research\NSDF-Data
 ```
 
-Downloading with `git clone` does not need a GitHub account. It makes a full copy of the project in a folder named `NSDF-Data`.
+Downloading with `git clone` does not need a GitHub account (saving your work online later does: Step 8). It makes a full copy of the project in a folder named `NSDF-Data`.
 
 **What these lines do**
 
@@ -113,28 +113,26 @@ Type `dir`{.cmd} and press Enter. You are now inside the `NSDF-Data` folder (you
 
 ## Step 5. Create your analysis environment
 
-An environment is a sealed box of programs with fixed versions. We make one for this project, called `darkmatter_cli_env`. Type these lines one at a time, pressing Enter after each. The third line takes several minutes and prints a lot of text: wait for the prompt to come back.
+An environment is a sealed box of programs with fixed versions. We make one for this project, called `darkmatter_cli_env`. Type these lines one at a time, pressing Enter after each. The last line takes several minutes and prints a lot of text: wait for the prompt to come back.
 
 ```
-conda create -n darkmatter_cli_env python=3.10 -y
+conda create -n darkmatter_cli_env python=3.10 pip -y
 conda activate darkmatter_cli_env
-python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0
-python -m pip install numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
-python -m pip install jupyterlab
+cd %USERPROFILE%\Research\NSDF-Data
+python -m pip install -r requirements.txt
 ```
 
 **What these lines do**
 
 | Line | What it does |
 |---|---|
-| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 inside it. |
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 and the package installer `pip` inside it. |
 | `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
-| `pip install nsdf-dark-matter...` | Installs the software that reads the detector data. |
-| `pip install numpy...` | Installs software for numbers, plots and checking that everything works. |
-| `pip install jupyterlab` | Installs Jupyter, the notebook program you will use later. |
+| `cd` | Moves you into the `NSDF-Data` folder, where the file `requirements.txt` is. |
+| `pip install -r requirements.txt` | Installs every program on the project's list, at the exact versions in that file: the software that reads the detector data, numbers and plots, the test tool, and Jupyter, the notebook program you will use later. |
 
 ::: tip
-The project folder also has a file called `requirements.txt` that lists the same software versions. You do **not** need it: the lines above do the whole job, and they work the same on every computer.
+`requirements.txt` is a plain text file in the project folder. It is the single list of what the project needs, so when a version changes, only that file changes. You can open it in any text editor to see the list.
 :::
 
 ::: tip
@@ -176,7 +174,7 @@ jupyter lab --version
 ```
 
 ::: checkpoint
-It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, run `python -m pip install jupyterlab`{.cmd} and try again.
+It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not found, check that your prompt starts with `(darkmatter_cli_env)`, go to the `NSDF-Data` folder and run `python -m pip install -r requirements.txt`{.cmd} again.
 :::
 
 **What these commands do**
@@ -213,7 +211,29 @@ git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 ```
 
-4. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
+4. Sign in to GitHub from the terminal, so that GitHub lets your computer upload your work. The second line installs `gh`, GitHub's own small helper program. The third starts the sign-in:
+
+```
+conda activate darkmatter_cli_env
+conda install gh -c conda-forge -y
+gh auth login
+```
+
+`gh auth login` asks a few questions. Move with the arrow keys and press Enter. Choose **GitHub.com**, then **HTTPS**, then answer **Y** to "Authenticate Git with your GitHub credentials?", then choose **Login with a web browser**. It prints a short one-time code such as `ABCD-1234`. Press Enter: your web browser opens. Type the code there and click **Authorize**. Back in the terminal, check it worked:
+
+```
+gh auth status
+```
+
+::: checkpoint
+It says `Logged in to github.com account` followed by your GitHub username.
+:::
+
+::: careful
+Never type your GitHub password into the terminal. GitHub no longer accepts it there, and Git answers with `Password authentication is not supported` or `Invalid username or token`. If you ever see one of those messages, run `gh auth login`{.cmd} again.
+:::
+
+5. Create your personal branch (your own space to save work, separate from the main project). Use your own name, without spaces, in place of `yourname`:
 
 ```
 cd %USERPROFILE%\Research\NSDF-Data
@@ -240,6 +260,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
+- [ ] `gh auth status`{.cmd} says you are logged in to github.com (after access is granted).
 - [ ] `git branch`{.cmd} shows `* student-yourname` (after access is granted).
 
 **Next:** *First analysis* (the guide for Windows).
@@ -258,7 +279,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 11, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 13, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

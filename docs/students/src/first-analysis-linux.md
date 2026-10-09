@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Linux edition"
-date: "Version 12 · 9 October 2026"
+date: "Version 13 · 9 October 2026"
 ---
 
 ::: tip
@@ -80,7 +80,7 @@ Do not move or edit the downloaded files, and do not add them to Git. They are n
 :::
 
 ::: tip
-If the message says the folder already exists, the data may already be there. Ask the project lead before you delete anything.
+If the message says the folder already exists, the data may already be there. To check, type `ls ~/idx`{.cmd}: if the list shows a folder named `07221203_2025_F0001`, you already have it, and an error message means there is no `idx` folder yet. Ask the project lead before you delete anything.
 :::
 
 ## Step 3. Open Jupyter in the right folder
@@ -237,7 +237,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 12, 9 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 13, 9 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

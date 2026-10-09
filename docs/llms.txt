@@ -1,0 +1,23 @@
+# NSDF-Data
+
+> Analysis of SuperCDMS-type dark-matter detector data (Run 76) from the National Science Data Fabric: a small pulse-analysis library, analysis notebooks, student guides and published analysis notes. Maintainer: Anthony Villano (villaa).
+
+If you are an AI agent, read the brief and AGENTS.md first. They contain the rules (never commit to master or develop, never merge a pull request, never invent a number).
+
+## Start here
+
+- [Agent brief](https://villano-lab.github.io/NSDF-Data/agent-brief.txt): what the project is and the rules, in plain text
+- [AGENTS.md](https://github.com/villano-lab/NSDF-Data/blob/develop/AGENTS.md): the full rules for agents and contributors
+- [Work with an AI agent](https://villano-lab.github.io/NSDF-Data/agents.html): setup for ChatGPT, Claude, Gemini, Copilot, Perplexity, Claude Code, Codex, Gemini CLI, Cursor, VS Code and Codespaces
+
+## Project
+
+- [Notes and guides (front page)](https://villano-lab.github.io/NSDF-Data/): every analysis note and student guide
+- [Repository](https://github.com/villano-lab/NSDF-Data)
+- [python/ library](https://github.com/villano-lab/NSDF-Data/tree/develop/python): the pulse library and its README
+- [RELEASING.md](https://github.com/villano-lab/NSDF-Data/blob/develop/RELEASING.md): branches, releases and versions (Git Flow)
+- [CHANGELOG.md](https://github.com/villano-lab/NSDF-Data/blob/develop/CHANGELOG.md)
+
+## Optional
+
+- [NSDF-SLAC documentation](https://nsdf-fabric.github.io/nsdf-slac/): the nsdf-cli tool and the data fabric

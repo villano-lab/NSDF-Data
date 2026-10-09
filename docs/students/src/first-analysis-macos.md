@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — macOS edition"
-date: "Version 15 · 9 October 2026"
+date: "Version 16 · 9 October 2026"
 ---
 
 ::: tip
@@ -85,15 +85,17 @@ If the message says the folder already exists, the data may already be there. To
 
 ## Step 3. Open Jupyter in the right folder
 
-Notebooks must be opened from the folder `data_analysis/R76/student`, inside the project. In the terminal, type these lines:
+Every student works in a folder of their own, inside `data_analysis/R76/student` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
 
 ```
 conda activate darkmatter_cli_env
 cd ~/Research/NSDF-Data/data_analysis/R76/student
+mkdir yourname
+cd yourname
 jupyter lab
 ```
 
-**What these lines do:** `conda activate` switches your environment on, `cd` moves you into the folder where the notebooks live, and `jupyter lab` starts the notebook program. **Leave this terminal window open while you work**: closing it stops Jupyter.
+**What these lines do:** `conda activate` switches your environment on, `cd` moves you into the folder where the students' notebooks live, `mkdir yourname` makes your own folder there (if it says the folder already exists, that is fine: you made it before), `cd yourname` moves you into it, and `jupyter lab` starts the notebook program. **Leave this terminal window open while you work**: closing it stops Jupyter.
 
 Your web browser opens a Jupyter page. Click **File**, then **New**, then **Notebook**. If it asks which kernel to use, choose **darkmatter_cli_env**.
 
@@ -187,7 +189,7 @@ Once your branch exists (setup guide, Step 8), save your notebook to Git. The fi
 cd ~/Research/NSDF-Data
 git branch --show-current
 git status
-git add data_analysis/R76/student/first-analysis-yourname.ipynb
+git add data_analysis/R76/student/yourname/first-analysis-yourname.ipynb
 git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
 ```
@@ -214,7 +216,7 @@ Commit only your notebook. Check the list from `git status` before committing. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from `data_analysis/R76/student`. |
+| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis/R76/student` (Step 3). |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |
 | The kernel is not `darkmatter_cli_env` | Click the kernel name at the top right and choose **darkmatter_cli_env**. |
@@ -277,7 +279,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 15, 9 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 16, 9 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

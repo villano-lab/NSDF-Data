@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 15 · 9 October 2026</p>
+edition &middot; Version 16 · 9 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -216,17 +216,24 @@ Ask the project lead before you delete anything.</p>
 </div>
 <h2 id="step-3.-open-jupyter-in-the-right-folder">Step 3. Open Jupyter
 in the right folder</h2>
-<p>Notebooks must be opened from the folder
-<code>data_analysis/R76/student</code>, inside the project. In the
-terminal, type these lines:</p>
+<p>Every student works in a folder of their own, inside
+<code>data_analysis/R76/student</code> in the project. Use the same name
+as in your branch name (<code>student-yourname</code>), without spaces,
+in place of <code>yourname</code>. In the terminal, type these
+lines:</p>
 <pre><code>conda activate darkmatter_cli_env
 cd ~/Research/NSDF-Data/data_analysis/R76/student
+mkdir yourname
+cd yourname
 jupyter lab</code></pre>
 <p><strong>What these lines do:</strong> <code>conda activate</code>
 switches your environment on, <code>cd</code> moves you into the folder
-where the notebooks live, and <code>jupyter lab</code> starts the
-notebook program. <strong>Leave this terminal window open while you
-work</strong>: closing it stops Jupyter.</p>
+where the students’ notebooks live, <code>mkdir yourname</code> makes
+your own folder there (if it says the folder already exists, that is
+fine: you made it before), <code>cd yourname</code> moves you into it,
+and <code>jupyter lab</code> starts the notebook program. <strong>Leave
+this terminal window open while you work</strong>: closing it stops
+Jupyter.</p>
 <p>Your web browser opens a Jupyter page. Click <strong>File</strong>,
 then <strong>New</strong>, then <strong>Notebook</strong>. If it asks
 which kernel to use, choose <strong>darkmatter_cli_env</strong>.</p>
@@ -330,7 +337,7 @@ you into the project folder from the setup guide:</p>
 <pre><code>cd ~/Research/NSDF-Data
 git branch --show-current
 git status
-git add data_analysis/R76/student/first-analysis-yourname.ipynb
+git add data_analysis/R76/student/yourname/first-analysis-yourname.ipynb
 git commit -m &quot;First analysis: load dump 1 and count the quiet traces&quot;
 git push -u origin student-yourname</code></pre>
 <p><strong>What these lines do:</strong> the first one moves you into
@@ -392,7 +399,8 @@ Kernel</strong>).</td>
 <tr>
 <td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
 <td>Jupyter was started from the wrong folder. Close it and start it
-again from <code>data_analysis/R76/student</code>.</td>
+again from your own folder in <code>data_analysis/R76/student</code>
+(Step 3).</td>
 </tr>
 <tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
@@ -539,7 +547,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 15, 9 October 2026, macOS edition. Written for
+<p>Guide version 16, 9 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>

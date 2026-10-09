@@ -12,7 +12,7 @@ This folder is expected to move to its own, separately versioned repository one 
 |---|---|
 | `R76/notebooks/` | The exploratory notebooks and scripts for Run 76, and the small files they write. Each one is named for the series it studies, for example `07221203_2025_dump1_noise.ipynb`. |
 | `R76/series_lists/` | Run logs and lists of which series exist (`DataSeriesList.xlsx`, `nsdf_r76_series.csv`, ...). |
-| `R76/student/` | Students' own notebooks, such as `first-analysis-yourname.ipynb` from the student guide. A student with several files makes a folder with their name. |
+| `R76/student/` | Students' own work. **Each student has a folder of their own**, named with their name (for example `student/tony/`), holding their notebooks such as `first-analysis-yourname.ipynb` from the student guide. The guides tell students to make it with `mkdir`. |
 | `archives/` | HDF5 files that record which events a cut kept. See `archives/README.md`. Do not run the notebook that rewrites `good_noise.h5` without the project lead's approval. |
 | `legacy/` | Old notebooks and notes from before the library existed. Kept for reference. Not maintained. |
 

@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-09
+
+Analysis files now live in one folder, `data_analysis/`, each student works in a folder of their own, and the student guides gain a line-by-line code appendix, a GitHub sign-in step and an AI-agents page.
+
 ### Changed
 
 - **Each student works in a folder of their own** inside `data_analysis/R76/student/` (for example `student/tony/`). The first-analysis guide (version 16) now has students run `mkdir yourname` and `cd yourname` before `jupyter lab` and use the longer path in `git add`; the Codespaces guide (version 4), the writing-a-note guide (version 8), the note template and `data_analysis/README.md` say the same.
@@ -91,7 +95,8 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.4.0...develop
+[0.4.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/villano-lab/NSDF-Data/releases/tag/v0.1.0

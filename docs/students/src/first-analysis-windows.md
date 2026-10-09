@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 13 · 9 October 2026"
+date: "Version 14 · 9 October 2026"
 ---
 
 ::: tip
@@ -136,9 +136,11 @@ print(pulses.shape)
 The output is `(1517, 4096)`: 1517 traces, each with 4096 samples. If you get a different number, stop and check the dump name and the folder in Step 2.
 :::
 
+Want to know what every line did? See [the code, line by line (part A)](#code-step4).
+
 ## Step 5. Look at a trace
 
-Put this in a new cell (click **+** in the toolbar, or use the menu **Insert**, then **Insert Cell Below**), and run it:
+Click in the empty cell under the one you just ran: Jupyter adds one each time you press **Shift + Enter**. If there is none, click **+** in the toolbar to add one. Put this in it and run it:
 
 ```python
 import matplotlib.pyplot as plt
@@ -153,7 +155,7 @@ Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat no
 
 ## Step 6. Reproduce a number from Note 2
 
-Note 2 says that for this dump, a strict selection leaves **179 quiet traces**. Run this in a new cell:
+Note 2 says that for this dump, a strict selection leaves **179 quiet traces**. Run this in the next empty cell (add one with **+** if there is none):
 
 ```python
 from dataclasses import replace
@@ -171,6 +173,8 @@ print(quiet.sum())
 The output is **179**. If you see a different number, that is worth knowing. Write down the number you got and the steps you took, and tell the project lead. Do not change the project's code to make the number match.
 :::
 
+Want to know what every line did? See [the code, line by line (part B)](#code-step6).
+
 ## Step 7. Write down what you did
 
 In Jupyter, click **+** to add a cell and change its type from *Code* to **Markdown** in the toolbar. In that cell, write a few sentences in plain English: what you loaded, what you plotted, and what number you got. Then press **Shift + Enter**.
@@ -181,15 +185,21 @@ Once your branch exists (setup guide, Step 8), save your notebook to Git. The fi
 
 ```
 cd %USERPROFILE%\Research\NSDF-Data
+git branch --show-current
+git status
 git add R76/analysis_notes/first-analysis-yourname.ipynb
 git commit -m "First analysis: load dump 1 and count the quiet traces"
 git push -u origin student-yourname
 ```
 
-**What these lines do:** `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
+**What these lines do:** the first one moves you into the project. `git branch --show-current` prints the name of the branch you are on, and `git status` lists what has changed since your last save. **Make this a habit: every time you open a terminal in a project, look at the branch and the status before you do anything else.** Then `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
+
+::: checkpoint
+`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
+:::
 
 ::: careful
-Commit only your notebook. Check the list before committing with `git status`. If you see `.bin` files or anything from the `idx` folder, do not add them.
+Commit only your notebook. Check the list from `git status` before committing. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::
 
 ## You are done when
@@ -229,6 +239,36 @@ A trace looks like a flat line with a little jitter (the **baseline**) until som
 
 The trace in the figure is row 1095 of the table `pulses` from Step 4 (the row is the position in the table, not the event number). Row 1 is a quiet trace.
 
+## Appendix: the code, line by line {#appendix-code}
+
+You do not need this to finish the guide. It explains the code you pasted, a few lines at a time. A line that begins with `#` is a comment: Python ignores it, and it is there for people to read.
+
+### Part A. Step 4: load the data and count the traces {#code-step4}
+
+- `import sys` and `from pathlib import Path`: bring in two tools. `sys` controls where Python looks for code. `Path` works with folder names in the same way on every kind of computer.
+- `here = Path.cwd().resolve()`: the folder Jupyter is working in, written out in full.
+- `REPO = next(...)`: look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
+- `assert REPO, "Start Jupyter from inside the NSDF-Data folder."`: stop with that message if the project was not found, which means Jupyter was started in the wrong place.
+- `sys.path.insert(0, str(REPO / "python"))`: tell Python to look in the project's `python` folder first, so that the next `import` lines can find the project's own code.
+- `from nsdf_dark_matter.idx import load_all_data`: bring in the function, from the NSDF software, that reads a downloaded dump.
+- `import pulse_io as pio`: bring in the project's helpers for traces. `as pio` gives it a short name.
+- `cdms = load_all_data(...)`: open the dump you downloaded in Step 2. `Path.home()` is your home folder, and `/ "idx" / "07221203_2025_F0001"` follows the path down to the dump, the same folder Step 2 created. The whole dump is read into the computer's memory and called `cdms`.
+- `ids, pulses = pio.load_channel_batch(...)`: read it from the inside out. `cdms.get_detector_ids()` is the list of names of every group of traces (a name holds an event number and a detector number). `pio.filter_by_detector(..., 0)` keeps only the names for detector 0. `pio.load_channel_batch(cdms, ..., 0)` takes channel 0 from each of those and stacks the traces into one table. It gives back two things: `ids`, the names in order, and `pulses`, the table, with one row for each event and one column for each sample.
+- `print(pulses.shape)`: show the size of the table as (rows, columns). That is the `(1517, 4096)` you checked.
+
+### Part B. Step 6: count the quiet traces {#code-step6}
+
+- `from dataclasses import replace`: a tool for making a copy of a group of settings with one value changed.
+- `from pulse_config import DEFAULT_CONFIG`: the project's standard settings, such as how many samples at the start of a trace count as the baseline window (1000 by default) and how many of the very first samples to skip because of the electronics glitch (10).
+- `import pulse_quantities as pq`: functions that work out one number for each trace, such as how much its baseline wobbles.
+- `import pulse_cuts as pc`: functions that answer yes or no for each trace: "keep this one?"
+- `import numpy as np`: tools for working with tables of numbers.
+- `c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)`: a copy of the standard settings in which the baseline window is the first 500 samples, as in Note 2.
+- `quiet = pc.excursion_band(pulses, c500) & (np.log10(pq.bstd(pulses)) < 0.5)`: two yes-or-no tests joined by `&`, which means "and". The result, `quiet`, is a list with one `True` or `False` for each trace.
+    - `pc.excursion_band(pulses, c500)` is `True` when the trace's largest swing after the baseline window, compared with the wobble of its own baseline, falls in the middle band chosen in Note 2.
+    - `pq.bstd(pulses)` is the wobble (the standard deviation) of each trace's baseline. `np.log10(...) < 0.5` keeps only the traces whose baseline wobbles little: under about 3 counts.
+- `print(quiet.sum())`: a `True` counts as 1 and a `False` as 0, so the sum is the number of traces that passed both tests. That is the 179 of the checkpoint.
+
 ## Where to get help
 
 **Anthony Villano**, project lead: <anthony.villano@ucdenver.edu>
@@ -237,7 +277,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 13, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 14, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

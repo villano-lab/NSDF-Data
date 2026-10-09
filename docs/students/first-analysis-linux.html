@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Linux
-edition &middot; Version 13 · 9 October 2026</p>
+edition &middot; Version 14 · 9 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -51,6 +51,8 @@ problems</a></li>
 <li><a href="#appendix-what-an-event-looks-like"
 id="toc-appendix-what-an-event-looks-like">Appendix: what an event looks
 like</a></li>
+<li><a href="#appendix-code" id="toc-appendix-code">Appendix: the code,
+line by line</a></li>
 <li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
 help</a></li>
 <li><a href="#session-info" id="toc-session-info">Session Info</a></li>
@@ -270,10 +272,13 @@ print(pulses.shape)</code></pre>
 samples. If you get a different number, stop and check the dump name and
 the folder in Step 2.</p>
 </div>
+<p>Want to know what every line did? See <a href="#code-step4">the code,
+line by line (part A)</a>.</p>
 <h2 id="step-5.-look-at-a-trace">Step 5. Look at a trace</h2>
-<p>Put this in a new cell (click <strong>+</strong> in the toolbar, or
-use the menu <strong>Insert</strong>, then <strong>Insert Cell
-Below</strong>), and run it:</p>
+<p>Click in the empty cell under the one you just ran: Jupyter adds one
+each time you press <strong>Shift + Enter</strong>. If there is none,
+click <strong>+</strong> in the toolbar to add one. Put this in it and
+run it:</p>
 <pre class="python"><code>import matplotlib.pyplot as plt
 
 plt.plot(pulses[0])
@@ -289,7 +294,8 @@ know more about what you are looking at.</p>
 <h2 id="step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce a
 number from Note 2</h2>
 <p>Note 2 says that for this dump, a strict selection leaves <strong>179
-quiet traces</strong>. Run this in a new cell:</p>
+quiet traces</strong>. Run this in the next empty cell (add one with
+<strong>+</strong> if there is none):</p>
 <pre class="python"><code>from dataclasses import replace
 from pulse_config import DEFAULT_CONFIG
 import pulse_quantities as pq
@@ -305,6 +311,8 @@ that is worth knowing. Write down the number you got and the steps you
 took, and tell the project lead. Do not change the project’s code to
 make the number match.</p>
 </div>
+<p>Want to know what every line did? See <a href="#code-step6">the code,
+line by line (part B)</a>.</p>
 <h2 id="step-7.-write-down-what-you-did">Step 7. Write down what you
 did</h2>
 <p>In Jupyter, click <strong>+</strong> to add a cell and change its
@@ -320,17 +328,34 @@ it open. Open a <strong>new</strong> terminal for the Git commands. A
 new terminal starts in your home folder, so the first line below moves
 you into the project folder from the setup guide:</p>
 <pre><code>cd ~/Research/NSDF-Data
+git branch --show-current
+git status
 git add R76/analysis_notes/first-analysis-yourname.ipynb
 git commit -m &quot;First analysis: load dump 1 and count the quiet traces&quot;
 git push -u origin student-yourname</code></pre>
-<p><strong>What these lines do:</strong> <code>git add</code> picks the
-file you want to save, <code>git commit</code> saves a snapshot of it
-with your short message, and <code>git push</code> uploads that snapshot
-to GitHub, to your own branch.</p>
+<p><strong>What these lines do:</strong> the first one moves you into
+the project. <code>git branch --show-current</code> prints the name of
+the branch you are on, and <code>git status</code> lists what has
+changed since your last save. <strong>Make this a habit: every time you
+open a terminal in a project, look at the branch and the status before
+you do anything else.</strong> Then <code>git add</code> picks the file
+you want to save, <code>git commit</code> saves a snapshot of it with
+your short message, and <code>git push</code> uploads that snapshot to
+GitHub, to your own branch.</p>
+<div class="checkpoint">
+<p><code>git branch --show-current</code> prints
+<code>student-yourname</code> (your own branch), and
+<code>git status</code> starts with
+<code>On branch student-yourname</code> and lists your notebook under
+<strong>Untracked files</strong> (a new file) or <strong>Changes not
+staged for commit</strong> (a file you changed). If the branch is
+<code>develop</code> or <code>master</code>, stop and ask the project
+lead: do not commit there.</p>
+</div>
 <div class="careful">
-<p>Commit only your notebook. Check the list before committing with
-<code>git status</code>. If you see <code>.bin</code> files or anything
-from the <code>idx</code> folder, do not add them.</p>
+<p>Commit only your notebook. Check the list from
+<code>git status</code> before committing. If you see <code>.bin</code>
+files or anything from the <code>idx</code> folder, do not add them.</p>
 </div>
 <h2 id="you-are-done-when">You are done when</h2>
 <ul class="task-list">
@@ -425,6 +450,87 @@ this dump, many pulses start there.</p>
 <p>The trace in the figure is row 1095 of the table <code>pulses</code>
 from Step 4 (the row is the position in the table, not the event
 number). Row 1 is a quiet trace.</p>
+<h2 id="appendix-code">Appendix: the code, line by line</h2>
+<p>You do not need this to finish the guide. It explains the code you
+pasted, a few lines at a time. A line that begins with <code>#</code> is
+a comment: Python ignores it, and it is there for people to read.</p>
+<h3 id="code-step4">Part A. Step 4: load the data and count the
+traces</h3>
+<ul>
+<li><code>import sys</code> and <code>from pathlib import Path</code>:
+bring in two tools. <code>sys</code> controls where Python looks for
+code. <code>Path</code> works with folder names in the same way on every
+kind of computer.</li>
+<li><code>here = Path.cwd().resolve()</code>: the folder Jupyter is
+working in, written out in full.</li>
+<li><code>REPO = next(...)</code>: look at <code>here</code> and then at
+each folder above it, one after another, and take the first one that
+contains the file <code>python/pulse_io.py</code>. That folder is the
+whole NSDF-Data project. If there is none, <code>REPO</code> is
+<code>None</code>.</li>
+<li><code>assert REPO, "Start Jupyter from inside the NSDF-Data folder."</code>:
+stop with that message if the project was not found, which means Jupyter
+was started in the wrong place.</li>
+<li><code>sys.path.insert(0, str(REPO / "python"))</code>: tell Python
+to look in the project’s <code>python</code> folder first, so that the
+next <code>import</code> lines can find the project’s own code.</li>
+<li><code>from nsdf_dark_matter.idx import load_all_data</code>: bring
+in the function, from the NSDF software, that reads a downloaded
+dump.</li>
+<li><code>import pulse_io as pio</code>: bring in the project’s helpers
+for traces. <code>as pio</code> gives it a short name.</li>
+<li><code>cdms = load_all_data(...)</code>: open the dump you downloaded
+in Step 2. <code>Path.home()</code> is your home folder, and
+<code>/ "idx" / "07221203_2025_F0001"</code> follows the path down to
+the dump, the same folder Step 2 created. The whole dump is read into
+the computer’s memory and called <code>cdms</code>.</li>
+<li><code>ids, pulses = pio.load_channel_batch(...)</code>: read it from
+the inside out. <code>cdms.get_detector_ids()</code> is the list of
+names of every group of traces (a name holds an event number and a
+detector number). <code>pio.filter_by_detector(..., 0)</code> keeps only
+the names for detector 0.
+<code>pio.load_channel_batch(cdms, ..., 0)</code> takes channel 0 from
+each of those and stacks the traces into one table. It gives back two
+things: <code>ids</code>, the names in order, and <code>pulses</code>,
+the table, with one row for each event and one column for each
+sample.</li>
+<li><code>print(pulses.shape)</code>: show the size of the table as
+(rows, columns). That is the <code>(1517, 4096)</code> you checked.</li>
+</ul>
+<h3 id="code-step6">Part B. Step 6: count the quiet traces</h3>
+<ul>
+<li><code>from dataclasses import replace</code>: a tool for making a
+copy of a group of settings with one value changed.</li>
+<li><code>from pulse_config import DEFAULT_CONFIG</code>: the project’s
+standard settings, such as how many samples at the start of a trace
+count as the baseline window (1000 by default) and how many of the very
+first samples to skip because of the electronics glitch (10).</li>
+<li><code>import pulse_quantities as pq</code>: functions that work out
+one number for each trace, such as how much its baseline wobbles.</li>
+<li><code>import pulse_cuts as pc</code>: functions that answer yes or
+no for each trace: “keep this one?”</li>
+<li><code>import numpy as np</code>: tools for working with tables of
+numbers.</li>
+<li><code>c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)</code>:
+a copy of the standard settings in which the baseline window is the
+first 500 samples, as in Note 2.</li>
+<li><code>quiet = pc.excursion_band(pulses, c500) &amp; (np.log10(pq.bstd(pulses)) &lt; 0.5)</code>:
+two yes-or-no tests joined by <code>&amp;</code>, which means “and”. The
+result, <code>quiet</code>, is a list with one <code>True</code> or
+<code>False</code> for each trace.
+<ul>
+<li><code>pc.excursion_band(pulses, c500)</code> is <code>True</code>
+when the trace’s largest swing after the baseline window, compared with
+the wobble of its own baseline, falls in the middle band chosen in Note
+2.</li>
+<li><code>pq.bstd(pulses)</code> is the wobble (the standard deviation)
+of each trace’s baseline. <code>np.log10(...) &lt; 0.5</code> keeps only
+the traces whose baseline wobbles little: under about 3 counts.</li>
+</ul></li>
+<li><code>print(quiet.sum())</code>: a <code>True</code> counts as 1 and
+a <code>False</code> as 0, so the sum is the number of traces that
+passed both tests. That is the 179 of the checkpoint.</li>
+</ul>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -433,7 +539,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 13, 9 October 2026, Linux edition. Written for
+<p>Guide version 14, 9 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>

@@ -26,7 +26,7 @@ For a note you write yourself: an HTML page in `docs/notes/` and one row in the 
 \small
 ```
 
-1. **Notebook.** Do the analysis in `R76/analysis_notes/`, run it top to bottom, and commit it with any library change. Note the short hash: `git rev-parse --short HEAD`. Re-running some notebooks leaves metadata churn, so read `git diff` before committing. Never run `07221203_2025_dump1_noise.ipynb` without approval (it rewrites `archives/good_noise.h5`).
+1. **Notebook.** Do the analysis in `data_analysis/R76/notebooks/`, run it top to bottom, and commit it with any library change. Note the short hash: `git rev-parse --short HEAD`. Re-running some notebooks leaves metadata churn, so read `git diff` before committing. Never run `07221203_2025_dump1_noise.ipynb` without approval (it rewrites `data_analysis/archives/good_noise.h5`).
 2. **Figures.** Save the PNGs from the executed notebook into `docs/notes/img/`, named for the series and the content, for example `dump1_bstd_time.png`.
 3. **Page.** Copy the newest note, `note-02a-bstd-vs-time.html`, to `docs/notes/note-NN-slug.html`. Edit the `<title>`, the `<h1>` (write it as a question), the meta line (`Note NN · Author(s) · date · Status`), and the `<nav class="outline">` with an `id` on every `<h2>`. Sections: Code Repository, Data and setup, The question, one section per result (`<figure>`, alt text, caption), Reading, Caveats, Next steps.
 4. **Pin the code.** Every link to a notebook or to `python/` uses the commit hash, never a branch name: under the repository URL, `blob/<hash>/<path>` for a file and `tree/<hash>/<folder>` for a folder. Check each one: `git cat-file -e <hash>:<path>` prints nothing when the file exists.

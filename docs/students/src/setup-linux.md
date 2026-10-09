@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Linux edition"
-date: "Version 12 · 9 October 2026"
+date: "Version 13 · 9 October 2026"
 ---
 
 ::: tip
@@ -109,7 +109,7 @@ Downloading with `git clone` does not need a GitHub account (saving your work on
 | `git clone` | Downloads a copy of the project from the internet into a new folder called `NSDF-Data`. |
 
 ::: checkpoint
-Type `ls`{.cmd} and press Enter. You are now inside the `NSDF-Data` folder (your prompt mentions it), so the list shows the project's own folders and files, such as `python`, `R76`, `docs` and `README.md`.
+Type `ls`{.cmd} and press Enter. You are now inside the `NSDF-Data` folder (your prompt mentions it), so the list shows the project's own folders and files, such as `python`, `data_analysis`, `docs` and `README.md`.
 :::
 
 ## Step 5. Create your analysis environment
@@ -280,7 +280,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 12, 9 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 13, 9 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

@@ -7,11 +7,10 @@ Instructions for AI coding agents (Claude Code, Codex, Copilot, Cursor and other
 Analysis of SuperCDMS-type dark-matter detector data from the NSDF archive (Run 76). It holds:
 
 - `python/`: a small shared pulse-analysis library (flat modules, no package). Start with `python/README.md`.
-- `R76/analysis_notes/`: exploratory Jupyter notebooks (kernel `darkmatter_cli_env`).
+- `data_analysis/`: **all data analysis lives here, and nowhere else** (notebooks, series lists, figures, archives, student work). `data_analysis/R76/notebooks/` holds the exploratory notebooks (kernel `darkmatter_cli_env`), `R76/student/` the students' notebooks, `R76/series_lists/` the run logs, `archives/` the HDF5 files, `legacy/` old work. See `data_analysis/README.md`. Expect this folder to move to its own repository later, so it may use the library in `python/` but nothing in the library may depend on it.
 - `docs/`: the GitHub Pages site (https://villano-lab.github.io/NSDF-Data/), plain hand-written HTML with no build step: `docs/index.html`, `docs/notes/note-NN-*.html`, `docs/notes/img/`, `docs/style.css`.
 - `docs/students/`: the student guide PDFs, built from sources in `docs/students/src/`.
 - `notes/src/` and `tools/build_notes.py`: student notes written in Markdown and published by a GitHub Action.
-- `archives/`: HDF5 files of selected event ids (see `archives/README.md`).
 
 The maintainer is Anthony Villano (@villaa).
 
@@ -68,7 +67,7 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 - Raw dump data lives **outside the repo**, in `~/idx`, and `/idx/` is git-ignored. `nsdf-cli download` writes an `idx` folder **in the current directory**, so always run it from the home folder, never from inside `NSDF-Data`.
 - Pinned packages: Python 3.10, `nsdf-dark-matter==0.3.0`, `nsdf-dark-matter-cli==0.5.0` (version 0.3.1 of the CLI does not exist on PyPI), `numpy==2.2.6`, `matplotlib==3.10.7`, plus `h5py`, `pytest`, `ipykernel` and `jupyterlab`.
 - `requirements.txt` is the single list of pip packages and versions; setup Step 5 does `conda create -n darkmatter_cli_env python=3.10 pip` and then `python -m pip install -r requirements.txt`. It has no `python==` line (pip cannot install one). Do **not** use `conda create -f requirements.txt`: the NSDF packages are not on conda channels.
-- Do **not** run `R76/analysis_notes/07221203_2025_dump1_noise.ipynb` without the maintainer's approval: it rewrites `archives/good_noise.h5`.
+- Do **not** run `data_analysis/R76/notebooks/07221203_2025_dump1_noise.ipynb` without the maintainer's approval: it rewrites `data_analysis/archives/good_noise.h5`.
 - The Pages site builds from `master` `/docs` in about 30 seconds. After a push to `docs/`, verify the live page (for example `curl -s -o /dev/null -w "%{http_code}"`, or compare a published PDF with `cmp`).
 
 ## Analysis pitfalls

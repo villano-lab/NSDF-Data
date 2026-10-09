@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Linux
-edition &middot; Version 14 · 9 October 2026</p>
+edition &middot; Version 15 · 9 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -217,10 +217,10 @@ Ask the project lead before you delete anything.</p>
 <h2 id="step-3.-open-jupyter-in-the-right-folder">Step 3. Open Jupyter
 in the right folder</h2>
 <p>Notebooks must be opened from the folder
-<code>R76/analysis_notes</code>, inside the project. In the terminal,
-type these lines:</p>
+<code>data_analysis/R76/student</code>, inside the project. In the
+terminal, type these lines:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/R76/analysis_notes
+cd ~/Research/NSDF-Data/data_analysis/R76/student
 jupyter lab</code></pre>
 <p><strong>What these lines do:</strong> <code>conda activate</code>
 switches your environment on, <code>cd</code> moves you into the folder
@@ -330,7 +330,7 @@ you into the project folder from the setup guide:</p>
 <pre><code>cd ~/Research/NSDF-Data
 git branch --show-current
 git status
-git add R76/analysis_notes/first-analysis-yourname.ipynb
+git add data_analysis/R76/student/first-analysis-yourname.ipynb
 git commit -m &quot;First analysis: load dump 1 and count the quiet traces&quot;
 git push -u origin student-yourname</code></pre>
 <p><strong>What these lines do:</strong> the first one moves you into
@@ -392,7 +392,7 @@ Kernel</strong>).</td>
 <tr>
 <td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
 <td>Jupyter was started from the wrong folder. Close it and start it
-again from <code>R76/analysis_notes</code>.</td>
+again from <code>data_analysis/R76/student</code>.</td>
 </tr>
 <tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
@@ -539,7 +539,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 14, 9 October 2026, Linux edition. Written for
+<p>Guide version 15, 9 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>

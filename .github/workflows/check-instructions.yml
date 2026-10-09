@@ -48,6 +48,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Analysis files live in data_analysis/
+        run: |
+          stray=$(git ls-files '*.ipynb' | grep -v '^data_analysis/' || true)
+          if [ -n "$stray" ]; then
+            echo "Notebooks must live under data_analysis/ (see data_analysis/README.md). Found:"
+            echo "$stray"
+            exit 1
+          fi
+          echo "all $(git ls-files '*.ipynb' | wc -l) notebooks are under data_analysis/"
+
       - name: requirements.txt is installable and used by the setup guide and dev container
         run: |
           python3 - <<'EOF'
@@ -304,5 +314,5 @@ jobs:
           MPLBACKEND: Agg
         run: |
           conda activate darkmatter_cli_env
-          cd R76/analysis_notes
-          python ../../.github/scripts/run_guide_code.py ../../docs/students/src/first-analysis-linux.md
+          cd data_analysis/R76/notebooks
+          python ../../../.github/scripts/run_guide_code.py ../../../docs/students/src/first-analysis-linux.md

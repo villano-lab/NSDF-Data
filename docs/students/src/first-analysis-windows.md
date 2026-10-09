@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 12 · 9 October 2026"
+date: "Version 13 · 9 October 2026"
 ---
 
 ::: tip
@@ -101,7 +101,7 @@ Your web browser opens a Jupyter page. Click **File**, then **New**, then **Note
 A notebook is a list of boxes called **cells**. Type code in a cell and press **Shift + Enter** to run it. The result appears under the cell. Press **Enter** (without Shift) to keep typing in the same cell.
 :::
 
-Give your notebook a name: click the name at the top, type `first-analysis-yourname`, and press Enter.
+Give your notebook a name: right-click its tab at the top (it says `Untitled.ipynb`) and choose **Rename Notebook**. In the box, replace `Untitled` with `first-analysis-yourname` (keep `.ipynb` at the end) and click **Rename**.
 
 ## Step 4. Load the data and count the traces
 
@@ -237,7 +237,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 12, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 13, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

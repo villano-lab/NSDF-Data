@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 14 · 10 October 2026"
+date: "Version 15 · 10 October 2026"
 ---
 
 ::: tip
@@ -251,7 +251,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `ls ~/Research`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `52 passed`.
+- [ ] `python -m pytest -q`{.cmd} ends with `52 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd ~/Research/NSDF-Data/python`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -274,7 +274,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 14, 10 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 15, 10 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

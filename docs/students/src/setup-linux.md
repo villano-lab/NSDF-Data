@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Linux edition"
-date: "Version 13 · 9 October 2026"
+date: "Version 14 · 10 October 2026"
 ---
 
 ::: tip
@@ -89,7 +89,7 @@ Use `sudo` only for the one command that installs Git. Other commands in this gu
 
 
 
-Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
+Your project will live in a folder called `Research`. Create it, go into it, and download the code by running the four commands below. To run a command, type (or paste) the line into the terminal and press Enter. Wait for the prompt to come back, then do the next line:
 
 ```
 mkdir -p ~/Research
@@ -146,7 +146,7 @@ The last line of the output is a message, not an error, and the `(darkmatter_cli
 
 ## Step 6. Check that everything works
 
-First, the tests. They use made-up data, so they need no download. Type each line and press Enter:
+First, the tests. They use made-up data, so they need no download. Run the three commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
 
 ```
 conda activate darkmatter_cli_env
@@ -280,7 +280,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 13, 9 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 14, 10 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

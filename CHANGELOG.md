@@ -6,6 +6,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Changed
 
+- **Setup guides (version 15):** in *You are done when*, the `python -m pytest -q` item now says to activate the environment (`conda activate darkmatter_cli_env`) and go to the repository's `python` folder first, as in Step 6.
 - **Setup guides (version 14):** Step 4 and Step 6 now say plainly that the lines in the box are commands to run, one at a time: type (or paste) each line, press Enter, and wait for the prompt before the next. The Windows guide no longer says the 150 MB Miniforge download "can take a few minutes"; it takes less than a minute on most connections.
 
 ## [0.4.0] - 2026-10-09

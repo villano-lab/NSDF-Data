@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **Setup guides (version 14):** Step 4 and Step 6 now say plainly that the lines in the box are commands to run, one at a time: type (or paste) each line, press Enter, and wait for the prompt before the next. The Windows guide no longer says the 150 MB Miniforge download "can take a few minutes"; it takes less than a minute on most connections.
+
 ## [0.4.0] - 2026-10-09
 
 Analysis files now live in one folder, `data_analysis/`, each student works in a folder of their own, and the student guides gain a line-by-line code appendix, a GitHub sign-in step and an AI-agents page.

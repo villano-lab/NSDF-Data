@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Windows
-edition &middot; Version 13 · 9 October 2026</p>
+edition &middot; Version 14 · 10 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -191,9 +191,10 @@ press Enter. You should see a line starting with
 Its download file is <strong>Miniforge3-Windows-x86_64.exe</strong>.</p>
 <p>Download the installer with this link: <a
 href="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe">Miniforge3-Windows-x86_64.exe</a>.
-It is about 150 MB, so it can take a few minutes. If your browser asks
-whether to keep the file, choose <strong>Keep</strong>. (If the link
-ever stops working, the downloads are also listed on the <a
+It is about 150 MB, which takes less than a minute on most connections.
+If your browser asks whether to keep the file, choose
+<strong>Keep</strong>. (If the link ever stops working, the downloads
+are also listed on the <a
 href="https://github.com/conda-forge/miniforge">Miniforge page</a>.)
 Double-click the downloaded file and follow the installer. Click
 <strong>Next</strong> (and <strong>I Agree</strong> on the licence page)
@@ -271,8 +272,10 @@ written</strong>, with the two percent signs. Do not replace it with
 your name: Windows fills it in for you.</p>
 </div>
 <p>Your project will live in a folder called <code>Research</code>.
-Create it, go into it, and download the code. Type each line and press
-Enter:</p>
+Create it, go into it, and download the code by running the four
+commands below. To run a command, type (or paste) the line into the
+terminal and press Enter. Wait for the prompt to come back, then do the
+next line:</p>
 <pre><code>mkdir %USERPROFILE%\Research
 cd %USERPROFILE%\Research
 git clone https://github.com/villano-lab/NSDF-Data.git
@@ -390,7 +393,9 @@ prompt.</p>
 <h2 id="step-6.-check-that-everything-works">Step 6. Check that
 everything works</h2>
 <p>First, the tests. They use made-up data, so they need no download.
-Type each line and press Enter:</p>
+Run the three commands below, one at a time: type (or paste) each line
+into the terminal and press Enter, and wait for the prompt to come back
+before the next one:</p>
 <pre><code>conda activate darkmatter_cli_env
 cd %USERPROFILE%\Research\NSDF-Data\python
 python -m pytest -q</code></pre>
@@ -577,7 +582,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 13, 9 October 2026, Windows edition. Written for
+<p>Guide version 14, 10 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

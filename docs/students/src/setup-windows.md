@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 13 · 9 October 2026"
+date: "Version 14 · 10 October 2026"
 ---
 
 ::: tip
@@ -57,7 +57,7 @@ In the terminal, type `git --version`{.cmd} and press Enter. You should see a li
 
 Miniforge installs Python and the other packages the analysis needs. Its download file is **Miniforge3-Windows-x86_64.exe**.
 
-Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, so it can take a few minutes. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:
+Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, which takes less than a minute on most connections. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:
 
 - When it asks who to install for, choose **Just Me**.
 - Keep the default install folder.
@@ -88,7 +88,7 @@ Windows may show a blue warning box when you run an installer ("Windows protecte
 **What is `%USERPROFILE%`?** It is a shortcut that Windows understands. It stands for your own personal folder on this computer, the one named after you (for example `C:\Users\YourName`). Type it **exactly as written**, with the two percent signs. Do not replace it with your name: Windows fills it in for you.
 :::
 
-Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
+Your project will live in a folder called `Research`. Create it, go into it, and download the code by running the four commands below. To run a command, type (or paste) the line into the terminal and press Enter. Wait for the prompt to come back, then do the next line:
 
 ```
 mkdir %USERPROFILE%\Research
@@ -145,7 +145,7 @@ The last line of the output is a message, not an error, and the `(darkmatter_cli
 
 ## Step 6. Check that everything works
 
-First, the tests. They use made-up data, so they need no download. Type each line and press Enter:
+First, the tests. They use made-up data, so they need no download. Run the three commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
 
 ```
 conda activate darkmatter_cli_env
@@ -279,7 +279,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 13, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 14, 10 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

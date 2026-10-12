@@ -380,6 +380,18 @@ staged for commit</strong> (a file you changed). If the branch is
 <code>develop</code> or <code>master</code>, stop and ask the project
 lead: do not commit there.</p>
 </div>
+<div class="tip">
+<p><strong>You may see a warning about LF and CRLF.</strong> On Windows,
+<code>git add</code> can print a line like this one:</p>
+<p><code>warning: in the working copy of 'data_analysis/R76/student/yourname/</code><br />
+<code>first-analysis-yourname.ipynb', LF will be replaced by CRLF the next time Git touches it</code></p>
+<p>This is harmless, and your file was still added, so carry on with
+<code>git commit</code>. Every line of a text file ends with an
+invisible marker. Windows uses two characters for it (CRLF), macOS and
+Linux use one (LF). Git for Windows keeps LF in the repository and gives
+you CRLF in your own copy, so it is telling you that it will convert
+this file the next time it writes it.</p>
+</div>
 <div class="careful">
 <p>Commit only your notebook. Check the list from
 <code>git status</code> before committing. If you see <code>.bin</code>

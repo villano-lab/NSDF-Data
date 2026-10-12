@@ -23,6 +23,7 @@ OS = {
   GOHOME="cd %USERPROFILE%",
   HOMEEX="`C:\\Users\\YourName`",
   NEWLINE_NOTE="",
+  CRLF_NOTE="::: tip\n**You may see a warning about LF and CRLF.** On Windows, `git add` can print a line like this one:\n\n`warning: in the working copy of 'data_analysis/R76/student/yourname/`\\\n`first-analysis-yourname.ipynb', LF will be replaced by CRLF the next time Git touches it`\n\nThis is harmless, and your file was still added, so carry on with `git commit`. Every line of a text file ends with an invisible marker. Windows uses two characters for it (CRLF), macOS and Linux use one (LF). Git for Windows keeps LF in the repository and gives you CRLF in your own copy, so it is telling you that it will convert this file the next time it writes it.\n:::\n\n",
   CAREFUL_EXTRA="Windows may show a blue warning box when you run an installer (\"Windows protected your PC\"). Click **More info**, then **Run anyway**, only if you downloaded the file from the link in this guide.",
 ),
 "macos": dict(
@@ -49,6 +50,7 @@ OS = {
   GOHOME="cd ~",
   HOMEEX="`/Users/YourName`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="macOS may say an app is from an unidentified developer when you open it. You do not need to open any app in this guide, so you can ignore this.",
+  CRLF_NOTE="",
 ),
 "linux": dict(
   NAME="Linux", FILE="linux", SHORT="Linux",
@@ -74,6 +76,7 @@ OS = {
   GOHOME="cd ~",
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.",
+  CRLF_NOTE="",
 ),
 }
 
@@ -551,7 +554,7 @@ git push -u origin student-yourname
 `git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
 :::
 
-::: careful
+@CRLF_NOTE@::: careful
 Commit only your notebook. Check the list from `git status` before committing. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::
 
@@ -772,7 +775,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

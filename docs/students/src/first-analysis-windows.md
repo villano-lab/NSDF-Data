@@ -204,6 +204,15 @@ git push -u origin student-yourname
 `git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
 :::
 
+::: tip
+**You may see a warning about LF and CRLF.** On Windows, `git add` can print a line like this one:
+
+`warning: in the working copy of 'data_analysis/R76/student/yourname/`\
+`first-analysis-yourname.ipynb', LF will be replaced by CRLF the next time Git touches it`
+
+This is harmless, and your file was still added, so carry on with `git commit`. Every line of a text file ends with an invisible marker. Windows uses two characters for it (CRLF), macOS and Linux use one (LF). Git for Windows keeps LF in the repository and gives you CRLF in your own copy, so it is telling you that it will convert this file the next time it writes it.
+:::
+
 ::: careful
 Commit only your notebook. Check the list from `git status` before committing. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::

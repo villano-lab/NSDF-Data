@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 5 · 12 October 2026"
+date: "Version 6 · 12 October 2026"
 ---
 
 ::: tip
@@ -22,21 +22,60 @@ Nothing reaches the public site until the merge.
 ## Before you start
 
 - **You have write access.** Your lead adds you to the project on GitHub. You need this to push a branch.
-- **Your note is written and checked** against guide 3, and the notebook it uses is committed to your branch.
+- **Your note is written and checked** against guide 3, as a Markdown file (the VS Code route) or a Word or Google Docs file, and the notebook it uses is committed to your branch.
 - **You know your branch name.** It is `student-yourname`, from the setup guide.
 
-## Step 1. Put your note in the right place
+## Step 1. Get your note into `notes/src/`
 
-Your note goes in the `notes/src/` folder:
+Your note has to end up as a Markdown file in the `notes/src/` folder, with its pictures in `notes/src/img/`. Follow the part that matches how you wrote it.
 
-- `notes/src/your-note-name.md` is the note. Start from `_template.md` and keep the header.
-- `notes/src/img/` holds the pictures. Refer to them as `img/your-picture.png`.
+### If you wrote Markdown in VS Code
 
-::: careful
-The template has a line that points to `img/example.png`. Delete that line, or replace it with one of your own pictures. The check reports a missing picture otherwise.
+The note is already in place. Check that:
+
+- the note is `notes/src/your-note-name.md`, started from `_template.md`, with the header kept;
+- every picture is a file directly in `notes/src/img/` (not in a subfolder), named with your note's name at the start, and linked as `img/your-note-name-fig1.png`;
+- the template's line that points to `img/example.png` is deleted or replaced by one of your own pictures. The check reports a missing picture otherwise.
+
+### If you wrote in Word or Google Docs
+
+A small program in the project, `tools/word_to_note.py`, turns the document into a note and saves its pictures in the right place under the right names.
+
+**a. Export the document.**
+
+- In **Word**: **File**, then **Save As**, and choose **Word Document (.docx)**.
+- In **Google Docs**: **File**, then **Download**, then **Microsoft Word (.docx)**.
+
+Save it in your `Research` folder, next to `NSDF-Data`, as `my-note.docx`.
+
+**b. Install pandoc once.** In the terminal, with your environment active:
+
+```
+conda activate darkmatter_cli_env
+conda install -c conda-forge pandoc -y
+```
+
+On macOS you can also use `brew install pandoc`. On Windows, the [pandoc website](https://pandoc.org/installing.html) has an installer.
+
+**c. Convert.** In the terminal, go to the `NSDF-Data` folder and run (change `my-note.docx` and choose a note name made of lowercase letters and hyphens):
+
+```
+python tools/word_to_note.py ../my-note.docx your-note-name
+```
+
+It writes `notes/src/your-note-name.md`. It saves each picture in `notes/src/img/` as `your-note-name-fig1.png`, then `-fig2.png`, and so on, in the order the pictures appear. It fixes the links and tells you what it did.
+
+::: checkpoint
+The program printed `Wrote notes/src/your-note-name.md` and the number of pictures you expect. Open the note in VS Code or any text editor. Every section title you styled as a heading should start with `#` or `##`, and every picture should be a line starting `![` with a caption line under it. If the program listed leftover formatting (`<u>`, `<sup>`, `<sub>`, `<span>`), delete those tags and keep the words, or the check will reject the note. If you see no `#` lines at all, your titles were not Heading-styled: fix the document and run the command again.
 :::
 
-Leave `id: "TBD"` in the header. Your lead will replace it with a number.
+**d. Fill in the header** at the top of the new note: title, author, date, keywords and the one-sentence description (guide 3, *The header*). Leave `id: "TBD"`.
+
+::: tip
+**Test the conversion before you rely on it.** Convert a short two-section document with one picture first. If the headings and the picture both come through, convert the real note.
+:::
+
+Your lead will replace `id: "TBD"` with a number.
 
 ## Step 2. Commit to your branch
 
@@ -82,6 +121,7 @@ The check starts automatically and takes less than a minute. When it finishes, c
 | `notebook link pinned to 'master'` | Replace `master` with the commit hash you committed the notebook at. |
 | `placeholder COMMIT is still in the note` | Put the real commit hash in place of `COMMIT`. |
 | `picture not found` | Check the file name and that the picture is in `notes/src/img/`. |
+| `picture '...' must be directly in notes/src/img/` | Move the picture out of the subfolder into `notes/src/img/` and link it as `img/name.png`. A note made with `word_to_note.py` already does this. |
 
 To fix a problem: edit the file on your branch and commit again. The pull request updates itself, and the check runs again.
 
@@ -100,7 +140,7 @@ Your lead reads the note, may comment on the pull request, and may ask you for c
 
 ## Changing a note later
 
-Start from the latest version of your branch. Your lead gave your note its number (S1, S2, …) on the pull request, and your own copy of the file may still say `TBD`:
+You can change a published note either way you wrote it. Start from the latest version of your branch. Your lead gave your note its number (S1, S2, …) on the pull request, and your own copy of the file may still say `TBD`:
 
 ```
 git switch student-yourname
@@ -109,11 +149,30 @@ git pull origin develop
 
 Open `notes/src/your-note-name.md` and look at the header. It should say your note's number, for example `id: "S3"`. **Keep that number.** If it says `TBD`, stop and ask your lead: the check does not mind `TBD`, but the site cannot publish a note with it, and nothing is published until it is fixed.
 
-Then make the change, commit, push, and open a new pull request (or add to the open one). Let the check run again. Update the **date** line and, if the conclusion has changed, the **Status** line. If a result was wrong, say so in the note, with the date, as guide 3 explains. Do not delete a published note to hide a mistake.
+Then choose **one** of the two ways and keep to it, because the second one replaces the text of the note:
+
+**Way 1. Edit the Markdown.** Open `notes/src/your-note-name.md` in VS Code (or any text editor), change the text, and replace a picture by saving the new PNG under the same name in `notes/src/img/`.
+
+**Way 2. Edit the Word or Google Docs file.** Change the document, export it again as a `.docx` (Step 1a), and run the same command with the **same note name**:
+
+```
+python tools/word_to_note.py ../my-note.docx your-note-name
+```
+
+The program replaces the text and the pictures, and **keeps your header as it is**, so the number stays. Pictures are numbered in the order they appear, so the file names can shift if you add one in the middle; the links are rewritten to match, and pictures that are no longer used are removed. Do not edit the Markdown by hand in this way: the next run would overwrite your changes.
+
+After either way, update the **date** line, and the **Status** line if the conclusion has changed, in the header. Look at what changed before you commit:
+
+```
+git status
+git diff notes/src/your-note-name.md
+```
+
+Then commit, push, and open a new pull request (or add to the open one). Let the check run again. If a result was wrong, say so in the note, with the date, as guide 3 explains. Do not delete a published note to hide a mistake.
 
 ## Session Info
 
-Guide version 5, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 6, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

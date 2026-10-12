@@ -68,7 +68,10 @@ def check_note(path, header, body, taken_ids, strict):
     for src in re.findall(r"!\[[^\]]*\]\(([^)]+)\)", body):
         if src.startswith("http"):
             continue
-        if not (SRC / src).is_file():
+        if not re.fullmatch(r"img/[^/]+", src):
+            problems.append(f"picture {src!r} must be directly in notes/src/img/, not in a subfolder, "
+                            "and linked as img/name.png (student guide 4)")
+        elif not (SRC / src).is_file():
             problems.append(f"picture not found: notes/src/{src}")
     if "COMMIT" in body:
         problems.append("placeholder COMMIT is still in the note: replace it with the commit hash")

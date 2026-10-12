@@ -393,13 +393,12 @@ date: "Version 17 · 12 October 2026"
 
 **Figure 2.** How the data is organised, and which part this guide follows (blue). A series is split into dumps; a dump holds events; each event has a trace from every channel of every detector; a trace is 4096 samples. The code in Step 4 picks detector 0, channel 0 from every event of dump `F0001`, so each row of the table `pulses` is one event, and `pulses[row, sample]` is one number.
 
-## Step 1. Read three notes first (about 30 minutes)
+## Step 1. Read two notes first (about 30 minutes)
 
 Open the notes site at [villano-lab.github.io/NSDF-Data](https://villano-lab.github.io/NSDF-Data/) and read these, in order:
 
-1. **Note 1**, *Run76 series catalog*: what a series and a dump are.
-2. **Note 1a**, *python library structure*: what each part of the code does.
-3. **Note 2**, *Noise-pulse selection*: how we pick quiet traces.
+1. **Note 2**, *Noise-pulse selection*: how we pick quiet traces. It uses the same dump you will download.
+2. **Note 2a**, *bstd against time*: how the baseline noise of those traces changes from event to event, in the same dump.
 
 You do **not** need to follow every number. Just learn the words in the table above.
 
@@ -634,9 +633,9 @@ Guide version 17, 12 October 2026, @NAME@ edition. Written for beginners; please
 
 ## Key links
 
-- Note 1: <https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html>
-- Note 1a: <https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html>
 - Note 2: <https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html>
+- Note 2a: <https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html>
+- Note 1 (series catalog) and Note 1a (python library structure), for later: <https://villano-lab.github.io/NSDF-Data/>
 - Repository: <https://github.com/villano-lab/NSDF-Data>
 """
 

@@ -25,9 +25,9 @@ edition &middot; Version 17 · 12 October 2026</p>
 start</a></li>
 <li><a href="#words-you-will-meet" id="toc-words-you-will-meet">Words
 you will meet</a></li>
-<li><a href="#step-1.-read-three-notes-first-about-30-minutes"
-id="toc-step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
-three notes first (about 30 minutes)</a></li>
+<li><a href="#step-1.-read-two-notes-first-about-30-minutes"
+id="toc-step-1.-read-two-notes-first-about-30-minutes">Step 1. Read two
+notes first (about 30 minutes)</a></li>
 <li><a href="#step-2.-download-the-data"
 id="toc-step-2.-download-the-data">Step 2. Download the data</a></li>
 <li><a href="#step-3.-open-jupyter-in-the-right-folder"
@@ -168,18 +168,17 @@ trace is 4096 samples. The code in Step 4 picks detector 0, channel 0
 from every event of dump <code>F0001</code>, so each row of the table
 <code>pulses</code> is one event, and <code>pulses[row, sample]</code>
 is one number.</p>
-<h2 id="step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
-three notes first (about 30 minutes)</h2>
+<h2 id="step-1.-read-two-notes-first-about-30-minutes">Step 1. Read two
+notes first (about 30 minutes)</h2>
 <p>Open the notes site at <a
 href="https://villano-lab.github.io/NSDF-Data/">villano-lab.github.io/NSDF-Data</a>
 and read these, in order:</p>
 <ol type="1">
-<li><strong>Note 1</strong>, <em>Run76 series catalog</em>: what a
-series and a dump are.</li>
-<li><strong>Note 1a</strong>, <em>python library structure</em>: what
-each part of the code does.</li>
 <li><strong>Note 2</strong>, <em>Noise-pulse selection</em>: how we pick
-quiet traces.</li>
+quiet traces. It uses the same dump you will download.</li>
+<li><strong>Note 2a</strong>, <em>bstd against time</em>: how the
+baseline noise of those traces changes from event to event, in the same
+dump.</li>
 </ol>
 <p>You do <strong>not</strong> need to follow every number. Just learn
 the words in the table above.</p>
@@ -567,15 +566,15 @@ be annoyed by a question about a step that did not work.</p>
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>
-<li>Note 1: <a
-href="https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html"
-class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html</a></li>
-<li>Note 1a: <a
-href="https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html"
-class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html</a></li>
 <li>Note 2: <a
 href="https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html"
 class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html</a></li>
+<li>Note 2a: <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html</a></li>
+<li>Note 1 (series catalog) and Note 1a (python library structure), for
+later: <a href="https://villano-lab.github.io/NSDF-Data/"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
 <li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
 class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 </ul>

@@ -11,6 +11,26 @@ function Div(el)
   if not FORMAT:match("latex") then
     return nil
   end
+  -- ::: explain (code appendix): the code block, then its explanation in red after an arrow,
+  -- and extra space before the next line of code. The HTML page puts the two side by side.
+  if el.classes:includes("explain") then
+    local out = {}
+    local first = true
+    for _, b in ipairs(el.content) do
+      if b.t == "Para" then
+        local inl = { pandoc.RawInline("latex", "{\\color{red!70!black}") }
+        if first then table.insert(inl, pandoc.RawInline("latex", "$\\uparrow$\\ ")) end
+        first = false
+        for _, i in ipairs(b.content) do table.insert(inl, i) end
+        table.insert(inl, pandoc.RawInline("latex", "}"))
+        table.insert(out, pandoc.Para(inl))
+      else
+        table.insert(out, b)
+      end
+    end
+    table.insert(out, pandoc.RawBlock("latex", "\\vspace{10pt}"))
+    return out
+  end
   for cls, info in pairs(boxes) do
     if el.classes:includes(cls) then
       local out = {}

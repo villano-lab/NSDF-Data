@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 16 · 9 October 2026</p>
+edition &middot; Version 17 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -25,9 +25,9 @@ edition &middot; Version 16 · 9 October 2026</p>
 start</a></li>
 <li><a href="#words-you-will-meet" id="toc-words-you-will-meet">Words
 you will meet</a></li>
-<li><a href="#step-1.-read-three-notes-first-about-30-minutes"
-id="toc-step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
-three notes first (about 30 minutes)</a></li>
+<li><a href="#step-1.-read-two-notes-first-about-30-minutes"
+id="toc-step-1.-read-two-notes-first-about-30-minutes">Step 1. Read two
+notes first (about 30 minutes)</a></li>
 <li><a href="#step-2.-download-the-data"
 id="toc-step-2.-download-the-data">Step 2. Download the data</a></li>
 <li><a href="#step-3.-open-jupyter-in-the-right-folder"
@@ -93,9 +93,12 @@ folder yet. Each step below tells you where to go.</li>
 <tbody>
 <tr>
 <td><strong>Series</strong></td>
-<td>One data-taking session, named like <code>07221203_2025</code>. A
-typical series lasts hours; some are shorter because they are
-tests.</td>
+<td>One data-taking session, named like <code>07221203_2025</code>. The
+first two digits are the test facility (<code>07</code> is UMN, the
+University of Minnesota); the rest are the date and time the series
+started, here <code>221203</code> (year, month, day: 3 December 2022)
+and <code>2025</code> (20:25). A typical series lasts hours; some are
+shorter because they are tests.</td>
 </tr>
 <tr>
 <td><strong>Dump</strong></td>
@@ -106,15 +109,20 @@ tests.</td>
 <td><strong>Event</strong></td>
 <td>One moment when the system decided something might have happened and
 saved a short recording from every detector. Events are numbered in time
-order. See the picture below, and the <a
+order. See <strong>Figure 2</strong>, and the <a
 href="#appendix-what-an-event-looks-like">appendix</a>.</td>
 </tr>
 <tr>
-<td><strong>Detector / channel</strong></td>
-<td>The software numbers the readout units 0, 1 and 2 (“detectors”), and
-each has four channels. In Run 76 all three read the same physical
-detector, so a “detector” here means one readout unit with 4 channels.
-We use detector 0, channel 0.</td>
+<td><strong>Detector</strong></td>
+<td>In this data, a “detector” number (0, 1 or 2) means one readout
+electronics unit, not a separate crystal. All three units are wired to
+the same physical detector, S104.</td>
+</tr>
+<tr>
+<td><strong>Channel</strong></td>
+<td>One of the four sensor outputs of a readout unit, numbered 0 to 3.
+Each channel records its own trace. We use detector 0, channel 0
+(<strong>Figure 2</strong>).</td>
 </tr>
 <tr>
 <td><strong>Trace</strong></td>
@@ -123,16 +131,17 @@ per sample.</td>
 </tr>
 <tr>
 <td><strong>Sample</strong></td>
-<td>One reading. Each sample is 1.6 microseconds long, and measures the
-average of the output (usually a voltage) over that time interval.</td>
+<td>One reading of the readout circuit’s output (usually a voltage or a
+current). Each sample is 1.6 microseconds long, and is the average of
+the output over that time.</td>
 </tr>
 <tr>
 <td><strong>ADC counts</strong></td>
-<td>The unit of the numbers in a trace. They are whole numbers
-(integers) from the analog-to-digital converter, proportional to the
-measured quantity (such as a voltage), but really just integers. In this
-dump the largest are around 8000, so they need at least 13 bits; the
-exact width is not stated in this guide.</td>
+<td>The units of a sample. The analog-to-digital converter (ADC) turns
+each reading into a whole number (an integer), proportional to the
+measured voltage or current. In this dump the largest are around 8000,
+so they need at least 13 bits; the exact width is not stated in this
+guide.</td>
 </tr>
 <tr>
 <td><strong>Baseline</strong></td>
@@ -152,20 +161,27 @@ what a particle leaves in a trace.</td>
 </div>
 <p><img src="src/img/trace-pulse.png" style="width:100.0%"
 alt="Two traces drawn on the same scale. The top one is flat noise with a little jitter. The bottom one is flat until about sample 505, then jumps up sharply and slowly falls back: that is a pulse." /></p>
-<p><em>Figure: two traces on the same scale. Top: noise only. Bottom: a
-pulse.</em></p>
-<h2 id="step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
-three notes first (about 30 minutes)</h2>
+<p><strong>Figure 1.</strong> Two traces on the same scale. Top: noise
+only. Bottom: a pulse.</p>
+<p><img src="src/img/data-structure.png" style="width:100.0%" /></p>
+<p><strong>Figure 2.</strong> How the data is organised, and which part
+this guide follows (blue). A series is split into dumps; a dump holds
+events; each event has a trace from every channel of every detector; a
+trace is 4096 samples. The code in Step 4 picks detector 0, channel 0
+from every event of dump <code>F0001</code>, so each row of the table
+<code>pulses</code> is one event, and <code>pulses[row, sample]</code>
+is one number.</p>
+<h2 id="step-1.-read-two-notes-first-about-30-minutes">Step 1. Read two
+notes first (about 30 minutes)</h2>
 <p>Open the notes site at <a
 href="https://villano-lab.github.io/NSDF-Data/">villano-lab.github.io/NSDF-Data</a>
 and read these, in order:</p>
 <ol type="1">
-<li><strong>Note 1</strong>, <em>Run76 series catalog</em>: what a
-series and a dump are.</li>
-<li><strong>Note 1a</strong>, <em>python library structure</em>: what
-each part of the code does.</li>
 <li><strong>Note 2</strong>, <em>Noise-pulse selection</em>: how we pick
-quiet traces.</li>
+quiet traces. It uses the same dump you will download.</li>
+<li><strong>Note 2a</strong>, <em>bstd against time</em>: how the
+baseline noise of those traces changes from event to event, in the same
+dump.</li>
 </ol>
 <p>You do <strong>not</strong> need to follow every number. Just learn
 the words in the table above.</p>
@@ -205,7 +221,8 @@ servers over the internet and puts it in a new <code>idx</code>
 folder.</p>
 <div class="careful">
 <p>Do not move or edit the downloaded files, and do not add them to Git.
-They are not part of the project.</p>
+They are external data, not part of our data analysis code in the
+NSDF-Data repository.</p>
 </div>
 <div class="tip">
 <p>If the message says the folder already exists, the data may already
@@ -294,8 +311,8 @@ plt.ylabel(&quot;ADC counts&quot;)
 plt.show()</code></pre>
 <p>Now change the <code>0</code> to <code>1</code>, <code>2</code>,
 <code>3</code> and run again. Most traces look like flat noise, with a
-little jitter. Row 1 is a quiet trace like the top one in the figure
-above. To see a pulse, try row <code>1095</code>. Then see the <a
+little jitter. Row 1 is a quiet trace like the top one in <strong>Figure
+1</strong>. To see a pulse, try row <code>1095</code>. Then see the <a
 href="#appendix-what-an-event-looks-like">appendix</a> if you want to
 know more about what you are looking at.</p>
 <h2 id="step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce a
@@ -443,102 +460,145 @@ of the 12 slots hold a trace and the other 5 read all zeros. We follow
 one channel, detector 0 channel 0, through all 1517 events.</p>
 <p><img src="src/img/channels.png" style="width:90.0%"
 alt="A schematic circle divided into four sectors for the four channels of detector 0 (channels 0 to 3). Channels 0, 1 and 3 hold a trace in this event and channel 2 reads all zeros. Channel 0 is outlined: it is the one this guide uses." /></p>
-<p><em>Figure: the four channels of detector 0 in one event. It is a
-schematic: the four sectors only stand for the channel numbers, and it
-does not show where the real sensors sit. The detector’s own sensor
-layout is similar to the SuperCDMS HV detector mask, but not the
-same.</em></p>
+<p><strong>Figure 3.</strong> The four channels of detector 0 in one
+event. It is a schematic: the four sectors only stand for the channel
+numbers, and it does not show where the real sensors sit. The detector’s
+own sensor layout is similar to the SuperCDMS HV detector mask, but not
+the same.</p>
 <p>A trace looks like a flat line with a little jitter (the
 <strong>baseline</strong>) until something happens. The first 500
 samples, the <strong>pretrigger window</strong>, are used to measure the
 baseline. If a particle deposits energy, the trace jumps up at once and
-then slowly falls back: a <strong>pulse</strong>. In the figure in the
-words table, the pulse in event 11108 starts just after sample 500; in
+then slowly falls back: a <strong>pulse</strong>. In <strong>Figure
+1</strong>, the pulse in event 11108 starts just after sample 500; in
 this dump, many pulses start there.</p>
-<p>The trace in the figure is row 1095 of the table <code>pulses</code>
-from Step 4 (the row is the position in the table, not the event
-number). Row 1 is a quiet trace.</p>
+<p>The pulse trace in <strong>Figure 1</strong> is row 1095 of the table
+<code>pulses</code> from Step 4 (the row is the position in the table,
+not the event number). Row 1 is a quiet trace.</p>
 <h2 id="appendix-code">Appendix: the code, line by line</h2>
-<p>You do not need this to finish the guide. It explains the code you
-pasted, a few lines at a time. A line that begins with <code>#</code> is
-a comment: Python ignores it, and it is there for people to read.</p>
+<p>You do not need this to finish the guide. It goes through the code
+you pasted, one line at a time: each line of code, and next to it, in
+red, what it does. A line that begins with <code>#</code> is a comment:
+Python ignores it, and it is there for people to read, so the comments
+are left out here.</p>
 <h3 id="code-step4">Part A. Step 4: load the data and count the
 traces</h3>
-<ul>
-<li><code>import sys</code> and <code>from pathlib import Path</code>:
-bring in two tools. <code>sys</code> controls where Python looks for
+<div class="explain">
+<pre class="python"><code>import sys
+from pathlib import Path</code></pre>
+<p>Bring in two tools. <code>sys</code> controls where Python looks for
 code. <code>Path</code> works with folder names in the same way on every
-kind of computer.</li>
-<li><code>here = Path.cwd().resolve()</code>: the folder Jupyter is
-working in, written out in full.</li>
-<li><code>REPO = next(...)</code>: look at <code>here</code> and then at
-each folder above it, one after another, and take the first one that
-contains the file <code>python/pulse_io.py</code>. That folder is the
-whole NSDF-Data project. If there is none, <code>REPO</code> is
-<code>None</code>.</li>
-<li><code>assert REPO, "Start Jupyter from inside the NSDF-Data folder."</code>:
-stop with that message if the project was not found, which means Jupyter
-was started in the wrong place.</li>
-<li><code>sys.path.insert(0, str(REPO / "python"))</code>: tell Python
-to look in the project’s <code>python</code> folder first, so that the
-next <code>import</code> lines can find the project’s own code.</li>
-<li><code>from nsdf_dark_matter.idx import load_all_data</code>: bring
-in the function, from the NSDF software, that reads a downloaded
-dump.</li>
-<li><code>import pulse_io as pio</code>: bring in the project’s helpers
-for traces. <code>as pio</code> gives it a short name.</li>
-<li><code>cdms = load_all_data(...)</code>: open the dump you downloaded
-in Step 2. <code>Path.home()</code> is your home folder, and
-<code>/ "idx" / "07221203_2025_F0001"</code> follows the path down to
-the dump, the same folder Step 2 created. The whole dump is read into
-the computer’s memory and called <code>cdms</code>.</li>
-<li><code>ids, pulses = pio.load_channel_batch(...)</code>: read it from
-the inside out. <code>cdms.get_detector_ids()</code> is the list of
-names of every group of traces (a name holds an event number and a
-detector number). <code>pio.filter_by_detector(..., 0)</code> keeps only
-the names for detector 0.
+kind of computer.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>here = Path.cwd().resolve()</code></pre>
+<p>The folder Jupyter is working in, written out in full.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>REPO = next((p for p in [here, *here.parents]
+             if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)</code></pre>
+<p>Look at <code>here</code> and then at each folder above it, one after
+another, and take the first one that contains the file
+<code>python/pulse_io.py</code>. That folder is the whole NSDF-Data
+project. If there is none, <code>REPO</code> is <code>None</code>.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;</code></pre>
+<p>Stop with that message if the project was not found, which means
+Jupyter was started in the wrong place.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>sys.path.insert(0, str(REPO / &quot;python&quot;))</code></pre>
+<p>Tell Python to look in the project’s <code>python</code> folder
+first, so that the next <code>import</code> lines can find the project’s
+own code.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>from nsdf_dark_matter.idx import load_all_data</code></pre>
+<p>Bring in the function, from the NSDF software, that reads a
+downloaded dump.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import pulse_io as pio</code></pre>
+<p>Bring in the project’s helpers for traces. <code>as pio</code> gives
+it a short name.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>cdms = load_all_data(str(Path.home() / &quot;idx&quot; / &quot;07221203_2025_F0001&quot;))</code></pre>
+<p>Open the dump you downloaded in Step 2. <code>Path.home()</code> is
+your home folder, and <code>/ "idx" / "07221203_2025_F0001"</code>
+follows the path down to the dump, the same folder Step 2 created. The
+whole dump is read into the computer’s memory and called
+<code>cdms</code>.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>ids, pulses = pio.load_channel_batch(
+    cdms, pio.filter_by_detector(cdms.get_detector_ids(), 0), 0)</code></pre>
+<p>Read it from the inside out. <code>cdms.get_detector_ids()</code> is
+the list of names of every group of traces (a name holds an event number
+and a detector number). <code>pio.filter_by_detector(..., 0)</code>
+keeps only the names for detector 0.
 <code>pio.load_channel_batch(cdms, ..., 0)</code> takes channel 0 from
 each of those and stacks the traces into one table. It gives back two
 things: <code>ids</code>, the names in order, and <code>pulses</code>,
-the table, with one row for each event and one column for each
-sample.</li>
-<li><code>print(pulses.shape)</code>: show the size of the table as
-(rows, columns). That is the <code>(1517, 4096)</code> you checked.</li>
-</ul>
+the table, with one row for each event and one column for each sample
+(see <strong>Figure 2</strong>).</p>
+</div>
+<div class="explain">
+<pre class="python"><code>print(pulses.shape)</code></pre>
+<p>Show the size of the table as (rows, columns). That is the
+<code>(1517, 4096)</code> you checked.</p>
+</div>
 <h3 id="code-step6">Part B. Step 6: count the quiet traces</h3>
-<ul>
-<li><code>from dataclasses import replace</code>: a tool for making a
-copy of a group of settings with one value changed.</li>
-<li><code>from pulse_config import DEFAULT_CONFIG</code>: the project’s
-standard settings, such as how many samples at the start of a trace
-count as the baseline window (1000 by default) and how many of the very
-first samples to skip because of the electronics glitch (10).</li>
-<li><code>import pulse_quantities as pq</code>: functions that work out
-one number for each trace, such as how much its baseline wobbles.</li>
-<li><code>import pulse_cuts as pc</code>: functions that answer yes or
-no for each trace: “keep this one?”</li>
-<li><code>import numpy as np</code>: tools for working with tables of
-numbers.</li>
-<li><code>c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)</code>:
-a copy of the standard settings in which the baseline window is the
-first 500 samples, as in Note 2.</li>
-<li><code>quiet = pc.excursion_band(pulses, c500) &amp; (np.log10(pq.bstd(pulses)) &lt; 0.5)</code>:
-two yes-or-no tests joined by <code>&amp;</code>, which means “and”. The
-result, <code>quiet</code>, is a list with one <code>True</code> or
+<div class="explain">
+<pre class="python"><code>from dataclasses import replace</code></pre>
+<p>A tool for making a copy of a group of settings with one value
+changed.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>from pulse_config import DEFAULT_CONFIG</code></pre>
+<p>The project’s standard settings, such as how many samples at the
+start of a trace count as the baseline window (1000 by default) and how
+many of the very first samples to skip because of the electronics glitch
+(10).</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import pulse_quantities as pq</code></pre>
+<p>Functions that work out one number for each trace, such as how much
+its baseline wobbles.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import pulse_cuts as pc</code></pre>
+<p>Functions that answer yes or no for each trace: “keep this one?”</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import numpy as np</code></pre>
+<p>Tools for working with tables of numbers.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)</code></pre>
+<p>A copy of the standard settings in which the baseline window is the
+first 500 samples, as in Note 2.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>quiet = pc.excursion_band(pulses, c500) &amp; (
+    np.log10(pq.bstd(pulses)) &lt; 0.5)</code></pre>
+<p>Two yes-or-no tests joined by <code>&amp;</code>, which means “and”.
+The result, <code>quiet</code>, has one <code>True</code> or
 <code>False</code> for each trace.
-<ul>
-<li><code>pc.excursion_band(pulses, c500)</code> is <code>True</code>
-when the trace’s largest swing after the baseline window, compared with
-the wobble of its own baseline, falls in the middle band chosen in Note
-2.</li>
-<li><code>pq.bstd(pulses)</code> is the wobble (the standard deviation)
-of each trace’s baseline. <code>np.log10(...) &lt; 0.5</code> keeps only
-the traces whose baseline wobbles little: under about 3 counts.</li>
-</ul></li>
-<li><code>print(quiet.sum())</code>: a <code>True</code> counts as 1 and
-a <code>False</code> as 0, so the sum is the number of traces that
-passed both tests. That is the 179 of the checkpoint.</li>
-</ul>
+<code>pc.excursion_band(pulses, c500)</code> is <code>True</code> when
+the trace’s largest swing after the baseline window, compared with the
+wobble of its own baseline, falls in the middle band chosen in Note 2.
+<code>pq.bstd(pulses)</code> is the wobble (the standard deviation) of
+each trace’s baseline, and <code>np.log10(...) &lt; 0.5</code> keeps
+only the traces whose baseline wobbles little: under about 3 counts.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>print(quiet.sum())</code></pre>
+<p>A <code>True</code> counts as 1 and a <code>False</code> as 0, so the
+sum is the number of traces that passed both tests. That is the 179 of
+the checkpoint.</p>
+</div>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -547,19 +607,19 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 16, 9 October 2026, macOS edition. Written for
+<p>Guide version 17, 12 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>
-<li>Note 1: <a
-href="https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html"
-class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html</a></li>
-<li>Note 1a: <a
-href="https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html"
-class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html</a></li>
 <li>Note 2: <a
 href="https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html"
 class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html</a></li>
+<li>Note 2a: <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html</a></li>
+<li>Note 1 (series catalog) and Note 1a (python library structure), for
+later: <a href="https://villano-lab.github.io/NSDF-Data/"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
 <li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
 class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 </ul>

@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 15 · 10 October 2026"
+date: "Version 16 · 12 October 2026"
 ---
 
 ::: tip
@@ -242,7 +242,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 ## Rules for keeping your work safe
 
 - **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
-- **Never commit data.** The raw files in the `idx` folder are large and not part of the project. Download only from your home folder, never from inside `NSDF-Data`.
+- **Never commit data.** The raw files in the `idx` folder are large external data, not part of our data analysis code in the NSDF-Data repository. Download only from your home folder, never from inside `NSDF-Data`.
 - **Do not run `07221203_2025_dump1_noise.ipynb`** unless the project lead says it is fine. It overwrites a shared archive file.
 - **Save often,** and commit your work when a piece is finished (see the first analysis guide).
 
@@ -274,7 +274,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 15, 10 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 16, 12 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

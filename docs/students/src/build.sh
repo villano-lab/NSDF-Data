@@ -12,6 +12,8 @@ set -e
 cd "$(dirname "$0")"
 OUT=..
 "${PYTHON:-python3}" gen.py > /dev/null
+# The data-structure figure of the first-analysis guide (needs matplotlib, not the data).
+"${PYTHON:-python3}" make_structure_figure.py
 for f in setup-windows setup-macos setup-linux first-analysis-windows first-analysis-macos first-analysis-linux writing-a-note publishing-a-note publishing-with-ai codespaces; do
   pandoc "$f.md" -o "$OUT/$f.pdf" --pdf-engine=xelatex --lua-filter=boxes.lua -H style.tex \
     -V geometry:margin=0.9in -V fontsize=11pt -V mainfont="${MAINFONT:-Helvetica}" -V monofont="${MONOFONT:-Menlo}" \

@@ -64,7 +64,7 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 
 ## Data and environment
 
-- Raw dump data lives **outside the repo**, in `~/idx`, and `/idx/` is git-ignored. `nsdf-cli download` writes an `idx` folder **in the current directory**, so always run it from the home folder, never from inside `NSDF-Data`.
+- Raw dump data lives **outside the repo**, in `~/idx`, and any folder named `idx/` is git-ignored. `nsdf-cli download` writes an `idx` folder **in the current directory**, so always run it from the home folder, never from inside `NSDF-Data`.
 - Pinned packages: Python 3.12, `nsdf-dark-matter==0.3.0`, `nsdf-dark-matter-cli==0.5.0` (version 0.3.1 of the CLI does not exist on PyPI), `numpy==2.2.6`, `matplotlib==3.10.7`, plus `h5py`, `pytest`, `ipykernel` and `jupyterlab`.
 - `requirements.txt` is the single list of pip packages and versions; setup Step 5 does `conda create -n darkmatter_cli_env python=3.12 pip` and then `python -m pip install -r requirements.txt`. It has no `python==` line (pip cannot install one). Do **not** use `conda create -f requirements.txt`: the NSDF packages are not on conda channels.
 - Do **not** run `data_analysis/R76/notebooks/07221203_2025_dump1_noise.ipynb` without the maintainer's approval: it rewrites `data_analysis/archives/good_noise.h5`.

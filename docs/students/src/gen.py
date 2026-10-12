@@ -796,7 +796,7 @@ Guide version 18, 12 October 2026, @NAME@ edition. Written for beginners; please
 UPDATE = """---
 title: "Updating your setup"
 subtitle: "NSDF-Data student guide 7 — @NAME@ edition"
-date: "Version 3 · 12 October 2026"
+date: "Version 4 · 12 October 2026"
 ---
 
 ::: maintenance
@@ -882,7 +882,7 @@ Then run the check again (Step 1). It should say `Environment OK`.
 
 ## Step 4. If Python changed: make a new environment
 
-Do this when the check says your Python is not the version the guides use. Python cannot be safely changed inside an existing environment, so you remove the old one and make a new one. Nothing you need is lost: the environment is rebuilt from `requirements.txt`, and the first lines below save a list of what the old one had, in case you installed something extra. Type each line and press Enter, and be patient: **removing the old environment takes a few minutes, and so does the final install.**
+Do this when the check says your Python is not the version the guides use. Conda can update Python inside an existing environment, but most of this project's packages were installed with pip, which does not rebuild them for the new Python, and that can leave a broken mix. It is more reliable to remove the old environment and make a new one. Nothing you need is lost: the environment is rebuilt from `requirements.txt`, and the first lines below save a list of what the old one had, in case you installed something extra. Type each line and press Enter, and be patient: **removing the old environment takes a few minutes, and so does the final install.**
 
 ```
 @GOHOME@
@@ -972,7 +972,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 3, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 4, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

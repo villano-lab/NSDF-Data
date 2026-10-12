@@ -1,7 +1,7 @@
 ---
 title: "Working in your browser with GitHub Codespaces"
 subtitle: "NSDF-Data student guide 6 — no install, for every computer"
-date: "Version 5 · 12 October 2026"
+date: "Version 6 · 12 October 2026"
 ---
 
 ::: tip
@@ -51,7 +51,7 @@ cd python && python -m pytest -q && cd ..
 ```
 
 ::: checkpoint
-You see `NSDF Dark Matter CLI: 0.5.0`, then `ok`, then a line ending `52 passed` (a larger number is fine).
+You see `NSDF Dark Matter CLI: 0.5.0`, then `ok`, then a line ending `62 passed` (a larger number is fine).
 :::
 
 ## Step 3. Download the data
@@ -117,7 +117,7 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## Session Info
 
-Guide version 5, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 6, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

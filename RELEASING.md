@@ -45,6 +45,7 @@ If a release contains changes of several kinds, use the highest bump.
    - set the number in `VERSION`;
    - in `CHANGELOG.md`, rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and start a new empty `[Unreleased]` section;
    - rebuild any student guide PDFs whose source changed (see `AGENTS.md`) and commit sources and PDFs together;
+   - **if the release changes the environment** (the Python version, or a package pin in `requirements.txt`), start that release's `CHANGELOG.md` section with a line beginning **Students, please:** that says what to do and points to *Updating your setup* (student guide 7), and tell the students when the release is out. Students learn about it from `python check_environment.py` (it warns when the environment differs from `requirements.txt` and the guides) and from that line;
    - only small fixes. No new features.
 4. Open a pull request from `release/X.Y.Z` into `master`. The maintainer merges it (a merge commit).
 5. Tag the merge commit: `git tag -a vX.Y.Z -m "Release X.Y.Z"` and `git push origin vX.Y.Z`.

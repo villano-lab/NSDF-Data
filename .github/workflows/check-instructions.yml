@@ -283,6 +283,12 @@ jobs:
           nsdf-cli version
           jupyter lab --version
 
+      - name: Updating your setup Step 1 - the environment check says OK
+        run: |
+          conda activate darkmatter_cli_env
+          cd python
+          python check_environment.py --strict
+
       - name: Setup Step 7 - register the Jupyter kernel
         run: |
           conda activate darkmatter_cli_env

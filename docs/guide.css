@@ -113,3 +113,14 @@
 
 .guide h3 .ico { margin-right: 6px; }
 .guide p.logo-note { font-size: 0.85rem; color: var(--muted); }
+
+/* "Routine maintenance": a red box for things that must be done regularly, not once */
+.guide div.maintenance {
+  background: var(--careful-bg); border: 2px solid var(--careful-border); border-left-width: 8px;
+  border-radius: 6px; padding: 8px 14px; margin: 16px 0;
+}
+.guide div.maintenance::before {
+  content: "Routine maintenance"; display: block; font-weight: 800; margin-bottom: 2px;
+  color: var(--careful-border); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.9rem;
+}
+.guide div.maintenance > :last-child { margin-bottom: 0; }

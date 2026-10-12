@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 17 · 12 October 2026</p>
+edition &middot; Version 18 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -77,6 +77,14 @@ start of the line should show <code>(darkmatter_cli_env)</code>.</li>
 <li><strong>Folder:</strong> you do not need to be in any particular
 folder yet. Each step below tells you where to go.</li>
 </ul>
+<div class="maintenance">
+<p><strong>Keep your setup up to date.</strong> The first code cell in
+Step 4 checks your environment against the project’s current list and
+warns you if it is out of date. If you see a WARNING, follow <a
+href="https://villano-lab.github.io/NSDF-Data/students/update-macos.html">Updating
+your setup (macOS)</a>. Do the same after every new release the project
+lead announces.</p>
+</div>
 <h2 id="words-you-will-meet">Words you will meet</h2>
 <div class="table-scroll">
 <table>
@@ -283,6 +291,10 @@ sys.path.insert(0, str(REPO / &quot;python&quot;))
 from nsdf_dark_matter.idx import load_all_data
 import pulse_io as pio
 
+# Check that your setup is up to date (it only warns; it never stops the notebook).
+import check_environment
+check_environment.check()
+
 # Open the dump you downloaded.
 cdms = load_all_data(str(Path.home() / &quot;idx&quot; / &quot;07221203_2025_F0001&quot;))
 
@@ -292,9 +304,11 @@ ids, pulses = pio.load_channel_batch(
 
 print(pulses.shape)</code></pre>
 <div class="checkpoint">
-<p>The output is <code>(1517, 4096)</code>: 1517 traces, each with 4096
-samples. If you get a different number, stop and check the dump name and
-the folder in Step 2.</p>
+<p>The first line says <code>Environment OK</code>, and the last is
+<code>(1517, 4096)</code>: 1517 traces, each with 4096 samples. If you
+get a different number, stop and check the dump name and the folder in
+Step 2. If the first line says <code>WARNING</code>, you can keep going
+for now, but follow <em>Updating your setup</em> soon.</p>
 </div>
 <p>Want to know what every line did? See <a href="#code-step4">the code,
 line by line (part A)</a>.</p>
@@ -524,6 +538,16 @@ downloaded dump.</p>
 it a short name.</p>
 </div>
 <div class="explain">
+<pre class="python"><code>import check_environment
+check_environment.check()</code></pre>
+<p>Bring in the project’s environment check and run it. It compares your
+Python and your packages with the project’s list
+(<code>requirements.txt</code>) and prints <code>Environment OK</code>,
+or a <code>WARNING</code> that says what differs and where to read how
+to fix it. It is only a warning: your notebook carries on either
+way.</p>
+</div>
+<div class="explain">
 <pre class="python"><code>cdms = load_all_data(str(Path.home() / &quot;idx&quot; / &quot;07221203_2025_F0001&quot;))</code></pre>
 <p>Open the dump you downloaded in Step 2. <code>Path.home()</code> is
 your home folder, and <code>/ "idx" / "07221203_2025_F0001"</code>
@@ -607,7 +631,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 17, 12 October 2026, macOS edition. Written for
+<p>Guide version 18, 12 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>

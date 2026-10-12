@@ -191,3 +191,19 @@ a.agent-link:hover, a.agent-link:focus-visible { border-color: var(--link); back
 @media (max-width: 640px) {
   a.agent-link { position: static; margin-bottom: 8px; }
 }
+
+/* The red "Routine maintenance" box on the front page */
+:root { --maint-bg: #fdecec; --maint-border: #b3261e; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --maint-bg: #381c1e; --maint-border: #f08a8a; }
+}
+.maintenance-box {
+  background: var(--maint-bg); border: 2px solid var(--maint-border); border-left-width: 8px;
+  border-radius: 6px; padding: 10px 16px; margin: 14px 0 20px;
+}
+.maintenance-box .mb-title {
+  margin: 0 0 4px; font-weight: 800; color: var(--maint-border);
+  text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.9rem;
+}
+.maintenance-box p { margin: 0 0 6px; }
+.maintenance-box p:last-child { margin-bottom: 0; }

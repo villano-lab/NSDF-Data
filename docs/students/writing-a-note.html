@@ -16,7 +16,7 @@ every computer)</title>
 
 <h1>Writing a note</h1>
 <p class="meta">NSDF-Data student guide 3 — writing a note, for every
-computer &middot; Version 11 · 12 October 2026</p>
+computer &middot; Version 12 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -306,8 +306,31 @@ sentence in <em>Results</em> states a number. A sentence in
 <div class="tip">
 <p>If you change your mind, say so. Notes that show a correction are
 more useful than notes that pretend nothing went wrong. Put the
-correction in a clearly labelled box, with the date.</p>
+correction in a clearly labelled box, with the date (see <em>A coloured
+box</em>, next).</p>
 </div>
+<h3 id="a-coloured-box">A coloured box</h3>
+<p>For a correction, a caveat or anything a reader must not miss, put it
+in a coloured box. In a Markdown note, write the text between two lines
+that hold only three colons, with a blank line before and after:</p>
+<pre><code>::: callout
+**Correction, 12 October 2026.** The median in the first table
+used 1000 samples; with 500 it is 1.51 counts.
+:::</code></pre>
+<p>Start the box with a bold label such as <strong>Correction</strong>,
+<strong>Caveat</strong> or <strong>Note</strong>. All boxes have the
+same colour (shaded, with a border); only the label tells the reader
+which kind it is.</p>
+<div class="careful">
+<p><strong>The VS Code preview does not draw the box.</strong> It shows
+the two <code>:::</code> lines as plain text. That is expected: the box
+appears on the published page, not in the preview. Do not delete the
+<code>:::</code> lines.</p>
+</div>
+<p>If you write in Word or Google Docs, a coloured box does not survive
+the conversion. Use a bold label such as <strong>Correction.</strong> at
+the start of the paragraph, or add the <code>:::</code> lines to the
+Markdown after converting.</p>
 <h2 id="figures-and-tables">Figures and tables</h2>
 <ul>
 <li><strong>Every figure needs a caption</strong> that says what is
@@ -364,7 +387,7 @@ concrete.</label></li>
 for a word a newcomer would not know.</label></li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 11, 12 October 2026. Written for every computer. Please
+<p>Guide version 12, 12 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="next">Next</h2>
 <p>When the note is written and checked, go to <strong>student guide 4:

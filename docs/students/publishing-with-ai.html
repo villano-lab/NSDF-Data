@@ -16,7 +16,7 @@
 
 <h1>Publishing a note with an AI assistant</h1>
 <p class="meta">NSDF-Data student guide 5 — with Claude Code or a
-similar assistant &middot; Version 3 · 7 October 2026</p>
+similar assistant &middot; Version 4 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -55,8 +55,9 @@ still own every number and every sentence.</p>
 <h2 id="what-the-assistant-is-good-at-here">What the assistant is good
 at here</h2>
 <ul>
-<li>converting a Word or Google Docs draft to Markdown, and fixing the
-formatting it leaves behind;</li>
+<li>converting a Word or Google Docs draft to a note (with
+<code>tools/word_to_note.py</code>), and fixing the formatting it leaves
+behind;</li>
 <li>reading the check’s messages and fixing the file for each one;</li>
 <li>checking that every notebook link is pinned to a real commit;</li>
 <li>finding numbers in your draft and confirming them against your
@@ -100,10 +101,11 @@ and check that it shows no changes you do not recognise.</li>
 <code>[path to the notebook]</code>, and I committed it at
 <code>[commit hash]</code>. Please:</p>
 <ol type="1">
-<li>If the draft is a <code>.docx</code>, convert it to Markdown as in
-student guide 3, Step 3 onward, and put the result in
-<code>notes/src/</code>. Keep the header block and set
-<code>id: "TBD"</code>.</li>
+<li>If the draft is a <code>.docx</code>, convert it with
+<code>python tools/word_to_note.py [path to the .docx] [note-name]</code>,
+as in student guide 4, Step 1. That puts the note in
+<code>notes/src/</code> and its pictures in <code>notes/src/img/</code>.
+Keep the header block and set <code>id: "TBD"</code>.</li>
 <li>Check every number in the text against the notebook output, and list
 any number that does not match or that I have not shown.</li>
 <li>Pin every notebook link to the commit above.</li>
@@ -152,7 +154,7 @@ generated.</li>
 the check’s message, not a summary of it.</li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 3, 7 October 2026. Written for every computer. The AI
+<p>Guide version 4, 12 October 2026. Written for every computer. The AI
 tools change quickly, so if a step here no longer matches what you see,
 follow the assistant’s own instructions and tell your lead.</p>
 <h2 id="where-to-get-help">Where to get help</h2>

@@ -10,7 +10,7 @@ Analysis of SuperCDMS-type dark-matter detector data from the NSDF archive (Run 
 - `data_analysis/`: **all data analysis lives here, and nowhere else** (notebooks, series lists, figures, archives, student work). `data_analysis/R76/notebooks/` holds the exploratory notebooks (kernel `darkmatter_cli_env`), `R76/student/` the students' notebooks (one folder per student, for example `student/tony/`), `R76/series_lists/` the run logs, `archives/` the HDF5 files, `legacy/` old work. See `data_analysis/README.md`. Expect this folder to move to its own repository later, so it may use the library in `python/` but nothing in the library may depend on it.
 - `docs/`: the GitHub Pages site (https://villano-lab.github.io/NSDF-Data/), plain hand-written HTML with no build step: `docs/index.html`, `docs/notes/note-NN-*.html`, `docs/notes/img/`, `docs/style.css`.
 - `docs/students/`: the student guide PDFs, built from sources in `docs/students/src/`.
-- `notes/src/` and `tools/build_notes.py`: student notes written in Markdown and published by a GitHub Action.
+- `notes/src/`, `tools/build_notes.py` and `tools/word_to_note.py`: student notes written in Markdown and published by a GitHub Action (`word_to_note.py` turns a Word or Google Docs `.docx` into a note and its pictures; pictures live directly in `notes/src/img/`, named `<note>-figN.png`).
 
 The maintainer is Anthony Villano (@villaa).
 
@@ -30,7 +30,7 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 - Use merge commits (not squash or rebase) to finish a branch.
 - Never force-push. `master` is protected against deletion and non-fast-forward pushes. Delete only branches you created, and only after they are merged.
 - **Add an entry under `[Unreleased]` in `CHANGELOG.md`** for any change a user or student would notice. Only a `release/*` or `hotfix/*` branch changes `VERSION` or renames `[Unreleased]`.
-- Student notes (`notes/src/**`), `tools/build_notes.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it an S-number and merges it; nothing is published before that.
+- Student notes (`notes/src/**`), `tools/build_notes.py`, `tools/word_to_note.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it an S-number and merges it; nothing is published before that.
 - Write commit messages that say what changed and why. If an AI assistant helped, add a `Co-Authored-By:` trailer naming it.
 - Never commit raw data, credentials or tokens.
 

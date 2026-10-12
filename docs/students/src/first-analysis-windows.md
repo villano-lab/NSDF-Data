@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 17 · 12 October 2026"
+date: "Version 18 · 12 October 2026"
 ---
 
 ::: tip
@@ -14,6 +14,10 @@ date: "Version 17 · 12 October 2026"
 - **You need:** the setup guide finished (your environment `darkmatter_cli_env` exists and works).
 - **Check:** open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**), and run `conda activate darkmatter_cli_env`{.cmd}. The start of the line should show `(darkmatter_cli_env)`.
 - **Folder:** you do not need to be in any particular folder yet. Each step below tells you where to go.
+
+::: maintenance
+**Keep your setup up to date.** The first code cell in Step 4 checks your environment against the project's current list and warns you if it is out of date. If you see a WARNING, follow [Updating your setup (Windows)](https://villano-lab.github.io/NSDF-Data/students/update-windows.html). Do the same after every new release the project lead announces.
+:::
 
 ## Words you will meet
 
@@ -128,6 +132,10 @@ sys.path.insert(0, str(REPO / "python"))
 from nsdf_dark_matter.idx import load_all_data
 import pulse_io as pio
 
+# Check that your setup is up to date (it only warns; it never stops the notebook).
+import check_environment
+check_environment.check()
+
 # Open the dump you downloaded.
 cdms = load_all_data(str(Path.home() / "idx" / "07221203_2025_F0001"))
 
@@ -139,7 +147,7 @@ print(pulses.shape)
 ```
 
 ::: checkpoint
-The output is `(1517, 4096)`: 1517 traces, each with 4096 samples. If you get a different number, stop and check the dump name and the folder in Step 2.
+The first line says `Environment OK`, and the last is `(1517, 4096)`: 1517 traces, each with 4096 samples. If you get a different number, stop and check the dump name and the folder in Step 2. If the first line says `WARNING`, you can keep going for now, but follow *Updating your setup* soon.
 :::
 
 Want to know what every line did? See [the code, line by line (part A)](#code-step4).
@@ -320,6 +328,15 @@ Bring in the project's helpers for traces. `as pio` gives it a short name.
 
 ::: explain
 ```python
+import check_environment
+check_environment.check()
+```
+
+Bring in the project's environment check and run it. It compares your Python and your packages with the project's list (`requirements.txt`) and prints `Environment OK`, or a `WARNING` that says what differs and where to read how to fix it. It is only a warning: your notebook carries on either way.
+:::
+
+::: explain
+```python
 cdms = load_all_data(str(Path.home() / "idx" / "07221203_2025_F0001"))
 ```
 
@@ -418,7 +435,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 17, 12 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 18, 12 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

@@ -115,11 +115,16 @@ order. See <strong>Figure 2</strong>, and the <a
 href="#appendix-what-an-event-looks-like">appendix</a>.</td>
 </tr>
 <tr>
-<td><strong>Detector / channel</strong></td>
-<td>Which readout unit (detector 0, 1 or 2) and which of its four
-channels (0 to 3) a trace comes from. All three units read the same
-physical detector. We use detector 0, channel 0. See <strong>Figure
-2</strong>.</td>
+<td><strong>Detector</strong></td>
+<td>In this data, a “detector” number (0, 1 or 2) means one readout
+electronics unit, not a separate crystal. All three units are wired to
+the same physical detector, S104.</td>
+</tr>
+<tr>
+<td><strong>Channel</strong></td>
+<td>One of the four sensor outputs of a readout unit, numbered 0 to 3.
+Each channel records its own trace. We use detector 0, channel 0
+(<strong>Figure 2</strong>).</td>
 </tr>
 <tr>
 <td><strong>Trace</strong></td>

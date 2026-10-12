@@ -22,7 +22,8 @@ date: "Version 17 · 12 October 2026"
 | **Series** | One data-taking session, named like `07221203_2025`. The first two digits are the test facility (`07` is UMN, the University of Minnesota); the rest are the date and time the series started, here `221203` (year, month, day: 3 December 2022) and `2025` (20:25). A typical series lasts hours; some are shorter because they are tests. |
 | **Dump** | One file set taken from a series, numbered `F0001`, `F0002`, ... |
 | **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See **Figure 2**, and the [appendix](#appendix-what-an-event-looks-like). |
-| **Detector / channel** | Which readout unit (detector 0, 1 or 2) and which of its four channels (0 to 3) a trace comes from. All three units read the same physical detector. We use detector 0, channel 0. See **Figure 2**. |
+| **Detector** | In this data, a "detector" number (0, 1 or 2) means one readout electronics unit, not a separate crystal. All three units are wired to the same physical detector, S104. |
+| **Channel** | One of the four sensor outputs of a readout unit, numbered 0 to 3. Each channel records its own trace. We use detector 0, channel 0 (**Figure 2**). |
 | **Trace** | The recorded signal for one channel in one event: 4096 numbers, one per sample. |
 | **Sample** | One reading of the readout circuit's output (usually a voltage or a current). Each sample is 1.6 microseconds long, and is the average of the output over that time. |
 | **ADC counts** | The units of a sample. The analog-to-digital converter (ADC) turns each reading into a whole number (an integer), proportional to the measured voltage or current. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |

@@ -1,7 +1,7 @@
 ---
 title: "Working in your browser with GitHub Codespaces"
 subtitle: "NSDF-Data student guide 6 — no install, for every computer"
-date: "Version 4 · 9 October 2026"
+date: "Version 5 · 12 October 2026"
 ---
 
 ::: tip
@@ -37,7 +37,7 @@ date: "Version 4 · 9 October 2026"
 A new browser tab opens with a code editor and a terminal at the bottom. The first start takes several minutes while the environment is prepared. Wait until the page stops changing.
 
 ::: checkpoint
-You see the project's files on the left, and a terminal at the bottom. Type `python3 --version` in the terminal and press Enter. You should see `Python 3.10`.
+You see the project's files on the left, and a terminal at the bottom. Type `python3 --version` in the terminal and press Enter. You should see `Python 3.12`.
 :::
 
 ## Step 2. Check the environment
@@ -72,7 +72,7 @@ The data (about 34 MB) goes into an `idx` folder in your home folder. Wait until
 Follow the steps of the first analysis guide (guide 2 for your computer). The only changes are these:
 
 - **Make your own folder, then open a notebook.** In the file list on the left, open `data_analysis/R76/student/`, right-click, choose **New Folder** and type your name (the same name as in your branch, without spaces). Open that folder, then click **New File**, or copy the code from the guide into a new notebook.
-- **Choose the kernel** when asked. Pick **darkmatter_cli_env** or the Python 3.10 kernel shown in the list.
+- **Choose the kernel** when asked. Pick **darkmatter_cli_env** or the Python 3.12 kernel shown in the list.
 - **Data path.** In the codespace your home folder is `/home/vscode`, and the code in the guide uses `Path.home() / "idx"`, so it finds the data without changes.
 - **Start the notebook from your folder.** Keep your notebook in your own folder inside `data_analysis/R76/student`. The code finds the project by looking upward from there.
 
@@ -117,7 +117,7 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## Session Info
 
-Guide version 4, 9 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 5, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

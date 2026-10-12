@@ -7,6 +7,7 @@
   --careful-bg: #fdecec; --careful-border: #b3261e;
   --check-bg: #e9f6ec;  --check-border: #1a7f37;
   --nav-bg: #fff8dc;    --nav-border: #b8860b;
+  --explain: #b3261e;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -14,6 +15,7 @@
     --careful-bg: #381c1e; --careful-border: #f08a8a;
     --check-bg: #17301f;  --check-border: #56c271;
     --nav-bg: #3a3317;    --nav-border: #e0b84a;
+    --explain: #f08a8a;
   }
 }
 
@@ -61,6 +63,29 @@
 .guide button.copy.done { color: var(--complete); border-color: var(--complete); }
 .guide button.copy-line { position: sticky; right: 0; flex: 0 0 auto; }
 .guide button.copy-inline { margin-left: 5px; padding: 0 7px; font-size: 0.72rem; vertical-align: 1px; }
+
+/* Code appendix of the first-analysis guide (::: explain): a line of code with its Copy button,
+   and to its right, in red with an arrow, what the line does. Stacked on a phone. */
+.guide div.explain {
+  display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 8px 22px;
+  align-items: start; margin: 0 0 36px;
+}
+.guide div.explain > .codeblock, .guide div.explain > pre { margin: 0; }
+.guide div.explain pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.guide div.explain .codebar span { visibility: hidden; }
+.guide div.explain > p {
+  position: relative; margin: 0; padding: 30px 0 0 24px; color: var(--explain); line-height: 1.45;
+}
+.guide div.explain > p::before {
+  content: "\2190"; position: absolute; left: 0; top: 27px; font-weight: 700; font-size: 1.15rem;
+}
+.guide div.explain > p + p { padding-top: 6px; }
+.guide div.explain > p + p::before { content: none; }
+@media (max-width: 720px) {
+  .guide div.explain { grid-template-columns: minmax(0, 1fr); }
+  .guide div.explain > p { padding-top: 0; }
+  .guide div.explain > p::before { content: "\2191"; top: -3px; }
+}
 
 .guide blockquote { margin: 4px 0 18px; padding: 6px 14px; border-left: 4px solid var(--border); background: var(--row-alt); border-radius: 0 6px 6px 0; }
 .guide blockquote > :last-child { margin-bottom: 0; }

@@ -202,9 +202,15 @@ Type this, then press Enter:</p>
 <pre><code>nsdf-cli download 07221203_2025_F0001</code></pre>
 <p>The download puts the data in an <code>idx</code> folder <strong>in
 the folder you are in</strong>. Because you went to your home folder
-first, it lands in <code>C:\Users\YourName\idx</code>, inside a folder
-named <code>07221203_2025_F0001</code>. The data is about 34 MB. Wait
-until the prompt comes back.</p>
+first, it lands in <code>C:\Users\YourName\idx</code>, in a folder named
+<code>07221203_2025_F0001</code>. That name appears three times, which
+can be confusing. Inside the folder are three files with the same name
+and the endings <code>.idx</code>, <code>.csv</code> and
+<code>.txt</code> (your file browser may hide the endings, so they can
+all look like <code>07221203_2025_F0001</code>), and one more folder
+with the same name, which holds the <code>.bin</code> files. The code in
+Step 4 opens the outer folder. The data is about 34 MB. Wait until the
+prompt comes back.</p>
 <div class="careful">
 <p>Never download from inside the <code>NSDF-Data</code> folder. Its
 <code>idx</code> folder would sit inside the project, where Git can pick

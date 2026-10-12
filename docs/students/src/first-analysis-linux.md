@@ -70,7 +70,7 @@ Now download the data:
 nsdf-cli download 07221203_2025_F0001
 ```
 
-The download puts the data in an `idx` folder **in the folder you are in**. Because you went to your home folder first, it lands in `~/idx`, inside a folder named `07221203_2025_F0001`. The data is about 34 MB. Wait until the prompt comes back.
+The download puts the data in an `idx` folder **in the folder you are in**. Because you went to your home folder first, it lands in `~/idx`, in a folder named `07221203_2025_F0001`. That name appears three times, which can be confusing. Inside the folder are three files with the same name and the endings `.idx`, `.csv` and `.txt` (your file browser may hide the endings, so they can all look like `07221203_2025_F0001`), and one more folder with the same name, which holds the `.bin` files. The code in Step 4 opens the outer folder. The data is about 34 MB. Wait until the prompt comes back.
 
 ::: careful
 Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit inside the project, where Git can pick it up. If you have already downloaded there, move the `idx` folder to your home folder, and tell your lead.

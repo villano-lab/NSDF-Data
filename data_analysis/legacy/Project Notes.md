@@ -14,8 +14,7 @@
 - 07 means minnesota
 - Rest is date. This was August 27th, 2018
 - 0000 is  (hr/min?)
-- F0001 is first dump of series (has random noise info from self-triggers)
-- 
+- F0001 is first dump of series (Most self-trigger random noise samples come from the 1st dump in series)
 
 # Running thoughts (Add to top)
 

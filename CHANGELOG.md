@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-12
+
+The guides and CI move from Python 3.10 (end of life this month) to Python 3.12, and the setup and first-analysis guides get clearer wording, a data-structure figure and a series-name explanation.
+
 ### Changed
 
 - **Python 3.12 instead of 3.10** (closes #43). Python 3.10 reaches end of life this month, and Anaconda stops building new 3.10 packages on its main channel after 31 October 2026. The setup guides (version 17) now create the environment with `python=3.12`; the dev container uses `mcr.microsoft.com/devcontainers/python:1-3.12-bookworm` (Debian 12 instead of the end-of-support Debian 11); CI creates the same environment and its check now looks for `python=3.12`; the Codespaces guide (version 5), the agent brief and the AI-agents page say 3.12; `AGENTS.md` and the default path in `nsdf_r76_availability.py` are updated. The pinned packages are unchanged: tested on Windows with Python 3.12.15, `pip install -r requirements.txt` works, the 52 library tests pass, and the guide's Steps 4 to 6 give 1517 and 179. Python 3.13 is not possible yet: the pinned `openvisusnogui==2.2.138` has no 3.13 wheel for Linux. Anyone with an existing `darkmatter_cli_env` on 3.10 can keep using it, or recreate it with `conda create -n darkmatter_cli_env python=3.12 pip -y` and `python -m pip install -r requirements.txt`.
@@ -104,7 +108,8 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.4.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.5.0...develop
+[0.5.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0

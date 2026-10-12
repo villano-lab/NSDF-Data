@@ -66,7 +66,7 @@ A hotfix repairs **released code** (for example a broken library function in a t
 Student notes (`notes/src/*.md`) are feature work: a student branches from `develop`, writes the note with `id: "TBD"`, and opens a pull request into `develop`.
 
 1. The pull request runs `tools/build_notes.py check`. Nothing is published yet, and nothing is visible on the site.
-2. The maintainer reviews it, gives it an S-number (replacing `TBD`), and merges. **Nothing is published without this approval**: the build refuses a note whose id is still `TBD`.
+2. The maintainer reviews it, gives it a note number (replacing `TBD`), and merges. **Nothing is published without this approval**: the build refuses a note whose id is still `TBD`.
 3. The merge pushes to `develop`, which starts the student-notes workflow. It builds `docs/notes/student-<name>.html`, the images and the index row, and the bot commits them to `develop`.
 4. GitHub Pages rebuilds from `develop`. The note is live about one to two minutes after the merge.
 

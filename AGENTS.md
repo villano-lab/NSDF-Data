@@ -30,7 +30,7 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 - Use merge commits (not squash or rebase) to finish a branch.
 - Never force-push. `master` is protected against deletion and non-fast-forward pushes. Delete only branches you created, and only after they are merged.
 - **Add an entry under `[Unreleased]` in `CHANGELOG.md`** for any change a user or student would notice. Only a `release/*` or `hotfix/*` branch changes `VERSION` or renames `[Unreleased]`.
-- Student notes (`notes/src/**`), `tools/build_notes.py`, `tools/word_to_note.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it an S-number and merges it; nothing is published before that.
+- Student notes (`notes/src/**`), `tools/build_notes.py`, `tools/word_to_note.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it a note number and merges it; nothing is published before that.
 - Write commit messages that say what changed and why. If an AI assistant helped, add a `Co-Authored-By:` trailer naming it.
 - Never commit raw data, credentials or tokens.
 
@@ -43,7 +43,7 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 | A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Never edit the generated `.html` pages or PDFs. Rebuild (below), commit sources **and** the rebuilt HTML pages and PDFs together, and bump the version and date in the guide's header and its *Session Info*. The front page links only to the HTML pages; each page links to its PDF. |
 | `requirements.txt`, package pins, or the Python version | Setup Step 5, `.devcontainer/devcontainer.json` and the CI step "Setup Step 5" all install with `pip install -r requirements.txt`, so change versions only in `requirements.txt`. The Python version (3.12) is written in the `conda create` lines of the setup guide and of *Updating your setup* (`gen.py`), in `.devcontainer/devcontainer.json` (image tag), in the CI workflow, and as `EXPECTED_PYTHON` in `python/check_environment.py` (a test checks that one against `gen.py`); keep those in step. A release that changes the environment also needs the "Students, please:" line described in `RELEASING.md`. |
 | `.github/workflows/*` | Test on a branch (a push runs the workflow). Keep it working on Windows, macOS and Linux if it checks the guides. |
-| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it (about 2 to 3 minutes). To remove a note, delete its source in a PR; the build prunes the generated page. |
+| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the note number (one continuous set with the hand-written notes; `python tools/build_notes.py next` prints the next free one). Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it (about 2 to 3 minutes). To remove a note, delete its source in a PR; the build prunes the generated page. |
 | Anything a user or student would notice | A line under `[Unreleased]` in `CHANGELOG.md`. |
 
 ## Building the student guides and quick-sheets

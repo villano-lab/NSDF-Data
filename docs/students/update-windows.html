@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — Windows
-edition &middot; Version 2 · 12 October 2026</p>
+edition &middot; Version 3 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -163,12 +163,13 @@ the project lead.</p>
 </div>
 <p>Now bring the changes in:</p>
 <pre><code>git fetch origin
-git merge origin/develop</code></pre>
+git merge --no-edit origin/develop</code></pre>
 <p><strong>What these lines do:</strong> <code>git fetch</code>
 downloads the newest changes without touching your files, and
-<code>git merge</code> combines them with your branch. It prints
-<code>Already up to date.</code> or a list of the files that
-changed.</p>
+<code>git merge</code> combines them with your branch
+(<code>--no-edit</code> keeps git from opening a text editor to ask for
+a message). It prints <code>Already up to date.</code> or a list of the
+files that changed.</p>
 <div class="careful">
 <p>If git says <code>CONFLICT</code>, stop. Do not edit anything and do
 not try to fix it: copy the message and send it to the project lead.</p>
@@ -198,7 +199,7 @@ something extra. Type each line and press Enter, and be patient:
 the final install.</strong></p>
 <pre><code>cd %USERPROFILE%
 conda activate darkmatter_cli_env
-python -m pip freeze &gt; old-environment.txt
+python -m pip freeze &gt; %USERPROFILE%\old-environment.txt
 conda deactivate
 conda env remove -n darkmatter_cli_env -y
 conda create -n darkmatter_cli_env python=3.12 pip -y
@@ -231,9 +232,9 @@ saved.</td>
 <td>Switches your old environment on, so the next line can read it.</td>
 </tr>
 <tr>
-<td><code>pip freeze &gt; old-environment.txt</code></td>
+<td><code>pip freeze &gt; ...old-environment.txt</code></td>
 <td>Writes the names and versions of everything in the old environment
-into the file <code>old-environment.txt</code>.</td>
+into the file <code>old-environment.txt</code> in your home folder.</td>
 </tr>
 <tr>
 <td><code>conda deactivate</code></td>
@@ -386,6 +387,14 @@ then the <code>ipykernel install</code> line again.</td>
 files.</td>
 </tr>
 <tr>
+<td>A text editor opens (a window full of <code>~</code> characters, or
+a message starting <code>Merge branch</code>) after
+<code>git merge</code></td>
+<td>git is asking for a message for the merge. In the editor (usually
+Vim): press <code>Esc</code>, type <code class="cmd">:wq</code> and
+press Enter. The merge finishes with git’s own message.</td>
+</tr>
+<tr>
 <td>The kernel is missing in Jupyter</td>
 <td>In the environment, run the last two lines of Step 4 again, then
 restart Jupyter.</td>
@@ -401,7 +410,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 2, 12 October 2026, Windows edition. Written for
+<p>Guide version 3, 12 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

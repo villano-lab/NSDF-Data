@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Linux edition"
-date: "Version 13 · 9 October 2026"
+date: "Version 17 · 12 October 2026"
 ---
 
 ::: tip
@@ -89,7 +89,7 @@ Use `sudo` only for the one command that installs Git. Other commands in this gu
 
 
 
-Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
+Your project will live in a folder called `Research`. Create it, go into it, and download the code by running the four commands below. To run a command, type (or paste) the line into the terminal and press Enter. Wait for the prompt to come back, then do the next line:
 
 ```
 mkdir -p ~/Research
@@ -117,7 +117,7 @@ Type `ls`{.cmd} and press Enter. You are now inside the `NSDF-Data` folder (your
 An environment is a sealed box of programs with fixed versions. We make one for this project, called `darkmatter_cli_env`. Type these lines one at a time, pressing Enter after each. The last line takes several minutes and prints a lot of text: wait for the prompt to come back.
 
 ```
-conda create -n darkmatter_cli_env python=3.10 pip -y
+conda create -n darkmatter_cli_env python=3.12 pip -y
 conda activate darkmatter_cli_env
 cd ~/Research/NSDF-Data
 python -m pip install -r requirements.txt
@@ -127,7 +127,7 @@ python -m pip install -r requirements.txt
 
 | Line | What it does |
 |---|---|
-| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 and the package installer `pip` inside it. |
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.12 and the package installer `pip` inside it. |
 | `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
 | `cd` | Moves you into the `NSDF-Data` folder, where the file `requirements.txt` is. |
 | `pip install -r requirements.txt` | Installs every program on the project's list, at the exact versions in that file: the software that reads the detector data, numbers and plots, the test tool, and Jupyter, the notebook program you will use later. |
@@ -146,7 +146,7 @@ The last line of the output is a message, not an error, and the `(darkmatter_cli
 
 ## Step 6. Check that everything works
 
-First, the tests. They use made-up data, so they need no download. Type each line and press Enter:
+First, the tests. They use made-up data, so they need no download. Run the three commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
 
 ```
 conda activate darkmatter_cli_env
@@ -248,7 +248,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 ## Rules for keeping your work safe
 
 - **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
-- **Never commit data.** The raw files in the `idx` folder are large and not part of the project. Download only from your home folder, never from inside `NSDF-Data`.
+- **Never commit data.** The raw files in the `idx` folder are large external data, not part of our data analysis code in the NSDF-Data repository. Download only from your home folder, never from inside `NSDF-Data`.
 - **Do not run `07221203_2025_dump1_noise.ipynb`** unless the project lead says it is fine. It overwrites a shared archive file.
 - **Save often,** and commit your work when a piece is finished (see the first analysis guide).
 
@@ -257,7 +257,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `ls ~/Research`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `52 passed`.
+- [ ] `python -m pytest -q`{.cmd} ends with `52 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd ~/Research/NSDF-Data/python`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -280,7 +280,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 13, 9 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 17, 12 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

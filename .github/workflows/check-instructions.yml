@@ -71,8 +71,8 @@ jobs:
           dev = pathlib.Path(".devcontainer/devcontainer.json").read_text()
           if "pip install -r requirements.txt" not in guide:
               problems.append("the setup guide does not install from requirements.txt")
-          if "python=3.10" not in guide:
-              problems.append("the setup guide does not create the environment with python=3.10")
+          if "python=3.12" not in guide:
+              problems.append("the setup guide does not create the environment with python=3.12")
           if "-r requirements.txt" not in dev:
               problems.append("the dev container does not install from requirements.txt")
           for p in problems:
@@ -267,7 +267,7 @@ jobs:
 
       - name: Setup Step 5 - create the environment
         run: |
-          conda create -n darkmatter_cli_env python=3.10 pip -y
+          conda create -n darkmatter_cli_env python=3.12 pip -y
           conda activate darkmatter_cli_env
           cd ~/Research/NSDF-Data
           # Step 4's git clone fetched the default branch. Use this commit's requirements.txt, so a

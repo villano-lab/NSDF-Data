@@ -4,6 +4,19 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-12
+
+The guides and CI move from Python 3.10 (end of life this month) to Python 3.12, and the setup and first-analysis guides get clearer wording, a data-structure figure and a series-name explanation.
+
+### Changed
+
+- **Python 3.12 instead of 3.10** (closes #43). Python 3.10 reaches end of life this month, and Anaconda stops building new 3.10 packages on its main channel after 31 October 2026. The setup guides (version 17) now create the environment with `python=3.12`; the dev container uses `mcr.microsoft.com/devcontainers/python:1-3.12-bookworm` (Debian 12 instead of the end-of-support Debian 11); CI creates the same environment and its check now looks for `python=3.12`; the Codespaces guide (version 5), the agent brief and the AI-agents page say 3.12; `AGENTS.md` and the default path in `nsdf_r76_availability.py` are updated. The pinned packages are unchanged: tested on Windows with Python 3.12.15, `pip install -r requirements.txt` works, the 52 library tests pass, and the guide's Steps 4 to 6 give 1517 and 179. Python 3.13 is not possible yet: the pinned `openvisusnogui==2.2.138` has no 3.13 wheel for Linux. Anyone with an existing `darkmatter_cli_env` on 3.10 can keep using it, or recreate it with `conda create -n darkmatter_cli_env python=3.12 pip -y` and `python -m pip install -r requirements.txt`.
+- **Front page:** the note cheat-sheet is no longer listed among student guides 3 to 6; it has its own "Quick reference" line under them.
+- **Setup guides (version 16) and first-analysis guide (version 17):** the downloaded files are now described as "external data, not part of our data analysis code in the NSDF-Data repository" instead of "not part of the project".
+- **First-analysis guide (version 17):** the words table explains the series name (`07` = test facility, UMN; then the start date and time), says a sample is one reading of a voltage or current and that ADC counts are the units of a sample, and splits the confusing detector/channel entry into a **Detector** row (a readout unit, all three on the same physical detector, S104) and a **Channel** row, pointing to a new **Figure 2**, a diagram of how the data is organised (series, dump, event, detector, channel, samples) and which indices the Step 4 code picks. Figures are now numbered, with bold labels. Step 1 now asks students to read Notes 2 and 2a, which use the same dump as the guide, instead of Notes 1, 1a and 2. The diagram is drawn by `make_structure_figure.py`, run by `build.sh`. The appendix "the code, line by line" now shows each line of code in its own block with a Copy button, and next to it, in red with an arrow, what it does (below it on a phone and in the PDF); `boxes.lua` and `docs/guide.css` handle the new `::: explain` block. The Windows edition's Step 7 has a tip about the `LF will be replaced by CRLF` warning that `git add` can print, saying why it appears and that it is harmless.
+- **Setup guides (version 15):** in *You are done when*, the `python -m pytest -q` item now says to activate the environment (`conda activate darkmatter_cli_env`) and go to the repository's `python` folder first, as in Step 6.
+- **Setup guides (version 14):** Step 4 and Step 6 now say plainly that the lines in the box are commands to run, one at a time: type (or paste) each line, press Enter, and wait for the prompt before the next. The Windows guide no longer says the 150 MB Miniforge download "can take a few minutes"; it takes less than a minute on most connections.
+
 ## [0.4.0] - 2026-10-09
 
 Analysis files now live in one folder, `data_analysis/`, each student works in a folder of their own, and the student guides gain a line-by-line code appendix, a GitHub sign-in step and an AI-agents page.
@@ -95,7 +108,8 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.4.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.5.0...develop
+[0.5.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.1.0...v0.2.0

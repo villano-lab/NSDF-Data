@@ -24,7 +24,7 @@ import openpyxl
 import requests
 
 REPO = next(p for p in Path(__file__).resolve().parents if (p / "python" / "pulse_io.py").exists())
-DEFAULT_MANIFEST = "/opt/anaconda3/envs/darkmatter_cli_env/lib/python3.10/site-packages/nsdf_dark_matter_cli/r_dataset.csv"
+DEFAULT_MANIFEST = "/opt/anaconda3/envs/darkmatter_cli_env/lib/python3.12/site-packages/nsdf_dark_matter_cli/r_dataset.csv"
 GENURL = "https://intersect.nationalsciencedatafabric.org/nexus/api/v1/darkmatter/gen-url"
 
 ap = argparse.ArgumentParser()

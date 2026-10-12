@@ -5,7 +5,7 @@ OS = {
   PASTE="In both windows, **right-click** the window to paste. `Ctrl+V` often does not work there.",
   GIT="Go to [git-scm.com/download/win](https://git-scm.com/download/win). The download of the installer starts by itself; if it does not, click the link on that page to download it. Run the installer. Keep every default setting: click **Next** until you reach **Install**, then click **Install**.\n\nWhen it finishes, **close the Command Prompt and open a new one** (the old window does not know about Git yet).",
   MINIFORGE_FILE="Miniforge3-Windows-x86_64.exe",
-  MINIFORGE="Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, so it can take a few minutes. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:\n\n- When it asks who to install for, choose **Just Me**.\n- Keep the default install folder.\n- On the **Advanced Installation Options** screen, set the four boxes exactly as in the table. They are the installer's defaults, so you may not need to change anything, but check each one:\n\n| Box | Set it to |\n|---|---|\n| Create shortcuts (supported packages only) | **Ticked.** This creates the *Miniforge Prompt* you will use from Step 4. |\n| Add installation to my PATH environment variable | **Unticked.** The installer says \"not recommended\", and the Miniforge Prompt works without it. |\n| Register Miniforge3 as my default Python | **Unticked.** |\n| Clear the package cache upon completion | **Unticked.** (Ticking it also works. It only saves a little disk space.) |\n\nThen click **Install**, wait until it finishes, and click **Finish**.\n\nNow close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.",
+  MINIFORGE="Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, which takes less than a minute on most connections. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:\n\n- When it asks who to install for, choose **Just Me**.\n- Keep the default install folder.\n- On the **Advanced Installation Options** screen, set the four boxes exactly as in the table. They are the installer's defaults, so you may not need to change anything, but check each one:\n\n| Box | Set it to |\n|---|---|\n| Create shortcuts (supported packages only) | **Ticked.** This creates the *Miniforge Prompt* you will use from Step 4. |\n| Add installation to my PATH environment variable | **Unticked.** The installer says \"not recommended\", and the Miniforge Prompt works without it. |\n| Register Miniforge3 as my default Python | **Unticked.** |\n| Clear the package cache upon completion | **Unticked.** (Ticking it also works. It only saves a little disk space.) |\n\nThen click **Install**, wait until it finishes, and click **Finish**.\n\nNow close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.",
   FOLDER="%USERPROFILE%\\Research",
   CD_REPO="cd %USERPROFILE%\\Research\\NSDF-Data",
   CD_PYTHON="cd %USERPROFILE%\\Research\\NSDF-Data\\python",
@@ -23,6 +23,7 @@ OS = {
   GOHOME="cd %USERPROFILE%",
   HOMEEX="`C:\\Users\\YourName`",
   NEWLINE_NOTE="",
+  CRLF_NOTE="::: tip\n**You may see a warning about LF and CRLF.** On Windows, `git add` can print a line like this one:\n\n`warning: in the working copy of 'data_analysis/R76/student/yourname/`\\\n`first-analysis-yourname.ipynb', LF will be replaced by CRLF the next time Git touches it`\n\nThis is harmless, and your file was still added, so carry on with `git commit`. Every line of a text file ends with an invisible marker. Windows uses two characters for it (CRLF), macOS and Linux use one (LF). Git for Windows keeps LF in the repository and gives you CRLF in your own copy, so it is telling you that it will convert this file the next time it writes it.\n:::\n\n",
   CAREFUL_EXTRA="Windows may show a blue warning box when you run an installer (\"Windows protected your PC\"). Click **More info**, then **Run anyway**, only if you downloaded the file from the link in this guide.",
 ),
 "macos": dict(
@@ -49,6 +50,7 @@ OS = {
   GOHOME="cd ~",
   HOMEEX="`/Users/YourName`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="macOS may say an app is from an unidentified developer when you open it. You do not need to open any app in this guide, so you can ignore this.",
+  CRLF_NOTE="",
 ),
 "linux": dict(
   NAME="Linux", FILE="linux", SHORT="Linux",
@@ -74,6 +76,7 @@ OS = {
   GOHOME="cd ~",
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.",
+  CRLF_NOTE="",
 ),
 }
 
@@ -97,7 +100,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 13 · 9 October 2026"
+date: "Version 17 · 12 October 2026"
 ---
 
 ::: tip
@@ -152,7 +155,7 @@ Open @NEW_TERM@ and type `conda --version`{.cmd}, then press Enter. You should s
 
 @HOME_NOTE@
 
-Your project will live in a folder called `Research`. Create it, go into it, and download the code. Type each line and press Enter:
+Your project will live in a folder called `Research`. Create it, go into it, and download the code by running the four commands below. To run a command, type (or paste) the line into the terminal and press Enter. Wait for the prompt to come back, then do the next line:
 
 ```
 @MKDIR@
@@ -180,7 +183,7 @@ Type `@LISTCMD@`{.cmd} and press Enter. You are now inside the `NSDF-Data` folde
 An environment is a sealed box of programs with fixed versions. We make one for this project, called `darkmatter_cli_env`. Type these lines one at a time, pressing Enter after each. The last line takes several minutes and prints a lot of text: wait for the prompt to come back.
 
 ```
-conda create -n darkmatter_cli_env python=3.10 pip -y
+conda create -n darkmatter_cli_env python=3.12 pip -y
 conda activate darkmatter_cli_env
 @CD_REPO@
 python -m pip install -r requirements.txt
@@ -190,7 +193,7 @@ python -m pip install -r requirements.txt
 
 | Line | What it does |
 |---|---|
-| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 and the package installer `pip` inside it. |
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.12 and the package installer `pip` inside it. |
 | `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
 | `cd` | Moves you into the `NSDF-Data` folder, where the file `requirements.txt` is. |
 | `pip install -r requirements.txt` | Installs every program on the project's list, at the exact versions in that file: the software that reads the detector data, numbers and plots, the test tool, and Jupyter, the notebook program you will use later. |
@@ -209,7 +212,7 @@ The last line of the output is a message, not an error, and the `(darkmatter_cli
 
 ## Step 6. Check that everything works
 
-First, the tests. They use made-up data, so they need no download. Type each line and press Enter:
+First, the tests. They use made-up data, so they need no download. Run the three commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
 
 ```
 conda activate darkmatter_cli_env
@@ -311,7 +314,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 ## Rules for keeping your work safe
 
 - **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
-- **Never commit data.** The raw files in the `idx` folder are large and not part of the project. Download only from your home folder, never from inside `NSDF-Data`.
+- **Never commit data.** The raw files in the `idx` folder are large external data, not part of our data analysis code in the NSDF-Data repository. Download only from your home folder, never from inside `NSDF-Data`.
 - **Do not run `07221203_2025_dump1_noise.ipynb`** unless the project lead says it is fine. It overwrites a shared archive file.
 - **Save often,** and commit your work when a piece is finished (see the first analysis guide).
 
@@ -320,7 +323,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `@LISTCMD@ @FOLDER@`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `52 passed`.
+- [ ] `python -m pytest -q`{.cmd} ends with `52 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `@CD_PYTHON@`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -343,7 +346,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 13, 9 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 17, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -356,7 +359,7 @@ Guide version 13, 9 October 2026, @NAME@ edition. Written for beginners; please 
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 16 · 9 October 2026"
+date: "Version 17 · 12 October 2026"
 ---
 
 ::: tip
@@ -374,28 +377,32 @@ date: "Version 16 · 9 October 2026"
 
 | Word | What it means here |
 |---|---|
-| **Series** | One data-taking session, named like `07221203_2025`. A typical series lasts hours; some are shorter because they are tests. |
+| **Series** | One data-taking session, named like `07221203_2025`. The first two digits are the test facility (`07` is UMN, the University of Minnesota); the rest are the date and time the series started, here `221203` (year, month, day: 3 December 2022) and `2025` (20:25). A typical series lasts hours; some are shorter because they are tests. |
 | **Dump** | One file set taken from a series, numbered `F0001`, `F0002`, ... |
-| **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See the picture below, and the [appendix](#appendix-what-an-event-looks-like). |
-| **Detector / channel** | The software numbers the readout units 0, 1 and 2 ("detectors"), and each has four channels. In Run 76 all three read the same physical detector, so a "detector" here means one readout unit with 4 channels. We use detector 0, channel 0. |
+| **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See **Figure 2**, and the [appendix](#appendix-what-an-event-looks-like). |
+| **Detector** | In this data, a "detector" number (0, 1 or 2) means one readout electronics unit, not a separate crystal. All three units are wired to the same physical detector, S104. |
+| **Channel** | One of the four sensor outputs of a readout unit, numbered 0 to 3. Each channel records its own trace. We use detector 0, channel 0 (**Figure 2**). |
 | **Trace** | The recorded signal for one channel in one event: 4096 numbers, one per sample. |
-| **Sample** | One reading. Each sample is 1.6 microseconds long, and measures the average of the output (usually a voltage) over that time interval. |
-| **ADC counts** | The unit of the numbers in a trace. They are whole numbers (integers) from the analog-to-digital converter, proportional to the measured quantity (such as a voltage), but really just integers. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |
+| **Sample** | One reading of the readout circuit's output (usually a voltage or a current). Each sample is 1.6 microseconds long, and is the average of the output over that time. |
+| **ADC counts** | The units of a sample. The analog-to-digital converter (ADC) turns each reading into a whole number (an integer), proportional to the measured voltage or current. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |
 | **Baseline** | The flat level a trace sits at when nothing happens. |
 | **Pretrigger window** | The first samples of a trace, used to measure the baseline. |
 | **Pulse** | A sudden rise above the baseline that then slowly falls back. It is what a particle leaves in a trace. |
 
 ![](img/trace-pulse.png){width=100%}
 
-*Figure: two traces on the same scale. Top: noise only. Bottom: a pulse.*
+**Figure 1.** Two traces on the same scale. Top: noise only. Bottom: a pulse.
 
-## Step 1. Read three notes first (about 30 minutes)
+![](img/data-structure.png){width=100%}
+
+**Figure 2.** How the data is organised, and which part this guide follows (blue). A series is split into dumps; a dump holds events; each event has a trace from every channel of every detector; a trace is 4096 samples. The code in Step 4 picks detector 0, channel 0 from every event of dump `F0001`, so each row of the table `pulses` is one event, and `pulses[row, sample]` is one number.
+
+## Step 1. Read two notes first (about 30 minutes)
 
 Open the notes site at [villano-lab.github.io/NSDF-Data](https://villano-lab.github.io/NSDF-Data/) and read these, in order:
 
-1. **Note 1**, *Run76 series catalog*: what a series and a dump are.
-2. **Note 1a**, *python library structure*: what each part of the code does.
-3. **Note 2**, *Noise-pulse selection*: how we pick quiet traces.
+1. **Note 2**, *Noise-pulse selection*: how we pick quiet traces. It uses the same dump you will download.
+2. **Note 2a**, *bstd against time*: how the baseline noise of those traces changes from event to event, in the same dump.
 
 You do **not** need to follow every number. Just learn the words in the table above.
 
@@ -423,7 +430,7 @@ Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit in
 **What these lines do:** the first one moves you to your home folder (the `cd` line). The second, `nsdf-cli download`, fetches the data set from the NSDF servers over the internet and puts it in a new `idx` folder.
 
 ::: careful
-Do not move or edit the downloaded files, and do not add them to Git. They are not part of the project.
+Do not move or edit the downloaded files, and do not add them to Git. They are external data, not part of our data analysis code in the NSDF-Data repository.
 :::
 
 ::: tip
@@ -500,7 +507,7 @@ plt.ylabel("ADC counts")
 plt.show()
 ```
 
-Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in the figure above. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
+Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in **Figure 1**. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
 
 ## Step 6. Reproduce a number from Note 2
 
@@ -547,7 +554,7 @@ git push -u origin student-yourname
 `git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
 :::
 
-::: careful
+@CRLF_NOTE@::: careful
 Commit only your notebook. Check the list from `git status` before committing. If you see `.bin` files or anything from the `idx` folder, do not add them.
 :::
 
@@ -582,41 +589,167 @@ In Run 76 one physical detector (a silicon detector, S104) is read out by three 
 
 ![](img/channels.png){width=90%}
 
-*Figure: the four channels of detector 0 in one event. It is a schematic: the four sectors only stand for the channel numbers, and it does not show where the real sensors sit. The detector's own sensor layout is similar to the SuperCDMS HV detector mask, but not the same.*
+**Figure 3.** The four channels of detector 0 in one event. It is a schematic: the four sectors only stand for the channel numbers, and it does not show where the real sensors sit. The detector's own sensor layout is similar to the SuperCDMS HV detector mask, but not the same.
 
-A trace looks like a flat line with a little jitter (the **baseline**) until something happens. The first 500 samples, the **pretrigger window**, are used to measure the baseline. If a particle deposits energy, the trace jumps up at once and then slowly falls back: a **pulse**. In the figure in the words table, the pulse in event 11108 starts just after sample 500; in this dump, many pulses start there.
+A trace looks like a flat line with a little jitter (the **baseline**) until something happens. The first 500 samples, the **pretrigger window**, are used to measure the baseline. If a particle deposits energy, the trace jumps up at once and then slowly falls back: a **pulse**. In **Figure 1**, the pulse in event 11108 starts just after sample 500; in this dump, many pulses start there.
 
-The trace in the figure is row 1095 of the table `pulses` from Step 4 (the row is the position in the table, not the event number). Row 1 is a quiet trace.
+The pulse trace in **Figure 1** is row 1095 of the table `pulses` from Step 4 (the row is the position in the table, not the event number). Row 1 is a quiet trace.
 
 ## Appendix: the code, line by line {#appendix-code}
 
-You do not need this to finish the guide. It explains the code you pasted, a few lines at a time. A line that begins with `#` is a comment: Python ignores it, and it is there for people to read.
+You do not need this to finish the guide. It goes through the code you pasted, one line at a time: each line of code, and next to it, in red, what it does. A line that begins with `#` is a comment: Python ignores it, and it is there for people to read, so the comments are left out here.
 
 ### Part A. Step 4: load the data and count the traces {#code-step4}
 
-- `import sys` and `from pathlib import Path`: bring in two tools. `sys` controls where Python looks for code. `Path` works with folder names in the same way on every kind of computer.
-- `here = Path.cwd().resolve()`: the folder Jupyter is working in, written out in full.
-- `REPO = next(...)`: look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
-- `assert REPO, "Start Jupyter from inside the NSDF-Data folder."`: stop with that message if the project was not found, which means Jupyter was started in the wrong place.
-- `sys.path.insert(0, str(REPO / "python"))`: tell Python to look in the project's `python` folder first, so that the next `import` lines can find the project's own code.
-- `from nsdf_dark_matter.idx import load_all_data`: bring in the function, from the NSDF software, that reads a downloaded dump.
-- `import pulse_io as pio`: bring in the project's helpers for traces. `as pio` gives it a short name.
-- `cdms = load_all_data(...)`: open the dump you downloaded in Step 2. `Path.home()` is your home folder, and `/ "idx" / "07221203_2025_F0001"` follows the path down to the dump, the same folder Step 2 created. The whole dump is read into the computer's memory and called `cdms`.
-- `ids, pulses = pio.load_channel_batch(...)`: read it from the inside out. `cdms.get_detector_ids()` is the list of names of every group of traces (a name holds an event number and a detector number). `pio.filter_by_detector(..., 0)` keeps only the names for detector 0. `pio.load_channel_batch(cdms, ..., 0)` takes channel 0 from each of those and stacks the traces into one table. It gives back two things: `ids`, the names in order, and `pulses`, the table, with one row for each event and one column for each sample.
-- `print(pulses.shape)`: show the size of the table as (rows, columns). That is the `(1517, 4096)` you checked.
+::: explain
+```python
+import sys
+from pathlib import Path
+```
+
+Bring in two tools. `sys` controls where Python looks for code. `Path` works with folder names in the same way on every kind of computer.
+:::
+
+::: explain
+```python
+here = Path.cwd().resolve()
+```
+
+The folder Jupyter is working in, written out in full.
+:::
+
+::: explain
+```python
+REPO = next((p for p in [here, *here.parents]
+             if (p / "python" / "pulse_io.py").exists()), None)
+```
+
+Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
+:::
+
+::: explain
+```python
+assert REPO, "Start Jupyter from inside the NSDF-Data folder."
+```
+
+Stop with that message if the project was not found, which means Jupyter was started in the wrong place.
+:::
+
+::: explain
+```python
+sys.path.insert(0, str(REPO / "python"))
+```
+
+Tell Python to look in the project's `python` folder first, so that the next `import` lines can find the project's own code.
+:::
+
+::: explain
+```python
+from nsdf_dark_matter.idx import load_all_data
+```
+
+Bring in the function, from the NSDF software, that reads a downloaded dump.
+:::
+
+::: explain
+```python
+import pulse_io as pio
+```
+
+Bring in the project's helpers for traces. `as pio` gives it a short name.
+:::
+
+::: explain
+```python
+cdms = load_all_data(str(Path.home() / "idx" / "07221203_2025_F0001"))
+```
+
+Open the dump you downloaded in Step 2. `Path.home()` is your home folder, and `/ "idx" / "07221203_2025_F0001"` follows the path down to the dump, the same folder Step 2 created. The whole dump is read into the computer's memory and called `cdms`.
+:::
+
+::: explain
+```python
+ids, pulses = pio.load_channel_batch(
+    cdms, pio.filter_by_detector(cdms.get_detector_ids(), 0), 0)
+```
+
+Read it from the inside out. `cdms.get_detector_ids()` is the list of names of every group of traces (a name holds an event number and a detector number). `pio.filter_by_detector(..., 0)` keeps only the names for detector 0. `pio.load_channel_batch(cdms, ..., 0)` takes channel 0 from each of those and stacks the traces into one table. It gives back two things: `ids`, the names in order, and `pulses`, the table, with one row for each event and one column for each sample (see **Figure 2**).
+:::
+
+::: explain
+```python
+print(pulses.shape)
+```
+
+Show the size of the table as (rows, columns). That is the `(1517, 4096)` you checked.
+:::
 
 ### Part B. Step 6: count the quiet traces {#code-step6}
 
-- `from dataclasses import replace`: a tool for making a copy of a group of settings with one value changed.
-- `from pulse_config import DEFAULT_CONFIG`: the project's standard settings, such as how many samples at the start of a trace count as the baseline window (1000 by default) and how many of the very first samples to skip because of the electronics glitch (10).
-- `import pulse_quantities as pq`: functions that work out one number for each trace, such as how much its baseline wobbles.
-- `import pulse_cuts as pc`: functions that answer yes or no for each trace: "keep this one?"
-- `import numpy as np`: tools for working with tables of numbers.
-- `c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)`: a copy of the standard settings in which the baseline window is the first 500 samples, as in Note 2.
-- `quiet = pc.excursion_band(pulses, c500) & (np.log10(pq.bstd(pulses)) < 0.5)`: two yes-or-no tests joined by `&`, which means "and". The result, `quiet`, is a list with one `True` or `False` for each trace.
-    - `pc.excursion_band(pulses, c500)` is `True` when the trace's largest swing after the baseline window, compared with the wobble of its own baseline, falls in the middle band chosen in Note 2.
-    - `pq.bstd(pulses)` is the wobble (the standard deviation) of each trace's baseline. `np.log10(...) < 0.5` keeps only the traces whose baseline wobbles little: under about 3 counts.
-- `print(quiet.sum())`: a `True` counts as 1 and a `False` as 0, so the sum is the number of traces that passed both tests. That is the 179 of the checkpoint.
+::: explain
+```python
+from dataclasses import replace
+```
+
+A tool for making a copy of a group of settings with one value changed.
+:::
+
+::: explain
+```python
+from pulse_config import DEFAULT_CONFIG
+```
+
+The project's standard settings, such as how many samples at the start of a trace count as the baseline window (1000 by default) and how many of the very first samples to skip because of the electronics glitch (10).
+:::
+
+::: explain
+```python
+import pulse_quantities as pq
+```
+
+Functions that work out one number for each trace, such as how much its baseline wobbles.
+:::
+
+::: explain
+```python
+import pulse_cuts as pc
+```
+
+Functions that answer yes or no for each trace: "keep this one?"
+:::
+
+::: explain
+```python
+import numpy as np
+```
+
+Tools for working with tables of numbers.
+:::
+
+::: explain
+```python
+c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)
+```
+
+A copy of the standard settings in which the baseline window is the first 500 samples, as in Note 2.
+:::
+
+::: explain
+```python
+quiet = pc.excursion_band(pulses, c500) & (
+    np.log10(pq.bstd(pulses)) < 0.5)
+```
+
+Two yes-or-no tests joined by `&`, which means "and". The result, `quiet`, has one `True` or `False` for each trace. `pc.excursion_band(pulses, c500)` is `True` when the trace's largest swing after the baseline window, compared with the wobble of its own baseline, falls in the middle band chosen in Note 2. `pq.bstd(pulses)` is the wobble (the standard deviation) of each trace's baseline, and `np.log10(...) < 0.5` keeps only the traces whose baseline wobbles little: under about 3 counts.
+:::
+
+::: explain
+```python
+print(quiet.sum())
+```
+
+A `True` counts as 1 and a `False` as 0, so the sum is the number of traces that passed both tests. That is the 179 of the checkpoint.
+:::
 
 ## Where to get help
 
@@ -626,13 +759,13 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 16, 9 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 17, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
-- Note 1: <https://villano-lab.github.io/NSDF-Data/notes/note-01-run76-series-catalog.html>
-- Note 1a: <https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html>
 - Note 2: <https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html>
+- Note 2a: <https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html>
+- Note 1 (series catalog) and Note 1a (python library structure), for later: <https://villano-lab.github.io/NSDF-Data/>
 - Repository: <https://github.com/villano-lab/NSDF-Data>
 """
 
@@ -642,7 +775,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

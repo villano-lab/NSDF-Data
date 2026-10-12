@@ -79,7 +79,7 @@ Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit in
 **What these lines do:** the first one moves you to your home folder (the `cd` line). The second, `nsdf-cli download`, fetches the data set from the NSDF servers over the internet and puts it in a new `idx` folder.
 
 ::: careful
-Do not move or edit the downloaded files, and do not add them to Git. They are not part of the project.
+Do not move or edit the downloaded files, and do not add them to Git. They are external data, not part of our data analysis code in the NSDF-Data repository.
 :::
 
 ::: tip

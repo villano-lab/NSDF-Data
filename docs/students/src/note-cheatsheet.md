@@ -2,7 +2,7 @@
 title-meta: "From note to live page"
 author-meta: "NSDF-Data"
 html-title: "From note to live page"
-html-subtitle: "NSDF-Data student cheat-sheet · version 2, 7 October 2026"
+html-subtitle: "NSDF-Data student cheat-sheet · version 3, 12 October 2026"
 ---
 
 ```{=latex}
@@ -13,7 +13,7 @@ html-subtitle: "NSDF-Data student cheat-sheet · version 2, 7 October 2026"
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} From note to live page}\\[0.2em]
-{\small NSDF-Data student cheat-sheet \textperiodcentered{} version 2, 7 October 2026}
+{\small NSDF-Data student cheat-sheet \textperiodcentered{} version 3, 12 October 2026}
 \end{center}
 \vspace{0.3em}
 ```
@@ -60,7 +60,7 @@ Then open the repository on [github.com](https://github.com), click **Compare & 
 | Message | What to do |
 |---|---|
 | `header field 'X' is missing or empty` | Fill in that line of the header. |
-| `status must be one of ...` | Use exactly *In progress*, *Complete* or *Outdated*. |
+| `status must be one of ...` | Use exactly *In progress*, *Complete* or *Superseded (reference/link)*. |
 | `notebook link pinned to 'master'`, or `placeholder COMMIT is still in the note` | Use the real commit hash. |
 | `raw HTML tag <u>` (or `<sup>`, `<sub>`, `<span>`) | Remove the formatting, keep the words. |
 | `picture not found` | Check the file name, and that it is in `notes/src/img/`. |

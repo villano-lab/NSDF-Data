@@ -10,6 +10,8 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Changed
 
+- **Note guides: how to supersede a note.** Writing a note (version 9) and Publishing a note (version 5) say what to do when a note replaces another: a `Supersedes:` line in the new note, a line in the pull request description, and the older note's status and link changing in the same pull request.
+- **The note status "Outdated" is now "Superseded (reference/link)".** It says what it means: a newer note has taken the place of this one, and this one stays up for reference with a link to the newer note. `tools/build_notes.py`, the status legend on the front page, the badge colour in `style.css` and the note guides (writing a note, publishing a note, the cheat-sheet and the developer note-creation sheet) use the new name; no existing note had the old one, so there is no alias. A student note whose header still says `Outdated` now fails `build_notes.py check`.
 - **Updating your setup, version 3.** The merge in Step 2 is now `git merge --no-edit origin/develop`, so git no longer opens a text editor (Vim on Windows) that a student may not know how to leave; a troubleshooting row says how to leave it anyway. In Step 4 the list of old packages is saved with a full path into the home folder (`%USERPROFILE%\old-environment.txt`, or `~/old-environment.txt`), so it cannot land inside the repository and show up as a new file in `git status`; `/old-environment.txt` is also in `.gitignore`.
 
 ## [0.5.0] - 2026-10-12

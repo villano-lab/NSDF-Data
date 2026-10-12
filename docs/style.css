@@ -9,7 +9,7 @@
   --code-bg: #f1f3f5;
   --complete: #1f845a;
   --in-progress: #b07d00;
-  --outdated: #8a5a00;
+  --superseded: #8a5a00;
   --abandoned: #a33a3a;
   --brainstorm: #6b4fbb;
   --warn-bg: #fff4e5;
@@ -31,7 +31,7 @@
     --code-bg: #222a33;
     --complete: #4bce97;
     --in-progress: #e2b203;
-    --outdated: #f1a94e;
+    --superseded: #f1a94e;
     --abandoned: #f08a8a;
     --brainstorm: #b9a3ff;
     --warn-bg: #2b2313;
@@ -100,7 +100,7 @@ table.compact td, table.compact th { padding: 5px 10px; }
 .status { font-weight: 600; white-space: nowrap; }
 .status.complete { color: var(--complete); }
 .status.in-progress { color: var(--in-progress); }
-.status.outdated { color: var(--outdated); }
+.status.superseded { color: var(--superseded); }
 .status.abandoned { color: var(--abandoned); }
 .status.brainstorm { color: var(--brainstorm); }
 .status.under-dev { color: var(--in-progress); }

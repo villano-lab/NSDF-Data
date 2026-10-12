@@ -21,6 +21,7 @@ OS = {
   FILEMGR="File Explorer",
   IDX="`C:\\Users\\YourName\\idx`",
   GOHOME="cd %USERPROFILE%",
+  OLDENV="%USERPROFILE%\\old-environment.txt",
   HOMEEX="`C:\\Users\\YourName`",
   NEWLINE_NOTE="",
   CRLF_NOTE="::: tip\n**You may see a warning about LF and CRLF.** On Windows, `git add` can print a line like this one:\n\n`warning: in the working copy of 'data_analysis/R76/student/yourname/`\\\n`first-analysis-yourname.ipynb', LF will be replaced by CRLF the next time Git touches it`\n\nThis is harmless, and your file was still added, so carry on with `git commit`. Every line of a text file ends with an invisible marker. Windows uses two characters for it (CRLF), macOS and Linux use one (LF). Git for Windows keeps LF in the repository and gives you CRLF in your own copy, so it is telling you that it will convert this file the next time it writes it.\n:::\n\n",
@@ -48,6 +49,7 @@ OS = {
   FILEMGR="Finder",
   IDX="`~/idx`",
   GOHOME="cd ~",
+  OLDENV="~/old-environment.txt",
   HOMEEX="`/Users/YourName`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="macOS may say an app is from an unidentified developer when you open it. You do not need to open any app in this guide, so you can ignore this.",
   CRLF_NOTE="",
@@ -74,6 +76,7 @@ OS = {
   FILEMGR="Files (the file manager)",
   IDX="`~/idx`",
   GOHOME="cd ~",
+  OLDENV="~/old-environment.txt",
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.",
   CRLF_NOTE="",
@@ -793,7 +796,7 @@ Guide version 18, 12 October 2026, @NAME@ edition. Written for beginners; please
 UPDATE = """---
 title: "Updating your setup"
 subtitle: "NSDF-Data student guide 7 — @NAME@ edition"
-date: "Version 2 · 12 October 2026"
+date: "Version 3 · 12 October 2026"
 ---
 
 ::: maintenance
@@ -854,10 +857,10 @@ Now bring the changes in:
 
 ```
 git fetch origin
-git merge origin/develop
+git merge --no-edit origin/develop
 ```
 
-**What these lines do:** `git fetch` downloads the newest changes without touching your files, and `git merge` combines them with your branch. It prints `Already up to date.` or a list of the files that changed.
+**What these lines do:** `git fetch` downloads the newest changes without touching your files, and `git merge` combines them with your branch (`--no-edit` keeps git from opening a text editor to ask for a message). It prints `Already up to date.` or a list of the files that changed.
 
 ::: careful
 If git says `CONFLICT`, stop. Do not edit anything and do not try to fix it: copy the message and send it to the project lead.
@@ -884,7 +887,7 @@ Do this when the check says your Python is not the version the guides use. Pytho
 ```
 @GOHOME@
 conda activate darkmatter_cli_env
-python -m pip freeze > old-environment.txt
+python -m pip freeze > @OLDENV@
 conda deactivate
 conda env remove -n darkmatter_cli_env -y
 conda create -n darkmatter_cli_env python=3.12 pip -y
@@ -901,7 +904,7 @@ python -m ipykernel install --user --name darkmatter_cli_env
 |---|---|
 | `cd` (the first line) | Moves you to your home folder, where the list of old packages is saved. |
 | `conda activate` | Switches your old environment on, so the next line can read it. |
-| `pip freeze > old-environment.txt` | Writes the names and versions of everything in the old environment into the file `old-environment.txt`. |
+| `pip freeze > ...old-environment.txt` | Writes the names and versions of everything in the old environment into the file `old-environment.txt` in your home folder. |
 | `conda deactivate` | Switches the old environment off. |
 | `conda env remove` | Deletes the old environment. This takes a few minutes. |
 | `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.12 and `pip`. |
@@ -958,6 +961,7 @@ Use the same `yourname` as in your branch name. If Jupyter asks for a kernel, ch
 | `Python was not found; run without arguments to install from the Microsoft Store` (Windows) | Your environment is not switched on, or it was not created. Type `conda env list`{.cmd}. If `darkmatter_cli_env` is not in the list, run the `conda create` line of Step 4 again. If it is, run `conda activate darkmatter_cli_env`{.cmd}. |
 | `FileExistsError` on the `ipykernel install` line | Jupyter already has a kernel of that name. Run `jupyter kernelspec remove darkmatter_cli_env -y`{.cmd} and then the `ipykernel install` line again. |
 | git says `CONFLICT` | Stop and send the message to the project lead. Do not edit the files. |
+| A text editor opens (a window full of `~` characters, or a message starting `Merge branch`) after `git merge` | git is asking for a message for the merge. In the editor (usually Vim): press `Esc`, type `:wq`{.cmd} and press Enter. The merge finishes with git's own message. |
 | The kernel is missing in Jupyter | In the environment, run the last two lines of Step 4 again, then restart Jupyter. |
 
 ## Where to get help
@@ -968,7 +972,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 2, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 3, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -983,7 +987,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST), ("update", UPDATE)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

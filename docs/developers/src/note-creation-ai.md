@@ -2,7 +2,7 @@
 title-meta: "Developer quick-sheet: creating a note with an AI agent"
 author-meta: "NSDF-Data maintainers"
 html-title: "Creating a note with an AI agent"
-html-subtitle: "Developer quick-sheet · Claude Code or a similar agent · version 1, 7 October 2026"
+html-subtitle: "Developer quick-sheet · Claude Code or a similar agent · version 2, 12 October 2026"
 ---
 
 ```{=latex}
@@ -13,7 +13,7 @@ html-subtitle: "Developer quick-sheet · Claude Code or a similar agent · versi
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} Creating a note with an AI agent}\\[0.2em]
-{\small Developer quick-sheet \textperiodcentered{} Claude Code or a similar agent \textperiodcentered{} version 1, 7 October 2026}
+{\small Developer quick-sheet \textperiodcentered{} Claude Code or a similar agent \textperiodcentered{} version 2, 12 October 2026}
 \end{center}
 \vspace{0.2em}
 ```
@@ -49,4 +49,4 @@ The agent does the mechanical work. **You own every number, every reading and ev
 - [ ] The diff touches only: the new page, its images, one row of `docs/index.html`, one line of `CHANGELOG.md`, and the notebook. Anything else: ask why, and revert it.
 - [ ] `git cat-file -e <hash>:<path>` passes for every pinned link, and the page opens from disk with working figures and links.
 
-**When it goes wrong.** It says a number is checked but you cannot find it: ask for the line of output it used, and if it has none, the number is wrong. It turns your sentence into a different claim: revert that sentence and say so. It wants to edit a Complete note or generated files: refuse. A check keeps failing: paste the message, not a summary. Then push the branch, let the checks run, and merge the PR yourself. For a **student** note, the agent can run `python tools/build_notes.py check` and report, but you give the S-number and merge.
+**When it goes wrong.** It says a number is checked but you cannot find it: ask for the line of output it used, and if it has none, the number is wrong. It turns your sentence into a different claim: revert that sentence and say so. It wants to edit a Complete note or generated files: refuse. A check keeps failing: paste the message, not a summary. Then push the branch, let the checks run, and merge the PR yourself. For a **student** note, the agent can run `python tools/build_notes.py check` and report, but you give the note number and merge.

@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 8 · 9 October 2026"
+date: "Version 14 · 12 October 2026"
 ---
 
 ::: tip
@@ -51,76 +51,31 @@ The table below lists the sections most notes use, in a sensible order. Each one
 **Caveats are strongly suggested.** A note that states its limits is trusted more than one that does not, however good the plots look. If you leave caveats out, be sure there is nothing you would want a reader to know about your result.
 :::
 
-## Which file to write in
+## Where and how to write
 
-Write your note in a **plain text file** with the extension `.md`. The name matters: `my-note.md`, not `my-note.md.txt` and not `my-note.docx`.
+Write your note in whatever you are comfortable with. Two routes are supported, and guide 4 takes either one onto the site.
 
-| Option | Use it when | What to do |
-|---|---|---|
-| **GitHub web editor** (any computer) | You want no install at all | Open the file in the repository on [github.com](https://github.com) and click the pencil icon. Choose a new file named `notes/src/your-note.md`. |
-| **VS Code** (any computer) | You want a comfortable editor | Install VS Code, open the `NSDF-Data` folder, click **New File**, and name it `your-note.md`. |
-| **Notepad** (Windows) | You only want something simple | Open Notepad, write, then **File**, **Save As**. Set *Save as type* to **All Files** and name the file `your-note.md`. In Notepad, leave the encoding as **UTF-8**. |
-| **TextEdit** (macOS) | You only want something simple | Open TextEdit, choose **Format**, then **Make Plain Text** before typing. Save as `your-note.md`. If it offers `.txt`, pick *Use .md* when asked. |
-| **gedit or Text Editor** (Linux) | You use a standard desktop | Open the editor, write, and save as `your-note.md`. |
+### Suggested: VS Code, writing Markdown in the project
 
-::: careful
-**Do not write your note in Word or Google Docs.** Word adds hidden formatting, turns straight quotes into curly ones, and changes characters in code. Those changes break the page and the code you paste in. If you already wrote in Word, convert it (see the next section).
-:::
+[VS Code](https://code.visualstudio.com/) is a free editor. Here you write the note as a **plain text file ending in `.md`** inside the `NSDF-Data` folder, next to the notebook that makes its numbers. It can show a preview of the page as you type, and everything stays in Git on your branch, so every version is saved and changing the note later is just editing the file. This is the route we suggest.
 
-To see the full file name on Windows, open File Explorer, then **View**, then tick **File name extensions**. Check that the name ends in `.md`.
+1. Install VS Code, start it, and choose **File**, then **Open Folder**, and pick the `NSDF-Data` folder.
+2. In the file list on the left, open `notes/src`. Copy `_template.md` (right-click it, **Copy**, then right-click the folder and **Paste**) and rename the copy `your-note-name.md`. Use lowercase letters and hyphens, for example `baseline-in-dump-one.md`.
+3. Write. To see the preview in its own tab next to the text, press `Ctrl+K`, let go, then press `V` (on macOS: `Cmd+K`, then `V`). The preview follows as you type and scroll. (`Ctrl+Shift+V` also works, but it replaces the text with the preview in the same tab.)
+4. Save each figure as a PNG in `notes/src/img/`, with your note's name at the start of the file name (`baseline-in-dump-one-fig1.png`) and refer to it as `![caption](img/baseline-in-dump-one-fig1.png)`. All notes share that one folder, so the name prefix keeps your pictures from being mixed up with someone else's. Put the picture directly in `img/`, not in a subfolder.
+5. Keep your notebook and any scripts in your own folder under `data_analysis/R76/student/`, and commit as you go (guide 2, Step 7).
 
-## Converting a Word or Google Docs file
+Any other plain text editor works for this route too (Notepad, TextEdit set to **Format**, then **Make Plain Text**, or gedit). Save the file as `your-note-name.md`, as UTF-8, and check on Windows that the name does not end in `.md.txt` (File Explorer, **View**, then tick **File name extensions**). The GitHub web editor also works, with no install at all.
 
-If your draft is in Word or Google Docs, convert it to Markdown with a program called **pandoc**. It is free and runs from the terminal you already know from the setup guide.
+### Also supported: Word or Google Docs
 
-**Step 1. Export your draft.**
-- In **Word**: **File**, then **Save As**, and choose **Word Document (.docx)**.
-- In **Google Docs**: **File**, then **Download**, then **Microsoft Word (.docx)**.
+If you write better in Word or Google Docs, write there. Keep the file anywhere outside the project, for example your `Research` folder. When it is ready, guide 4 turns it into a note, pictures included, with one command, and the same command updates the note after you change the document. Three habits make the conversion clean:
 
-Before you export, check the three things that convert badly:
+- **Use Heading styles for section titles.** In Word, select a section title and choose **Home**, then **Heading 1** (main sections) or **Heading 2** (sub-sections). Do not just make the title bold or bigger. Only Heading-styled text becomes a heading, and without headings there is no outline.
+- **Avoid underline and superscript.** Underlined text and superscripts (the raised "th" in 5th, for example) do not convert. Use plain text instead.
+- **Insert pictures into the document** with **Insert**, then **Pictures** (or paste them in), and put the caption in the line under each one. Pictures that are only linked, not embedded, are lost.
 
-- **Use Word's Heading styles for section titles.** In Word, select a section title and choose **Home**, then **Heading 1** (main sections) or **Heading 2** (sub-sections). Do not just make the title bold or bigger. Pandoc only turns Heading-styled text into `#` headings. Bold text stays plain text, and your outline will be missing.
-- **Remove underline and superscript formatting.** Underlined text becomes raw HTML tags such as `<u>…</u>`, and superscripts such as `5<sup>th</sup>` do the same. Use plain text instead, or write `5th` and `^th^` by hand afterwards.
-- **Put figures in the document, not as text.** Insert each picture with **Insert**, then **Pictures**. Pandoc can only save pictures that are embedded in the file.
-
-Save the document in your `Research` folder, next to `NSDF-Data`, as `my-note.docx`. Put any separate figure files you want to keep in that folder too.
-
-**Step 2. Install pandoc once.** In the terminal, with your environment active:
-
-```
-conda activate darkmatter_cli_env
-conda install -c conda-forge pandoc -y
-```
-
-On macOS you can also use `brew install pandoc`. On Windows, the [pandoc website](https://pandoc.org/installing.html) has an installer.
-
-**Step 3. Convert.** Go to the folder that holds the `.docx` and run:
-
-```
-pandoc my-note.docx -t gfm --extract-media=img -o my-note.md
-```
-
-This writes `my-note.md` and saves any pictures from the document into an `img` folder.
-
-::: checkpoint
-Open `my-note.md` in a plain text editor. Every section title you styled as Heading 1 or Heading 2 should start with `#` or `##`. Every picture you inserted should appear as a line starting `![`, and its file should be in the `img` folder. If you see no `#` lines at all, your titles were not Heading-styled. If the file is one long line of symbols, you saved the wrong type of file: check that it is a `.docx`, not a `.doc` or a PDF.
-:::
-
-::: careful
-**Look for leftover HTML.** Search the file for `<u>`, `<sup>`, `<sub>` and `<span`. Each one is formatting that did not convert. Delete the tags and keep the words, or rewrite them in plain text. A note with raw HTML tags in it will look broken on the site.
-:::
-
-::: tip
-**Test a conversion before you rely on it.** Convert a short two-section draft with one picture first. If the headings and the picture both come through, convert the full note.
-:::
-
-**Step 4. Add the header.** Open `my-note.md` and add the header block (see *The header* above) at the very top. Conversion does not add it for you.
-
-**Step 5. Check it.** Go through the checklist at the end of this guide. Check every number, every heading you did use and every figure path. Figures must still exist in the `img` folder after you move the note.
-
-::: careful
-Do not convert a PDF. The text of a PDF cannot be recovered reliably, so write the note again in a `.md` file, or copy the text from the PDF into your editor and check it carefully.
-:::
+Keep code out of the document where you can: link to the notebook instead (see *Pinning your code*). Word turns straight quotes into curly ones, which breaks any code you paste in.
 
 ## The header
 
@@ -138,9 +93,24 @@ description: "One sentence: what you did and what you found."
 ---
 ```
 
-Leave `id` as `TBD`. The reviewer gives your note its number (S1, S2, …) before it is published.
+Leave `id` as `TBD`. The reviewer gives your note its number (the next free one, for example 8) before it is published. Notes have one continuous set of numbers, whoever wrote them.
 
-**Status** is one of: *In progress* (you are still working on it), *Complete* (the question is answered and you are not going to change it), or *Outdated* (a later note or a fix has superseded it). New notes start as *In progress*.
+**Status** is one of: *In progress* (you are still working on it), *Complete* (the question is answered and you are not going to change it), or *Superseded (reference/link)* (a later note has taken its place; this one stays up for reference and links to the newer note). New notes start as *In progress*.
+
+## If your note replaces an earlier note
+
+Sometimes a new note redoes an earlier one with a better method. Then the two notes have to point at each other, and the older note's status has to change. Do this:
+
+1. **In your note**, directly under the header, add one line that names the note you replace and links to it. Pages sit in the same folder, so a link to a hand-written note looks like this (note 3 here), and a link to another student note is `student-their-note-name.html`:
+
+    ```
+    **Supersedes:** [Note 3](note-03-noise-psd.html)
+    ```
+
+2. **In the pull request description** (guide 4), write `Supersedes Note 3` so your lead sees it at once.
+3. **The older note** then changes to the status *Superseded (reference/link)* and gets a link to yours. Your lead does this for a hand-written note, in the same pull request, as an extra commit. For another student note, change `status:` in its header in `notes/src/` yourself, add a line `**Superseded by:** [your note](student-your-note-name.html)` under its header, and include that file in your pull request.
+
+Do not delete the older note. It stays up for reference.
 
 ## Writing the body
 
@@ -152,14 +122,33 @@ Leave `id` as `TBD`. The reviewer gives your note its number (S1, S2, …) befor
 - **Separate what you measured from what you think.** A sentence in *Results* states a number. A sentence in *Reading* says what it might mean.
 
 ::: tip
-If you change your mind, say so. Notes that show a correction are more useful than notes that pretend nothing went wrong. Put the correction in a clearly labelled box, with the date.
+If you change your mind, say so. Notes that show a correction are more useful than notes that pretend nothing went wrong. Put the correction in a clearly labelled box, with the date (see *A coloured box*, next).
 :::
+
+### A coloured box
+
+For a correction, a caveat or anything a reader must not miss, put it in a coloured box. In a Markdown note, write the text between two lines that hold only three colons, with a blank line before and after:
+
+```
+::: callout
+**Correction, 12 October 2026.** The median in the first table
+used 1000 samples; with 500 it is 1.51 counts.
+:::
+```
+
+Start the box with a bold label such as **Correction**, **Caveat** or **Note**. All boxes have the same colour (shaded, with a border); only the label tells the reader which kind it is.
+
+::: careful
+**The VS Code preview does not draw the box.** It shows the two `:::` lines as plain text. That is expected: the box appears on the published page, not in the preview. Do not delete the `:::` lines.
+:::
+
+If you write in Word or Google Docs, a coloured box does not survive the conversion. Use a bold label such as **Correction.** at the start of the paragraph, or add the `:::` lines to the Markdown after converting.
 
 ## Figures and tables
 
 - **Every figure needs a caption** that says what is plotted, for which data, and what to look for. "Bstd against event number, dump 1. Grey: trigger type Unknown." is a good caption.
 - **Label the axes with units.** ADC counts, microseconds, or samples. Do not leave the units out.
-- **Save figures as PNG** from your notebook, at a readable size, into the note's image folder.
+- **Save figures as PNG** from your notebook, at a readable size, into the note's image folder (`notes/src/img/`, named as in *Where and how to write*) or, in a Word document, into the document.
 - **Use a table** when you are comparing numbers. Use a figure when you are showing shape.
 
 ## Pinning your code
@@ -168,7 +157,11 @@ A note is only useful if the reader can find the code that made its numbers. Lin
 
 1. Commit your notebook to your branch (see the first analysis guide).
 2. Find the commit's short code, for example `a1b2c3d`.
-3. Link to `https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/data_analysis/R76/student/yourname/your-notebook.ipynb`.
+3. Link to the notebook like this, with your commit in place of `a1b2c3d` and the notebook's path in place of `PATH` (its folder under `data_analysis/R76/student/`, then its file name):
+
+    ```
+    https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/PATH
+    ```
 
 Say in the note which commit you pinned.
 
@@ -192,7 +185,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 8, 9 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 14, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

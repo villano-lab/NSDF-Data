@@ -211,3 +211,6 @@ __marimo__/
 
 # Claude Code: per-user local settings (permissions etc.) are not shared
 .claude/settings.local.json
+
+# Left behind by the Updating your setup guide if run inside the repo
+/old-environment.txt

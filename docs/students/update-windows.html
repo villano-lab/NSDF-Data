@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — Windows
-edition &middot; Version 1 · 12 October 2026</p>
+edition &middot; Version 3 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -62,7 +62,8 @@ behind, things can fail in confusing ways. Follow this guide
 <strong>whenever the project lead announces a new release</strong>,
 <strong>whenever the environment check warns you</strong>, and
 <strong>when you start a new piece of work after a long break</strong>.
-It takes about 10 minutes, or about 20 if Python itself changed.</p>
+It takes about 10 minutes, or 20 to 30 minutes if Python itself changed
+(mostly waiting).</p>
 </div>
 <div class="tip">
 <p><strong>Who this is for.</strong> You have finished the setup guide
@@ -72,8 +73,8 @@ the project lead.</p>
 </div>
 <h2 id="before-you-start">Before you start</h2>
 <ul>
-<li><strong>Time:</strong> about 10 minutes (about 20 if Python
-changed).</li>
+<li><strong>Time:</strong> about 10 minutes (20 to 30 if Python changed;
+most of that is waiting for deleting and installing).</li>
 <li><strong>You need:</strong> the setup guide finished, and your own
 work saved in Git (see Step 7 of the first analysis guide). Step 2 below
 checks.</li>
@@ -162,12 +163,13 @@ the project lead.</p>
 </div>
 <p>Now bring the changes in:</p>
 <pre><code>git fetch origin
-git merge origin/develop</code></pre>
+git merge --no-edit origin/develop</code></pre>
 <p><strong>What these lines do:</strong> <code>git fetch</code>
 downloads the newest changes without touching your files, and
-<code>git merge</code> combines them with your branch. It prints
-<code>Already up to date.</code> or a list of the files that
-changed.</p>
+<code>git merge</code> combines them with your branch
+(<code>--no-edit</code> keeps git from opening a text editor to ask for
+a message). It prints <code>Already up to date.</code> or a list of the
+files that changed.</p>
 <div class="careful">
 <p>If git says <code>CONFLICT</code>, stop. Do not edit anything and do
 not try to fix it: copy the message and send it to the project lead.</p>
@@ -189,14 +191,22 @@ text and can take a few minutes.</p>
 Python changed: make a new environment</h2>
 <p>Do this when the check says your Python is not the version the guides
 use. Python cannot be safely changed inside an existing environment, so
-you make a new one and keep the old one until the new one works. Type
-each line and press Enter:</p>
-<pre><code>conda deactivate
-conda rename -n darkmatter_cli_env darkmatter_cli_env_old
+you remove the old one and make a new one. Nothing you need is lost: the
+environment is rebuilt from <code>requirements.txt</code>, and the first
+lines below save a list of what the old one had, in case you installed
+something extra. Type each line and press Enter, and be patient:
+<strong>removing the old environment takes a few minutes, and so does
+the final install.</strong></p>
+<pre><code>cd %USERPROFILE%
+conda activate darkmatter_cli_env
+python -m pip freeze &gt; %USERPROFILE%\old-environment.txt
+conda deactivate
+conda env remove -n darkmatter_cli_env -y
 conda create -n darkmatter_cli_env python=3.12 pip -y
 conda activate darkmatter_cli_env
 cd %USERPROFILE%\Research\NSDF-Data
 python -m pip install -r requirements.txt
+jupyter kernelspec remove darkmatter_cli_env -y
 python -m ipykernel install --user --name darkmatter_cli_env</code></pre>
 <p><strong>What these lines do</strong></p>
 <div class="table-scroll">
@@ -213,13 +223,26 @@ python -m ipykernel install --user --name darkmatter_cli_env</code></pre>
 </thead>
 <tbody>
 <tr>
-<td><code>conda deactivate</code></td>
-<td>Switches your current environment off.</td>
+<td><code>cd</code> (the first line)</td>
+<td>Moves you to your home folder, where the list of old packages is
+saved.</td>
 </tr>
 <tr>
-<td><code>conda rename</code></td>
-<td>Gives your old environment the new name
-<code>darkmatter_cli_env_old</code>. Nothing is deleted.</td>
+<td><code>conda activate</code></td>
+<td>Switches your old environment on, so the next line can read it.</td>
+</tr>
+<tr>
+<td><code>pip freeze &gt; ...old-environment.txt</code></td>
+<td>Writes the names and versions of everything in the old environment
+into the file <code>old-environment.txt</code> in your home folder.</td>
+</tr>
+<tr>
+<td><code>conda deactivate</code></td>
+<td>Switches the old environment off.</td>
+</tr>
+<tr>
+<td><code>conda env remove</code></td>
+<td>Deletes the old environment. This takes a few minutes.</td>
 </tr>
 <tr>
 <td><code>conda create</code></td>
@@ -232,31 +255,33 @@ python -m ipykernel install --user --name darkmatter_cli_env</code></pre>
 <td>Switches the new environment on.</td>
 </tr>
 <tr>
-<td><code>cd</code></td>
+<td><code>cd</code> (the second one)</td>
 <td>Moves you into the <code>NSDF-Data</code> folder, where
 <code>requirements.txt</code> is.</td>
 </tr>
 <tr>
 <td><code>pip install -r requirements.txt</code></td>
-<td>Installs the project’s list of packages. It takes a few
+<td>Installs the project’s list of packages. It takes about five
 minutes.</td>
 </tr>
 <tr>
+<td><code>jupyter kernelspec remove</code></td>
+<td>Removes Jupyter’s old entry for the environment. If it says there is
+no such kernel, that is fine.</td>
+</tr>
+<tr>
 <td><code>ipykernel install</code></td>
-<td>Tells Jupyter about the new environment, replacing the old entry of
-the same name.</td>
+<td>Tells Jupyter about the new environment.</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="careful">
-<p>Anything you installed yourself into the old environment is not in
-the new one. To see what it had, type
-<code>conda activate darkmatter_cli_env_old</code> and then
-<code>python -m pip freeze</code>. When the new environment works (Step
-5), you can free the disk space with
-<code>conda env remove -n darkmatter_cli_env_old</code>, but there is no
-hurry.</p>
+<p>If you installed anything yourself into the old environment, its name
+is in <code>old-environment.txt</code> in your home folder. Install it
+again into the new environment with <code>python -m pip install</code>
+and the name, if you still need it. If one of the lines above fails, do
+not skip it: see <em>If something goes wrong</em> below.</p>
 </div>
 <h2 id="step-5.-check-that-everything-works">Step 5. Check that
 everything works</h2>
@@ -318,15 +343,43 @@ class="cmd">jupyter kernelspec list</code> lists
 arrives with the newest changes).</td>
 </tr>
 <tr>
-<td><code>conda rename</code> says it is not a command</td>
-<td>Your conda is old. Ask the project lead.</td>
+<td><code>EnvironmentLocationNotFound</code> or “not a conda
+environment” on <code>conda env remove</code></td>
+<td>There is no environment of that name any more. That is fine: carry
+on with the next line.</td>
 </tr>
 <tr>
-<td><code>CondaError</code> or <code>EnvironmentNameNotFound</code> on
-<code>conda rename</code></td>
-<td>The environment <code>darkmatter_cli_env</code> may not exist under
-that name. Type <code class="cmd">conda env list</code> and send the
-list to the project lead.</td>
+<td><code>CondaError: Prefix record '...' already exists</code> on
+<code>conda create</code></td>
+<td>Conda’s download cache has a bad entry. Type <code
+class="cmd">conda clean --all -y</code> and then run the
+<code>conda create</code> line again.</td>
+</tr>
+<tr>
+<td><code>conda create</code> complains that the folder exists, or a
+leftover folder <code>darkmatter_cli_env</code> is in the
+<code>envs</code> folder</td>
+<td>The removal left an empty shell behind. Type <code
+class="cmd">conda info --envs</code> to see where the environments live,
+check that the leftover <code>darkmatter_cli_env</code> folder holds no
+<code>python</code> file, delete that folder, and run the
+<code>conda create</code> line again.</td>
+</tr>
+<tr>
+<td><code>Python was not found; run without arguments to install from the Microsoft Store</code>
+(Windows)</td>
+<td>Your environment is not switched on, or it was not created. Type
+<code class="cmd">conda env list</code>. If
+<code>darkmatter_cli_env</code> is not in the list, run the
+<code>conda create</code> line of Step 4 again. If it is, run <code
+class="cmd">conda activate darkmatter_cli_env</code>.</td>
+</tr>
+<tr>
+<td><code>FileExistsError</code> on the <code>ipykernel install</code>
+line</td>
+<td>Jupyter already has a kernel of that name. Run <code
+class="cmd">jupyter kernelspec remove darkmatter_cli_env -y</code> and
+then the <code>ipykernel install</code> line again.</td>
 </tr>
 <tr>
 <td>git says <code>CONFLICT</code></td>
@@ -334,9 +387,17 @@ list to the project lead.</td>
 files.</td>
 </tr>
 <tr>
+<td>A text editor opens (a window full of <code>~</code> characters, or
+a message starting <code>Merge branch</code>) after
+<code>git merge</code></td>
+<td>git is asking for a message for the merge. In the editor (usually
+Vim): press <code>Esc</code>, type <code class="cmd">:wq</code> and
+press Enter. The merge finishes with git’s own message.</td>
+</tr>
+<tr>
 <td>The kernel is missing in Jupyter</td>
-<td>In the environment, run the last line of Step 4 again, then restart
-Jupyter.</td>
+<td>In the environment, run the last two lines of Step 4 again, then
+restart Jupyter.</td>
 </tr>
 </tbody>
 </table>
@@ -349,7 +410,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 1, 12 October 2026, Windows edition. Written for
+<p>Guide version 3, 12 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

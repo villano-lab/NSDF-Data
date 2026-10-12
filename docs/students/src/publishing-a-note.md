@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 6 · 12 October 2026"
+date: "Version 7 · 12 October 2026"
 ---
 
 ::: tip
@@ -15,7 +15,7 @@ Your note goes through four stages. You do the first two, the automatic check do
 1. **You** write the note as a `.md` file in the `notes/src/` folder, on your own branch.
 2. **You** open a **pull request**: a request to add your work to the project.
 3. **The check** runs at once. It lists anything wrong with the note.
-4. **Your lead** reviews the note, gives it a number (S1, S2, …), and merges it. After the merge the site builds your page. This takes a few minutes.
+4. **Your lead** reviews the note, gives it a note number (the next free one, for example 8), and merges it. After the merge the site builds your page. This takes a few minutes.
 
 Nothing reaches the public site until the merge.
 
@@ -116,7 +116,7 @@ The check starts automatically and takes less than a minute. When it finishes, c
 |---|---|
 | `header field 'X' is missing or empty` | Fill in that line of the header. |
 | `status must be one of ...` | Use exactly *In progress*, *Complete* or *Superseded (reference/link)*. |
-| `id must look like S1, S2, or TBD` | Leave `id: "TBD"`. |
+| `id must be a note number such as 8 ... or TBD` | Leave `id: "TBD"`. |
 | `raw HTML tag <u>` (or `<sup>`, `<sub>`, `<span>`) | Remove the formatting and keep the words. |
 | `notebook link pinned to 'master'` | Replace `master` with the commit hash you committed the notebook at. |
 | `placeholder COMMIT is still in the note` | Put the real commit hash in place of `COMMIT`. |
@@ -135,19 +135,19 @@ Your lead reads the note, may comment on the pull request, and may ask you for c
 
 ## After the merge
 
-- The site builds your page automatically, usually within two minutes. Check the front page: your note appears in the **Student notes** table at the bottom.
+- The site builds your page automatically, usually within two minutes. Check the front page: your note appears in the **Analysis Notes** table, in order of its note number.
 - The page is at `notes/student-<name>.html` on the site.
 
 ## Changing a note later
 
-You can change a published note either way you wrote it. Start from the latest version of your branch. Your lead gave your note its number (S1, S2, …) on the pull request, and your own copy of the file may still say `TBD`:
+You can change a published note either way you wrote it. Start from the latest version of your branch. Your lead gave your note its number on the pull request, and your own copy of the file may still say `TBD`:
 
 ```
 git switch student-yourname
 git pull origin develop
 ```
 
-Open `notes/src/your-note-name.md` and look at the header. It should say your note's number, for example `id: "S3"`. **Keep that number.** If it says `TBD`, stop and ask your lead: the check does not mind `TBD`, but the site cannot publish a note with it, and nothing is published until it is fixed.
+Open `notes/src/your-note-name.md` and look at the header. It should say your note's number, for example `id: "8"`. **Keep that number.** If it says `TBD`, stop and ask your lead: the check does not mind `TBD`, but the site cannot publish a note with it, and nothing is published until it is fixed.
 
 Then choose **one** of the two ways and keep to it, because the second one replaces the text of the note:
 
@@ -172,7 +172,7 @@ Then commit, push, and open a new pull request (or add to the open one). Let the
 
 ## Session Info
 
-Guide version 6, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 7, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

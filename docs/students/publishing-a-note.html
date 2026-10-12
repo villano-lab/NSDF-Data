@@ -16,7 +16,7 @@ computer)</title>
 
 <h1>Publishing a note</h1>
 <p class="meta">NSDF-Data student guide 4 — for every
-computer &middot; Version 6 · 12 October 2026</p>
+computer &middot; Version 7 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -66,9 +66,9 @@ the <code>notes/src/</code> folder, on your own branch.</li>
 to add your work to the project.</li>
 <li><strong>The check</strong> runs at once. It lists anything wrong
 with the note.</li>
-<li><strong>Your lead</strong> reviews the note, gives it a number (S1,
-S2, …), and merges it. After the merge the site builds your page. This
-takes a few minutes.</li>
+<li><strong>Your lead</strong> reviews the note, gives it a note number
+(the next free one, for example 8), and merges it. After the merge the
+site builds your page. This takes a few minutes.</li>
 </ol>
 <p>Nothing reaches the public site until the merge.</p>
 <h2 id="before-you-start">Before you start</h2>
@@ -219,7 +219,7 @@ common ones and what to do:</p>
 <em>Superseded (reference/link)</em>.</td>
 </tr>
 <tr>
-<td><code>id must look like S1, S2, or TBD</code></td>
+<td><code>id must be a note number such as 8 ... or TBD</code></td>
 <td>Leave <code>id: "TBD"</code>.</td>
 </tr>
 <tr>
@@ -264,20 +264,20 @@ note is ready, your lead gives it a number and merges it.</p>
 <h2 id="after-the-merge">After the merge</h2>
 <ul>
 <li>The site builds your page automatically, usually within two minutes.
-Check the front page: your note appears in the <strong>Student
-notes</strong> table at the bottom.</li>
+Check the front page: your note appears in the <strong>Analysis
+Notes</strong> table, in order of its note number.</li>
 <li>The page is at <code>notes/student-&lt;name&gt;.html</code> on the
 site.</li>
 </ul>
 <h2 id="changing-a-note-later">Changing a note later</h2>
 <p>You can change a published note either way you wrote it. Start from
 the latest version of your branch. Your lead gave your note its number
-(S1, S2, …) on the pull request, and your own copy of the file may still
-say <code>TBD</code>:</p>
+on the pull request, and your own copy of the file may still say
+<code>TBD</code>:</p>
 <pre><code>git switch student-yourname
 git pull origin develop</code></pre>
 <p>Open <code>notes/src/your-note-name.md</code> and look at the header.
-It should say your note’s number, for example <code>id: "S3"</code>.
+It should say your note’s number, for example <code>id: "8"</code>.
 <strong>Keep that number.</strong> If it says <code>TBD</code>, stop and
 ask your lead: the check does not mind <code>TBD</code>, but the site
 cannot publish a note with it, and nothing is published until it is
@@ -308,7 +308,7 @@ one). Let the check run again. If a result was wrong, say so in the
 note, with the date, as guide 3 explains. Do not delete a published note
 to hide a mistake.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 6, 12 October 2026. Written for every computer. Please
+<p>Guide version 7, 12 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a

@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 13 · 12 October 2026"
+date: "Version 14 · 12 October 2026"
 ---
 
 ::: tip
@@ -93,7 +93,7 @@ description: "One sentence: what you did and what you found."
 ---
 ```
 
-Leave `id` as `TBD`. The reviewer gives your note its number (S1, S2, …) before it is published.
+Leave `id` as `TBD`. The reviewer gives your note its number (the next free one, for example 8) before it is published. Notes have one continuous set of numbers, whoever wrote them.
 
 **Status** is one of: *In progress* (you are still working on it), *Complete* (the question is answered and you are not going to change it), or *Superseded (reference/link)* (a later note has taken its place; this one stays up for reference and links to the newer note). New notes start as *In progress*.
 
@@ -185,7 +185,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 13, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 14, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

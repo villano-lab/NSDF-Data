@@ -2,7 +2,7 @@
 title-meta: "Developer quick-sheet: creating a note"
 author-meta: "NSDF-Data maintainers"
 html-title: "Creating a note"
-html-subtitle: "Developer quick-sheet · hand-written notes in docs/notes/ · version 3, 12 October 2026"
+html-subtitle: "Developer quick-sheet · hand-written notes in docs/notes/ · version 4, 12 October 2026"
 ---
 
 ```{=latex}
@@ -13,12 +13,12 @@ html-subtitle: "Developer quick-sheet · hand-written notes in docs/notes/ · ve
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} Creating a note}\\[0.2em]
-{\small Developer quick-sheet \textperiodcentered{} hand-written notes in \texttt{docs/notes/} \textperiodcentered{} version 3, 12 October 2026}
+{\small Developer quick-sheet \textperiodcentered{} hand-written notes in \texttt{docs/notes/} \textperiodcentered{} version 4, 12 October 2026}
 \end{center}
 \vspace{0.2em}
 ```
 
-For a note you write yourself: an HTML page in `docs/notes/` and one row in the front-page table. (Student notes are Markdown in `notes/src/`; see the box at the bottom and the [student cheat-sheet](https://villano-lab.github.io/NSDF-Data/students/note-cheatsheet.html).) Start from `develop`, on a branch: `git switch -c feature/note-NN-short-name` (NN is the next note number; a follow-up takes a letter, like 2a).
+For a note you write yourself: an HTML page in `docs/notes/` and one row in the front-page table. (Student notes are Markdown in `notes/src/`; see the box at the bottom and the [student cheat-sheet](https://villano-lab.github.io/NSDF-Data/students/note-cheatsheet.html).) Start from `develop`, on a branch: `git switch -c feature/note-NN-short-name` (NN is the next note number, which student notes share: `python tools/build_notes.py next` prints it; a follow-up takes a letter, like 2a).
 
 ![](img/note-steps.png){width=100%}
 
@@ -43,5 +43,5 @@ For a note you write yourself: an HTML page in `docs/notes/` and one row in the 
 **Rules.** A **Complete** note gets only a minimal correction, and only when a library rename makes it wrong. A breaking library change means updating the notebooks that use it, or marking them deprecated (the red box described on the front page). Any whole-trace spectrum must skip the leading glitch samples. A *segment* is a run of same-trigger events; a *run* is a whole data-taking period.
 
 ::: tip
-**Reviewing a student note.** The PR into `develop` shows a green check and nothing is public. Change `id: "TBD"` to the next S-number (S1, S2, ...), commit it to the PR branch, and merge. The bot builds the page and the index row, and it is live in 2 to 3 minutes. When a student updates a published note, check the header still has its S-number: `TBD` passes the PR check, but the build refuses it and nothing is published until you fix it. To remove a note, delete its source file in a PR; the next build removes the page.
+**Reviewing a student note.** The PR into `develop` shows a green check and nothing is public. Change `id: "TBD"` to the next note number (`python tools/build_notes.py next` prints it; it is the same numbering as the hand-written notes), commit it to the PR branch, and merge. The bot builds the page and its row in the Analysis Notes table, placed by number among the hand-written rows, and it is live in 2 to 3 minutes. When a student updates a published note, check the header still has its note number: `TBD` passes the PR check, but the build refuses it and nothing is published until you fix it. To remove a note, delete its source file in a PR; the next build removes the page.
 :::

@@ -7,4 +7,4 @@ Student notes are written here as Markdown (`.md`) files, one note per file, and
 - Wrote the note in Word or Google Docs? `python tools/word_to_note.py my-note.docx your-note-name` turns it into a note and saves its pictures (student guide 4, Step 1).
 - Read the guide *Writing a note* (student guide 3) on the notes site before you start.
 - The publishing check runs on every pull request. Fix anything it reports before asking for review.
-- Leave `id: "TBD"` in your header. A reviewer gives the note its S-number (S1, S2, …) before merging.
+- Leave `id: "TBD"` in your header. A reviewer gives the note its number (the next free one, for example 8) before merging. Notes have one continuous set of numbers; `python tools/build_notes.py next` prints the next free one.

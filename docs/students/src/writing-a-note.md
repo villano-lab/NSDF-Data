@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 8 · 9 October 2026"
+date: "Version 9 · 12 October 2026"
 ---
 
 ::: tip
@@ -140,7 +140,22 @@ description: "One sentence: what you did and what you found."
 
 Leave `id` as `TBD`. The reviewer gives your note its number (S1, S2, …) before it is published.
 
-**Status** is one of: *In progress* (you are still working on it), *Complete* (the question is answered and you are not going to change it), or *Outdated* (a later note or a fix has superseded it). New notes start as *In progress*.
+**Status** is one of: *In progress* (you are still working on it), *Complete* (the question is answered and you are not going to change it), or *Superseded (reference/link)* (a later note has taken its place; this one stays up for reference and links to the newer note). New notes start as *In progress*.
+
+## If your note replaces an earlier note
+
+Sometimes a new note redoes an earlier one with a better method. Then the two notes have to point at each other, and the older note's status has to change. Do this:
+
+1. **In your note**, directly under the header, add one line that names the note you replace and links to it. Pages sit in the same folder, so a link to a hand-written note looks like this (note 3 here), and a link to another student note is `student-their-note-name.html`:
+
+```
+**Supersedes:** [Note 3, Noise PSD from selected traces](note-03-noise-psd.html)
+```
+
+2. **In the pull request description** (guide 4), write `Supersedes Note 3` so your lead sees it at once.
+3. **The older note** then changes to the status *Superseded (reference/link)* and gets a link to yours. Your lead does this for a hand-written note, in the same pull request, as an extra commit. For another student note, change `status:` in its header in `notes/src/` yourself, add a line `**Superseded by:** [your note](student-your-note-name.html)` under its header, and include that file in your pull request.
+
+Do not delete the older note. It stays up for reference.
 
 ## Writing the body
 
@@ -192,7 +207,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 8, 9 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 9, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

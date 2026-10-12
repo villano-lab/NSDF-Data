@@ -16,7 +16,7 @@ every computer)</title>
 
 <h1>Writing a note</h1>
 <p class="meta">NSDF-Data student guide 3 — writing a note, for every
-computer &middot; Version 8 · 9 October 2026</p>
+computer &middot; Version 9 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -33,6 +33,9 @@ id="toc-which-file-to-write-in">Which file to write in</a></li>
 id="toc-converting-a-word-or-google-docs-file">Converting a Word or
 Google Docs file</a></li>
 <li><a href="#the-header" id="toc-the-header">The header</a></li>
+<li><a href="#if-your-note-replaces-an-earlier-note"
+id="toc-if-your-note-replaces-an-earlier-note">If your note replaces an
+earlier note</a></li>
 <li><a href="#writing-the-body" id="toc-writing-the-body">Writing the
 body</a></li>
 <li><a href="#figures-and-tables" id="toc-figures-and-tables">Figures
@@ -329,8 +332,34 @@ description: &quot;One sentence: what you did and what you found.&quot;
 note its number (S1, S2, …) before it is published.</p>
 <p><strong>Status</strong> is one of: <em>In progress</em> (you are
 still working on it), <em>Complete</em> (the question is answered and
-you are not going to change it), or <em>Outdated</em> (a later note or a
-fix has superseded it). New notes start as <em>In progress</em>.</p>
+you are not going to change it), or <em>Superseded (reference/link)</em>
+(a later note has taken its place; this one stays up for reference and
+links to the newer note). New notes start as <em>In progress</em>.</p>
+<h2 id="if-your-note-replaces-an-earlier-note">If your note replaces an
+earlier note</h2>
+<p>Sometimes a new note redoes an earlier one with a better method. Then
+the two notes have to point at each other, and the older note’s status
+has to change. Do this:</p>
+<ol type="1">
+<li><strong>In your note</strong>, directly under the header, add one
+line that names the note you replace and links to it. Pages sit in the
+same folder, so a link to a hand-written note looks like this (note 3
+here), and a link to another student note is
+<code>student-their-note-name.html</code>:</li>
+</ol>
+<pre><code>**Supersedes:** [Note 3, Noise PSD from selected traces](note-03-noise-psd.html)</code></pre>
+<ol start="2" type="1">
+<li><strong>In the pull request description</strong> (guide 4), write
+<code>Supersedes Note 3</code> so your lead sees it at once.</li>
+<li><strong>The older note</strong> then changes to the status
+<em>Superseded (reference/link)</em> and gets a link to yours. Your lead
+does this for a hand-written note, in the same pull request, as an extra
+commit. For another student note, change <code>status:</code> in its
+header in <code>notes/src/</code> yourself, add a line
+<code>**Superseded by:** [your note](student-your-note-name.html)</code>
+under its header, and include that file in your pull request.</li>
+</ol>
+<p>Do not delete the older note. It stays up for reference.</p>
 <h2 id="writing-the-body">Writing the body</h2>
 <ul>
 <li><strong>Say what you did in order,</strong> with enough detail that
@@ -413,7 +442,7 @@ concrete.</label></li>
 for a word a newcomer would not know.</label></li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 8, 9 October 2026. Written for every computer. Please
+<p>Guide version 9, 12 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="next">Next</h2>
 <p>When the note is written and checked, go to <strong>student guide 4:

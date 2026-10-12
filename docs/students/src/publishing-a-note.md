@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 4 · 7 October 2026"
+date: "Version 5 · 12 October 2026"
 ---
 
 ::: tip
@@ -60,9 +60,14 @@ On [github.com](https://github.com), open the repository. GitHub shows a yellow 
 
 - the **base** is `develop` and the **compare** branch is `student-yourname`;
 - the title says what the note is about;
-- the description says, in one sentence, what question the note answers.
+- the description says, in one sentence, what question the note answers;
+- if your note replaces an earlier note, the description says so (for example `Supersedes Note 3`).
 
 Click **Create pull request**.
+
+::: careful
+**If your note replaces an earlier note**, that note's status must change and it must link to yours, and this has to travel in the same pull request. Guide 3 (*If your note replaces an earlier note*) says what goes in your note. For a hand-written note, your lead adds the change as a commit on your branch, so you do not edit `docs/`. For another student note, include its changed file in your pull request.
+:::
 
 ## Step 4. Read the check
 
@@ -71,7 +76,7 @@ The check starts automatically and takes less than a minute. When it finishes, c
 | Message says | What to do |
 |---|---|
 | `header field 'X' is missing or empty` | Fill in that line of the header. |
-| `status must be one of ...` | Use exactly *In progress*, *Complete* or *Outdated*. |
+| `status must be one of ...` | Use exactly *In progress*, *Complete* or *Superseded (reference/link)*. |
 | `id must look like S1, S2, or TBD` | Leave `id: "TBD"`. |
 | `raw HTML tag <u>` (or `<sup>`, `<sub>`, `<span>`) | Remove the formatting and keep the words. |
 | `notebook link pinned to 'master'` | Replace `master` with the commit hash you committed the notebook at. |
@@ -108,7 +113,7 @@ Then make the change, commit, push, and open a new pull request (or add to the o
 
 ## Session Info
 
-Guide version 4, 7 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 5, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

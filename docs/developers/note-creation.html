@@ -15,7 +15,7 @@
 
 <h1>Creating a note</h1>
 <p class="meta">Developer quick-sheet · hand-written notes in
-docs/notes/ · version 2, 7 October 2026</p>
+docs/notes/ · version 3, 12 October 2026</p>
 
 
 <p>For a note you write yourself: an HTML page in
@@ -61,7 +61,7 @@ Analysis Notes table in <code>docs/index.html</code>, <strong>newest
 note first</strong>. Columns: Note #, Link, Date, Author, Title,
 Description, Keywords, Status, Presentation. The status badge is
 <code>&lt;span class="status in-progress"&gt;</code> (or
-<code>complete</code>, <code>outdated</code>, <code>abandoned</code>,
+<code>complete</code>, <code>superseded</code>, <code>abandoned</code>,
 <code>brainstorm</code>).</li>
 <li><strong>Changelog and checks.</strong> Add a line under
 <code>[Unreleased]</code> in <code>CHANGELOG.md</code> (a new note is a
@@ -78,12 +78,12 @@ from <code>develop</code>. Check its status first: a
 <strong>Complete</strong> note is left alone (a follow-up takes a
 letter, like 2a after 2), an <strong>In progress</strong> note can
 change freely, and a note that a later one replaces becomes
-<strong>Outdated</strong> with a link to the newer one. If you re-ran
-anything, re-pin the links to the new hash and replace the PNGs. Update
-the date and status in the page’s meta line <strong>and</strong> in its
-row of <code>docs/index.html</code> (the row is hand-edited, so the two
-can drift). A wrong result stays in the note, corrected and dated; never
-delete a published note.</p>
+<strong>Superseded (reference/link)</strong> with a link to the newer
+one. If you re-ran anything, re-pin the links to the new hash and
+replace the PNGs. Update the date and status in the page’s meta line
+<strong>and</strong> in its row of <code>docs/index.html</code> (the row
+is hand-edited, so the two can drift). A wrong result stays in the note,
+corrected and dated; never delete a published note.</p>
 <p><strong>Rules.</strong> A <strong>Complete</strong> note gets only a
 minimal correction, and only when a library rename makes it wrong. A
 breaking library change means updating the notebooks that use it, or

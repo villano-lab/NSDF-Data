@@ -25,7 +25,7 @@ INDEX = DOCS / "index.html"
 START, END = "<!-- student-notes:start -->", "<!-- student-notes:end -->"
 
 REQUIRED = ["id", "title", "author", "date", "status", "keywords", "description"]
-STATUSES = {"In progress": "in-progress", "Complete": "complete", "Outdated": "outdated"}
+STATUSES = {"In progress": "in-progress", "Complete": "complete", "Superseded (reference/link)": "superseded"}
 FORBIDDEN_HTML = re.compile(r"<(u|sup|sub|span|font)\b", re.I)
 PIN = re.compile(r"github\.com/villano-lab/NSDF-Data/(?:blob|tree)/([^/\s)]+)/")
 

@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 16 · 9 October 2026</p>
+edition &middot; Version 17 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -93,9 +93,12 @@ folder yet. Each step below tells you where to go.</li>
 <tbody>
 <tr>
 <td><strong>Series</strong></td>
-<td>One data-taking session, named like <code>07221203_2025</code>. A
-typical series lasts hours; some are shorter because they are
-tests.</td>
+<td>One data-taking session, named like <code>07221203_2025</code>. The
+first two digits are the test facility (<code>07</code> is UMN, the
+University of Minnesota); the rest are the date and time the series
+started, here <code>221203</code> (year, month, day: 3 December 2022)
+and <code>2025</code> (20:25). A typical series lasts hours; some are
+shorter because they are tests.</td>
 </tr>
 <tr>
 <td><strong>Dump</strong></td>
@@ -106,15 +109,15 @@ tests.</td>
 <td><strong>Event</strong></td>
 <td>One moment when the system decided something might have happened and
 saved a short recording from every detector. Events are numbered in time
-order. See the picture below, and the <a
+order. See <strong>Figure 2</strong>, and the <a
 href="#appendix-what-an-event-looks-like">appendix</a>.</td>
 </tr>
 <tr>
 <td><strong>Detector / channel</strong></td>
-<td>The software numbers the readout units 0, 1 and 2 (“detectors”), and
-each has four channels. In Run 76 all three read the same physical
-detector, so a “detector” here means one readout unit with 4 channels.
-We use detector 0, channel 0.</td>
+<td>Which readout unit (detector 0, 1 or 2) and which of its four
+channels (0 to 3) a trace comes from. All three units read the same
+physical detector. We use detector 0, channel 0. See <strong>Figure
+2</strong>.</td>
 </tr>
 <tr>
 <td><strong>Trace</strong></td>
@@ -123,16 +126,17 @@ per sample.</td>
 </tr>
 <tr>
 <td><strong>Sample</strong></td>
-<td>One reading. Each sample is 1.6 microseconds long, and measures the
-average of the output (usually a voltage) over that time interval.</td>
+<td>One reading of the readout circuit’s output (usually a voltage or a
+current). Each sample is 1.6 microseconds long, and is the average of
+the output over that time.</td>
 </tr>
 <tr>
 <td><strong>ADC counts</strong></td>
-<td>The unit of the numbers in a trace. They are whole numbers
-(integers) from the analog-to-digital converter, proportional to the
-measured quantity (such as a voltage), but really just integers. In this
-dump the largest are around 8000, so they need at least 13 bits; the
-exact width is not stated in this guide.</td>
+<td>The units of a sample. The analog-to-digital converter (ADC) turns
+each reading into a whole number (an integer), proportional to the
+measured voltage or current. In this dump the largest are around 8000,
+so they need at least 13 bits; the exact width is not stated in this
+guide.</td>
 </tr>
 <tr>
 <td><strong>Baseline</strong></td>
@@ -152,8 +156,16 @@ what a particle leaves in a trace.</td>
 </div>
 <p><img src="src/img/trace-pulse.png" style="width:100.0%"
 alt="Two traces drawn on the same scale. The top one is flat noise with a little jitter. The bottom one is flat until about sample 505, then jumps up sharply and slowly falls back: that is a pulse." /></p>
-<p><em>Figure: two traces on the same scale. Top: noise only. Bottom: a
-pulse.</em></p>
+<p><strong>Figure 1.</strong> Two traces on the same scale. Top: noise
+only. Bottom: a pulse.</p>
+<p><img src="src/img/data-structure.png" style="width:100.0%" /></p>
+<p><strong>Figure 2.</strong> How the data is organised, and which part
+this guide follows (blue). A series is split into dumps; a dump holds
+events; each event has a trace from every channel of every detector; a
+trace is 4096 samples. The code in Step 4 picks detector 0, channel 0
+from every event of dump <code>F0001</code>, so each row of the table
+<code>pulses</code> is one event, and <code>pulses[row, sample]</code>
+is one number.</p>
 <h2 id="step-1.-read-three-notes-first-about-30-minutes">Step 1. Read
 three notes first (about 30 minutes)</h2>
 <p>Open the notes site at <a
@@ -294,8 +306,8 @@ plt.ylabel(&quot;ADC counts&quot;)
 plt.show()</code></pre>
 <p>Now change the <code>0</code> to <code>1</code>, <code>2</code>,
 <code>3</code> and run again. Most traces look like flat noise, with a
-little jitter. Row 1 is a quiet trace like the top one in the figure
-above. To see a pulse, try row <code>1095</code>. Then see the <a
+little jitter. Row 1 is a quiet trace like the top one in <strong>Figure
+1</strong>. To see a pulse, try row <code>1095</code>. Then see the <a
 href="#appendix-what-an-event-looks-like">appendix</a> if you want to
 know more about what you are looking at.</p>
 <h2 id="step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce a
@@ -443,21 +455,21 @@ of the 12 slots hold a trace and the other 5 read all zeros. We follow
 one channel, detector 0 channel 0, through all 1517 events.</p>
 <p><img src="src/img/channels.png" style="width:90.0%"
 alt="A schematic circle divided into four sectors for the four channels of detector 0 (channels 0 to 3). Channels 0, 1 and 3 hold a trace in this event and channel 2 reads all zeros. Channel 0 is outlined: it is the one this guide uses." /></p>
-<p><em>Figure: the four channels of detector 0 in one event. It is a
-schematic: the four sectors only stand for the channel numbers, and it
-does not show where the real sensors sit. The detector’s own sensor
-layout is similar to the SuperCDMS HV detector mask, but not the
-same.</em></p>
+<p><strong>Figure 3.</strong> The four channels of detector 0 in one
+event. It is a schematic: the four sectors only stand for the channel
+numbers, and it does not show where the real sensors sit. The detector’s
+own sensor layout is similar to the SuperCDMS HV detector mask, but not
+the same.</p>
 <p>A trace looks like a flat line with a little jitter (the
 <strong>baseline</strong>) until something happens. The first 500
 samples, the <strong>pretrigger window</strong>, are used to measure the
 baseline. If a particle deposits energy, the trace jumps up at once and
-then slowly falls back: a <strong>pulse</strong>. In the figure in the
-words table, the pulse in event 11108 starts just after sample 500; in
+then slowly falls back: a <strong>pulse</strong>. In <strong>Figure
+1</strong>, the pulse in event 11108 starts just after sample 500; in
 this dump, many pulses start there.</p>
-<p>The trace in the figure is row 1095 of the table <code>pulses</code>
-from Step 4 (the row is the position in the table, not the event
-number). Row 1 is a quiet trace.</p>
+<p>The pulse trace in <strong>Figure 1</strong> is row 1095 of the table
+<code>pulses</code> from Step 4 (the row is the position in the table,
+not the event number). Row 1 is a quiet trace.</p>
 <h2 id="appendix-code">Appendix: the code, line by line</h2>
 <p>You do not need this to finish the guide. It explains the code you
 pasted, a few lines at a time. A line that begins with <code>#</code> is
@@ -547,7 +559,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 16, 9 October 2026, macOS edition. Written for
+<p>Guide version 17, 12 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>

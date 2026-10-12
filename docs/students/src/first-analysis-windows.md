@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 16 · 9 October 2026"
+date: "Version 17 · 12 October 2026"
 ---
 
 ::: tip
@@ -19,20 +19,24 @@ date: "Version 16 · 9 October 2026"
 
 | Word | What it means here |
 |---|---|
-| **Series** | One data-taking session, named like `07221203_2025`. A typical series lasts hours; some are shorter because they are tests. |
+| **Series** | One data-taking session, named like `07221203_2025`. The first two digits are the test facility (`07` is UMN, the University of Minnesota); the rest are the date and time the series started, here `221203` (year, month, day: 3 December 2022) and `2025` (20:25). A typical series lasts hours; some are shorter because they are tests. |
 | **Dump** | One file set taken from a series, numbered `F0001`, `F0002`, ... |
-| **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See the picture below, and the [appendix](#appendix-what-an-event-looks-like). |
-| **Detector / channel** | The software numbers the readout units 0, 1 and 2 ("detectors"), and each has four channels. In Run 76 all three read the same physical detector, so a "detector" here means one readout unit with 4 channels. We use detector 0, channel 0. |
+| **Event** | One moment when the system decided something might have happened and saved a short recording from every detector. Events are numbered in time order. See **Figure 2**, and the [appendix](#appendix-what-an-event-looks-like). |
+| **Detector / channel** | Which readout unit (detector 0, 1 or 2) and which of its four channels (0 to 3) a trace comes from. All three units read the same physical detector. We use detector 0, channel 0. See **Figure 2**. |
 | **Trace** | The recorded signal for one channel in one event: 4096 numbers, one per sample. |
-| **Sample** | One reading. Each sample is 1.6 microseconds long, and measures the average of the output (usually a voltage) over that time interval. |
-| **ADC counts** | The unit of the numbers in a trace. They are whole numbers (integers) from the analog-to-digital converter, proportional to the measured quantity (such as a voltage), but really just integers. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |
+| **Sample** | One reading of the readout circuit's output (usually a voltage or a current). Each sample is 1.6 microseconds long, and is the average of the output over that time. |
+| **ADC counts** | The units of a sample. The analog-to-digital converter (ADC) turns each reading into a whole number (an integer), proportional to the measured voltage or current. In this dump the largest are around 8000, so they need at least 13 bits; the exact width is not stated in this guide. |
 | **Baseline** | The flat level a trace sits at when nothing happens. |
 | **Pretrigger window** | The first samples of a trace, used to measure the baseline. |
 | **Pulse** | A sudden rise above the baseline that then slowly falls back. It is what a particle leaves in a trace. |
 
 ![](img/trace-pulse.png){width=100%}
 
-*Figure: two traces on the same scale. Top: noise only. Bottom: a pulse.*
+**Figure 1.** Two traces on the same scale. Top: noise only. Bottom: a pulse.
+
+![](img/data-structure.png){width=100%}
+
+**Figure 2.** How the data is organised, and which part this guide follows (blue). A series is split into dumps; a dump holds events; each event has a trace from every channel of every detector; a trace is 4096 samples. The code in Step 4 picks detector 0, channel 0 from every event of dump `F0001`, so each row of the table `pulses` is one event, and `pulses[row, sample]` is one number.
 
 ## Step 1. Read three notes first (about 30 minutes)
 
@@ -153,7 +157,7 @@ plt.ylabel("ADC counts")
 plt.show()
 ```
 
-Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in the figure above. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
+Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in **Figure 1**. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
 
 ## Step 6. Reproduce a number from Note 2
 
@@ -235,11 +239,11 @@ In Run 76 one physical detector (a silicon detector, S104) is read out by three 
 
 ![](img/channels.png){width=90%}
 
-*Figure: the four channels of detector 0 in one event. It is a schematic: the four sectors only stand for the channel numbers, and it does not show where the real sensors sit. The detector's own sensor layout is similar to the SuperCDMS HV detector mask, but not the same.*
+**Figure 3.** The four channels of detector 0 in one event. It is a schematic: the four sectors only stand for the channel numbers, and it does not show where the real sensors sit. The detector's own sensor layout is similar to the SuperCDMS HV detector mask, but not the same.
 
-A trace looks like a flat line with a little jitter (the **baseline**) until something happens. The first 500 samples, the **pretrigger window**, are used to measure the baseline. If a particle deposits energy, the trace jumps up at once and then slowly falls back: a **pulse**. In the figure in the words table, the pulse in event 11108 starts just after sample 500; in this dump, many pulses start there.
+A trace looks like a flat line with a little jitter (the **baseline**) until something happens. The first 500 samples, the **pretrigger window**, are used to measure the baseline. If a particle deposits energy, the trace jumps up at once and then slowly falls back: a **pulse**. In **Figure 1**, the pulse in event 11108 starts just after sample 500; in this dump, many pulses start there.
 
-The trace in the figure is row 1095 of the table `pulses` from Step 4 (the row is the position in the table, not the event number). Row 1 is a quiet trace.
+The pulse trace in **Figure 1** is row 1095 of the table `pulses` from Step 4 (the row is the position in the table, not the event number). Row 1 is a quiet trace.
 
 ## Appendix: the code, line by line {#appendix-code}
 
@@ -279,7 +283,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 16, 9 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 17, 12 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

@@ -593,33 +593,159 @@ The pulse trace in **Figure 1** is row 1095 of the table `pulses` from Step 4 (t
 
 ## Appendix: the code, line by line {#appendix-code}
 
-You do not need this to finish the guide. It explains the code you pasted, a few lines at a time. A line that begins with `#` is a comment: Python ignores it, and it is there for people to read.
+You do not need this to finish the guide. It goes through the code you pasted, one line at a time: each line of code, and next to it, in red, what it does. A line that begins with `#` is a comment: Python ignores it, and it is there for people to read, so the comments are left out here.
 
 ### Part A. Step 4: load the data and count the traces {#code-step4}
 
-- `import sys` and `from pathlib import Path`: bring in two tools. `sys` controls where Python looks for code. `Path` works with folder names in the same way on every kind of computer.
-- `here = Path.cwd().resolve()`: the folder Jupyter is working in, written out in full.
-- `REPO = next(...)`: look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
-- `assert REPO, "Start Jupyter from inside the NSDF-Data folder."`: stop with that message if the project was not found, which means Jupyter was started in the wrong place.
-- `sys.path.insert(0, str(REPO / "python"))`: tell Python to look in the project's `python` folder first, so that the next `import` lines can find the project's own code.
-- `from nsdf_dark_matter.idx import load_all_data`: bring in the function, from the NSDF software, that reads a downloaded dump.
-- `import pulse_io as pio`: bring in the project's helpers for traces. `as pio` gives it a short name.
-- `cdms = load_all_data(...)`: open the dump you downloaded in Step 2. `Path.home()` is your home folder, and `/ "idx" / "07221203_2025_F0001"` follows the path down to the dump, the same folder Step 2 created. The whole dump is read into the computer's memory and called `cdms`.
-- `ids, pulses = pio.load_channel_batch(...)`: read it from the inside out. `cdms.get_detector_ids()` is the list of names of every group of traces (a name holds an event number and a detector number). `pio.filter_by_detector(..., 0)` keeps only the names for detector 0. `pio.load_channel_batch(cdms, ..., 0)` takes channel 0 from each of those and stacks the traces into one table. It gives back two things: `ids`, the names in order, and `pulses`, the table, with one row for each event and one column for each sample.
-- `print(pulses.shape)`: show the size of the table as (rows, columns). That is the `(1517, 4096)` you checked.
+::: explain
+```python
+import sys
+from pathlib import Path
+```
+
+Bring in two tools. `sys` controls where Python looks for code. `Path` works with folder names in the same way on every kind of computer.
+:::
+
+::: explain
+```python
+here = Path.cwd().resolve()
+```
+
+The folder Jupyter is working in, written out in full.
+:::
+
+::: explain
+```python
+REPO = next((p for p in [here, *here.parents]
+             if (p / "python" / "pulse_io.py").exists()), None)
+```
+
+Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
+:::
+
+::: explain
+```python
+assert REPO, "Start Jupyter from inside the NSDF-Data folder."
+```
+
+Stop with that message if the project was not found, which means Jupyter was started in the wrong place.
+:::
+
+::: explain
+```python
+sys.path.insert(0, str(REPO / "python"))
+```
+
+Tell Python to look in the project's `python` folder first, so that the next `import` lines can find the project's own code.
+:::
+
+::: explain
+```python
+from nsdf_dark_matter.idx import load_all_data
+```
+
+Bring in the function, from the NSDF software, that reads a downloaded dump.
+:::
+
+::: explain
+```python
+import pulse_io as pio
+```
+
+Bring in the project's helpers for traces. `as pio` gives it a short name.
+:::
+
+::: explain
+```python
+cdms = load_all_data(str(Path.home() / "idx" / "07221203_2025_F0001"))
+```
+
+Open the dump you downloaded in Step 2. `Path.home()` is your home folder, and `/ "idx" / "07221203_2025_F0001"` follows the path down to the dump, the same folder Step 2 created. The whole dump is read into the computer's memory and called `cdms`.
+:::
+
+::: explain
+```python
+ids, pulses = pio.load_channel_batch(
+    cdms, pio.filter_by_detector(cdms.get_detector_ids(), 0), 0)
+```
+
+Read it from the inside out. `cdms.get_detector_ids()` is the list of names of every group of traces (a name holds an event number and a detector number). `pio.filter_by_detector(..., 0)` keeps only the names for detector 0. `pio.load_channel_batch(cdms, ..., 0)` takes channel 0 from each of those and stacks the traces into one table. It gives back two things: `ids`, the names in order, and `pulses`, the table, with one row for each event and one column for each sample (see **Figure 2**).
+:::
+
+::: explain
+```python
+print(pulses.shape)
+```
+
+Show the size of the table as (rows, columns). That is the `(1517, 4096)` you checked.
+:::
 
 ### Part B. Step 6: count the quiet traces {#code-step6}
 
-- `from dataclasses import replace`: a tool for making a copy of a group of settings with one value changed.
-- `from pulse_config import DEFAULT_CONFIG`: the project's standard settings, such as how many samples at the start of a trace count as the baseline window (1000 by default) and how many of the very first samples to skip because of the electronics glitch (10).
-- `import pulse_quantities as pq`: functions that work out one number for each trace, such as how much its baseline wobbles.
-- `import pulse_cuts as pc`: functions that answer yes or no for each trace: "keep this one?"
-- `import numpy as np`: tools for working with tables of numbers.
-- `c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)`: a copy of the standard settings in which the baseline window is the first 500 samples, as in Note 2.
-- `quiet = pc.excursion_band(pulses, c500) & (np.log10(pq.bstd(pulses)) < 0.5)`: two yes-or-no tests joined by `&`, which means "and". The result, `quiet`, is a list with one `True` or `False` for each trace.
-    - `pc.excursion_band(pulses, c500)` is `True` when the trace's largest swing after the baseline window, compared with the wobble of its own baseline, falls in the middle band chosen in Note 2.
-    - `pq.bstd(pulses)` is the wobble (the standard deviation) of each trace's baseline. `np.log10(...) < 0.5` keeps only the traces whose baseline wobbles little: under about 3 counts.
-- `print(quiet.sum())`: a `True` counts as 1 and a `False` as 0, so the sum is the number of traces that passed both tests. That is the 179 of the checkpoint.
+::: explain
+```python
+from dataclasses import replace
+```
+
+A tool for making a copy of a group of settings with one value changed.
+:::
+
+::: explain
+```python
+from pulse_config import DEFAULT_CONFIG
+```
+
+The project's standard settings, such as how many samples at the start of a trace count as the baseline window (1000 by default) and how many of the very first samples to skip because of the electronics glitch (10).
+:::
+
+::: explain
+```python
+import pulse_quantities as pq
+```
+
+Functions that work out one number for each trace, such as how much its baseline wobbles.
+:::
+
+::: explain
+```python
+import pulse_cuts as pc
+```
+
+Functions that answer yes or no for each trace: "keep this one?"
+:::
+
+::: explain
+```python
+import numpy as np
+```
+
+Tools for working with tables of numbers.
+:::
+
+::: explain
+```python
+c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)
+```
+
+A copy of the standard settings in which the baseline window is the first 500 samples, as in Note 2.
+:::
+
+::: explain
+```python
+quiet = pc.excursion_band(pulses, c500) & (
+    np.log10(pq.bstd(pulses)) < 0.5)
+```
+
+Two yes-or-no tests joined by `&`, which means "and". The result, `quiet`, has one `True` or `False` for each trace. `pc.excursion_band(pulses, c500)` is `True` when the trace's largest swing after the baseline window, compared with the wobble of its own baseline, falls in the middle band chosen in Note 2. `pq.bstd(pulses)` is the wobble (the standard deviation) of each trace's baseline, and `np.log10(...) < 0.5` keeps only the traces whose baseline wobbles little: under about 3 counts.
+:::
+
+::: explain
+```python
+print(quiet.sum())
+```
+
+A `True` counts as 1 and a `False` as 0, so the sum is the number of traces that passed both tests. That is the 179 of the checkpoint.
+:::
 
 ## Where to get help
 

@@ -475,86 +475,129 @@ this dump, many pulses start there.</p>
 <code>pulses</code> from Step 4 (the row is the position in the table,
 not the event number). Row 1 is a quiet trace.</p>
 <h2 id="appendix-code">Appendix: the code, line by line</h2>
-<p>You do not need this to finish the guide. It explains the code you
-pasted, a few lines at a time. A line that begins with <code>#</code> is
-a comment: Python ignores it, and it is there for people to read.</p>
+<p>You do not need this to finish the guide. It goes through the code
+you pasted, one line at a time: each line of code, and next to it, in
+red, what it does. A line that begins with <code>#</code> is a comment:
+Python ignores it, and it is there for people to read, so the comments
+are left out here.</p>
 <h3 id="code-step4">Part A. Step 4: load the data and count the
 traces</h3>
-<ul>
-<li><code>import sys</code> and <code>from pathlib import Path</code>:
-bring in two tools. <code>sys</code> controls where Python looks for
+<div class="explain">
+<pre class="python"><code>import sys
+from pathlib import Path</code></pre>
+<p>Bring in two tools. <code>sys</code> controls where Python looks for
 code. <code>Path</code> works with folder names in the same way on every
-kind of computer.</li>
-<li><code>here = Path.cwd().resolve()</code>: the folder Jupyter is
-working in, written out in full.</li>
-<li><code>REPO = next(...)</code>: look at <code>here</code> and then at
-each folder above it, one after another, and take the first one that
-contains the file <code>python/pulse_io.py</code>. That folder is the
-whole NSDF-Data project. If there is none, <code>REPO</code> is
-<code>None</code>.</li>
-<li><code>assert REPO, "Start Jupyter from inside the NSDF-Data folder."</code>:
-stop with that message if the project was not found, which means Jupyter
-was started in the wrong place.</li>
-<li><code>sys.path.insert(0, str(REPO / "python"))</code>: tell Python
-to look in the project’s <code>python</code> folder first, so that the
-next <code>import</code> lines can find the project’s own code.</li>
-<li><code>from nsdf_dark_matter.idx import load_all_data</code>: bring
-in the function, from the NSDF software, that reads a downloaded
-dump.</li>
-<li><code>import pulse_io as pio</code>: bring in the project’s helpers
-for traces. <code>as pio</code> gives it a short name.</li>
-<li><code>cdms = load_all_data(...)</code>: open the dump you downloaded
-in Step 2. <code>Path.home()</code> is your home folder, and
-<code>/ "idx" / "07221203_2025_F0001"</code> follows the path down to
-the dump, the same folder Step 2 created. The whole dump is read into
-the computer’s memory and called <code>cdms</code>.</li>
-<li><code>ids, pulses = pio.load_channel_batch(...)</code>: read it from
-the inside out. <code>cdms.get_detector_ids()</code> is the list of
-names of every group of traces (a name holds an event number and a
-detector number). <code>pio.filter_by_detector(..., 0)</code> keeps only
-the names for detector 0.
+kind of computer.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>here = Path.cwd().resolve()</code></pre>
+<p>The folder Jupyter is working in, written out in full.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>REPO = next((p for p in [here, *here.parents]
+             if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)</code></pre>
+<p>Look at <code>here</code> and then at each folder above it, one after
+another, and take the first one that contains the file
+<code>python/pulse_io.py</code>. That folder is the whole NSDF-Data
+project. If there is none, <code>REPO</code> is <code>None</code>.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;</code></pre>
+<p>Stop with that message if the project was not found, which means
+Jupyter was started in the wrong place.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>sys.path.insert(0, str(REPO / &quot;python&quot;))</code></pre>
+<p>Tell Python to look in the project’s <code>python</code> folder
+first, so that the next <code>import</code> lines can find the project’s
+own code.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>from nsdf_dark_matter.idx import load_all_data</code></pre>
+<p>Bring in the function, from the NSDF software, that reads a
+downloaded dump.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import pulse_io as pio</code></pre>
+<p>Bring in the project’s helpers for traces. <code>as pio</code> gives
+it a short name.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>cdms = load_all_data(str(Path.home() / &quot;idx&quot; / &quot;07221203_2025_F0001&quot;))</code></pre>
+<p>Open the dump you downloaded in Step 2. <code>Path.home()</code> is
+your home folder, and <code>/ "idx" / "07221203_2025_F0001"</code>
+follows the path down to the dump, the same folder Step 2 created. The
+whole dump is read into the computer’s memory and called
+<code>cdms</code>.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>ids, pulses = pio.load_channel_batch(
+    cdms, pio.filter_by_detector(cdms.get_detector_ids(), 0), 0)</code></pre>
+<p>Read it from the inside out. <code>cdms.get_detector_ids()</code> is
+the list of names of every group of traces (a name holds an event number
+and a detector number). <code>pio.filter_by_detector(..., 0)</code>
+keeps only the names for detector 0.
 <code>pio.load_channel_batch(cdms, ..., 0)</code> takes channel 0 from
 each of those and stacks the traces into one table. It gives back two
 things: <code>ids</code>, the names in order, and <code>pulses</code>,
-the table, with one row for each event and one column for each
-sample.</li>
-<li><code>print(pulses.shape)</code>: show the size of the table as
-(rows, columns). That is the <code>(1517, 4096)</code> you checked.</li>
-</ul>
+the table, with one row for each event and one column for each sample
+(see <strong>Figure 2</strong>).</p>
+</div>
+<div class="explain">
+<pre class="python"><code>print(pulses.shape)</code></pre>
+<p>Show the size of the table as (rows, columns). That is the
+<code>(1517, 4096)</code> you checked.</p>
+</div>
 <h3 id="code-step6">Part B. Step 6: count the quiet traces</h3>
-<ul>
-<li><code>from dataclasses import replace</code>: a tool for making a
-copy of a group of settings with one value changed.</li>
-<li><code>from pulse_config import DEFAULT_CONFIG</code>: the project’s
-standard settings, such as how many samples at the start of a trace
-count as the baseline window (1000 by default) and how many of the very
-first samples to skip because of the electronics glitch (10).</li>
-<li><code>import pulse_quantities as pq</code>: functions that work out
-one number for each trace, such as how much its baseline wobbles.</li>
-<li><code>import pulse_cuts as pc</code>: functions that answer yes or
-no for each trace: “keep this one?”</li>
-<li><code>import numpy as np</code>: tools for working with tables of
-numbers.</li>
-<li><code>c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)</code>:
-a copy of the standard settings in which the baseline window is the
-first 500 samples, as in Note 2.</li>
-<li><code>quiet = pc.excursion_band(pulses, c500) &amp; (np.log10(pq.bstd(pulses)) &lt; 0.5)</code>:
-two yes-or-no tests joined by <code>&amp;</code>, which means “and”. The
-result, <code>quiet</code>, is a list with one <code>True</code> or
+<div class="explain">
+<pre class="python"><code>from dataclasses import replace</code></pre>
+<p>A tool for making a copy of a group of settings with one value
+changed.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>from pulse_config import DEFAULT_CONFIG</code></pre>
+<p>The project’s standard settings, such as how many samples at the
+start of a trace count as the baseline window (1000 by default) and how
+many of the very first samples to skip because of the electronics glitch
+(10).</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import pulse_quantities as pq</code></pre>
+<p>Functions that work out one number for each trace, such as how much
+its baseline wobbles.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import pulse_cuts as pc</code></pre>
+<p>Functions that answer yes or no for each trace: “keep this one?”</p>
+</div>
+<div class="explain">
+<pre class="python"><code>import numpy as np</code></pre>
+<p>Tools for working with tables of numbers.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>c500 = replace(DEFAULT_CONFIG, pretrigger_samples=500)</code></pre>
+<p>A copy of the standard settings in which the baseline window is the
+first 500 samples, as in Note 2.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>quiet = pc.excursion_band(pulses, c500) &amp; (
+    np.log10(pq.bstd(pulses)) &lt; 0.5)</code></pre>
+<p>Two yes-or-no tests joined by <code>&amp;</code>, which means “and”.
+The result, <code>quiet</code>, has one <code>True</code> or
 <code>False</code> for each trace.
-<ul>
-<li><code>pc.excursion_band(pulses, c500)</code> is <code>True</code>
-when the trace’s largest swing after the baseline window, compared with
-the wobble of its own baseline, falls in the middle band chosen in Note
-2.</li>
-<li><code>pq.bstd(pulses)</code> is the wobble (the standard deviation)
-of each trace’s baseline. <code>np.log10(...) &lt; 0.5</code> keeps only
-the traces whose baseline wobbles little: under about 3 counts.</li>
-</ul></li>
-<li><code>print(quiet.sum())</code>: a <code>True</code> counts as 1 and
-a <code>False</code> as 0, so the sum is the number of traces that
-passed both tests. That is the 179 of the checkpoint.</li>
-</ul>
+<code>pc.excursion_band(pulses, c500)</code> is <code>True</code> when
+the trace’s largest swing after the baseline window, compared with the
+wobble of its own baseline, falls in the middle band chosen in Note 2.
+<code>pq.bstd(pulses)</code> is the wobble (the standard deviation) of
+each trace’s baseline, and <code>np.log10(...) &lt; 0.5</code> keeps
+only the traces whose baseline wobbles little: under about 3 counts.</p>
+</div>
+<div class="explain">
+<pre class="python"><code>print(quiet.sum())</code></pre>
+<p>A <code>True</code> counts as 1 and a <code>False</code> as 0, so the
+sum is the number of traces that passed both tests. That is the 179 of
+the checkpoint.</p>
+</div>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"

@@ -8,6 +8,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 - **Updating your setup (new student guide 7, for Windows, macOS and Linux), a Routine maintenance box, and an environment check.** Students had no way to find out that the guides moved to a new Python or new packages. `python/check_environment.py` (stdlib only; `check()` in a notebook or `python check_environment.py` in a terminal; warning only, `--strict` for CI) compares the Python version and the pins in `requirements.txt` with what is installed and points to the new guide. The guide covers the three cases: merge the newest changes into your branch, reinstall `requirements.txt` when packages changed, and make a new environment (save a list of the old packages, `conda env remove`, then `conda create`) when Python changed. A red **Routine maintenance** box says this is regular, not one-off: on the front page (with a new column in the guides table), at the end of the setup guide (version 18), in the first-analysis guide's *Before you start* (version 18), and at the top of the new guide. The first-analysis guide's Step 4 cell now runs the check. The library has 10 new tests (62 in all; the guides now say `62 passed`; Codespaces guide version 6). `RELEASING.md` says a release that changes the environment must start with a "Students, please:" line; CI runs the check in the environment the guide builds.
 
+### Changed
+
+- **Updating your setup, version 3.** The merge in Step 2 is now `git merge --no-edit origin/develop`, so git no longer opens a text editor (Vim on Windows) that a student may not know how to leave; a troubleshooting row says how to leave it anyway. In Step 4 the list of old packages is saved with a full path into the home folder (`%USERPROFILE%\old-environment.txt`, or `~/old-environment.txt`), so it cannot land inside the repository and show up as a new file in `git status`; `/old-environment.txt` is also in `.gitignore`.
+
 ## [0.5.0] - 2026-10-12
 
 The guides and CI move from Python 3.10 (end of life this month) to Python 3.12, and the setup and first-analysis guides get clearer wording, a data-structure figure and a series-name explanation.

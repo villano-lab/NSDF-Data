@@ -1,7 +1,7 @@
 ---
 title: "Updating your setup"
 subtitle: "NSDF-Data student guide 7 — Linux edition"
-date: "Version 2 · 12 October 2026"
+date: "Version 3 · 12 October 2026"
 ---
 
 ::: maintenance
@@ -62,10 +62,10 @@ Now bring the changes in:
 
 ```
 git fetch origin
-git merge origin/develop
+git merge --no-edit origin/develop
 ```
 
-**What these lines do:** `git fetch` downloads the newest changes without touching your files, and `git merge` combines them with your branch. It prints `Already up to date.` or a list of the files that changed.
+**What these lines do:** `git fetch` downloads the newest changes without touching your files, and `git merge` combines them with your branch (`--no-edit` keeps git from opening a text editor to ask for a message). It prints `Already up to date.` or a list of the files that changed.
 
 ::: careful
 If git says `CONFLICT`, stop. Do not edit anything and do not try to fix it: copy the message and send it to the project lead.
@@ -92,7 +92,7 @@ Do this when the check says your Python is not the version the guides use. Pytho
 ```
 cd ~
 conda activate darkmatter_cli_env
-python -m pip freeze > old-environment.txt
+python -m pip freeze > ~/old-environment.txt
 conda deactivate
 conda env remove -n darkmatter_cli_env -y
 conda create -n darkmatter_cli_env python=3.12 pip -y
@@ -109,7 +109,7 @@ python -m ipykernel install --user --name darkmatter_cli_env
 |---|---|
 | `cd` (the first line) | Moves you to your home folder, where the list of old packages is saved. |
 | `conda activate` | Switches your old environment on, so the next line can read it. |
-| `pip freeze > old-environment.txt` | Writes the names and versions of everything in the old environment into the file `old-environment.txt`. |
+| `pip freeze > ...old-environment.txt` | Writes the names and versions of everything in the old environment into the file `old-environment.txt` in your home folder. |
 | `conda deactivate` | Switches the old environment off. |
 | `conda env remove` | Deletes the old environment. This takes a few minutes. |
 | `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.12 and `pip`. |
@@ -166,6 +166,7 @@ Use the same `yourname` as in your branch name. If Jupyter asks for a kernel, ch
 | `Python was not found; run without arguments to install from the Microsoft Store` (Windows) | Your environment is not switched on, or it was not created. Type `conda env list`{.cmd}. If `darkmatter_cli_env` is not in the list, run the `conda create` line of Step 4 again. If it is, run `conda activate darkmatter_cli_env`{.cmd}. |
 | `FileExistsError` on the `ipykernel install` line | Jupyter already has a kernel of that name. Run `jupyter kernelspec remove darkmatter_cli_env -y`{.cmd} and then the `ipykernel install` line again. |
 | git says `CONFLICT` | Stop and send the message to the project lead. Do not edit the files. |
+| A text editor opens (a window full of `~` characters, or a message starting `Merge branch`) after `git merge` | git is asking for a message for the merge. In the editor (usually Vim): press `Esc`, type `:wq`{.cmd} and press Enter. The merge finishes with git's own message. |
 | The kernel is missing in Jupyter | In the environment, run the last two lines of Step 4 again, then restart Jupyter. |
 
 ## Where to get help
@@ -176,7 +177,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 2, 12 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 3, 12 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

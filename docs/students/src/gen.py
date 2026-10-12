@@ -100,7 +100,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 16 · 12 October 2026"
+date: "Version 17 · 12 October 2026"
 ---
 
 ::: tip
@@ -183,7 +183,7 @@ Type `@LISTCMD@`{.cmd} and press Enter. You are now inside the `NSDF-Data` folde
 An environment is a sealed box of programs with fixed versions. We make one for this project, called `darkmatter_cli_env`. Type these lines one at a time, pressing Enter after each. The last line takes several minutes and prints a lot of text: wait for the prompt to come back.
 
 ```
-conda create -n darkmatter_cli_env python=3.10 pip -y
+conda create -n darkmatter_cli_env python=3.12 pip -y
 conda activate darkmatter_cli_env
 @CD_REPO@
 python -m pip install -r requirements.txt
@@ -193,7 +193,7 @@ python -m pip install -r requirements.txt
 
 | Line | What it does |
 |---|---|
-| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.10 and the package installer `pip` inside it. |
+| `conda create` | Makes a new, empty environment called `darkmatter_cli_env`, with Python 3.12 and the package installer `pip` inside it. |
 | `conda activate` | Switches that environment on. While it is on, your prompt starts with `(darkmatter_cli_env)`. |
 | `cd` | Moves you into the `NSDF-Data` folder, where the file `requirements.txt` is. |
 | `pip install -r requirements.txt` | Installs every program on the project's list, at the exact versions in that file: the software that reads the detector data, numbers and plots, the test tool, and Jupyter, the notebook program you will use later. |
@@ -346,7 +346,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 16, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 17, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

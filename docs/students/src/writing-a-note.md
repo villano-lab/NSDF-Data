@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 11 · 12 October 2026"
+date: "Version 12 · 12 October 2026"
 ---
 
 ::: tip
@@ -122,8 +122,27 @@ Do not delete the older note. It stays up for reference.
 - **Separate what you measured from what you think.** A sentence in *Results* states a number. A sentence in *Reading* says what it might mean.
 
 ::: tip
-If you change your mind, say so. Notes that show a correction are more useful than notes that pretend nothing went wrong. Put the correction in a clearly labelled box, with the date.
+If you change your mind, say so. Notes that show a correction are more useful than notes that pretend nothing went wrong. Put the correction in a clearly labelled box, with the date (see *A coloured box*, next).
 :::
+
+### A coloured box
+
+For a correction, a caveat or anything a reader must not miss, put it in a coloured box. In a Markdown note, write the text between two lines that hold only three colons, with a blank line before and after:
+
+```
+::: callout
+**Correction, 12 October 2026.** The median in the first table
+used 1000 samples; with 500 it is 1.51 counts.
+:::
+```
+
+Start the box with a bold label such as **Correction**, **Caveat** or **Note**. All boxes have the same colour (shaded, with a border); only the label tells the reader which kind it is.
+
+::: careful
+**The VS Code preview does not draw the box.** It shows the two `:::` lines as plain text. That is expected: the box appears on the published page, not in the preview. Do not delete the `:::` lines.
+:::
+
+If you write in Word or Google Docs, a coloured box does not survive the conversion. Use a bold label such as **Correction.** at the start of the paragraph, or add the `:::` lines to the Markdown after converting.
 
 ## Figures and tables
 
@@ -162,7 +181,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 11, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 12, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

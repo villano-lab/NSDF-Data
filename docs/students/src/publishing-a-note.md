@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 7 · 12 October 2026"
+date: "Version 8 · 13 October 2026"
 ---
 
 ::: tip
@@ -95,6 +95,10 @@ Look at the list that `git status` prints before the commit. It should contain o
 
 ## Step 3. Open the pull request
 
+::: tip
+**What is a pull request? Nothing scary.** Your branch is your own copy of the project. Nothing you do on it changes anyone else's work or the public site. A *pull request* is a button on github.com that means "I'm done, please have a look." Your lead reads it, may ask for changes, and only then adds your work to the project. Until then you can push as often as you like, and you cannot break anything. If something looks wrong, stop, type `git status`, and send your lead what it prints.
+:::
+
 On [github.com](https://github.com), open the repository. GitHub shows a yellow banner saying your branch had recent pushes. Click **Compare & pull request**. Check that:
 
 - the **base** is `develop` and the **compare** branch is `student-yourname`;
@@ -172,7 +176,7 @@ Then commit, push, and open a new pull request (or add to the open one). Let the
 
 ## Session Info
 
-Guide version 7, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 8, 13 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

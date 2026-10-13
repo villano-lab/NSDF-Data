@@ -51,7 +51,7 @@
 <p>None of the six paths above exist. Not just the per-series <code>byseries/&lt;series&gt;</code> folders &mdash; the <code>fritts</code> directory itself is gone from <code>/data/chocula</code> (there is no top-level <code>/data/chocula/fritts</code> at all; <code>fritts</code> only owns a couple of unrelated small folders elsewhere under <code>/data/chocula</code>, such as <code>docker_files</code> and <code>ristani</code>). So this is not a renamed series folder or a typo in the spreadsheet: the entire personal processing area the log and the analysis macro depend on is absent.</p>
 
 <h2 id="other-users">Other users&rsquo; copies of the k100 pipeline</h2>
-<p>The <code>k100proc</code> layout (<code>midasraw/byseries</code>, <code>midasrq/byseries</code>, <code>midasfilterFiles</code>) is a shared convention, not unique to <code>fritts</code>: it also exists under <code>neog</code>, <code>will</code>, <code>shi</code> and <code>acharya</code> in <code>/project/chocula</code>. None of them have our three series.</p>
+<p>The <code>k100proc</code> layout (<code>midasraw/byseries</code>, <code>midasrq/byseries</code>, <code>midasfilterFiles</code>) is a shared convention, not unique to <code>fritts</code>: a search for every directory named <code>k100proc</code> under <code>/project/chocula</code> (depth 3, so any user's personal area) found it under <code>neog</code>, <code>will</code>, <code>shi</code> and <code>acharya</code> too, and <strong>none of these <code>k100proc</code> directories, anywhere under <code>/project/chocula</code>, contain our three series</strong> &mdash; checked by testing for each series under every such directory&rsquo;s <code>midasraw/byseries</code> and <code>midasrq/byseries</code>, not by sampling a few users by name.</p>
 <div class="table-scroll"><table class="compact">
   <thead><tr><th>User</th><th class="num">RQ series present</th><th>Series found (none of our 3)</th></tr></thead>
   <tbody>
@@ -65,7 +65,7 @@
 
 <h2 id="reading">Reading</h2>
 <ul>
-  <li><strong>The three series' recorded RQ output is gone from where the log says it was,</strong> and is not in the four other UMN personal areas checked. This does not prove the RQ data no longer exists anywhere &mdash; only that it is not where <code>Processing.xlsx</code> says, and not in the few obvious places checked today.</li>
+  <li><strong>The three series' recorded RQ output is gone from where the log says it was,</strong> and is not in any <code>k100proc</code> directory found under <code>/project/chocula</code> (every user&rsquo;s, not a sample of a few). This does not prove the RQ data no longer exists anywhere &mdash; only that it is not where <code>Processing.xlsx</code> says, and not in any readable <code>k100proc</code> area on this filesystem today.</li>
   <li><strong>The loss is structural, not a path change.</strong> The whole <code>fritts</code> area is missing, not just the series subfolders, so this looks like an account or directory removal (for example when someone leaves the group) rather than a reorganization of the k100 pipeline.</li>
   <li><strong>This only speaks to these three series.</strong> Note 1 catalogs roughly 130 Run76 series with raw dumps on NSDF; this note has checked RQ availability for 3 of them (all off NSDF, i.e. UMN-only in this log) and raw/RQ availability at UMN for those same 3. It says nothing about Run68, and nothing about the other ~230 Run76 series.</li>
 </ul>

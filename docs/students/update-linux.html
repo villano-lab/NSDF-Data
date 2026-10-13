@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — Linux
-edition &middot; Version 4 · 12 October 2026</p>
+edition &middot; Version 5 · 13 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -43,6 +43,9 @@ everything works</a></li>
 <li><a href="#step-6.-start-jupyter-again"
 id="toc-step-6.-start-jupyter-again">Step 6. Start Jupyter
 again</a></li>
+<li><a href="#good-to-know-the-nsdf-software-changes-too"
+id="toc-good-to-know-the-nsdf-software-changes-too">Good to know: the
+NSDF software changes too</a></li>
 <li><a href="#you-are-done-when" id="toc-you-are-done-when">You are done
 when</a></li>
 <li><a href="#if-something-goes-wrong"
@@ -103,7 +106,7 @@ something from you: look for the words “Students, please”.</li>
 <tbody>
 <tr>
 <td><strong>Release</strong></td>
-<td>A numbered version of the whole project, such as 0.5.0. The number
+<td>A numbered version of the whole project, such as 0.6.0. The number
 is in the file <code>VERSION</code>.</td>
 </tr>
 <tr>
@@ -292,7 +295,7 @@ python check_environment.py
 python -m pytest -q</code></pre>
 <div class="checkpoint">
 <p>The check says <code>Environment OK</code> and <code>pytest</code>
-ends with <code>62 passed</code>. If not, do not guess: copy the output
+ends with <code>101 passed</code>. If not, do not guess: copy the output
 and send it to the project lead.</p>
 </div>
 <h2 id="step-6.-start-jupyter-again">Step 6. Start Jupyter again</h2>
@@ -304,6 +307,42 @@ jupyter lab</code></pre>
 asks for a kernel, choose <strong>darkmatter_cli_env</strong>. Open your
 notebook and run the first cell: it should print
 <code>Environment OK</code> and then <code>(1517, 4096)</code>.</p>
+<h2 id="good-to-know-the-nsdf-software-changes-too">Good to know: the
+NSDF software changes too</h2>
+<p>The programs that download and read the data, the
+<code>nsdf-cli</code> command and the <code>nsdf_dark_matter</code>
+library, come from a separate project called <strong>Nexus-DM</strong>
+(formerly NSDF-SLAC). Its team improves it often, and our analysis
+depends heavily on it. So:</p>
+<ul>
+<li><strong>We pin its versions.</strong> <code>requirements.txt</code>
+names the exact version of both packages. The project lead tests each
+new version here before it goes on the list, so a change upstream cannot
+quietly change your results. <strong>Do not upgrade them
+yourself</strong> (no <code>pip install --upgrade</code>): you could end
+up with a mix nobody has tested.</li>
+<li><strong>You get a new version the usual way.</strong> When the list
+changes, the release notes say so, the project lead writes to you
+(“Students, please”), and you follow Step 3 of this guide. The
+environment check in Step 1 warns you when your versions differ from the
+list.</li>
+<li><strong>To see your versions,</strong> type
+<code>nsdf-cli version</code>, and
+<code>python -m pip show nsdf-dark-matter nsdf-dark-matter-cli</code>
+(look at the <code>Version</code> lines).</li>
+<li><strong>New commands come with new versions.</strong> Version 0.6.0
+added <code>nsdf-cli config</code> (the folder that downloads go to),
+<code>nsdf-cli download ... --all</code> and
+<code>nsdf-cli prune</code>; the first analysis guide, Step 2, explains
+them.</li>
+<li><strong>If something behaves differently after an update,</strong>
+send the project lead the output of <code>nsdf-cli version</code> and
+the message you saw. The lead reports problems in the NSDF software to
+its team; you do not need to.</li>
+</ul>
+<p>What the Nexus-DM team changed in each version is in <a
+href="https://github.com/nsdf-fabric/nexus-dm/releases">their release
+notes</a>.</p>
 <h2 id="you-are-done-when">You are done when</h2>
 <ul class="task-list">
 <li><label><input type="checkbox" /><code
@@ -315,7 +354,7 @@ in the <code>NSDF-Data</code> folder shows your own branch and nothing
 you want to keep is unsaved.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">python -m pytest -q</code> in the <code>python</code> folder
-ends with <code>62 passed</code>.</label></li>
+ends with <code>101 passed</code>.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">jupyter kernelspec list</code> lists
 <code>darkmatter_cli_env</code>.</label></li>
@@ -378,9 +417,10 @@ class="cmd">conda activate darkmatter_cli_env</code>.</td>
 <tr>
 <td><code>FileExistsError</code> on the <code>ipykernel install</code>
 line</td>
-<td>Jupyter already has a kernel of that name. Run <code
-class="cmd">jupyter kernelspec remove darkmatter_cli_env -y</code> and
-then the <code>ipykernel install</code> line again.</td>
+<td>Jupyter already has a kernel of that name. Run the
+<code>jupyter kernelspec remove</code> line of Step 4 (the one ending
+<code>-y</code>), then the <code>ipykernel install</code> line
+again.</td>
 </tr>
 <tr>
 <td>git says <code>CONFLICT</code></td>
@@ -411,7 +451,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 4, 12 October 2026, Linux edition. Written for
+<p>Guide version 5, 13 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

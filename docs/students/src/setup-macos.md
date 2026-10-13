@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 17 · 12 October 2026"
+date: "Version 18 · 12 October 2026"
 ---
 
 ::: tip
@@ -149,7 +149,7 @@ python -m pytest -q
 ```
 
 ::: checkpoint
-The last line says `52 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
+The last line says `62 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
 :::
 
 Then, the data tool:
@@ -178,7 +178,7 @@ It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not fou
 |---|---|
 | `conda activate` | Switches your environment on. Do this in every new terminal. |
 | `cd` | Moves into the `python` folder of the project. |
-| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `52 passed` means every check worked. |
+| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `62 passed` means every check worked. |
 | `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -251,7 +251,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `ls ~/Research`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} ends with `52 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd ~/Research/NSDF-Data/python`{.cmd}, as in Step 6.
+- [ ] `python -m pytest -q`{.cmd} ends with `62 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd ~/Research/NSDF-Data/python`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -259,6 +259,10 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] `git branch`{.cmd} shows `* student-yourname` (after access is granted).
 
 **Next:** *First analysis* (the guide for macOS).
+
+::: maintenance
+**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup (macOS)](https://villano-lab.github.io/NSDF-Data/students/update-macos.html).** It takes about 10 minutes.
+:::
 
 ## If something goes wrong
 
@@ -274,7 +278,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 17, 12 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 18, 12 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

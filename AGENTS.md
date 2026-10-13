@@ -10,14 +10,14 @@ Analysis of SuperCDMS-type dark-matter detector data from the NSDF archive (Run 
 - `data_analysis/`: **all data analysis lives here, and nowhere else** (notebooks, series lists, figures, archives, student work). `data_analysis/R76/notebooks/` holds the exploratory notebooks (kernel `darkmatter_cli_env`), `R76/student/` the students' notebooks (one folder per student, for example `student/tony/`), `R76/series_lists/` the run logs, `archives/` the HDF5 files, `legacy/` old work. See `data_analysis/README.md`. Expect this folder to move to its own repository later, so it may use the library in `python/` but nothing in the library may depend on it.
 - `docs/`: the GitHub Pages site (https://villano-lab.github.io/NSDF-Data/), plain hand-written HTML with no build step: `docs/index.html`, `docs/notes/note-NN-*.html`, `docs/notes/img/`, `docs/style.css`.
 - `docs/students/`: the student guide PDFs, built from sources in `docs/students/src/`.
-- `notes/src/` and `tools/build_notes.py`: student notes written in Markdown and published by a GitHub Action.
+- `notes/src/`, `tools/build_notes.py` and `tools/word_to_note.py`: student notes written in Markdown and published by a GitHub Action (`word_to_note.py` turns a Word or Google Docs `.docx` into a note and its pictures; pictures live directly in `notes/src/img/`, named `<note>-figN.png`).
 
 The maintainer is Anthony Villano (@villaa).
 
 ## Before you change anything
 
 1. `git status` and `git log --oneline -3`. Pull first. Confirm the tree is clean and in sync, and that you are on a `feature/*` branch made from an up-to-date `develop`.
-2. Run the tests: `cd python && python -m pytest -q` (52 or more should pass).
+2. Run the tests: `cd python && python -m pytest -q` (62 or more should pass).
 3. Run `git status` again before any `checkout`, `reset` or `clean`. Two notebooks (`07221203_2025_dump1_bstd_time.ipynb`, `good_pulses_overlay.ipynb`) often show as modified after re-execution; check whether the source really changed before committing.
 
 ## Git rules
@@ -30,7 +30,7 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 - Use merge commits (not squash or rebase) to finish a branch.
 - Never force-push. `master` is protected against deletion and non-fast-forward pushes. Delete only branches you created, and only after they are merged.
 - **Add an entry under `[Unreleased]` in `CHANGELOG.md`** for any change a user or student would notice. Only a `release/*` or `hotfix/*` branch changes `VERSION` or renames `[Unreleased]`.
-- Student notes (`notes/src/**`), `tools/build_notes.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it an S-number and merges it; nothing is published before that.
+- Student notes (`notes/src/**`), `tools/build_notes.py`, `tools/word_to_note.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it a note number and merges it; nothing is published before that.
 - Write commit messages that say what changed and why. If an AI assistant helped, add a `Co-Authored-By:` trailer naming it.
 - Never commit raw data, credentials or tokens.
 
@@ -38,12 +38,12 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 
 | You change | Also do |
 |---|---|
-| A function in `python/` (add, rename, remove) | Add or update tests in `python/tests/`. Tag it `@status(DONE)` or `@status(UNDER_DEVELOPMENT, note=...)`. Note 1a (the library reference) is regenerated from the library, never hand-edited. A **breaking** change (rename/removal) means updating the notebooks that use it, or marking them deprecated (see "Notebooks and deprecation" on `docs/index.html`). Additive changes need no notebook edits. |
+| A function in `python/` (add, rename, remove) | Add or update tests in `python/tests/`. Tag it `@status(DONE)` or `@status(UNDER_DEVELOPMENT, note=...)`. The library reference page `docs/library/index.html` is generated, never hand-edited: after adding, renaming, removing or re-documenting a function run `python tools/build_library_reference.py` and commit the page (a test fails if it is stale). Note 1a is a hand-written note and is not regenerated. A **breaking** change (rename/removal) means updating the notebooks that use it, or marking them deprecated (see "Notebooks and deprecation" on `docs/index.html`). Additive changes need no notebook edits. |
 | A hand-written note page `docs/notes/note-NN-*.html` (live as soon as it is merged into `develop`; quick-sheets: `docs/developers/note-creation.pdf`, and `note-creation-ai.pdf` for an agent) | Keep exactly one row for it in `docs/index.html`, newest note number first. Notes marked **Complete** are left alone, apart from a minimal correction when a library rename makes them wrong. New or In-progress notes get an `id` on each `<h2>` and a `<nav class="outline">`. Pin notebooks and `python/` to the exact commit sha that produced the results. |
 | A student guide (`docs/students/src/`) | Edit **only the sources**: `gen.py` for the setup and first-analysis guides (it writes the six per-OS `.md` files, so never edit those by hand), or the guide's own `.md` for the others. Never edit the generated `.html` pages or PDFs. Rebuild (below), commit sources **and** the rebuilt HTML pages and PDFs together, and bump the version and date in the guide's header and its *Session Info*. The front page links only to the HTML pages; each page links to its PDF. |
-| `requirements.txt`, package pins, or the Python version | Setup Step 5, `.devcontainer/devcontainer.json` and the CI step "Setup Step 5" all install with `pip install -r requirements.txt`, so change versions only in `requirements.txt`. The Python version (3.12) is written in the guide's `conda create` line, in `.devcontainer/devcontainer.json` (image tag) and in the CI workflow; keep those three in step. |
+| `requirements.txt`, package pins, or the Python version | Setup Step 5, `.devcontainer/devcontainer.json` and the CI step "Setup Step 5" all install with `pip install -r requirements.txt`, so change versions only in `requirements.txt`. The Python version (3.12) is written in the `conda create` lines of the setup guide and of *Updating your setup* (`gen.py`), in `.devcontainer/devcontainer.json` (image tag), in the CI workflow, and as `EXPECTED_PYTHON` in `python/check_environment.py` (a test checks that one against `gen.py`); keep those in step. A release that changes the environment also needs the "Students, please:" line described in `RELEASING.md`. |
 | `.github/workflows/*` | Test on a branch (a push runs the workflow). Keep it working on Windows, macOS and Linux if it checks the guides. |
-| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the S-number. Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it (about 2 to 3 minutes). To remove a note, delete its source in a PR; the build prunes the generated page. |
+| A student note (`notes/src/*.md`) | PR into `develop`. Leave `id: "TBD"`; the maintainer assigns the note number (one continuous set with the hand-written notes; `python tools/build_notes.py next` prints the next free one). Run `python tools/build_notes.py check` before asking for review. It goes live once the maintainer merges it (about 2 to 3 minutes). To remove a note, delete its source in a PR; the build prunes the generated page. |
 | Anything a user or student would notice | A line under `[Unreleased]` in `CHANGELOG.md`. |
 
 ## Building the student guides and quick-sheets
@@ -64,7 +64,7 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 
 ## Data and environment
 
-- Raw dump data lives **outside the repo**, in `~/idx`, and `/idx/` is git-ignored. `nsdf-cli download` writes an `idx` folder **in the current directory**, so always run it from the home folder, never from inside `NSDF-Data`.
+- Raw dump data lives **outside the repo**, in `~/idx`, and any folder named `idx/` is git-ignored. `nsdf-cli download` writes an `idx` folder **in the current directory**, so always run it from the home folder, never from inside `NSDF-Data`.
 - Pinned packages: Python 3.12, `nsdf-dark-matter==0.3.0`, `nsdf-dark-matter-cli==0.5.0` (version 0.3.1 of the CLI does not exist on PyPI), `numpy==2.2.6`, `matplotlib==3.10.7`, plus `h5py`, `pytest`, `ipykernel` and `jupyterlab`.
 - `requirements.txt` is the single list of pip packages and versions; setup Step 5 does `conda create -n darkmatter_cli_env python=3.12 pip` and then `python -m pip install -r requirements.txt`. It has no `python==` line (pip cannot install one). Do **not** use `conda create -f requirements.txt`: the NSDF packages are not on conda channels.
 - Do **not** run `data_analysis/R76/notebooks/07221203_2025_dump1_noise.ipynb` without the maintainer's approval: it rewrites `data_analysis/archives/good_noise.h5`.
@@ -82,4 +82,5 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 ## Checks that run automatically
 
 - **Student notes** (`.github/workflows/student-notes.yml`): validates `notes/src/**` on pull requests and builds the pages on push to `master`.
+- **Library tests** (`.github/workflows/library-tests.yml`): runs `python -m pytest` in `python/` on Windows, macOS and Linux for pull requests and pushes that touch `python/` or `requirements.txt`. It includes `test_library_conventions.py`, which fails when a public library function has no `@status` tag or is not mentioned in any test.
 - **Check instructions** (`.github/workflows/check-instructions.yml`): repeats the guides' setup steps on Windows, macOS and Linux. It runs on pull requests, on pushes to `develop` and `master`, and weekly.

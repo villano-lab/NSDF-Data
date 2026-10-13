@@ -15,7 +15,7 @@
 
 <h1>Developer workflow</h1>
 <p class="meta">NSDF-Data · Git Flow and semantic versioning · version
-1, 7 October 2026</p>
+2, 12 October 2026</p>
 
 
 <p><strong>A pull request (PR)</strong> is a page on GitHub that says
@@ -49,12 +49,13 @@ fixes and content. A guide or site fix is an ordinary feature PR. A
 <strong>hotfix</strong> is only for a bug in a released version.</p>
 <p><strong>Special cases.</strong> <em>A student note:</em> the PR into
 <code>develop</code> runs the check only, and nothing is visible; you
-replace <code>TBD</code> with an S-number and merge, the bot builds the
-page, and it is live in 2 to 3 minutes (delete the source file to remove
-a note). <em>A contributor such as Kitty:</em> they open a PR into
-<code>develop</code>, you are requested automatically, and you add other
-reviewers by hand. <em>An AI agent:</em> may open PRs, and never merges
-without your go-ahead.</p>
+replace <code>TBD</code> with the next note number
+(<code>python tools/build_notes.py next</code> prints it) and merge, the
+bot builds the page, and it is live in 2 to 3 minutes (delete the source
+file to remove a note). <em>A contributor such as Kitty:</em> they open
+a PR into <code>develop</code>, you are requested automatically, and you
+add other reviewers by hand. <em>An AI agent:</em> may open PRs, and
+never merges without your go-ahead.</p>
 <p><strong>Never</strong> commit directly to <code>master</code> or
 <code>develop</code>, and never force-push (the rulesets block
 both).<br />

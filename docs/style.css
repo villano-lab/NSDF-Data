@@ -9,7 +9,7 @@
   --code-bg: #f1f3f5;
   --complete: #1f845a;
   --in-progress: #b07d00;
-  --outdated: #8a5a00;
+  --superseded: #8a5a00;
   --abandoned: #a33a3a;
   --brainstorm: #6b4fbb;
   --warn-bg: #fff4e5;
@@ -31,7 +31,7 @@
     --code-bg: #222a33;
     --complete: #4bce97;
     --in-progress: #e2b203;
-    --outdated: #f1a94e;
+    --superseded: #f1a94e;
     --abandoned: #f08a8a;
     --brainstorm: #b9a3ff;
     --warn-bg: #2b2313;
@@ -100,7 +100,7 @@ table.compact td, table.compact th { padding: 5px 10px; }
 .status { font-weight: 600; white-space: nowrap; }
 .status.complete { color: var(--complete); }
 .status.in-progress { color: var(--in-progress); }
-.status.outdated { color: var(--outdated); }
+.status.superseded { color: var(--superseded); }
 .status.abandoned { color: var(--abandoned); }
 .status.brainstorm { color: var(--brainstorm); }
 .status.under-dev { color: var(--in-progress); }
@@ -191,3 +191,19 @@ a.agent-link:hover, a.agent-link:focus-visible { border-color: var(--link); back
 @media (max-width: 640px) {
   a.agent-link { position: static; margin-bottom: 8px; }
 }
+
+/* The red "Routine maintenance" box on the front page */
+:root { --maint-bg: #fdecec; --maint-border: #b3261e; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --maint-bg: #381c1e; --maint-border: #f08a8a; }
+}
+.maintenance-box {
+  background: var(--maint-bg); border: 2px solid var(--maint-border); border-left-width: 8px;
+  border-radius: 6px; padding: 10px 16px; margin: 14px 0 20px;
+}
+.maintenance-box .mb-title {
+  margin: 0 0 4px; font-weight: 800; color: var(--maint-border);
+  text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.9rem;
+}
+.maintenance-box p { margin: 0 0 6px; }
+.maintenance-box p:last-child { margin-bottom: 0; }

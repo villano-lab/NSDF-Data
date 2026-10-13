@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note with an AI assistant"
 subtitle: "NSDF-Data student guide 5 — with Claude Code or a similar assistant"
-date: "Version 3 · 7 October 2026"
+date: "Version 4 · 12 October 2026"
 ---
 
 ::: tip
@@ -10,7 +10,7 @@ date: "Version 3 · 7 October 2026"
 
 ## What the assistant is good at here
 
-- converting a Word or Google Docs draft to Markdown, and fixing the formatting it leaves behind;
+- converting a Word or Google Docs draft to a note (with `tools/word_to_note.py`), and fixing the formatting it leaves behind;
 - reading the check's messages and fixing the file for each one;
 - checking that every notebook link is pinned to a real commit;
 - finding numbers in your draft and confirming them against your notebook's output;
@@ -38,7 +38,7 @@ Start with a brief like this, and fill in the brackets:
 
 > I am a student writing a note for the NSDF-Data site. My draft is `[path to your .docx or .md]`, my notebook is `[path to the notebook]`, and I committed it at `[commit hash]`. Please:
 >
-> 1. If the draft is a `.docx`, convert it to Markdown as in student guide 3, Step 3 onward, and put the result in `notes/src/`. Keep the header block and set `id: "TBD"`.
+> 1. If the draft is a `.docx`, convert it with `python tools/word_to_note.py [path to the .docx] [note-name]`, as in student guide 4, Step 1. That puts the note in `notes/src/` and its pictures in `notes/src/img/`. Keep the header block and set `id: "TBD"`.
 > 2. Check every number in the text against the notebook output, and list any number that does not match or that I have not shown.
 > 3. Pin every notebook link to the commit above.
 > 4. Run `python tools/build_notes.py check` and fix each message it reports, without changing my sentences except where a fix needs it.
@@ -67,7 +67,7 @@ Once you are satisfied, follow guide 4 from Step 2 onward. You can ask the assis
 
 ## Session Info
 
-Guide version 3, 7 October 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
+Guide version 4, 12 October 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
 
 ## Where to get help
 

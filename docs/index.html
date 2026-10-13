@@ -17,18 +17,23 @@
   <nav>
     <a href="https://github.com/villano-lab/NSDF-Data">GitHub repository</a>
     <a href="https://github.com/villano-lab/NSDF-Data/tree/master/python">python/ pulse library</a>
-    <a href="https://nsdf-fabric.github.io/nsdf-slac/">NSDF-SLAC documentation</a>
+    <a href="https://nsdf-fabric.github.io/nexus-dm/">Nexus-DM documentation (formerly NSDF-SLAC)</a>
   </nav>
 </header>
 
 <h2>Student guides</h2>
+<div class="maintenance-box" id="maintenance">
+<p class="mb-title">Routine maintenance: keep your setup up to date</p>
+<p>The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages the notebooks use. <strong>Every time the project lead announces a new release, and whenever the environment check warns you, follow <em>Updating your setup</em> (student guide 7).</strong> It takes about 10 minutes. Your first-analysis notebook runs the check for you; you can also run it yourself with <code>python check_environment.py</code> in the <code>python</code> folder.</p>
+<p>Updating your setup: <a href="students/update-windows.html">Windows</a> &middot; <a href="students/update-macos.html">macOS</a> &middot; <a href="students/update-linux.html">Linux</a>. What changed in each release: <a href="https://github.com/villano-lab/NSDF-Data/releases">release notes</a>.</p>
+</div>
 <p>New to computing? Start here. Pick your computer, do the setup guide first (about an hour), then the first analysis (about two hours). Each guide is a web page written step by step, with checkpoints and a Copy button on every command. A PDF version, to download or print, is linked at the top of each page.</p>
 <table class="compact">
-  <thead><tr><th>Computer</th><th>1. Setting up your computer</th><th>2. Your first analysis</th></tr></thead>
+  <thead><tr><th>Computer</th><th>1. Setting up your computer</th><th>2. Your first analysis</th><th>7. Updating your setup (regularly)</th></tr></thead>
   <tbody>
-    <tr><td>Windows</td><td><a href="students/setup-windows.html">Setup (Windows)</a></td><td><a href="students/first-analysis-windows.html">First analysis (Windows)</a></td></tr>
-    <tr><td>macOS</td><td><a href="students/setup-macos.html">Setup (macOS)</a></td><td><a href="students/first-analysis-macos.html">First analysis (macOS)</a></td></tr>
-    <tr><td>Linux</td><td><a href="students/setup-linux.html">Setup (Linux)</a></td><td><a href="students/first-analysis-linux.html">First analysis (Linux)</a></td></tr>
+    <tr><td>Windows</td><td><a href="students/setup-windows.html">Setup (Windows)</a></td><td><a href="students/first-analysis-windows.html">First analysis (Windows)</a></td><td><a href="students/update-windows.html">Updating (Windows)</a></td></tr>
+    <tr><td>macOS</td><td><a href="students/setup-macos.html">Setup (macOS)</a></td><td><a href="students/first-analysis-macos.html">First analysis (macOS)</a></td><td><a href="students/update-macos.html">Updating (macOS)</a></td></tr>
+    <tr><td>Linux</td><td><a href="students/setup-linux.html">Setup (Linux)</a></td><td><a href="students/first-analysis-linux.html">First analysis (Linux)</a></td><td><a href="students/update-linux.html">Updating (Linux)</a></td></tr>
   </tbody>
 </table>
 <p>Writing and publishing your own note:</p>
@@ -51,6 +56,12 @@
   <li><a href="developers/note-creation-ai.html">Developer quick-sheet: creating a note with an AI agent (one page)</a></li>
 </ul>
 
+<h2>Library reference</h2>
+<p>The shared <code>python/</code> library, generated from the code: every module, function, signature and status (done or under development).</p>
+<ul class="repo">
+  <li><a href="library/index.html">Library reference: modules and functions</a></li>
+</ul>
+
 <h2>Analysis Notes</h2>
 
 <p>Each note summarizes one investigation, pins the notebooks it rests on to the commits that produced the results, and ends with a status and next steps. Newest first. The links in a note show each file as it was at the commit named in the link, which may be older than the latest version, and the file may have moved since. To find where a file is now, see the table in <code>data_analysis/README.md</code>.</p>
@@ -62,7 +73,7 @@
   <tbody>
     <tr><td><span class="status complete">Complete</span></td><td>Note is in a complete and finalized state.</td></tr>
     <tr><td><span class="status in-progress">In-progress</span></td><td>Note is still being worked on.</td></tr>
-    <tr><td><span class="status outdated">Outdated</span></td><td>Note is no longer relevant to the analysis or a newer version has taken its place.</td></tr>
+    <tr><td><span class="status superseded">Superseded (reference/link)</span></td><td>A newer note has taken its place. This note stays up for reference and links to the newer one.</td></tr>
     <tr><td><span class="status abandoned">Abandoned</span></td><td>Note was created, but, for whatever reason, is left incomplete without the intent for completion in the future.</td></tr>
     <tr><td><span class="status brainstorm">Brainstorm</span></td><td>Note is used for brainstorming or putting down ideas, without any analysis results or conclusions.</td></tr>
   </tbody>
@@ -212,17 +223,6 @@
   </tbody>
 </table>
 </div>
-
-<!-- student-notes:start -->
-<h2>Student notes</h2>
-<p>Notes written by students, published from <code>notes/src/</code>. Each has been reviewed before it appears here.</p>
-<div class="table-scroll"><table class="notes">
-  <thead><tr><th>Note #</th><th>Link</th><th>Date</th><th>Author</th><th>Title</th><th>Description</th><th>Keywords</th><th>Status</th><th>Presentation</th></tr></thead>
-  <tbody>
-    <tr><td colspan="9">No student notes yet.</td></tr>
-  </tbody>
-</table></div>
-<!-- student-notes:end -->
 
 <footer>
   Source: <a href="https://github.com/villano-lab/NSDF-Data/tree/master/docs">docs/</a> in the

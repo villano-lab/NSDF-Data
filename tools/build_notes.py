@@ -1,12 +1,15 @@
 """Build student notes from notes/src/*.md into the GitHub Pages site.
 
     python tools/build_notes.py check    # validate only; exit 1 on any problem
-    python tools/build_notes.py build    # validate, then write docs/ (HTML, images, index block)
+    python tools/build_notes.py build    # validate, then write docs/ (HTML, images, index rows)
+    python tools/build_notes.py next     # print the next free note number
 
 Each note is one Markdown file with a YAML header. The header fields are
 listed in REQUIRED. The output is docs/notes/student-<slug>.html, its figures
-in docs/notes/img/student-<slug>/, and a table of student notes between the
-markers in docs/index.html. Hand-written notes are never touched.
+in docs/notes/img/student-<slug>/, and one row per note in the Analysis Notes
+table of docs/index.html, marked class="generated" and placed by note number
+among the hand-written rows (one continuous set of numbers: 1, 1a, 2, ... 8, ...).
+Hand-written notes are never touched.
 A build also removes generated pages and figures whose note is gone (see prune()), so
 deleting notes/src/<name>.md is enough to take a note off the site.
 Run by .github/workflows/student-notes.yml.
@@ -22,10 +25,12 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "notes" / "src"
 DOCS = ROOT / "docs"
 INDEX = DOCS / "index.html"
-START, END = "<!-- student-notes:start -->", "<!-- student-notes:end -->"
+NOTE_ID = re.compile(r"(\d+)([a-z]?)")                   # a note number: 8, or 8a for a follow-up
+GENERATED_ROW = re.compile(r'[ \t]*<tr class="generated">.*?</tr>[ \t]*\n(?:[ \t]*\n)?', re.S)
+HAND_ROW = re.compile(r'[ \t]*<tr>\s*<td class="num">([^<]+)</td>.*?</tr>', re.S)
 
 REQUIRED = ["id", "title", "author", "date", "status", "keywords", "description"]
-STATUSES = {"In progress": "in-progress", "Complete": "complete", "Outdated": "outdated"}
+STATUSES = {"In progress": "in-progress", "Complete": "complete", "Superseded (reference/link)": "superseded"}
 FORBIDDEN_HTML = re.compile(r"<(u|sup|sub|span|font)\b", re.I)
 PIN = re.compile(r"github\.com/villano-lab/NSDF-Data/(?:blob|tree)/([^/\s)]+)/")
 
@@ -55,9 +60,9 @@ def check_note(path, header, body, taken_ids, strict):
     nid = header.get("id", "")
     if nid == "TBD":
         if strict:
-            problems.append("id is still TBD: the reviewer assigns the S-number before merging")
-    elif nid and not re.fullmatch(r"S\d+", nid):
-        problems.append(f"id must look like S1, S2, or TBD, not {nid!r}")
+            problems.append("id is still TBD: the reviewer assigns the note number before merging")
+    elif nid and not NOTE_ID.fullmatch(nid):
+        problems.append(f"id must be a note number such as 8 (or 8a for a follow-up), or TBD, not {nid!r}")
     elif nid in taken_ids:
         problems.append(f"id {nid} is already used by another note")
     for tag in FORBIDDEN_HTML.findall(body):
@@ -68,7 +73,10 @@ def check_note(path, header, body, taken_ids, strict):
     for src in re.findall(r"!\[[^\]]*\]\(([^)]+)\)", body):
         if src.startswith("http"):
             continue
-        if not (SRC / src).is_file():
+        if not re.fullmatch(r"img/[^/]+", src):
+            problems.append(f"picture {src!r} must be directly in notes/src/img/, not in a subfolder, "
+                            "and linked as img/name.png (student guide 4)")
+        elif not (SRC / src).is_file():
             problems.append(f"picture not found: notes/src/{src}")
     if "COMMIT" in body:
         problems.append("placeholder COMMIT is still in the note: replace it with the commit hash")
@@ -100,7 +108,7 @@ def page(header, slug, body_html):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{html.escape(header['id'])}: {html.escape(header['title'])}</title>
+<title>Note {html.escape(header['id'])}: {html.escape(header['title'])}</title>
 <link rel="stylesheet" href="../style.css">
 </head>
 <body>
@@ -109,7 +117,7 @@ def page(header, slug, body_html):
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>{html.escape(header['title'])}</h1>
-<p class="meta"><strong>{html.escape(header['id'])}</strong> &middot; Author(s): {html.escape(header['author'])} &middot; {html.escape(header['date'])} &middot; Status: <span class="status {status_class}">{html.escape(header['status'])}</span></p>
+<p class="meta"><strong>Note {html.escape(header['id'])}</strong> &middot; Author(s): {html.escape(header['author'])} &middot; {html.escape(header['date'])} &middot; Status: <span class="status {status_class}">{html.escape(header['status'])}</span></p>
 
 {outline_block}
 
@@ -123,10 +131,23 @@ def page(header, slug, body_html):
 """
 
 
-def index_block(notes):
-    rows = []  # one row per published note, in S-number order
-    for slug, h in sorted(notes, key=lambda x: x[1]["id"]):
-        rows.append(f"""    <tr>
+def id_key(nid):
+    """Sort key of a note number: 8 -> (8, ""), 2a -> (2, "a")."""
+    m = NOTE_ID.fullmatch(nid)
+    return (int(m.group(1)), m.group(2))
+
+
+def hand_written_ids():
+    """The note numbers already in the front-page table that this script did not write."""
+    text = GENERATED_ROW.sub("", INDEX.read_text(encoding="utf-8"))
+    return {m.group(1) for m in HAND_ROW.finditer(text)}
+
+
+def index_rows(notes):
+    """One table row per published note (class="generated" marks it as ours)."""
+    rows = []
+    for slug, h in notes:
+        rows.append((h["id"], f"""    <tr class="generated">
       <td class="num">{html.escape(h['id'])}</td>
       <td class="link"><a href="notes/student-{slug}.html">Open note &rarr;</a></td>
       <td class="date">{html.escape(h['date'])}</td>
@@ -136,18 +157,44 @@ def index_block(notes):
       <td class="kw">{html.escape(h['keywords'])}</td>
       <td><span class="status {STATUSES[h['status']]}">{html.escape(h['status'])}</span></td>
       <td></td>
-    </tr>""")
-    body = "\n".join(rows) if rows else "    <tr><td colspan=\"9\">No student notes yet.</td></tr>"
-    return f"""{START}
-<h2>Student notes</h2>
-<p>Notes written by students, published from <code>notes/src/</code>. Each has been reviewed before it appears here.</p>
-<div class="table-scroll"><table class="notes">
-  <thead><tr><th>Note #</th><th>Link</th><th>Date</th><th>Author</th><th>Title</th><th>Description</th><th>Keywords</th><th>Status</th><th>Presentation</th></tr></thead>
-  <tbody>
-{body}
-  </tbody>
-</table></div>
-{END}"""
+    </tr>"""))
+    return rows
+
+
+def merge_rows(text, notes):
+    """Put the generated rows into the Analysis Notes table, newest number first, among the
+    hand-written rows (which keep their text). Rows from an earlier build are replaced."""
+    text = GENERATED_ROW.sub("", text)
+    t = text.index('<table class="notes">')
+    start = text.index("<tbody>", t) + len("<tbody>")
+    end = text.index("</tbody>", start)
+    body = text[start:end]
+    items = [(id_key(m.group(1)), m.group(0).rstrip()) for m in HAND_ROW.finditer(body)]
+    items += [(id_key(nid), row) for nid, row in index_rows(notes)]
+    items.sort(key=lambda it: it[0], reverse=True)
+    new_body = "\n\n" + "\n\n".join(r for _, r in items) + "\n\n  " if items else "\n  "
+    return text[:start] + new_body + text[end:]
+
+
+def notes_src_ids():
+    """The note numbers already written in notes/src, valid note or not."""
+    ids = set()
+    for p in SRC.glob("*.md"):
+        if p.name.startswith("_") or p.name == "README.md":
+            continue
+        try:
+            h, _ = read_note(p)
+        except ValueError:
+            continue
+        if NOTE_ID.fullmatch(h.get("id", "")):
+            ids.add(h["id"])
+    return ids
+
+
+def next_number():
+    """The next free note number: one more than the highest in the table and in notes/src."""
+    used = hand_written_ids() | notes_src_ids()
+    return max(id_key(i)[0] for i in used) + 1 if used else 1
 
 
 def load_all(strict):
@@ -162,7 +209,7 @@ def load_all(strict):
     ids = [h.get("id") for h, _ in parsed.values() if h.get("id") not in (None, "", "TBD")]
     for p, (h, body) in parsed.items():
         others = [i for i in ids if i != h.get("id")]
-        taken = set(others) | {i for i in ids if ids.count(i) > 1}
+        taken = set(others) | {i for i in ids if ids.count(i) > 1} | hand_written_ids()
         found = check_note(p, h, body, taken, strict)
         if found:
             problems.setdefault(p.name, []).extend(found)
@@ -212,18 +259,16 @@ def build(notes):
             for f in img_src.iterdir():
                 if f.is_file():
                     shutil.copy2(f, img_dst / f.name)
-    text = INDEX.read_text(encoding="utf-8")
-    block = index_block([(s, h) for s, h, _ in notes])
-    if START in text:
-        text = re.sub(re.escape(START) + r".*?" + re.escape(END), lambda _: block, text, flags=re.S)
-    else:
-        text = text.replace("<footer>", block + "\n\n<footer>", 1)
+    text = merge_rows(INDEX.read_text(encoding="utf-8"), [(s_, h) for s_, h, _ in notes])
     INDEX.write_text(text, encoding="utf-8")
     for path in prune(notes):
         print(f"removed stale file: {path}")
 
 
 def main(mode):
+    if mode == "next":
+        print(next_number())
+        return 0
     notes, problems = load_all(strict=(mode == "build"))
     if problems:
         for name, items in problems.items():
@@ -240,7 +285,7 @@ def main(mode):
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "check"
-    if mode not in ("check", "build"):
+    if mode not in ("check", "build", "next"):
         print(__doc__)
         sys.exit(2)
     sys.exit(main(mode))

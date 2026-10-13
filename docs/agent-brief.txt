@@ -32,7 +32,7 @@ HOW WORK IS DONE HERE
 - Find the python/ library by looking upward from the notebook for python/pulse_io.py. Never count folders with
   Path.cwd().parents[N].
 - Environment: conda, Python 3.12, environment darkmatter_cli_env, installed with
-  "python -m pip install -r requirements.txt". Tests: cd python; python -m pytest -q (52 or more should pass).
+  "python -m pip install -r requirements.txt". Tests: cd python; python -m pytest -q (62 or more should pass).
 - Student guides are generated. Edit only their sources (docs/students/src/), rebuild, and commit the sources and
   the rebuilt pages and PDFs together. Never use the Consolas font in a PDF: its hyphen copies as a look-alike
   character and breaks pasted commands.

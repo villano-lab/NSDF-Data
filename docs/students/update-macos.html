@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — macOS
-edition &middot; Version 3 · 12 October 2026</p>
+edition &middot; Version 4 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -188,13 +188,16 @@ text and can take a few minutes.</p>
 <h2 id="step-4.-if-python-changed-make-a-new-environment">Step 4. If
 Python changed: make a new environment</h2>
 <p>Do this when the check says your Python is not the version the guides
-use. Python cannot be safely changed inside an existing environment, so
-you remove the old one and make a new one. Nothing you need is lost: the
-environment is rebuilt from <code>requirements.txt</code>, and the first
-lines below save a list of what the old one had, in case you installed
-something extra. Type each line and press Enter, and be patient:
-<strong>removing the old environment takes a few minutes, and so does
-the final install.</strong></p>
+use. Conda can update Python inside an existing environment, but most of
+this project’s packages were installed with pip, which does not rebuild
+them for the new Python, and that can leave a broken mix. It is more
+reliable to remove the old environment and make a new one. Nothing you
+need is lost: the environment is rebuilt from
+<code>requirements.txt</code>, and the first lines below save a list of
+what the old one had, in case you installed something extra. Type each
+line and press Enter, and be patient: <strong>removing the old
+environment takes a few minutes, and so does the final
+install.</strong></p>
 <pre><code>cd ~
 conda activate darkmatter_cli_env
 python -m pip freeze &gt; ~/old-environment.txt
@@ -408,7 +411,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 3, 12 October 2026, macOS edition. Written for
+<p>Guide version 4, 12 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

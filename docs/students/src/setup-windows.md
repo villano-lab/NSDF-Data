@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 18 · 12 October 2026"
+date: "Version 19 · 13 October 2026"
 ---
 
 ::: tip
@@ -154,7 +154,7 @@ python -m pytest -q
 ```
 
 ::: checkpoint
-The last line says `62 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
+The last line says `101 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
 :::
 
 Then, the data tool:
@@ -164,7 +164,7 @@ nsdf-cli version
 ```
 
 ::: checkpoint
-It prints `NSDF Dark Matter CLI: 0.5.0` (or a later version).
+It prints `NSDF Dark Matter CLI: 0.6.0` (or a later version).
 :::
 
 Finally, the notebook program:
@@ -183,7 +183,7 @@ It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not fou
 |---|---|
 | `conda activate` | Switches your environment on. Do this in every new terminal. |
 | `cd` | Moves into the `python` folder of the project. |
-| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `62 passed` means every check worked. |
+| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `101 passed` means every check worked. |
 | `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -256,7 +256,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `dir %USERPROFILE%\Research`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} ends with `62 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd %USERPROFILE%\Research\NSDF-Data\python`{.cmd}, as in Step 6.
+- [ ] `python -m pytest -q`{.cmd} ends with `101 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd %USERPROFILE%\Research\NSDF-Data\python`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -283,7 +283,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 18, 12 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 19, 13 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Linux edition"
-date: "Version 18 · 12 October 2026"
+date: "Version 19 · 13 October 2026"
 ---
 
 ::: tip
@@ -82,6 +82,16 @@ Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit in
 :::
 
 **What these lines do:** the first one moves you to your home folder (the `cd` line). The second, `nsdf-cli download`, fetches the data set from the NSDF servers over the internet and puts it in a new `idx` folder.
+
+::: tip
+**Optional: tell `nsdf-cli` once where downloads go.** Type this one time, and every later download goes to your `idx` folder, whichever folder you are in:
+
+```
+nsdf-cli config --output-global ~/idx
+```
+
+Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`.nexus-dm/config.json`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
+:::
 
 ::: careful
 Do not move or edit the downloaded files, and do not add them to Git. They are external data, not part of our data analysis code in the NSDF-Data repository.
@@ -426,7 +436,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 18, 12 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 19, 13 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

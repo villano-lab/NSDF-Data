@@ -4,6 +4,21 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-13
+
+**Students, please:** the project's package list changed (`nsdf-cli` 0.6.0 and the `nsdf_dark_matter` library 0.3.1, from the Nexus-DM team), so reinstall it: follow *Updating your setup* (student guide 7), Step 3, then run `python check_environment.py` in the `python` folder, which should say `Environment OK`. Python is still 3.12, so you do not need a new environment. Until you reinstall, the check warns that your setup is out of date.
+
+The students' guides gain *Git in five minutes* (student guide 8) and a short box that says what a pull request is; the project moves to the new `nsdf-cli` and library versions, with a procedure and a helper script for updating the NSDF software in future; and the first-analysis guide teaches the new download options.
+
+### Added
+
+- **Nexus-DM (the NSDF software) 0.6.0 / 0.3.1, and a procedure for updating it.** Nexus-DM released v0.7.0 on 13 October: `nsdf-cli` 0.6.0 adds `config` (a saved download folder and endpoint; the default is still `./idx`), `download --all` (every dump of a series), `-o/--output-dir` and `prune`. The library 0.3.1 has no code changes against 0.3.0. `requirements.txt` now pins `nsdf-dark-matter==0.3.1` and `nsdf-dark-matter-cli==0.6.0`, tested first in a throwaway Python 3.12 environment (new commands, same files and sizes as an old download, the guide's 1517 traces and 179 quiet traces, 96 tests). New `tools/check_upstream.py` compares our pins with PyPI and the Nexus-DM releases. `RELEASING.md` gets *When the NSDF software updates* (notice, read, test in a throwaway environment, bump, release with "Students, please:", report upstream). *Updating your setup* (version 5) gets *Good to know: the NSDF software changes too* (we pin versions, do not upgrade by yourself, how to see versions, what 0.6.0 added). The first-analysis guide (version 19) has a tip on `nsdf-cli config --output-global`, a warning about `--all` (30 dumps, about 1.9 GB for this series) and `prune`; the setup guide (version 19) and the Codespaces guide (version 7) show CLI 0.6.0. Tests check that the guides quote the pinned versions. **When this is released, begin its changelog section with "Students, please:" (reinstall the list: *Updating your setup*, Step 3).**
+- **Student guide 8, *Git in five minutes* (one page, for every computer).** The few Git ideas a student needs, in plain words: repository, commit, branch, push and pull request; your own branch; the four commands (`git status`, `git add`, `git commit`, `git push`); a normal session; a table of messages that look scary and what they mean (including the Vim editor and `CONFLICT`); a note that Git Flow is the maintainers' business; and outside links (Software Carpentry, GitHub's pull request page, GitHub Skills, Pro Git, Dangit Git). Linked from the front page and from the pull-request box of *Publishing a note* (version 9).
+
+### Changed
+
+- **Publishing a note (version 8): a short box that says what a pull request is.** At the top of Step 3: your branch is your own copy, nothing on it changes anyone else's work or the public site, a pull request is the button that means "please have a look", and if something looks wrong, stop and send `git status`. Written for students who are new to Git.
+
 ## [0.6.0] - 2026-10-13
 
 The student guides gain *Updating your setup* and an environment check, the note guides now suggest VS Code and fully support Word and Google Docs (with a converter that carries the pictures), all notes share one table and one set of note numbers, and the library gets a channel-name module, a generated reference page and its own CI workflow.

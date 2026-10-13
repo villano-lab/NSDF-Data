@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — Linux
-edition &middot; Version 5 · 13 October 2026</p>
+edition &middot; Version 6 · 13 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -178,7 +178,13 @@ not try to fix it: copy the message and send it to the project lead.</p>
 <h2
 id="step-3.-if-packages-changed-install-the-projects-list-again">Step 3.
 If packages changed: install the project’s list again</h2>
-<p>Do this when the check named a package. Type:</p>
+<p>Do this when the check named a package, or when the release notes or
+the project lead say the NSDF software changed. This step is how the
+NSDF software (<code>nsdf-cli</code> and the
+<code>nsdf_dark_matter</code> library, from the Nexus-DM project; see
+<em>Good to know</em> below) is updated: <code>requirements.txt</code>
+names the exact version of each, and the line below installs them.
+Type:</p>
 <pre><code>conda activate darkmatter_cli_env
 cd ~/Research/NSDF-Data
 python -m pip install -r requirements.txt</code></pre>
@@ -187,7 +193,8 @@ python -m pip install -r requirements.txt</code></pre>
 the exact version given, replacing any that differ. It prints a lot of
 text and can take a few minutes.</p>
 <p>Then run the check again (Step 1). It should say
-<code>Environment OK</code>.</p>
+<code>Environment OK</code>. Step 5 also shows you the version of
+<code>nsdf-cli</code> you now have.</p>
 <h2 id="step-4.-if-python-changed-make-a-new-environment">Step 4. If
 Python changed: make a new environment</h2>
 <p>Do this when the check says your Python is not the version the guides
@@ -292,11 +299,14 @@ everything works</h2>
 <pre><code>conda activate darkmatter_cli_env
 cd ~/Research/NSDF-Data/python
 python check_environment.py
-python -m pytest -q</code></pre>
+python -m pytest -q
+nsdf-cli version</code></pre>
 <div class="checkpoint">
-<p>The check says <code>Environment OK</code> and <code>pytest</code>
-ends with <code>101 passed</code>. If not, do not guess: copy the output
-and send it to the project lead.</p>
+<p>The check says <code>Environment OK</code>, <code>pytest</code> ends
+with <code>101 passed</code>, and the last line prints
+<code>NSDF Dark Matter CLI: 0.6.0</code> (or the newer version the
+release notes name). If not, do not guess: copy the output and send it
+to the project lead.</p>
 </div>
 <h2 id="step-6.-start-jupyter-again">Step 6. Start Jupyter again</h2>
 <pre><code>conda activate darkmatter_cli_env
@@ -451,7 +461,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 5, 13 October 2026, Linux edition. Written for
+<p>Guide version 6, 13 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="key-links">Key links</h2>

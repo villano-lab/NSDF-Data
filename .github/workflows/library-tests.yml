@@ -10,12 +10,16 @@ on:
     paths:
       - "python/**"
       - "requirements.txt"
+      - "tools/build_library_reference.py"
+      - "docs/library/**"
       - ".github/workflows/library-tests.yml"
   push:
     branches: [develop, master]
     paths:
       - "python/**"
       - "requirements.txt"
+      - "tools/build_library_reference.py"
+      - "docs/library/**"
       - ".github/workflows/library-tests.yml"
   workflow_dispatch:
 

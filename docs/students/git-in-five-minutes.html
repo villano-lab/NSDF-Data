@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git in five minutes (NSDF-Data student guide 8 — for every
+computer)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="git-in-five-minutes.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Git in five minutes</h1>
+<p class="meta">NSDF-Data student guide 8 — for every
+computer &middot; Version 1 · 13 October 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#the-idea" id="toc-the-idea">The idea</a></li>
+<li><a href="#the-words" id="toc-the-words">The words</a></li>
+<li><a href="#your-branch" id="toc-your-branch">Your branch</a></li>
+<li><a href="#the-four-commands" id="toc-the-four-commands">The four
+commands</a></li>
+<li><a href="#a-normal-session" id="toc-a-normal-session">A normal
+session</a></li>
+<li><a href="#getting-the-newest-project-changes"
+id="toc-getting-the-newest-project-changes">Getting the newest project
+changes</a></li>
+<li><a href="#when-something-looks-wrong"
+id="toc-when-something-looks-wrong">When something looks wrong</a></li>
+<li><a href="#you-may-hear-about-git-flow"
+id="toc-you-may-hear-about-git-flow">You may hear about “Git
+Flow”</a></li>
+<li><a href="#where-to-learn-more" id="toc-where-to-learn-more">Where to
+learn more</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>This is guide 8.</strong> It explains the few Git ideas you
+need for this project, in plain words. Read it once, now or later, and
+come back to it when a Git word or message puzzles you. You do not have
+to memorize anything: you will use four commands.</p>
+</div>
+<h2 id="the-idea">The idea</h2>
+<p><strong>Git</strong> keeps every saved version of your project, like
+an endless “Save As” where each save has a note saying what changed.
+Nothing you have saved is lost, even if you change your mind later.
+<strong>GitHub</strong> is the website that keeps a shared copy online,
+so your lead can see your work.</p>
+<h2 id="the-words">The words</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Word</th>
+<th>What it means here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>repository</strong></td>
+<td>The project folder (<code>NSDF-Data</code>) together with its whole
+saved history.</td>
+</tr>
+<tr>
+<td><strong>commit</strong></td>
+<td>One saved version, with a short message saying what changed.</td>
+</tr>
+<tr>
+<td><strong>branch</strong></td>
+<td>A separate line of saved versions. Your branch is your own copy of
+the work.</td>
+</tr>
+<tr>
+<td><strong>push</strong></td>
+<td>Send your commits from your computer to GitHub.</td>
+</tr>
+<tr>
+<td><strong>pull request</strong></td>
+<td>A button on github.com that means “I’m done, please have a look.”
+Your lead reads it and, if it is ready, adds your work to the project.
+Guide 4 shows it step by step.</td>
+</tr>
+<tr>
+<td><strong><code>develop</code> and <code>master</code></strong></td>
+<td>The shared branches that belong to the project. You never work on
+them.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="your-branch">Your branch</h2>
+<p>Everything you do happens on your own branch, named
+<code>student-yourname</code>. The setup guide (Step 8) made it for you.
+Your branch cannot hurt anyone else’s work or the public site, however
+many times you commit or push.</p>
+<p>To see which branch you are on, type:</p>
+<pre><code>git branch --show-current</code></pre>
+<p>It should print <code>student-yourname</code>. If it prints
+<code>develop</code> or <code>master</code>, stop and ask your lead.</p>
+<h2 id="the-four-commands">The four commands</h2>
+<p>You will use these all the time. Run them in a terminal, from inside
+the <code>NSDF-Data</code> folder (the first two guides show how to get
+there).</p>
+<pre><code>git status
+git add your-file
+git commit -m &quot;Say what you changed&quot;
+git push</code></pre>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>git status</code></td>
+<td>Shows what has changed since your last commit, and which branch you
+are on. It only looks: it never changes anything, so use it as often as
+you like.</td>
+</tr>
+<tr>
+<td><code>git add your-file</code></td>
+<td>Chooses a file to include in your next commit. Use the real file
+name, as <code>git status</code> shows it.</td>
+</tr>
+<tr>
+<td><code>git commit -m "..."</code></td>
+<td>Saves a version of everything you added, with your message. A good
+message says what and why, in a few words.</td>
+</tr>
+<tr>
+<td><code>git push</code></td>
+<td>Sends your saved versions to GitHub. The first time on a new branch,
+Git tells you the exact command to use: copy it.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tip">
+<p>Before every commit, type <code>git status</code> and read the list.
+It should show only your own files. If you see data files (a folder
+named <code>idx</code>, or <code>.bin</code> files) or other people’s
+files, do not add them: ask your lead.</p>
+</div>
+<h2 id="a-normal-session">A normal session</h2>
+<ol type="1">
+<li>Go to the <code>NSDF-Data</code> folder in a terminal.</li>
+<li>Type <code>git branch --show-current</code> and check that it is
+your branch.</li>
+<li>Do your work: a notebook, a note.</li>
+<li>Type <code>git status</code>, then <code>git add</code> for each
+file of yours, then <code>git commit -m "..."</code>, then
+<code>git push</code>.</li>
+<li>When a note or a piece of work is ready for review, open a pull
+request on github.com (guide 4, Step 3).</li>
+</ol>
+<h2 id="getting-the-newest-project-changes">Getting the newest project
+changes</h2>
+<p>The project keeps changing. To bring the newest shared changes into
+your branch, follow <em>Updating your setup</em> (guide 7, Step 2). It
+uses two lines, <code>git fetch origin</code> and
+<code>git merge --no-edit origin/develop</code>, and tells you what to
+do if Git reports a <code>CONFLICT</code>: stop, and send the message to
+your lead.</p>
+<h2 id="when-something-looks-wrong">When something looks wrong</h2>
+<div class="careful">
+<p><strong>Stop, and do not try commands you found on the
+internet.</strong> Type <code>git status</code>, copy everything it
+prints, and send it to your lead together with the message that worried
+you. Work you have committed is very hard to lose, and nobody minds this
+question.</p>
+</div>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>You see</th>
+<th>What it means</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nothing to commit, working tree clean</code></td>
+<td>You have no unsaved changes.</td>
+<td>Nothing: this is fine.</td>
+</tr>
+<tr>
+<td><code>Untracked files:</code></td>
+<td>Files Git has not been told about yet.</td>
+<td>Add the ones that are yours. Leave data files alone.</td>
+</tr>
+<tr>
+<td><code>Your branch is ahead of 'origin/...' by 2 commits</code></td>
+<td>You committed but have not pushed.</td>
+<td><code>git push</code></td>
+</tr>
+<tr>
+<td><code>Your branch is behind</code></td>
+<td>There are newer commits on GitHub.</td>
+<td>Ask your lead, or see guide 7, Step 2.</td>
+</tr>
+<tr>
+<td><code>CONFLICT</code></td>
+<td>Git cannot combine two changes by itself.</td>
+<td>Stop. Do not edit anything. Send the message to your lead.</td>
+</tr>
+<tr>
+<td>A text editor opens (a window full of <code>~</code> characters, or
+text starting <code>Merge branch</code>)</td>
+<td>Git wants a message for a merge.</td>
+<td>Press <code>Esc</code>, type <code>:wq</code>, press Enter.</td>
+</tr>
+<tr>
+<td><code>fatal: not a git repository</code></td>
+<td>You are not inside the <code>NSDF-Data</code> folder.</td>
+<td>Go to the <code>NSDF-Data</code> folder and try again.</td>
+</tr>
+<tr>
+<td><code>Please tell me who you are</code>, or a password or permission
+error when you push</td>
+<td>Git does not know your name, or you are not signed in to
+GitHub.</td>
+<td>Setup guide, Step 8. Never type your GitHub password into the
+terminal.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="you-may-hear-about-git-flow">You may hear about “Git Flow”</h2>
+<p>Git Flow is the set of branches (<code>develop</code>,
+<code>release/…</code>, <code>hotfix/…</code>) the project lead uses to
+publish versions. It is the maintainers’ business. You only ever use
+your own branch and the pull request button.</p>
+<h2 id="where-to-learn-more">Where to learn more</h2>
+<p>These are outside websites, which you can read at your own pace. None
+is required.</p>
+<ul>
+<li><strong>Software Carpentry, “Version Control with Git”</strong>: a
+gentle course for scientists. <a
+href="https://swcarpentry.github.io/git-novice/"
+class="uri">https://swcarpentry.github.io/git-novice/</a></li>
+<li><strong>GitHub: About pull requests</strong>: <a
+href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests"
+class="uri">https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests</a></li>
+<li><strong>GitHub Skills</strong>: short interactive courses in your
+browser. <a href="https://skills.github.com/"
+class="uri">https://skills.github.com/</a></li>
+<li><strong>Pro Git</strong>, the free book, for later. <a
+href="https://git-scm.com/book/en/v2"
+class="uri">https://git-scm.com/book/en/v2</a></li>
+<li><strong>Dangit, Git!?!</strong>: plain recipes for “I did something
+wrong”. <a href="https://dangitgit.com/"
+class="uri">https://dangitgit.com/</a></li>
+</ul>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 1, 13 October 2026. Written for every computer. Please
+tell the project lead where a step was unclear.</p>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, include the output of <code>git status</code> and the
+message that worried you.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+<li>Student guides: <a href="https://villano-lab.github.io/NSDF-Data/"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="git-in-five-minutes.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

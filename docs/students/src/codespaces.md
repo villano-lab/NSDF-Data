@@ -1,7 +1,7 @@
 ---
 title: "Working in your browser with GitHub Codespaces"
 subtitle: "NSDF-Data student guide 6 — no install, for every computer"
-date: "Version 6 · 12 October 2026"
+date: "Version 7 · 13 October 2026"
 ---
 
 ::: tip
@@ -51,7 +51,7 @@ cd python && python -m pytest -q && cd ..
 ```
 
 ::: checkpoint
-You see `NSDF Dark Matter CLI: 0.5.0`, then `ok`, then a line ending `62 passed` (a larger number is fine).
+You see `NSDF Dark Matter CLI: 0.6.0`, then `ok`, then a line ending `101 passed` (a larger number is fine).
 :::
 
 ## Step 3. Download the data
@@ -102,7 +102,7 @@ Do not leave a codespace running overnight. It keeps using your hours while it i
 If `python -c "import nsdf_dark_matter"` fails, the setup step did not run. Install the packages by hand, in the terminal:
 
 ```
-python -m pip install nsdf-dark-matter==0.3.0 nsdf-dark-matter-cli==0.5.0 numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
+python -m pip install nsdf-dark-matter==0.3.1 nsdf-dark-matter-cli==0.6.0 numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel
 ```
 
 Then run the checks in Step 2 again. If that does not work, copy the last lines of the message and send them to your lead.
@@ -117,7 +117,7 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## Session Info
 
-Guide version 6, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 7, 13 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

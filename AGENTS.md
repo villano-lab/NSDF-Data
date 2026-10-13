@@ -82,4 +82,5 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 ## Checks that run automatically
 
 - **Student notes** (`.github/workflows/student-notes.yml`): validates `notes/src/**` on pull requests and builds the pages on push to `master`.
+- **Library tests** (`.github/workflows/library-tests.yml`): runs `python -m pytest` in `python/` on Windows, macOS and Linux for pull requests and pushes that touch `python/` or `requirements.txt`. It includes `test_library_conventions.py`, which fails when a public library function has no `@status` tag or is not mentioned in any test.
 - **Check instructions** (`.github/workflows/check-instructions.yml`): repeats the guides' setup steps on Windows, macOS and Linux. It runs on pull requests, on pushes to `develop` and `master`, and weekly.

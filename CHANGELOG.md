@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Added
+
+- **Student guide 8, *Git in five minutes* (one page, for every computer).** The few Git ideas a student needs, in plain words: repository, commit, branch, push and pull request; your own branch; the four commands (`git status`, `git add`, `git commit`, `git push`); a normal session; a table of messages that look scary and what they mean (including the Vim editor and `CONFLICT`); a note that Git Flow is the maintainers' business; and outside links (Software Carpentry, GitHub's pull request page, GitHub Skills, Pro Git, Dangit Git). Linked from the front page and from the pull-request box of *Publishing a note* (version 9).
+
 ### Changed
 
 - **Publishing a note (version 8): a short box that says what a pull request is.** At the top of Step 3: your branch is your own copy, nothing on it changes anyone else's work or the public site, a pull request is the button that means "please have a look", and if something looks wrong, stop and send `git status`. Written for students who are new to Git.

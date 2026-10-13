@@ -14,7 +14,7 @@ OUT=..
 "${PYTHON:-python3}" gen.py > /dev/null
 # The data-structure figure of the first-analysis guide (needs matplotlib, not the data).
 "${PYTHON:-python3}" make_structure_figure.py
-for f in setup-windows setup-macos setup-linux first-analysis-windows first-analysis-macos first-analysis-linux update-windows update-macos update-linux writing-a-note publishing-a-note publishing-with-ai codespaces; do
+for f in setup-windows setup-macos setup-linux first-analysis-windows first-analysis-macos first-analysis-linux update-windows update-macos update-linux writing-a-note publishing-a-note publishing-with-ai codespaces git-in-five-minutes; do
   pandoc "$f.md" -o "$OUT/$f.pdf" --pdf-engine=xelatex --lua-filter=boxes.lua -H style.tex \
     -V geometry:margin=0.9in -V fontsize=11pt -V mainfont="${MAINFONT:-Helvetica}" -V monofont="${MONOFONT:-Menlo}" \
     -V colorlinks=true -V linkcolor=brand -V urlcolor=brand --highlight-style=tango
@@ -31,7 +31,7 @@ echo "built note-cheatsheet.pdf"
 # The same sources, as web pages with copy buttons. The PDF stays as a backup, linked from inside
 # each page. The pages use docs/style.css, docs/guide.css and docs/guide.js; they need only pandoc.
 HTML_COMMON="-s -f markdown -t html5 --template=guide-template.html --lua-filter=boxes.lua --lua-filter=htmlfix.lua --no-highlight -V root=.."
-for f in setup-windows setup-macos setup-linux first-analysis-windows first-analysis-macos first-analysis-linux update-windows update-macos update-linux writing-a-note publishing-a-note publishing-with-ai codespaces; do
+for f in setup-windows setup-macos setup-linux first-analysis-windows first-analysis-macos first-analysis-linux update-windows update-macos update-linux writing-a-note publishing-a-note publishing-with-ai codespaces git-in-five-minutes; do
   pandoc "$f.md" -o "$OUT/$f.html" $HTML_COMMON --toc --toc-depth=2 -V pdf="$f.pdf"
   echo "built $f.html"
 done

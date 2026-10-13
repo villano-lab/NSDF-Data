@@ -6,6 +6,18 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Added
 
+- **Student guide 8, *Git in five minutes* (one page, for every computer).** The few Git ideas a student needs, in plain words: repository, commit, branch, push and pull request; your own branch; the four commands (`git status`, `git add`, `git commit`, `git push`); a normal session; a table of messages that look scary and what they mean (including the Vim editor and `CONFLICT`); a note that Git Flow is the maintainers' business; and outside links (Software Carpentry, GitHub's pull request page, GitHub Skills, Pro Git, Dangit Git). Linked from the front page and from the pull-request box of *Publishing a note* (version 9).
+
+### Changed
+
+- **Publishing a note (version 8): a short box that says what a pull request is.** At the top of Step 3: your branch is your own copy, nothing on it changes anyone else's work or the public site, a pull request is the button that means "please have a look", and if something looks wrong, stop and send `git status`. Written for students who are new to Git.
+
+## [0.6.0] - 2026-10-13
+
+The student guides gain *Updating your setup* and an environment check, the note guides now suggest VS Code and fully support Word and Google Docs (with a converter that carries the pictures), all notes share one table and one set of note numbers, and the library gets a channel-name module, a generated reference page and its own CI workflow.
+
+### Added
+
 - **A generated library reference page, `docs/library/index.html`.** `python tools/build_library_reference.py` reads every `python/pulse_*.py` module and writes one page with each module's docstring, its classes and fields, and a table of its public functions (signature, one-line summary, expandable details, and the `done` or `under development` tag with its note). It is separate from Note 1a, which keeps its history and prose and can be updated or superseded later. The front page links to it. `python/tests/test_library_reference.py` fails when the page no longer matches the code, and `test_library_conventions.py` now also requires a docstring on every public function (the library tests run when the generator or the page changes).
 - **`python/pulse_channels.py`: which physical channel is a dump's (detector, channel)?** `channel_name(0, 2)` gives `'Side1pC'`, `channel_label` adds the DCRC board and tower input for plot labels, `find_channel` goes from a name back to `(detector, channel)`, and `all_channels()` lists all 12. The dump's three "detectors" are three readout boards (DCRC1, DCRC3, DCRC4) of one two-sided detector; the table comes from the Run 76 Setup table on the UMN wiki. Tagged `under_development`: that detector 0, 1, 2 are the boards in ascending order is inferred from a raw MIDAS file of another Run 76 series, and the channel order within a board is assumed. 11 new tests (73 in all).
 - **Library tests run on their own in CI, and two rules of `AGENTS.md` are now tests.** The new workflow `.github/workflows/library-tests.yml` runs `python -m pytest` in `python/` on Windows, macOS and Linux for every pull request or push that touches `python/` or `requirements.txt`, so a broken function fails a check named after the library (the guide walkthrough in `check-instructions.yml` still runs the tests as Setup Step 6). `python/tests/test_library_conventions.py` fails when a public function in a `pulse_*.py` module has no `@status` tag, or when no test file mentions it (14 new tests, 87 in all).

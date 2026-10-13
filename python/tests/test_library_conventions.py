@@ -1,6 +1,7 @@
 """Rules from AGENTS.md that apply to every module in `python/`, checked automatically.
 
 * every public function is tagged `@status(DONE)` or `@status(UNDER_DEVELOPMENT, ...)`;
+* every public function has a docstring (the library reference page is built from them);
 * every public function is named in at least one test file, so a new function cannot arrive
   without a test (this checks that a test mentions it, not that the test is any good).
 """
@@ -29,6 +30,13 @@ def test_every_public_function_has_a_status_tag(modname):
     module = importlib.import_module(modname)
     untagged = [name for name, f in _public_functions(module) if getattr(f, "status", None) is None]
     assert not untagged, f"{modname}: tag with @status(DONE) or @status(UNDER_DEVELOPMENT, note=...): {untagged}"
+
+
+@pytest.mark.parametrize("modname", MODULES)
+def test_every_public_function_has_a_docstring(modname):
+    module = importlib.import_module(modname)
+    bare = [name for name, f in _public_functions(module) if not (f.__doc__ or "").strip()]
+    assert not bare, f"{modname}: add a docstring (first line = one-sentence summary): {bare}"
 
 
 @pytest.mark.parametrize("modname", MODULES)

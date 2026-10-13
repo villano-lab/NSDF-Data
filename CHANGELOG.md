@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Added
+
+- **Note 8: the Processing.xlsx-recorded raw and RQ locations for 3 UMN R76 series no longer exist.** Reads `Processing.xlsx` from `cdms3.spa.umn.edu:/project/chocula/k100/run076` and checks the raw (`midasraw`) and processed (`midasrq`) paths it records for series `07220812_1805`, `07220830_1829` and `07220923_1746`; none exist, and the owning user's whole directory is gone. Four other UMN users' `k100proc` copies were checked and none hold these series either. In progress: Run68 and the other ~230 Run76 series are not yet covered, and a broader filename search did not finish in time.
+
 ## [0.7.0] - 2026-10-13
 
 **Students, please:** the project's package list changed (`nsdf-cli` 0.6.0 and the `nsdf_dark_matter` library 0.3.1, from the Nexus-DM team), so reinstall it: follow *Updating your setup* (student guide 7), Step 3, then run `python check_environment.py` in the `python` folder, which should say `Environment OK`. Python is still 3.12, so you do not need a new environment. Until you reinstall, the check warns that your setup is out of date.

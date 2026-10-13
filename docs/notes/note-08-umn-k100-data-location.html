@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 8: Where does the UMN k100/R76 data live?</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>Where does the raw and processed (RQ) k100 data for R76 actually live at UMN? The paths <code>Processing.xlsx</code> records no longer exist</h1>
+<p class="meta"><strong>Note 8</strong> &middot; Author(s): Anthony Villano &middot; 13 Oct 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ol>
+  <li><a href="#question">The question</a></li>
+  <li><a href="#method">Method</a></li>
+  <li><a href="#processing-xlsx">What <code>Processing.xlsx</code> records</a></li>
+  <li><a href="#checked">What is actually on <code>cdms3</code> today</a></li>
+  <li><a href="#other-users">Other users&rsquo; copies of the k100 pipeline</a></li>
+  <li><a href="#reading">Reading</a></li>
+  <li><a href="#caveats">Caveats</a></li>
+  <li><a href="#next-steps">Next steps</a></li>
+</ol>
+</nav>
+
+<h2 id="question">The question</h2>
+<p>We have had trouble locating the raw k100 data in general, and the Run 68 and Run 76 data specifically, on the UMN side. NSDF (<a href="note-01-run76-series-catalog.html">Note 1</a>) holds raw dumps for 130 of the 235 cataloged Run76 series, but says nothing about where the <strong>processed</strong> (BatRoot &ldquo;RQ&rdquo;) data lives, or about Run68 at all. The group keeps a processing log, <code>Processing.xlsx</code>, in <code>/project/chocula/k100/run076</code> on <code>cdms3.spa.umn.edu</code>; this note reads it and checks whether the locations it records still exist.</p>
+
+<h2 id="method">Method</h2>
+<p>This note has no notebook to pin: everything below comes from reading one file and running read-only <code>ls</code>/<code>find</code> commands over SSH as user <code>avillano</code> on <code>cdms3.spa.umn.edu</code>, on 13 Oct 2026. Unlike a notebook pinned to a commit, these results reflect the state of that filesystem at that moment and could change; rerun the same commands to check them again.</p>
+<p>The file read was <code>/project/chocula/k100/run076/Processing.xlsx</code> (owned by <code>fritts</code>, last modified 16 Dec 2022, 41,895 bytes, MD5 <code>04d9ddc0ee43fb516c3c026d9b914788</code>). It was not committed to this repository: it is someone else&rsquo;s internal processing log, not raw detector data, and the repository already has an unrelated file of the same name (<code>data_analysis/R76/series_lists/Processing.xlsx</code>, MD5 <code>b7ee6cfc0b5cabf91a75241f78129d22</code>, different content) which this note does not touch.</p>
+
+<h2 id="processing-xlsx">What <code>Processing.xlsx</code> records</h2>
+<p><code>Processing.xlsx</code> is a BatRoot (<code>cdmsbats</code>) processing log and template: nine sheets, but only <strong>three</strong> distinct Run76 series (several sheets are the same series split by dump range across different machines for parallel processing, not nine different series). Each sheet sets the raw-data and processed-output locations as shell environment variables before running <code>BatRoot</code>.</p>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>Series</th><th class="num">Dump range (sheet)</th><th>Raw data location</th><th>Processed (RQ) data location</th></tr></thead>
+  <tbody>
+    <tr><td><code>07220812_1805</code></td><td class="num">241&ndash;384</td><td><code>/data/chocula/fritts/data/k100proc/midasraw/byseries/07220812_1805</code></td><td><code>/data/chocula/fritts/data/k100proc/midasrq/byseries/07220812_1805</code></td></tr>
+    <tr><td><code>07220830_1829</code></td><td class="num">88&ndash;143</td><td><code>/data/chocula/fritts/data/k100proc/midasraw/byseries/07220830_1829</code></td><td><code>/data/chocula/fritts/data/k100proc/midasrq/byseries/07220830_1829</code></td></tr>
+    <tr><td><code>07220923_1746</code></td><td class="num">401&ndash;800 (4 sheets, split across machines)</td><td><code>/data/chocula/fritts/data/k100proc/midasraw/byseries/07220923_1746</code></td><td><code>/data/chocula/fritts/data/k100proc/midasrq/byseries/07220923_1746</code></td></tr>
+  </tbody>
+</table></div>
+<p>The pattern, if it still held: both raw and processed data live under a fixed path with the series name appended &mdash; raw at <code>/data/chocula/fritts/data/k100proc/midasraw/byseries/&lt;series&gt;</code>, processed at <code>/data/chocula/fritts/data/k100proc/midasrq/byseries/&lt;series&gt;</code>, both under user <code>fritts</code>&rsquo;s area. The directory also has an analysis macro, <code>r76_analysis_hvcal.c</code> (9 Dec 2022), whose <code>datapath</code> variable hardcodes the same <code>.../fritts/data/k100proc/midasrq/byseries/</code> path and reads <code>umn*.root</code> files from it with a <code>TChain</code>.</p>
+
+<h2 id="checked">What is actually on <code>cdms3</code> today</h2>
+<p>None of the six paths above exist. Not just the per-series <code>byseries/&lt;series&gt;</code> folders &mdash; the <code>fritts</code> directory itself is gone from <code>/data/chocula</code> (there is no top-level <code>/data/chocula/fritts</code> at all; <code>fritts</code> only owns a couple of unrelated small folders elsewhere under <code>/data/chocula</code>, such as <code>docker_files</code> and <code>ristani</code>). So this is not a renamed series folder or a typo in the spreadsheet: the entire personal processing area the log and the analysis macro depend on is absent.</p>
+
+<h2 id="other-users">Other users&rsquo; copies of the k100 pipeline</h2>
+<p>The <code>k100proc</code> layout (<code>midasraw/byseries</code>, <code>midasrq/byseries</code>, <code>midasfilterFiles</code>) is a shared convention, not unique to <code>fritts</code>: it also exists under <code>neog</code>, <code>will</code>, <code>shi</code> and <code>acharya</code> in <code>/project/chocula</code>. None of them have our three series.</p>
+<div class="table-scroll"><table class="compact">
+  <thead><tr><th>User</th><th class="num">RQ series present</th><th>Series found (none of our 3)</th></tr></thead>
+  <tbody>
+    <tr><td><code>will</code></td><td class="num">20</td><td>19 from Aug 2020 (<code>0720...</code>), 1 from Jun 2022 (<code>07220617_1305_v2</code>)</td></tr>
+    <tr><td><code>neog</code></td><td class="num">1</td><td><code>07220330_1639</code> (Mar 2022, before our series)</td></tr>
+    <tr><td><code>shi</code></td><td class="num">0</td><td><code>midasrq/byseries</code> does not exist for this user</td></tr>
+    <tr><td><code>acharya</code></td><td class="num">0</td><td><code>midasrq/byseries</code> does not exist for this user</td></tr>
+  </tbody>
+</table></div>
+<p>There is also a group pipeline tool, <code>/project/chocula/cdmssoft/k100Pipe</code>, with scripts <code>copyRawToRemote.sh</code> and <code>copyRQToRemote.sh</code> for copying raw and RQ data to a remote host by series and time range &mdash; evidence that at least some k100 data is routinely copied off <code>cdms3</code> to somewhere else, which this note has not tracked down.</p>
+
+<h2 id="reading">Reading</h2>
+<ul>
+  <li><strong>The three series' recorded RQ output is gone from where the log says it was,</strong> and is not in the four other UMN personal areas checked. This does not prove the RQ data no longer exists anywhere &mdash; only that it is not where <code>Processing.xlsx</code> says, and not in the few obvious places checked today.</li>
+  <li><strong>The loss is structural, not a path change.</strong> The whole <code>fritts</code> area is missing, not just the series subfolders, so this looks like an account or directory removal (for example when someone leaves the group) rather than a reorganization of the k100 pipeline.</li>
+  <li><strong>This only speaks to these three series.</strong> Note 1 catalogs roughly 130 Run76 series with raw dumps on NSDF; this note has checked RQ availability for 3 of them (all off NSDF, i.e. UMN-only in this log) and raw/RQ availability at UMN for those same 3. It says nothing about Run68, and nothing about the other ~230 Run76 series.</li>
+</ul>
+
+<div class="callout"><strong class="tag">Caveat</strong>
+<ul>
+  <li>Several directories under <code>/project/chocula</code> are <code>drwx------</code> (owner-only) and were not readable as <code>avillano</code>; the data could be sitting in one of those.</li>
+  <li>No tape or backup system was checked &mdash; only the live filesystem reachable over SSH.</li>
+  <li>A broader search for any directory literally named <code>run076</code>, <code>run76</code>, <code>run068</code> or <code>run68</code> anywhere under <code>/project</code> (depth 5) was started but did not finish in the time available for this note; it is not reported here because it is incomplete, not because it came back empty.</li>
+  <li>Run68 was not investigated at all in this note &mdash; the question above names it, but everything found here is Run76-specific, because that is what <code>Processing.xlsx</code> covers.</li>
+  <li>&ldquo;Not found&rdquo; here means not found by one person over one SSH session in a few minutes, not a certified absence.</li>
+</ul></div>
+
+<h2 id="next-steps">Next steps</h2>
+<ul>
+  <li>Ask the UMN group (<code>fritts</code>, or whoever administers <code>cdms3</code>) directly whether that account's files were migrated or archived, and where.</li>
+  <li>Check whether <code>copyRawToRemote.sh</code> / <code>copyRQToRemote.sh</code> point at a known remote host that might hold a copy.</li>
+  <li>Repeat this same check for Run68, which this note did not touch.</li>
+  <li>If the RQ data for these three series is confirmed gone, the fallback is reprocessing from NSDF's raw dumps with BatRoot, for whichever of the 130 available series are needed.</li>
+  <li>Finish the broader <code>run076</code>/<code>run68</code> name search across <code>/project</code> that did not complete in time for this note.</li>
+</ul>
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

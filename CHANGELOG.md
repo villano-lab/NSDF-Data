@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **Publishing a note (version 8): a short box that says what a pull request is.** At the top of Step 3: your branch is your own copy, nothing on it changes anyone else's work or the public site, a pull request is the button that means "please have a look", and if something looks wrong, stop and send `git status`. Written for students who are new to Git.
+
 ## [0.6.0] - 2026-10-13
 
 The student guides gain *Updating your setup* and an environment check, the note guides now suggest VS Code and fully support Word and Google Docs (with a converter that carries the pictures), all notes share one table and one set of note numbers, and the library gets a channel-name module, a generated reference page and its own CI workflow.

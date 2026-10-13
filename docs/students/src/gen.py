@@ -20,6 +20,7 @@ OS = {
   HOME_NOTE="::: tip\n**What is `%USERPROFILE%`?** It is a shortcut that Windows understands. It stands for your own personal folder on this computer, the one named after you (for example `C:\\Users\\YourName`). Type it **exactly as written**, with the two percent signs. Do not replace it with your name: Windows fills it in for you.\n:::",
   FILEMGR="File Explorer",
   IDX="`C:\\Users\\YourName\\idx`",
+  IDXPATH="%USERPROFILE%\\idx",
   GOHOME="cd %USERPROFILE%",
   OLDENV="%USERPROFILE%\\old-environment.txt",
   HOMEEX="`C:\\Users\\YourName`",
@@ -48,6 +49,7 @@ OS = {
   HOME_NOTE="",
   FILEMGR="Finder",
   IDX="`~/idx`",
+  IDXPATH="~/idx",
   GOHOME="cd ~",
   OLDENV="~/old-environment.txt",
   HOMEEX="`/Users/YourName`  (the `~` symbol means this folder)",
@@ -75,6 +77,7 @@ OS = {
   HOME_NOTE="",
   FILEMGR="Files (the file manager)",
   IDX="`~/idx`",
+  IDXPATH="~/idx",
   GOHOME="cd ~",
   OLDENV="~/old-environment.txt",
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
@@ -103,7 +106,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 18 · 12 October 2026"
+date: "Version 19 · 13 October 2026"
 ---
 
 ::: tip
@@ -224,7 +227,7 @@ python -m pytest -q
 ```
 
 ::: checkpoint
-The last line says `62 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
+The last line says `101 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
 :::
 
 Then, the data tool:
@@ -234,7 +237,7 @@ nsdf-cli version
 ```
 
 ::: checkpoint
-It prints `NSDF Dark Matter CLI: 0.5.0` (or a later version).
+It prints `NSDF Dark Matter CLI: 0.6.0` (or a later version).
 :::
 
 Finally, the notebook program:
@@ -253,7 +256,7 @@ It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not fou
 |---|---|
 | `conda activate` | Switches your environment on. Do this in every new terminal. |
 | `cd` | Moves into the `python` folder of the project. |
-| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `62 passed` means every check worked. |
+| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `101 passed` means every check worked. |
 | `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -326,7 +329,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `@LISTCMD@ @FOLDER@`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} ends with `62 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `@CD_PYTHON@`{.cmd}, as in Step 6.
+- [ ] `python -m pytest -q`{.cmd} ends with `101 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `@CD_PYTHON@`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -353,7 +356,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 18, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -366,7 +369,7 @@ Guide version 18, 12 October 2026, @NAME@ edition. Written for beginners; please
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 18 · 12 October 2026"
+date: "Version 19 · 13 October 2026"
 ---
 
 ::: tip
@@ -439,6 +442,16 @@ Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit in
 :::
 
 **What these lines do:** the first one moves you to your home folder (the `cd` line). The second, `nsdf-cli download`, fetches the data set from the NSDF servers over the internet and puts it in a new `idx` folder.
+
+::: tip
+**Optional: tell `nsdf-cli` once where downloads go.** Type this one time, and every later download goes to your `idx` folder, whichever folder you are in:
+
+```
+nsdf-cli config --output-global @IDXPATH@
+```
+
+Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`.nexus-dm/config.json`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
+:::
 
 ::: careful
 Do not move or edit the downloaded files, and do not add them to Git. They are external data, not part of our data analysis code in the NSDF-Data repository.
@@ -783,7 +796,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 18, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -796,7 +809,7 @@ Guide version 18, 12 October 2026, @NAME@ edition. Written for beginners; please
 UPDATE = """---
 title: "Updating your setup"
 subtitle: "NSDF-Data student guide 7 — @NAME@ edition"
-date: "Version 4 · 12 October 2026"
+date: "Version 5 · 13 October 2026"
 ---
 
 ::: maintenance
@@ -818,7 +831,7 @@ date: "Version 4 · 12 October 2026"
 
 | Word | What it means here |
 |---|---|
-| **Release** | A numbered version of the whole project, such as 0.5.0. The number is in the file `VERSION`. |
+| **Release** | A numbered version of the whole project, such as 0.6.0. The number is in the file `VERSION`. |
 | **Environment** | The sealed box of programs with fixed versions that you made in the setup guide, called `darkmatter_cli_env`. |
 | **Pinned** | A package listed in `requirements.txt` with an exact version, such as `numpy==2.2.6`. |
 | **Merge** | Bring the newest shared changes of the project (the branch `develop`) into your own branch. |
@@ -928,7 +941,7 @@ python -m pytest -q
 ```
 
 ::: checkpoint
-The check says `Environment OK` and `pytest` ends with `62 passed`. If not, do not guess: copy the output and send it to the project lead.
+The check says `Environment OK` and `pytest` ends with `101 passed`. If not, do not guess: copy the output and send it to the project lead.
 :::
 
 ## Step 6. Start Jupyter again
@@ -942,11 +955,23 @@ jupyter lab
 
 Use the same `yourname` as in your branch name. If Jupyter asks for a kernel, choose **darkmatter_cli_env**. Open your notebook and run the first cell: it should print `Environment OK` and then `(1517, 4096)`.
 
+## Good to know: the NSDF software changes too
+
+The programs that download and read the data, the `nsdf-cli` command and the `nsdf_dark_matter` library, come from a separate project called **Nexus-DM** (formerly NSDF-SLAC). Its team improves it often, and our analysis depends heavily on it. So:
+
+- **We pin its versions.** `requirements.txt` names the exact version of both packages. The project lead tests each new version here before it goes on the list, so a change upstream cannot quietly change your results. **Do not upgrade them yourself** (no `pip install --upgrade`): you could end up with a mix nobody has tested.
+- **You get a new version the usual way.** When the list changes, the release notes say so, the project lead writes to you ("Students, please"), and you follow Step 3 of this guide. The environment check in Step 1 warns you when your versions differ from the list.
+- **To see your versions,** type `nsdf-cli version`, and `python -m pip show nsdf-dark-matter nsdf-dark-matter-cli` (look at the `Version` lines).
+- **New commands come with new versions.** Version 0.6.0 added `nsdf-cli config` (the folder that downloads go to), `nsdf-cli download ... --all` and `nsdf-cli prune`; the first analysis guide, Step 2, explains them.
+- **If something behaves differently after an update,** send the project lead the output of `nsdf-cli version` and the message you saw. The lead reports problems in the NSDF software to its team; you do not need to.
+
+What the Nexus-DM team changed in each version is in [their release notes](https://github.com/nsdf-fabric/nexus-dm/releases).
+
 ## You are done when
 
 - [ ] `python check_environment.py`{.cmd} (in the `python` folder, with the environment on) says `Environment OK`.
 - [ ] `git status`{.cmd} in the `NSDF-Data` folder shows your own branch and nothing you want to keep is unsaved.
-- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `62 passed`.
+- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `101 passed`.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
 - [ ] Your notebook's first cell prints `Environment OK`.
 
@@ -959,7 +984,7 @@ Use the same `yourname` as in your branch name. If Jupyter asks for a kernel, ch
 | `CondaError: Prefix record '...' already exists` on `conda create` | Conda's download cache has a bad entry. Type `conda clean --all -y`{.cmd} and then run the `conda create` line again. |
 | `conda create` complains that the folder exists, or a leftover folder `darkmatter_cli_env` is in the `envs` folder | The removal left an empty shell behind. Type `conda info --envs`{.cmd} to see where the environments live, check that the leftover `darkmatter_cli_env` folder holds no `python` file, delete that folder, and run the `conda create` line again. |
 | `Python was not found; run without arguments to install from the Microsoft Store` (Windows) | Your environment is not switched on, or it was not created. Type `conda env list`{.cmd}. If `darkmatter_cli_env` is not in the list, run the `conda create` line of Step 4 again. If it is, run `conda activate darkmatter_cli_env`{.cmd}. |
-| `FileExistsError` on the `ipykernel install` line | Jupyter already has a kernel of that name. Run `jupyter kernelspec remove darkmatter_cli_env -y`{.cmd} and then the `ipykernel install` line again. |
+| `FileExistsError` on the `ipykernel install` line | Jupyter already has a kernel of that name. Run the `jupyter kernelspec remove` line of Step 4 (the one ending `-y`), then the `ipykernel install` line again. |
 | git says `CONFLICT` | Stop and send the message to the project lead. Do not edit the files. |
 | A text editor opens (a window full of `~` characters, or a message starting `Merge branch`) after `git merge` | git is asking for a message for the merge. In the editor (usually Vim): press `Esc`, type `:wq`{.cmd} and press Enter. The merge finishes with git's own message. |
 | The kernel is missing in Jupyter | In the environment, run the last two lines of Step 4 again, then restart Jupyter. |
@@ -972,7 +997,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 4, 12 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 5, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -987,7 +1012,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST), ("update", UPDATE)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","IDXPATH","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

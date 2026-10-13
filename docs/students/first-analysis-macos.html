@@ -16,7 +16,7 @@ edition)</title>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 18 · 12 October 2026</p>
+edition &middot; Version 19 · 13 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -227,6 +227,21 @@ home folder (the <code>cd</code> line). The second,
 <code>nsdf-cli download</code>, fetches the data set from the NSDF
 servers over the internet and puts it in a new <code>idx</code>
 folder.</p>
+<div class="tip">
+<p><strong>Optional: tell <code>nsdf-cli</code> once where downloads
+go.</strong> Type this one time, and every later download goes to your
+<code>idx</code> folder, whichever folder you are in:</p>
+<pre><code>nsdf-cli config --output-global ~/idx</code></pre>
+<p>Type <code>nsdf-cli config</code> to see the setting. It is saved in
+a small file in your home folder (<code>.nexus-dm/config.json</code>),
+so you do not repeat it. Two more <code>nsdf-cli</code> options you may
+see: <code>nsdf-cli download SERIES --all</code> downloads
+<strong>every</strong> dump of a series (the series in this guide has 30
+dumps, about 1.9 GB), so do not use <code>--all</code> unless your lead
+says to; and <code>nsdf-cli prune</code> removes the downloaded series
+from your download folder to free disk space (it shows the folder and
+asks before it deletes anything).</p>
+</div>
 <div class="careful">
 <p>Do not move or edit the downloaded files, and do not add them to Git.
 They are external data, not part of our data analysis code in the
@@ -631,7 +646,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 18, 12 October 2026, macOS edition. Written for
+<p>Guide version 19, 13 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="key-links">Key links</h2>
 <ul>

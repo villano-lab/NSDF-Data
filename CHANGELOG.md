@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-13
+
+The student guides gain *Updating your setup* and an environment check, the note guides now suggest VS Code and fully support Word and Google Docs (with a converter that carries the pictures), all notes share one table and one set of note numbers, and the library gets a channel-name module, a generated reference page and its own CI workflow.
+
 ### Added
 
 - **A generated library reference page, `docs/library/index.html`.** `python tools/build_library_reference.py` reads every `python/pulse_*.py` module and writes one page with each module's docstring, its classes and fields, and a table of its public functions (signature, one-line summary, expandable details, and the `done` or `under development` tag with its note). It is separate from Note 1a, which keeps its history and prose and can be updated or superseded later. The front page links to it. `python/tests/test_library_reference.py` fails when the page no longer matches the code, and `test_library_conventions.py` now also requires a docstring on every public function (the library tests run when the generator or the page changes).

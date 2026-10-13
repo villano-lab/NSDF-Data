@@ -67,6 +67,15 @@ no default), used e.g. by `07221203_2025_dump2_pulse.ipynb`'s `ratio > 9` cut.
 objects -- `load_channel_batch` turns a list of `detector_id`s into a plain
 `(n_pulses, n_samples)` array for everything else to consume.
 
+`pulse_channels.py` says which physical channel a dump's `(detector, channel)`
+pair is, from the Run 76 Setup table: `channel_name(0, 2)` is `'Side1pC'`,
+`channel_label(0, 2)` is `'Side1pC (DCRC1, Face3pC)'`, `find_channel('Side1pC')`
+is `(0, 2)`, and `all_channels()` lists the 12. It needs no data and no extra
+package. It is tagged `under_development`: the dump's detectors 0, 1, 2 are
+inferred to be the boards DCRC1, DCRC3, DCRC4, and the channel order within a
+board is assumed (evidence and caveats: section 7 of
+`noise-psd-randoms-buddy.ipynb` on the `student-buddy` branch).
+
 `pulse_archive.py` is a fifth, separate module: it persists a cut's *result*
 (which `detector_id`s it selected, for a given series/detector/channel) to an
 HDF5 file, rather than computing something from pulse data -- see its own

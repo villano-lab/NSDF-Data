@@ -16,7 +16,7 @@ computer)</title>
 
 <h1>Publishing a note</h1>
 <p class="meta">NSDF-Data student guide 4 — for every
-computer &middot; Version 4 · 7 October 2026</p>
+computer &middot; Version 9 · 13 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -26,9 +26,9 @@ id="toc-what-happens-when-you-publish">What happens when you
 publish</a></li>
 <li><a href="#before-you-start" id="toc-before-you-start">Before you
 start</a></li>
-<li><a href="#step-1.-put-your-note-in-the-right-place"
-id="toc-step-1.-put-your-note-in-the-right-place">Step 1. Put your note
-in the right place</a></li>
+<li><a href="#step-1.-get-your-note-into-notessrc"
+id="toc-step-1.-get-your-note-into-notessrc">Step 1. Get your note into
+<code>notes/src/</code></a></li>
 <li><a href="#step-2.-commit-to-your-branch"
 id="toc-step-2.-commit-to-your-branch">Step 2. Commit to your
 branch</a></li>
@@ -66,9 +66,9 @@ the <code>notes/src/</code> folder, on your own branch.</li>
 to add your work to the project.</li>
 <li><strong>The check</strong> runs at once. It lists anything wrong
 with the note.</li>
-<li><strong>Your lead</strong> reviews the note, gives it a number (S1,
-S2, …), and merges it. After the merge the site builds your page. This
-takes a few minutes.</li>
+<li><strong>Your lead</strong> reviews the note, gives it a note number
+(the next free one, for example 8), and merges it. After the merge the
+site builds your page. This takes a few minutes.</li>
 </ol>
 <p>Nothing reaches the public site until the merge.</p>
 <h2 id="before-you-start">Before you start</h2>
@@ -76,26 +76,83 @@ takes a few minutes.</li>
 <li><strong>You have write access.</strong> Your lead adds you to the
 project on GitHub. You need this to push a branch.</li>
 <li><strong>Your note is written and checked</strong> against guide 3,
+as a Markdown file (the VS Code route) or a Word or Google Docs file,
 and the notebook it uses is committed to your branch.</li>
 <li><strong>You know your branch name.</strong> It is
 <code>student-yourname</code>, from the setup guide.</li>
 </ul>
-<h2 id="step-1.-put-your-note-in-the-right-place">Step 1. Put your note
-in the right place</h2>
-<p>Your note goes in the <code>notes/src/</code> folder:</p>
+<h2 id="step-1.-get-your-note-into-notessrc">Step 1. Get your note into
+<code>notes/src/</code></h2>
+<p>Your note has to end up as a Markdown file in the
+<code>notes/src/</code> folder, with its pictures in
+<code>notes/src/img/</code>. Follow the part that matches how you wrote
+it.</p>
+<h3 id="if-you-wrote-markdown-in-vs-code">If you wrote Markdown in VS
+Code</h3>
+<p>The note is already in place. Check that:</p>
 <ul>
-<li><code>notes/src/your-note-name.md</code> is the note. Start from
-<code>_template.md</code> and keep the header.</li>
-<li><code>notes/src/img/</code> holds the pictures. Refer to them as
-<code>img/your-picture.png</code>.</li>
+<li>the note is <code>notes/src/your-note-name.md</code>, started from
+<code>_template.md</code>, with the header kept;</li>
+<li>every picture is a file directly in <code>notes/src/img/</code> (not
+in a subfolder), named with your note’s name at the start, and linked as
+<code>img/your-note-name-fig1.png</code>;</li>
+<li>the template’s line that points to <code>img/example.png</code> is
+deleted or replaced by one of your own pictures. The check reports a
+missing picture otherwise.</li>
 </ul>
-<div class="careful">
-<p>The template has a line that points to <code>img/example.png</code>.
-Delete that line, or replace it with one of your own pictures. The check
-reports a missing picture otherwise.</p>
+<h3 id="if-you-wrote-in-word-or-google-docs">If you wrote in Word or
+Google Docs</h3>
+<p>A small program in the project, <code>tools/word_to_note.py</code>,
+turns the document into a note and saves its pictures in the right place
+under the right names.</p>
+<p><strong>a. Export the document.</strong></p>
+<ul>
+<li>In <strong>Word</strong>: <strong>File</strong>, then <strong>Save
+As</strong>, and choose <strong>Word Document (.docx)</strong>.</li>
+<li>In <strong>Google Docs</strong>: <strong>File</strong>, then
+<strong>Download</strong>, then <strong>Microsoft Word
+(.docx)</strong>.</li>
+</ul>
+<p>Save it in your <code>Research</code> folder, next to
+<code>NSDF-Data</code>, as <code>my-note.docx</code>.</p>
+<p><strong>b. Install pandoc once.</strong> In the terminal, with your
+environment active:</p>
+<pre><code>conda activate darkmatter_cli_env
+conda install -c conda-forge pandoc -y</code></pre>
+<p>On macOS you can also use <code>brew install pandoc</code>. On
+Windows, the <a href="https://pandoc.org/installing.html">pandoc
+website</a> has an installer.</p>
+<p><strong>c. Convert.</strong> In the terminal, go to the
+<code>NSDF-Data</code> folder and run (change <code>my-note.docx</code>
+and choose a note name made of lowercase letters and hyphens):</p>
+<pre><code>python tools/word_to_note.py ../my-note.docx your-note-name</code></pre>
+<p>It writes <code>notes/src/your-note-name.md</code>. It saves each
+picture in <code>notes/src/img/</code> as
+<code>your-note-name-fig1.png</code>, then <code>-fig2.png</code>, and
+so on, in the order the pictures appear. It fixes the links and tells
+you what it did.</p>
+<div class="checkpoint">
+<p>The program printed <code>Wrote notes/src/your-note-name.md</code>
+and the number of pictures you expect. Open the note in VS Code or any
+text editor. Every section title you styled as a heading should start
+with <code>#</code> or <code>##</code>, and every picture should be a
+line starting <code>![</code> with a caption line under it. If the
+program listed leftover formatting (<code>&lt;u&gt;</code>,
+<code>&lt;sup&gt;</code>, <code>&lt;sub&gt;</code>,
+<code>&lt;span&gt;</code>), delete those tags and keep the words, or the
+check will reject the note. If you see no <code>#</code> lines at all,
+your titles were not Heading-styled: fix the document and run the
+command again.</p>
 </div>
-<p>Leave <code>id: "TBD"</code> in the header. Your lead will replace it
-with a number.</p>
+<p><strong>d. Fill in the header</strong> at the top of the new note:
+title, author, date, keywords and the one-sentence description (guide 3,
+<em>The header</em>). Leave <code>id: "TBD"</code>.</p>
+<div class="tip">
+<p><strong>Test the conversion before you rely on it.</strong> Convert a
+short two-section document with one picture first. If the headings and
+the picture both come through, convert the real note.</p>
+</div>
+<p>Your lead will replace <code>id: "TBD"</code> with a number.</p>
 <h2 id="step-2.-commit-to-your-branch">Step 2. Commit to your
 branch</h2>
 <p>In the terminal, from the <code>NSDF-Data</code> folder:</p>
@@ -112,6 +169,17 @@ changes to other people’s notes, stop and ask your lead.</p>
 </div>
 <h2 id="step-3.-open-the-pull-request">Step 3. Open the pull
 request</h2>
+<div class="tip">
+<p><strong>What is a pull request? Nothing scary.</strong> Your branch
+is your own copy of the project. Nothing you do on it changes anyone
+else’s work or the public site. A <em>pull request</em> is a button on
+github.com that means “I’m done, please have a look.” Your lead reads
+it, may ask for changes, and only then adds your work to the project.
+Until then you can push as often as you like, and you cannot break
+anything. If something looks wrong, stop, type <code>git status</code>,
+and send your lead what it prints. Guide 8, <em>Git in five
+minutes</em>, explains the words and the few commands you need.</p>
+</div>
 <p>On <a href="https://github.com">github.com</a>, open the repository.
 GitHub shows a yellow banner saying your branch had recent pushes. Click
 <strong>Compare &amp; pull request</strong>. Check that:</p>
@@ -120,9 +188,20 @@ GitHub shows a yellow banner saying your branch had recent pushes. Click
 <strong>compare</strong> branch is <code>student-yourname</code>;</li>
 <li>the title says what the note is about;</li>
 <li>the description says, in one sentence, what question the note
-answers.</li>
+answers;</li>
+<li>if your note replaces an earlier note, the description says so (for
+example <code>Supersedes Note 3</code>).</li>
 </ul>
 <p>Click <strong>Create pull request</strong>.</p>
+<div class="careful">
+<p><strong>If your note replaces an earlier note</strong>, that note’s
+status must change and it must link to yours, and this has to travel in
+the same pull request. Guide 3 (<em>If your note replaces an earlier
+note</em>) says what goes in your note. For a hand-written note, your
+lead adds the change as a commit on your branch, so you do not edit
+<code>docs/</code>. For another student note, include its changed file
+in your pull request.</p>
+</div>
 <h2 id="step-4.-read-the-check">Step 4. Read the check</h2>
 <p>The check starts automatically and takes less than a minute. When it
 finishes, click <strong>Details</strong> on the check, and read its
@@ -148,10 +227,10 @@ common ones and what to do:</p>
 <tr>
 <td><code>status must be one of ...</code></td>
 <td>Use exactly <em>In progress</em>, <em>Complete</em> or
-<em>Outdated</em>.</td>
+<em>Superseded (reference/link)</em>.</td>
 </tr>
 <tr>
-<td><code>id must look like S1, S2, or TBD</code></td>
+<td><code>id must be a note number such as 8 ... or TBD</code></td>
 <td>Leave <code>id: "TBD"</code>.</td>
 </tr>
 <tr>
@@ -173,6 +252,12 @@ notebook at.</td>
 <td>Check the file name and that the picture is in
 <code>notes/src/img/</code>.</td>
 </tr>
+<tr>
+<td><code>picture '...' must be directly in notes/src/img/</code></td>
+<td>Move the picture out of the subfolder into
+<code>notes/src/img/</code> and link it as <code>img/name.png</code>. A
+note made with <code>word_to_note.py</code> already does this.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -190,31 +275,51 @@ note is ready, your lead gives it a number and merges it.</p>
 <h2 id="after-the-merge">After the merge</h2>
 <ul>
 <li>The site builds your page automatically, usually within two minutes.
-Check the front page: your note appears in the <strong>Student
-notes</strong> table at the bottom.</li>
+Check the front page: your note appears in the <strong>Analysis
+Notes</strong> table, in order of its note number.</li>
 <li>The page is at <code>notes/student-&lt;name&gt;.html</code> on the
 site.</li>
 </ul>
 <h2 id="changing-a-note-later">Changing a note later</h2>
-<p>Start from the latest version of your branch. Your lead gave your
-note its number (S1, S2, …) on the pull request, and your own copy of
-the file may still say <code>TBD</code>:</p>
+<p>You can change a published note either way you wrote it. Start from
+the latest version of your branch. Your lead gave your note its number
+on the pull request, and your own copy of the file may still say
+<code>TBD</code>:</p>
 <pre><code>git switch student-yourname
 git pull origin develop</code></pre>
 <p>Open <code>notes/src/your-note-name.md</code> and look at the header.
-It should say your note’s number, for example <code>id: "S3"</code>.
+It should say your note’s number, for example <code>id: "8"</code>.
 <strong>Keep that number.</strong> If it says <code>TBD</code>, stop and
 ask your lead: the check does not mind <code>TBD</code>, but the site
 cannot publish a note with it, and nothing is published until it is
 fixed.</p>
-<p>Then make the change, commit, push, and open a new pull request (or
-add to the open one). Let the check run again. Update the
-<strong>date</strong> line and, if the conclusion has changed, the
-<strong>Status</strong> line. If a result was wrong, say so in the note,
-with the date, as guide 3 explains. Do not delete a published note to
-hide a mistake.</p>
+<p>Then choose <strong>one</strong> of the two ways and keep to it,
+because the second one replaces the text of the note:</p>
+<p><strong>Way 1. Edit the Markdown.</strong> Open
+<code>notes/src/your-note-name.md</code> in VS Code (or any text
+editor), change the text, and replace a picture by saving the new PNG
+under the same name in <code>notes/src/img/</code>.</p>
+<p><strong>Way 2. Edit the Word or Google Docs file.</strong> Change the
+document, export it again as a <code>.docx</code> (Step 1a), and run the
+same command with the <strong>same note name</strong>:</p>
+<pre><code>python tools/word_to_note.py ../my-note.docx your-note-name</code></pre>
+<p>The program replaces the text and the pictures, and <strong>keeps
+your header as it is</strong>, so the number stays. Pictures are
+numbered in the order they appear, so the file names can shift if you
+add one in the middle; the links are rewritten to match, and pictures
+that are no longer used are removed. Do not edit the Markdown by hand in
+this way: the next run would overwrite your changes.</p>
+<p>After either way, update the <strong>date</strong> line, and the
+<strong>Status</strong> line if the conclusion has changed, in the
+header. Look at what changed before you commit:</p>
+<pre><code>git status
+git diff notes/src/your-note-name.md</code></pre>
+<p>Then commit, push, and open a new pull request (or add to the open
+one). Let the check run again. If a result was wrong, say so in the
+note, with the date, as guide 3 explains. Do not delete a published note
+to hide a mistake.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 4, 7 October 2026. Written for every computer. Please
+<p>Guide version 9, 13 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a

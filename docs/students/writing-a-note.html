@@ -16,7 +16,7 @@ every computer)</title>
 
 <h1>Writing a note</h1>
 <p class="meta">NSDF-Data student guide 3 — writing a note, for every
-computer &middot; Version 8 · 9 October 2026</p>
+computer &middot; Version 14 · 12 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -27,12 +27,12 @@ start</a></li>
 note is for</a></li>
 <li><a href="#the-parts-of-a-note" id="toc-the-parts-of-a-note">The
 parts of a note</a></li>
-<li><a href="#which-file-to-write-in"
-id="toc-which-file-to-write-in">Which file to write in</a></li>
-<li><a href="#converting-a-word-or-google-docs-file"
-id="toc-converting-a-word-or-google-docs-file">Converting a Word or
-Google Docs file</a></li>
+<li><a href="#where-and-how-to-write"
+id="toc-where-and-how-to-write">Where and how to write</a></li>
 <li><a href="#the-header" id="toc-the-header">The header</a></li>
+<li><a href="#if-your-note-replaces-an-earlier-note"
+id="toc-if-your-note-replaces-an-earlier-note">If your note replaces an
+earlier note</a></li>
 <li><a href="#writing-the-body" id="toc-writing-the-body">Writing the
 body</a></li>
 <li><a href="#figures-and-tables" id="toc-figures-and-tables">Figures
@@ -168,151 +168,76 @@ its limits is trusted more than one that does not, however good the
 plots look. If you leave caveats out, be sure there is nothing you would
 want a reader to know about your result.</p>
 </div>
-<h2 id="which-file-to-write-in">Which file to write in</h2>
-<p>Write your note in a <strong>plain text file</strong> with the
-extension <code>.md</code>. The name matters: <code>my-note.md</code>,
-not <code>my-note.md.txt</code> and not <code>my-note.docx</code>.</p>
-<div class="table-scroll">
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th>Option</th>
-<th>Use it when</th>
-<th>What to do</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>GitHub web editor</strong> (any computer)</td>
-<td>You want no install at all</td>
-<td>Open the file in the repository on <a
-href="https://github.com">github.com</a> and click the pencil icon.
-Choose a new file named <code>notes/src/your-note.md</code>.</td>
-</tr>
-<tr>
-<td><strong>VS Code</strong> (any computer)</td>
-<td>You want a comfortable editor</td>
-<td>Install VS Code, open the <code>NSDF-Data</code> folder, click
-<strong>New File</strong>, and name it <code>your-note.md</code>.</td>
-</tr>
-<tr>
-<td><strong>Notepad</strong> (Windows)</td>
-<td>You only want something simple</td>
-<td>Open Notepad, write, then <strong>File</strong>, <strong>Save
-As</strong>. Set <em>Save as type</em> to <strong>All Files</strong> and
-name the file <code>your-note.md</code>. In Notepad, leave the encoding
-as <strong>UTF-8</strong>.</td>
-</tr>
-<tr>
-<td><strong>TextEdit</strong> (macOS)</td>
-<td>You only want something simple</td>
-<td>Open TextEdit, choose <strong>Format</strong>, then <strong>Make
-Plain Text</strong> before typing. Save as <code>your-note.md</code>. If
-it offers <code>.txt</code>, pick <em>Use .md</em> when asked.</td>
-</tr>
-<tr>
-<td><strong>gedit or Text Editor</strong> (Linux)</td>
-<td>You use a standard desktop</td>
-<td>Open the editor, write, and save as <code>your-note.md</code>.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="careful">
-<p><strong>Do not write your note in Word or Google Docs.</strong> Word
-adds hidden formatting, turns straight quotes into curly ones, and
-changes characters in code. Those changes break the page and the code
-you paste in. If you already wrote in Word, convert it (see the next
-section).</p>
-</div>
-<p>To see the full file name on Windows, open File Explorer, then
-<strong>View</strong>, then tick <strong>File name extensions</strong>.
-Check that the name ends in <code>.md</code>.</p>
-<h2 id="converting-a-word-or-google-docs-file">Converting a Word or
-Google Docs file</h2>
-<p>If your draft is in Word or Google Docs, convert it to Markdown with
-a program called <strong>pandoc</strong>. It is free and runs from the
-terminal you already know from the setup guide.</p>
-<p><strong>Step 1. Export your draft.</strong> - In
-<strong>Word</strong>: <strong>File</strong>, then <strong>Save
-As</strong>, and choose <strong>Word Document (.docx)</strong>. - In
-<strong>Google Docs</strong>: <strong>File</strong>, then
-<strong>Download</strong>, then <strong>Microsoft Word
-(.docx)</strong>.</p>
-<p>Before you export, check the three things that convert badly:</p>
+<h2 id="where-and-how-to-write">Where and how to write</h2>
+<p>Write your note in whatever you are comfortable with. Two routes are
+supported, and guide 4 takes either one onto the site.</p>
+<h3 id="suggested-vs-code-writing-markdown-in-the-project">Suggested: VS
+Code, writing Markdown in the project</h3>
+<p><a href="https://code.visualstudio.com/">VS Code</a> is a free
+editor. Here you write the note as a <strong>plain text file ending in
+<code>.md</code></strong> inside the <code>NSDF-Data</code> folder, next
+to the notebook that makes its numbers. It can show a preview of the
+page as you type, and everything stays in Git on your branch, so every
+version is saved and changing the note later is just editing the file.
+This is the route we suggest.</p>
+<ol type="1">
+<li>Install VS Code, start it, and choose <strong>File</strong>, then
+<strong>Open Folder</strong>, and pick the <code>NSDF-Data</code>
+folder.</li>
+<li>In the file list on the left, open <code>notes/src</code>. Copy
+<code>_template.md</code> (right-click it, <strong>Copy</strong>, then
+right-click the folder and <strong>Paste</strong>) and rename the copy
+<code>your-note-name.md</code>. Use lowercase letters and hyphens, for
+example <code>baseline-in-dump-one.md</code>.</li>
+<li>Write. To see the preview in its own tab next to the text, press
+<code>Ctrl+K</code>, let go, then press <code>V</code> (on macOS:
+<code>Cmd+K</code>, then <code>V</code>). The preview follows as you
+type and scroll. (<code>Ctrl+Shift+V</code> also works, but it replaces
+the text with the preview in the same tab.)</li>
+<li>Save each figure as a PNG in <code>notes/src/img/</code>, with your
+note’s name at the start of the file name
+(<code>baseline-in-dump-one-fig1.png</code>) and refer to it as
+<code>![caption](img/baseline-in-dump-one-fig1.png)</code>. All notes
+share that one folder, so the name prefix keeps your pictures from being
+mixed up with someone else’s. Put the picture directly in
+<code>img/</code>, not in a subfolder.</li>
+<li>Keep your notebook and any scripts in your own folder under
+<code>data_analysis/R76/student/</code>, and commit as you go (guide 2,
+Step 7).</li>
+</ol>
+<p>Any other plain text editor works for this route too (Notepad,
+TextEdit set to <strong>Format</strong>, then <strong>Make Plain
+Text</strong>, or gedit). Save the file as
+<code>your-note-name.md</code>, as UTF-8, and check on Windows that the
+name does not end in <code>.md.txt</code> (File Explorer,
+<strong>View</strong>, then tick <strong>File name extensions</strong>).
+The GitHub web editor also works, with no install at all.</p>
+<h3 id="also-supported-word-or-google-docs">Also supported: Word or
+Google Docs</h3>
+<p>If you write better in Word or Google Docs, write there. Keep the
+file anywhere outside the project, for example your
+<code>Research</code> folder. When it is ready, guide 4 turns it into a
+note, pictures included, with one command, and the same command updates
+the note after you change the document. Three habits make the conversion
+clean:</p>
 <ul>
-<li><strong>Use Word’s Heading styles for section titles.</strong> In
-Word, select a section title and choose <strong>Home</strong>, then
+<li><strong>Use Heading styles for section titles.</strong> In Word,
+select a section title and choose <strong>Home</strong>, then
 <strong>Heading 1</strong> (main sections) or <strong>Heading 2</strong>
-(sub-sections). Do not just make the title bold or bigger. Pandoc only
-turns Heading-styled text into <code>#</code> headings. Bold text stays
-plain text, and your outline will be missing.</li>
-<li><strong>Remove underline and superscript formatting.</strong>
-Underlined text becomes raw HTML tags such as
-<code>&lt;u&gt;…&lt;/u&gt;</code>, and superscripts such as
-<code>5&lt;sup&gt;th&lt;/sup&gt;</code> do the same. Use plain text
-instead, or write <code>5th</code> and <code>^th^</code> by hand
-afterwards.</li>
-<li><strong>Put figures in the document, not as text.</strong> Insert
-each picture with <strong>Insert</strong>, then
-<strong>Pictures</strong>. Pandoc can only save pictures that are
-embedded in the file.</li>
+(sub-sections). Do not just make the title bold or bigger. Only
+Heading-styled text becomes a heading, and without headings there is no
+outline.</li>
+<li><strong>Avoid underline and superscript.</strong> Underlined text
+and superscripts (the raised “th” in 5th, for example) do not convert.
+Use plain text instead.</li>
+<li><strong>Insert pictures into the document</strong> with
+<strong>Insert</strong>, then <strong>Pictures</strong> (or paste them
+in), and put the caption in the line under each one. Pictures that are
+only linked, not embedded, are lost.</li>
 </ul>
-<p>Save the document in your <code>Research</code> folder, next to
-<code>NSDF-Data</code>, as <code>my-note.docx</code>. Put any separate
-figure files you want to keep in that folder too.</p>
-<p><strong>Step 2. Install pandoc once.</strong> In the terminal, with
-your environment active:</p>
-<pre><code>conda activate darkmatter_cli_env
-conda install -c conda-forge pandoc -y</code></pre>
-<p>On macOS you can also use <code>brew install pandoc</code>. On
-Windows, the <a href="https://pandoc.org/installing.html">pandoc
-website</a> has an installer.</p>
-<p><strong>Step 3. Convert.</strong> Go to the folder that holds the
-<code>.docx</code> and run:</p>
-<pre><code>pandoc my-note.docx -t gfm --extract-media=img -o my-note.md</code></pre>
-<p>This writes <code>my-note.md</code> and saves any pictures from the
-document into an <code>img</code> folder.</p>
-<div class="checkpoint">
-<p>Open <code>my-note.md</code> in a plain text editor. Every section
-title you styled as Heading 1 or Heading 2 should start with
-<code>#</code> or <code>##</code>. Every picture you inserted should
-appear as a line starting <code>![</code>, and its file should be in the
-<code>img</code> folder. If you see no <code>#</code> lines at all, your
-titles were not Heading-styled. If the file is one long line of symbols,
-you saved the wrong type of file: check that it is a <code>.docx</code>,
-not a <code>.doc</code> or a PDF.</p>
-</div>
-<div class="careful">
-<p><strong>Look for leftover HTML.</strong> Search the file for
-<code>&lt;u&gt;</code>, <code>&lt;sup&gt;</code>,
-<code>&lt;sub&gt;</code> and <code>&lt;span</code>. Each one is
-formatting that did not convert. Delete the tags and keep the words, or
-rewrite them in plain text. A note with raw HTML tags in it will look
-broken on the site.</p>
-</div>
-<div class="tip">
-<p><strong>Test a conversion before you rely on it.</strong> Convert a
-short two-section draft with one picture first. If the headings and the
-picture both come through, convert the full note.</p>
-</div>
-<p><strong>Step 4. Add the header.</strong> Open <code>my-note.md</code>
-and add the header block (see <em>The header</em> above) at the very
-top. Conversion does not add it for you.</p>
-<p><strong>Step 5. Check it.</strong> Go through the checklist at the
-end of this guide. Check every number, every heading you did use and
-every figure path. Figures must still exist in the <code>img</code>
-folder after you move the note.</p>
-<div class="careful">
-<p>Do not convert a PDF. The text of a PDF cannot be recovered reliably,
-so write the note again in a <code>.md</code> file, or copy the text
-from the PDF into your editor and check it carefully.</p>
-</div>
+<p>Keep code out of the document where you can: link to the notebook
+instead (see <em>Pinning your code</em>). Word turns straight quotes
+into curly ones, which breaks any code you paste in.</p>
 <h2 id="the-header">The header</h2>
 <p>Start your note file with a short block like this. These are the
 fields the site will read:</p>
@@ -326,11 +251,37 @@ keywords: &quot;baseline, pretrigger window, dump 1&quot;
 description: &quot;One sentence: what you did and what you found.&quot;
 ---</code></pre>
 <p>Leave <code>id</code> as <code>TBD</code>. The reviewer gives your
-note its number (S1, S2, …) before it is published.</p>
+note its number (the next free one, for example 8) before it is
+published. Notes have one continuous set of numbers, whoever wrote
+them.</p>
 <p><strong>Status</strong> is one of: <em>In progress</em> (you are
 still working on it), <em>Complete</em> (the question is answered and
-you are not going to change it), or <em>Outdated</em> (a later note or a
-fix has superseded it). New notes start as <em>In progress</em>.</p>
+you are not going to change it), or <em>Superseded (reference/link)</em>
+(a later note has taken its place; this one stays up for reference and
+links to the newer note). New notes start as <em>In progress</em>.</p>
+<h2 id="if-your-note-replaces-an-earlier-note">If your note replaces an
+earlier note</h2>
+<p>Sometimes a new note redoes an earlier one with a better method. Then
+the two notes have to point at each other, and the older note’s status
+has to change. Do this:</p>
+<ol type="1">
+<li><p><strong>In your note</strong>, directly under the header, add one
+line that names the note you replace and links to it. Pages sit in the
+same folder, so a link to a hand-written note looks like this (note 3
+here), and a link to another student note is
+<code>student-their-note-name.html</code>:</p>
+<pre><code>**Supersedes:** [Note 3](note-03-noise-psd.html)</code></pre></li>
+<li><p><strong>In the pull request description</strong> (guide 4), write
+<code>Supersedes Note 3</code> so your lead sees it at once.</p></li>
+<li><p><strong>The older note</strong> then changes to the status
+<em>Superseded (reference/link)</em> and gets a link to yours. Your lead
+does this for a hand-written note, in the same pull request, as an extra
+commit. For another student note, change <code>status:</code> in its
+header in <code>notes/src/</code> yourself, add a line
+<code>**Superseded by:** [your note](student-your-note-name.html)</code>
+under its header, and include that file in your pull request.</p></li>
+</ol>
+<p>Do not delete the older note. It stays up for reference.</p>
 <h2 id="writing-the-body">Writing the body</h2>
 <ul>
 <li><strong>Say what you did in order,</strong> with enough detail that
@@ -357,8 +308,31 @@ sentence in <em>Results</em> states a number. A sentence in
 <div class="tip">
 <p>If you change your mind, say so. Notes that show a correction are
 more useful than notes that pretend nothing went wrong. Put the
-correction in a clearly labelled box, with the date.</p>
+correction in a clearly labelled box, with the date (see <em>A coloured
+box</em>, next).</p>
 </div>
+<h3 id="a-coloured-box">A coloured box</h3>
+<p>For a correction, a caveat or anything a reader must not miss, put it
+in a coloured box. In a Markdown note, write the text between two lines
+that hold only three colons, with a blank line before and after:</p>
+<pre><code>::: callout
+**Correction, 12 October 2026.** The median in the first table
+used 1000 samples; with 500 it is 1.51 counts.
+:::</code></pre>
+<p>Start the box with a bold label such as <strong>Correction</strong>,
+<strong>Caveat</strong> or <strong>Note</strong>. All boxes have the
+same colour (shaded, with a border); only the label tells the reader
+which kind it is.</p>
+<div class="careful">
+<p><strong>The VS Code preview does not draw the box.</strong> It shows
+the two <code>:::</code> lines as plain text. That is expected: the box
+appears on the published page, not in the preview. Do not delete the
+<code>:::</code> lines.</p>
+</div>
+<p>If you write in Word or Google Docs, a coloured box does not survive
+the conversion. Use a bold label such as <strong>Correction.</strong> at
+the start of the paragraph, or add the <code>:::</code> lines to the
+Markdown after converting.</p>
 <h2 id="figures-and-tables">Figures and tables</h2>
 <ul>
 <li><strong>Every figure needs a caption</strong> that says what is
@@ -367,7 +341,9 @@ number, dump 1. Grey: trigger type Unknown.” is a good caption.</li>
 <li><strong>Label the axes with units.</strong> ADC counts,
 microseconds, or samples. Do not leave the units out.</li>
 <li><strong>Save figures as PNG</strong> from your notebook, at a
-readable size, into the note’s image folder.</li>
+readable size, into the note’s image folder
+(<code>notes/src/img/</code>, named as in <em>Where and how to
+write</em>) or, in a Word document, into the document.</li>
 <li><strong>Use a table</strong> when you are comparing numbers. Use a
 figure when you are showing shape.</li>
 </ul>
@@ -377,11 +353,15 @@ numbers. Link to your notebook and library files at a <strong>specific
 commit</strong>, not at a branch name such as <code>develop</code> or
 <code>master</code>, because branches keep changing:</p>
 <ol type="1">
-<li>Commit your notebook to your branch (see the first analysis
-guide).</li>
-<li>Find the commit’s short code, for example <code>a1b2c3d</code>.</li>
-<li>Link to
-<code>https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/data_analysis/R76/student/yourname/your-notebook.ipynb</code>.</li>
+<li><p>Commit your notebook to your branch (see the first analysis
+guide).</p></li>
+<li><p>Find the commit’s short code, for example
+<code>a1b2c3d</code>.</p></li>
+<li><p>Link to the notebook like this, with your commit in place of
+<code>a1b2c3d</code> and the notebook’s path in place of
+<code>PATH</code> (its folder under
+<code>data_analysis/R76/student/</code>, then its file name):</p>
+<pre><code>https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/PATH</code></pre></li>
 </ol>
 <p>Say in the note which commit you pinned.</p>
 <h2 id="outline-and-links">Outline and links</h2>
@@ -413,7 +393,7 @@ concrete.</label></li>
 for a word a newcomer would not know.</label></li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 8, 9 October 2026. Written for every computer. Please
+<p>Guide version 14, 12 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="next">Next</h2>
 <p>When the note is written and checked, go to <strong>student guide 4:

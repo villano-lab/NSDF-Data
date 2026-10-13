@@ -1,7 +1,7 @@
 ---
 title: "Updating your setup"
 subtitle: "NSDF-Data student guide 7 — Linux edition"
-date: "Version 3 · 12 October 2026"
+date: "Version 5 · 13 October 2026"
 ---
 
 ::: maintenance
@@ -23,7 +23,7 @@ date: "Version 3 · 12 October 2026"
 
 | Word | What it means here |
 |---|---|
-| **Release** | A numbered version of the whole project, such as 0.5.0. The number is in the file `VERSION`. |
+| **Release** | A numbered version of the whole project, such as 0.6.0. The number is in the file `VERSION`. |
 | **Environment** | The sealed box of programs with fixed versions that you made in the setup guide, called `darkmatter_cli_env`. |
 | **Pinned** | A package listed in `requirements.txt` with an exact version, such as `numpy==2.2.6`. |
 | **Merge** | Bring the newest shared changes of the project (the branch `develop`) into your own branch. |
@@ -87,7 +87,7 @@ Then run the check again (Step 1). It should say `Environment OK`.
 
 ## Step 4. If Python changed: make a new environment
 
-Do this when the check says your Python is not the version the guides use. Python cannot be safely changed inside an existing environment, so you remove the old one and make a new one. Nothing you need is lost: the environment is rebuilt from `requirements.txt`, and the first lines below save a list of what the old one had, in case you installed something extra. Type each line and press Enter, and be patient: **removing the old environment takes a few minutes, and so does the final install.**
+Do this when the check says your Python is not the version the guides use. Conda can update Python inside an existing environment, but most of this project's packages were installed with pip, which does not rebuild them for the new Python, and that can leave a broken mix. It is more reliable to remove the old environment and make a new one. Nothing you need is lost: the environment is rebuilt from `requirements.txt`, and the first lines below save a list of what the old one had, in case you installed something extra. Type each line and press Enter, and be patient: **removing the old environment takes a few minutes, and so does the final install.**
 
 ```
 cd ~
@@ -133,7 +133,7 @@ python -m pytest -q
 ```
 
 ::: checkpoint
-The check says `Environment OK` and `pytest` ends with `62 passed`. If not, do not guess: copy the output and send it to the project lead.
+The check says `Environment OK` and `pytest` ends with `101 passed`. If not, do not guess: copy the output and send it to the project lead.
 :::
 
 ## Step 6. Start Jupyter again
@@ -147,11 +147,23 @@ jupyter lab
 
 Use the same `yourname` as in your branch name. If Jupyter asks for a kernel, choose **darkmatter_cli_env**. Open your notebook and run the first cell: it should print `Environment OK` and then `(1517, 4096)`.
 
+## Good to know: the NSDF software changes too
+
+The programs that download and read the data, the `nsdf-cli` command and the `nsdf_dark_matter` library, come from a separate project called **Nexus-DM** (formerly NSDF-SLAC). Its team improves it often, and our analysis depends heavily on it. So:
+
+- **We pin its versions.** `requirements.txt` names the exact version of both packages. The project lead tests each new version here before it goes on the list, so a change upstream cannot quietly change your results. **Do not upgrade them yourself** (no `pip install --upgrade`): you could end up with a mix nobody has tested.
+- **You get a new version the usual way.** When the list changes, the release notes say so, the project lead writes to you ("Students, please"), and you follow Step 3 of this guide. The environment check in Step 1 warns you when your versions differ from the list.
+- **To see your versions,** type `nsdf-cli version`, and `python -m pip show nsdf-dark-matter nsdf-dark-matter-cli` (look at the `Version` lines).
+- **New commands come with new versions.** Version 0.6.0 added `nsdf-cli config` (the folder that downloads go to), `nsdf-cli download ... --all` and `nsdf-cli prune`; the first analysis guide, Step 2, explains them.
+- **If something behaves differently after an update,** send the project lead the output of `nsdf-cli version` and the message you saw. The lead reports problems in the NSDF software to its team; you do not need to.
+
+What the Nexus-DM team changed in each version is in [their release notes](https://github.com/nsdf-fabric/nexus-dm/releases).
+
 ## You are done when
 
 - [ ] `python check_environment.py`{.cmd} (in the `python` folder, with the environment on) says `Environment OK`.
 - [ ] `git status`{.cmd} in the `NSDF-Data` folder shows your own branch and nothing you want to keep is unsaved.
-- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `62 passed`.
+- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `101 passed`.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
 - [ ] Your notebook's first cell prints `Environment OK`.
 
@@ -164,7 +176,7 @@ Use the same `yourname` as in your branch name. If Jupyter asks for a kernel, ch
 | `CondaError: Prefix record '...' already exists` on `conda create` | Conda's download cache has a bad entry. Type `conda clean --all -y`{.cmd} and then run the `conda create` line again. |
 | `conda create` complains that the folder exists, or a leftover folder `darkmatter_cli_env` is in the `envs` folder | The removal left an empty shell behind. Type `conda info --envs`{.cmd} to see where the environments live, check that the leftover `darkmatter_cli_env` folder holds no `python` file, delete that folder, and run the `conda create` line again. |
 | `Python was not found; run without arguments to install from the Microsoft Store` (Windows) | Your environment is not switched on, or it was not created. Type `conda env list`{.cmd}. If `darkmatter_cli_env` is not in the list, run the `conda create` line of Step 4 again. If it is, run `conda activate darkmatter_cli_env`{.cmd}. |
-| `FileExistsError` on the `ipykernel install` line | Jupyter already has a kernel of that name. Run `jupyter kernelspec remove darkmatter_cli_env -y`{.cmd} and then the `ipykernel install` line again. |
+| `FileExistsError` on the `ipykernel install` line | Jupyter already has a kernel of that name. Run the `jupyter kernelspec remove` line of Step 4 (the one ending `-y`), then the `ipykernel install` line again. |
 | git says `CONFLICT` | Stop and send the message to the project lead. Do not edit the files. |
 | A text editor opens (a window full of `~` characters, or a message starting `Merge branch`) after `git merge` | git is asking for a message for the merge. In the editor (usually Vim): press `Esc`, type `:wq`{.cmd} and press Enter. The merge finishes with git's own message. |
 | The kernel is missing in Jupyter | In the environment, run the last two lines of Step 4 again, then restart Jupyter. |
@@ -177,7 +189,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 3, 12 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 5, 13 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

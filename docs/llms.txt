@@ -20,4 +20,4 @@ If you are an AI agent, read the brief and AGENTS.md first. They contain the rul
 
 ## Optional
 
-- [NSDF-SLAC documentation](https://nsdf-fabric.github.io/nsdf-slac/): the nsdf-cli tool and the data fabric
+- [Nexus-DM documentation](https://nsdf-fabric.github.io/nexus-dm/): the nsdf-cli tool and the data fabric (the project was called NSDF-SLAC; its old address no longer works)

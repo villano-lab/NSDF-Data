@@ -61,12 +61,23 @@ A hotfix repairs **released code** (for example a broken library function in a t
 3. Open a pull request into `master`. The maintainer merges it, then tags `vX.Y.Z` as above.
 4. Merge `master` back into `develop`.
 
+## When the NSDF software updates
+
+`nsdf-cli` and the `nsdf_dark_matter` library (formerly NSDF-SLAC, now **Nexus-DM**, https://github.com/nsdf-fabric/nexus-dm) are developed actively by another team, and this project depends heavily on them. We therefore **pin exact versions** in `requirements.txt` and never let a student upgrade them alone. Three numberings exist and are not the same: the CLI package version on PyPI (0.6.0), the library package version on PyPI (0.3.1), and the repository's release tags (v0.7.0). Their documentation is at https://nsdf-fabric.github.io/nexus-dm/ and their release notes at https://github.com/nsdf-fabric/nexus-dm/releases.
+
+1. **Notice.** Run `python tools/check_upstream.py` (read-only; `--strict` exits 1 when a pinned package has a newer release). Look at it when the Nexus-DM team announces something and before each release.
+2. **Read what changed.** The release notes, and the code: compare the tags on GitHub (`compare/<old>...<new>`) and note which files changed under `nsdf_dark_matter/` (the library) and `nsdf_dark_matter_cli/`. Check their open issues for anything we filed (for example the trigger-label and missing-data bugs).
+3. **Test in a throwaway environment, never in yours.** `conda create -n nexus_test python=3.12 pip -y`, then `python -m pip install -r` a copy of `requirements.txt` with the new pins. Run the commands with a temporary home folder (set `USERPROFILE` and `HOME`), because the CLI now writes `~/.nexus-dm/config.json` the first time any command runs. Check: `nsdf-cli version`, `config` (and `config --output-global`, `--reset`), `ls --limit 3`, `download 07221203_2025_F0001` from a different folder, the same files and sizes as an existing download, `download ... -o`, `prune -f`, then the guide's numbers (shape (1517, 4096), 179 quiet traces, 141 randoms), `python python/check_environment.py` (it should warn about the pin you changed) and `python -m pytest -q`. Then `conda env remove -n nexus_test -y`.
+4. **Bump the pins** in `requirements.txt` only, then change what quotes them: the "NSDF Dark Matter CLI: X" line of the setup guide and the Codespaces guide (a test fails until they match), the pinned-packages line of `AGENTS.md`, and any new options the guides should teach. Rebuild the guides and open a pull request: the CI check "Guide steps" repeats the setup and first analysis on Windows, macOS and Linux with the new pins.
+5. **Release it** with a changelog line beginning **Students, please:** that points to *Updating your setup* (student guide 7, Step 3), as for any change of environment. Students are warned by `check_environment.py` until they reinstall.
+6. **Tell the Nexus-DM team** about anything wrong that you found (an issue on their repository), and keep our own notes about their behaviour (for example the unconfirmed trigger-label assumption in `pulse_cuts.py`) in step with their answers.
+
 ## Student notes
 
 Student notes (`notes/src/*.md`) are feature work: a student branches from `develop`, writes the note with `id: "TBD"`, and opens a pull request into `develop`.
 
 1. The pull request runs `tools/build_notes.py check`. Nothing is published yet, and nothing is visible on the site.
-2. The maintainer reviews it, gives it an S-number (replacing `TBD`), and merges. **Nothing is published without this approval**: the build refuses a note whose id is still `TBD`.
+2. The maintainer reviews it, gives it a note number (replacing `TBD`), and merges. **Nothing is published without this approval**: the build refuses a note whose id is still `TBD`.
 3. The merge pushes to `develop`, which starts the student-notes workflow. It builds `docs/notes/student-<name>.html`, the images and the index row, and the bot commits them to `develop`.
 4. GitHub Pages rebuilds from `develop`. The note is live about one to two minutes after the merge.
 

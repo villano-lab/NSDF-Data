@@ -28,3 +28,23 @@ function Table(el)
   if not FORMAT:match("html") then return nil end
   return pandoc.Div({ el }, pandoc.Attr("", { "table-scroll" }))
 end
+
+-- Links to this site: the sources use the full address (the PDFs need it, because a PDF has no
+-- "next to me"), but on the web pages it is better to link to the page next door. That keeps the
+-- link working in a local copy or a preview of a branch, and keeps the reader on the same site
+-- (and so the same remembered Windows / macOS / Linux choice).
+local SITE = "https://villano-lab.github.io/NSDF-Data/"
+
+function Link(el)
+  if not FORMAT:match("html") then return nil end
+  if el.target:sub(1, #SITE) ~= SITE then return nil end
+  local rest = el.target:sub(#SITE + 1)
+  if rest:match("^students/") then
+    el.target = rest:sub(#"students/" + 1)
+  elseif rest == "" or rest:match("^#") then
+    el.target = "../index.html" .. rest
+  else
+    el.target = "../" .. rest
+  end
+  return el
+end

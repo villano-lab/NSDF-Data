@@ -106,7 +106,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 19 · 13 October 2026"
+date: "Version 20 · 14 October 2026"
 ---
 
 ::: tip
@@ -339,7 +339,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 **Next:** *First analysis* (the guide for @NAME@).
 
 ::: maintenance
-**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup (@NAME@)](https://villano-lab.github.io/NSDF-Data/students/update-@FILE@.html).** It takes about 10 minutes.
+**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup](https://villano-lab.github.io/NSDF-Data/students/update.html).** It takes about 10 minutes.
 :::
 
 ## If something goes wrong
@@ -356,7 +356,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -369,7 +369,7 @@ Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 19 · 13 October 2026"
+date: "Version 20 · 14 October 2026"
 ---
 
 ::: tip
@@ -384,7 +384,7 @@ date: "Version 19 · 13 October 2026"
 - **Folder:** you do not need to be in any particular folder yet. Each step below tells you where to go.
 
 ::: maintenance
-**Keep your setup up to date.** The first code cell in Step 4 checks your environment against the project's current list and warns you if it is out of date. If you see a WARNING, follow [Updating your setup (@NAME@)](https://villano-lab.github.io/NSDF-Data/students/update-@FILE@.html). Do the same after every new release the project lead announces.
+**Keep your setup up to date.** The first code cell in Step 4 checks your environment against the project's current list and warns you if it is out of date. If you see a WARNING, follow [Updating your setup](https://villano-lab.github.io/NSDF-Data/students/update.html). Do the same after every new release the project lead announces.
 :::
 
 ## Words you will meet
@@ -796,7 +796,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -809,7 +809,7 @@ Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please
 UPDATE = """---
 title: "Updating your setup"
 subtitle: "NSDF-Data student guide 7 — @NAME@ edition"
-date: "Version 5 · 13 October 2026"
+date: "Version 6 · 13 October 2026"
 ---
 
 ::: maintenance
@@ -881,7 +881,7 @@ If git says `CONFLICT`, stop. Do not edit anything and do not try to fix it: cop
 
 ## Step 3. If packages changed: install the project's list again
 
-Do this when the check named a package. Type:
+Do this when the check named a package, or when the release notes or the project lead say the NSDF software changed. This step is how the NSDF software (`nsdf-cli` and the `nsdf_dark_matter` library, from the Nexus-DM project; see *Good to know* below) is updated: `requirements.txt` names the exact version of each, and the line below installs them. Type:
 
 ```
 conda activate darkmatter_cli_env
@@ -891,7 +891,7 @@ python -m pip install -r requirements.txt
 
 **What these lines do:** the last one reads `requirements.txt` and installs every package on the list at the exact version given, replacing any that differ. It prints a lot of text and can take a few minutes.
 
-Then run the check again (Step 1). It should say `Environment OK`.
+Then run the check again (Step 1). It should say `Environment OK`. Step 5 also shows you the version of `nsdf-cli` you now have.
 
 ## Step 4. If Python changed: make a new environment
 
@@ -938,10 +938,11 @@ conda activate darkmatter_cli_env
 @CD_PYTHON@
 python check_environment.py
 python -m pytest -q
+nsdf-cli version
 ```
 
 ::: checkpoint
-The check says `Environment OK` and `pytest` ends with `101 passed`. If not, do not guess: copy the output and send it to the project lead.
+The check says `Environment OK`, `pytest` ends with `101 passed`, and the last line prints `NSDF Dark Matter CLI: 0.6.0` (or the newer version the release notes name). If not, do not guess: copy the output and send it to the project lead.
 :::
 
 ## Step 6. Start Jupyter again
@@ -997,7 +998,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 5, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 6, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

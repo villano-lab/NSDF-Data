@@ -152,7 +152,97 @@
     quote.parentNode.insertBefore(bar, quote);
   }
 
+  /* A guide with a version for each computer (Windows, macOS, Linux) is one page with a switch.
+     The page picks the visitor's system from the browser; the visitor can change it, and the choice is
+     remembered in this browser (never sent anywhere). A link such as setup.html?os=macos picks one
+     directly, and so does a link to a heading that lives in one of the versions. Without JavaScript the
+     page shows all three versions, one after the other. */
+  function osSwitch() {
+    var bar = document.querySelector('.os-switch');
+    if (!bar) { return; }
+    var systems = ['windows', 'macos', 'linux'];
+    var names = { windows: 'Windows', macos: 'macOS', linux: 'Linux' };
+    var variants = document.querySelectorAll('.os-variant');
+    var buttons = bar.querySelectorAll('button[data-os]');
+    var pdf = bar.querySelector('.os-pdf');
+    var prompt = document.querySelector('.os-prompt');
+    var KEY = 'nsdf-os';
+
+    function valid(v) { return systems.indexOf(v) !== -1 ? v : null; }
+
+    function fromUrl() {
+      var m = /[?&]os=([a-z]+)/i.exec(location.search);
+      return m ? valid(m[1].toLowerCase()) : null;
+    }
+
+    function fromHash() {
+      if (!location.hash) { return null; }
+      var target = null;
+      try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { return null; }
+      var variant = target && target.closest ? target.closest('.os-variant') : null;
+      return variant ? valid(variant.getAttribute('data-os')) : null;
+    }
+
+    function stored() {
+      try { return valid(localStorage.getItem(KEY)); } catch (e) { return null; }
+    }
+
+    /* Best guess at the visitor's computer; null when it is not one of the three (a phone, a tablet, a Chromebook). */
+    function detect() {
+      var ua = navigator.userAgent || '';
+      var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+      if (/iPhone|iPad|iPod|Android|CrOS/i.test(ua)) { return null; }
+      if (/^Win/i.test(p)) { return 'windows'; }
+      if (/^Mac/i.test(p)) { return navigator.maxTouchPoints > 1 ? null : 'macos'; }
+      if (/Linux/i.test(p)) { return 'linux'; }
+      return null;
+    }
+
+    function show(os) {
+      for (var i = 0; i < variants.length; i++) {
+        var on = variants[i].getAttribute('data-os') === os;
+        if (on) { variants[i].classList.add('active'); } else { variants[i].classList.remove('active'); }
+      }
+      for (var j = 0; j < buttons.length; j++) {
+        buttons[j].setAttribute('aria-pressed', buttons[j].getAttribute('data-os') === os ? 'true' : 'false');
+      }
+      if (pdf) {
+        var base = pdf.getAttribute('data-base');
+        if (os) {
+          pdf.href = base + '-' + os + '.pdf';
+          pdf.textContent = 'PDF for ' + names[os] + ' (download or print)';
+          pdf.hidden = false;
+        } else {
+          pdf.hidden = true;
+        }
+      }
+      if (prompt) { prompt.hidden = !!os; }
+    }
+
+    for (var b = 0; b < buttons.length; b++) {
+      buttons[b].addEventListener('click', function () {
+        var os = this.getAttribute('data-os');
+        try { localStorage.setItem(KEY, os); } catch (e) { /* private mode: ignore */ }
+        try { history.replaceState(null, '', location.pathname + '?os=' + os); } catch (e) { /* ignore */ }
+        show(os);
+      });
+    }
+
+    /* A link that names a system (?os=macos) is a deliberate choice, so remember it: the guides link to each
+       other without naming a system, and the next page then opens on the same one. */
+    var urlOs = fromUrl();
+    if (urlOs) { try { localStorage.setItem(KEY, urlOs); } catch (e) { /* private mode: ignore */ } }
+    var chosen = urlOs || fromHash() || stored() || detect();
+    show(chosen);
+    if (location.hash && chosen) {
+      var el = null;
+      try { el = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { el = null; }
+      if (el && el.scrollIntoView) { el.scrollIntoView(); }
+    }
+  }
+
   function init() {
+    osSwitch();
     var blocks = document.querySelectorAll('.guide pre');
     for (var i = 0; i < blocks.length; i++) { enhance(blocks[i]); }
     var quotes = document.querySelectorAll('.guide blockquote');

@@ -109,10 +109,21 @@ jobs:
           for page in pages:
               html = open(page, encoding="utf-8").read()
               name = os.path.basename(page)[:-5]
-              if not os.path.exists(page[:-5] + ".pdf"):
-                  problems.append(f"{page}: no PDF backup next to it")
-              if f'href="{name}.pdf"' not in html:
-                  problems.append(f"{page}: does not link to its PDF")
+              if 'class="os-variant"' in html:
+                  # one page for Windows, macOS and Linux: a PDF backup for each, linked from the page
+                  for system in ("windows", "macos", "linux"):
+                      pdf = f"{name}-{system}.pdf"
+                      if not os.path.exists(os.path.join(os.path.dirname(page), pdf)):
+                          problems.append(f"{page}: no PDF backup {pdf} next to it")
+                      if f'href="{pdf}"' not in html:
+                          problems.append(f"{page}: does not link to {pdf}")
+                  if html.count('class="os-variant"') != 3:
+                      problems.append(f"{page}: expected three versions (Windows, macOS, Linux)")
+              else:
+                  if not os.path.exists(page[:-5] + ".pdf"):
+                      problems.append(f"{page}: no PDF backup next to it")
+                  if f'href="{name}.pdf"' not in html:
+                      problems.append(f"{page}: does not link to its PDF")
               if "guide.js" not in html or "guide.css" not in html:
                   problems.append(f"{page}: missing the copy-button script or the stylesheet")
               for ch in "\u2010\u2011\u2212":

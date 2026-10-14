@@ -28,7 +28,7 @@
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — Windows edition,
-optional &middot; Version 2 · 14 October 2026</p>
+optional &middot; Version 3 · 14 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -186,6 +186,25 @@ either button. They send your commits to GitHub, so they must say your
 own branch. If the corner shows anything other than
 <code>student-yourname</code>, stop and ask your lead.</p>
 </div>
+<div class="careful">
+<p><strong>A down-arrow number as well as an up-arrow number?</strong>
+Only you push to your own branch, so there is normally no down-arrow
+number. If there is one, newer commits were put on your branch on
+GitHub, usually by your lead, who merged the project’s newest changes
+into it. After you have checked the branch name, click <strong>Sync
+Changes</strong> as usual. VS Code asks for confirmation: the question
+says it will pull and push commits from and to
+<code>origin/student-yourname</code>. Click <strong>OK</strong>. It
+first downloads the newer commits, then sends yours.</p>
+<p>If VS Code then says there are <strong>merge conflicts</strong>, or
+lists files under <strong>Merge Changes</strong> in the Source Control
+tab, nothing has been sent to GitHub and nothing of yours is lost.
+<strong>Stop, and do not edit anything.</strong> Press
+<code>Ctrl+Shift+P</code>, type <code
+class="cmd">Git: Abort Merge</code>, and press Enter: this puts
+everything back as it was before you clicked. Then send your lead a
+screenshot.</p>
+</div>
 <div class="checkpoint">
 <p>The big blue button no longer shows an up-arrow number, and your
 branch appears on <a
@@ -193,7 +212,9 @@ href="https://github.com/villano-lab/NSDF-Data/branches"
 class="uri">https://github.com/villano-lab/NSDF-Data/branches</a>.</p>
 </div>
 <p>This step is <code>git push</code> (the first time,
-<code>git push -u origin student-yourname</code>).</p>
+<code>git push -u origin student-yourname</code>). <strong>Sync
+Changes</strong> runs <code>git pull</code> first, to bring in anything
+newer on GitHub, and then <code>git push</code>.</p>
 <h2 id="windows-step-6.-bring-in-the-newest-project-changes">Step 6.
 Bring in the newest project changes</h2>
 <p>The project keeps changing. When <em>Updating your setup</em> (guide
@@ -201,6 +222,10 @@ Bring in the newest project changes</h2>
 that step here instead of typing the two lines. Do all the other steps
 of guide 7 as written, because they update your environment.</p>
 <ol type="1">
+<li><strong>Sync first.</strong> Look at the big blue button in the
+Source Control tab. If it shows an up-arrow or a down-arrow number,
+click <strong>Sync Changes</strong> (Step 5) so that your branch and
+GitHub agree before you start. If it shows no number, go on.</li>
 <li>Press <code>Ctrl+Shift+P</code>. A box opens at the top of the
 window.</li>
 <li>Type <code class="cmd">Git: Fetch</code> and press Enter. This
@@ -211,17 +236,28 @@ class="cmd">Git: Merge...</code>, and press Enter.</li>
 <li>A list of branches opens. Choose <strong>origin/develop</strong>,
 under <em>remote branches</em>. This combines it with your branch
 (<code>git merge --no-edit origin/develop</code>).</li>
+<li>Look at the big blue button again. If it now shows an up-arrow
+number, click <strong>Sync Changes</strong> (Step 5) to send the result
+to GitHub.</li>
 </ol>
 <div class="checkpoint">
 <p>VS Code finishes without an error message, and the Source Control tab
-shows no conflict.</p>
+shows no conflict. Then look at the big blue button. If it shows an
+up-arrow number, the newest project changes are now on your branch and
+waiting to go to GitHub (point 6). If it shows no number, you already
+had the newest changes. VS Code says nothing when there is nothing to
+merge, whereas the terminal prints <code>Already up to date.</code>, so
+it can look as if the command did nothing. Nothing went wrong.</p>
 </div>
 <div class="careful">
-<p>If VS Code reports a <strong>conflict</strong>, or opens a window
-with two versions of a file side by side, <strong>stop. Do not click
-anything in that window and do not edit anything.</strong> Send your
+<p>If VS Code reports a <strong>conflict</strong>, lists files under
+<strong>Merge Changes</strong>, or opens a window with two versions of a
+file side by side, <strong>stop. Do not click anything in that window
+and do not edit anything.</strong> To put everything back as it was,
+press <code>Ctrl+Shift+P</code>, type <code
+class="cmd">Git: Abort Merge</code>, and press Enter. Then send your
 lead a screenshot or the message. This is the same rule as the terminal
-guides.</p>
+guides: stop, and send it to your lead.</p>
 </div>
 <h2 id="windows-step-7.-open-a-pull-request">Step 7. Open a pull
 request</h2>
@@ -233,9 +269,10 @@ Code</h3>
 <p>VS Code can also open pull requests for you, with an extension made
 by GitHub.</p>
 <div class="careful">
-<p>This part was written from the extension’s own documentation and has
-<strong>not yet been tried on a student’s computer</strong>. If a screen
-differs, stop, and use guide 4 instead.</p>
+<p>This part was written from the extension’s own documentation and its
+list of commands, and has <strong>not yet been tried all the way through
+on a student’s computer</strong>. If a screen differs, stop, and use
+guide 4 instead.</p>
 </div>
 <ol type="1">
 <li>Press <code>Ctrl+Shift+X</code> to open
@@ -247,10 +284,33 @@ mark next to the name.</li>
 <strong>Sign in</strong>. A web page opens in your browser: sign in to
 GitHub there. <strong>Never type your GitHub password into VS Code or
 into the terminal.</strong></li>
-<li>Your branch is listed in the extension’s view, with a button to
-create a pull request. Follow the prompts, and write the pull request
-description as guide 4 says.</li>
+<li>Your branch will <strong>not</strong> be listed in the extension’s
+view: that view lists pull requests, not branches, so a branch that has
+no pull request yet does not appear in it. To start one, click the
+<strong>Create Pull Request</strong> button. It is a <strong>very small
+icon</strong>, the pull-request symbol with a plus sign on it, at the
+right end of the title bar of the <strong>Pull Requests</strong> view
+(the view you open with the GitHub icon in the bar on the left). Move
+the mouse over it and a label says <em>Create Pull Request</em>. Or
+press <code>Ctrl+Shift+P</code>, type <code
+class="cmd">GitHub Pull Requests: Create Pull Request</code>, and press
+Enter. The button and the command only appear after you have signed in
+(point 3) and pushed your branch (Step 5).</li>
+<li>A form opens. Check that the <strong>base</strong> is
+<code>develop</code> (it may offer <code>master</code>: change it) and
+that the branch being compared is <code>student-yourname</code>. Write
+the title and the description as guide 4 says, then click
+<strong>Create</strong>. Your pull request is then listed in the
+view.</li>
 </ol>
+<p><img src="src/img/vscode-pull-requests-view.png"
+style="width:75.0%" /></p>
+<p><strong>Figure 1.</strong> The <strong>Pull Requests</strong> view of
+the GitHub extension. The button that starts a pull request is the first
+icon in the title bar, the pull-request symbol with a plus sign
+(outlined in red). It is small. The other icons are <em>Refresh</em>,
+<em>Collapse All</em> and a menu. Your own branch is not in the list
+below until its pull request exists.</p>
 <h2 id="windows-the-same-steps-in-the-terminal">The same steps in the
 terminal</h2>
 <div class="table-scroll">
@@ -286,7 +346,7 @@ terminal</h2>
 <td><strong>Publish Branch</strong> (first time), then <strong>Sync
 Changes</strong></td>
 <td><code>git push -u origin student-yourname</code>, then
-<code>git push</code></td>
+<code>git pull</code> and <code>git push</code></td>
 </tr>
 <tr>
 <td><code class="cmd">Git: Fetch</code> and <code
@@ -294,9 +354,22 @@ class="cmd">Git: Merge...</code> with <code>origin/develop</code></td>
 <td><code>git fetch origin</code> and
 <code>git merge --no-edit origin/develop</code></td>
 </tr>
+<tr>
+<td>The <strong>Create Pull Request</strong> button of the GitHub
+extension (Step 7)</td>
+<td><code>gh pr create --base develop --title "Add note: your title" --body "One sentence on what the note answers."</code></td>
+</tr>
 </tbody>
 </table>
 </div>
+<p>The last row uses the <code>gh</code> command, which guide 1
+installed and signed in to GitHub in its Step 8. Run it from the
+<code>NSDF-Data</code> folder, on your own branch, after your commits
+are pushed (Step 5); it prints the address of your pull request. This
+way has <strong>not yet been tried on a student’s computer</strong>:
+guide 4 (Step 3), on github.com, is the route that has been tested step
+by step. Whichever way you use, the base must be
+<code>develop</code>.</p>
 <h2 id="windows-when-something-looks-wrong">When something looks
 wrong</h2>
 <div class="table-scroll">
@@ -340,13 +413,40 @@ found”</td>
 <tr>
 <td><strong>Sync Changes</strong> shows a down-arrow number as well as
 an up-arrow number</td>
-<td>There are newer commits on GitHub too.</td>
-<td>Ask your lead, or see guide 7, Step 2.</td>
+<td>There are newer commits on your branch on GitHub: your lead merged
+the project’s newest changes into it.</td>
+<td>Check the branch name, click <strong>Sync Changes</strong>, and
+click <strong>OK</strong> on the question (Step 5).</td>
+</tr>
+<tr>
+<td>VS Code says there are merge conflicts, or lists files under
+<strong>Merge Changes</strong></td>
+<td>Git cannot combine two changes by itself. Nothing has been sent to
+GitHub.</td>
+<td>Stop. Do not edit anything. Press <code>Ctrl+Shift+P</code>, run
+<code class="cmd">Git: Abort Merge</code>, and send your lead a
+screenshot.</td>
 </tr>
 <tr>
 <td>A window with two versions of a file side by side</td>
 <td>A conflict.</td>
-<td>Stop. Click nothing. Send it to your lead.</td>
+<td>Stop. Click nothing. Run <code class="cmd">Git: Abort Merge</code>
+as in the row above, and send it to your lead.</td>
+</tr>
+<tr>
+<td>Your branch is not in the <strong>Pull Requests</strong> view of the
+GitHub extension</td>
+<td>That view lists pull requests, not branches.</td>
+<td>Use the <strong>Create Pull Request</strong> button or command (Step
+7), and check that the base is <code>develop</code>.</td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Merge...</code> finishes and nothing seems to
+have happened</td>
+<td>You already had the newest changes. VS Code says nothing when there
+is nothing to merge.</td>
+<td>Look at the big blue button (Step 6). No number means you were up to
+date.</td>
 </tr>
 <tr>
 <td>“Make sure you configure your user.name and user.email”, or a
@@ -360,12 +460,17 @@ Code.</td>
 </table>
 </div>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 2, 14 October 2026, Windows edition. The Git steps were
+<p>Guide version 3, 14 October 2026, Windows edition. The Git steps were
 checked in a browser version of VS Code on a test copy of the project,
 on Windows (commit, the branch list, the merge list, and installing the
-extension). The install step for your system, the sign-in, and the
-pull-request part have not been tried on a student’s computer yet.
-Please tell the project lead where a step was unclear.</p>
+extension). The names of the commands (<code>Git: Fetch</code>,
+<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
+against VS Code 1.141. The <strong>Sync Changes</strong> question and
+the way out of a conflict were written from VS Code’s documentation and
+have not been tried on a real conflict. The install step for your
+system, the sign-in, and the pull-request part have not been tried on a
+student’s computer yet. Please tell the project lead where a step was
+unclear.</p>
 <h2 id="windows-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -388,7 +493,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — macOS edition,
-optional &middot; Version 2 · 14 October 2026</p>
+optional &middot; Version 3 · 14 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -543,6 +648,25 @@ either button. They send your commits to GitHub, so they must say your
 own branch. If the corner shows anything other than
 <code>student-yourname</code>, stop and ask your lead.</p>
 </div>
+<div class="careful">
+<p><strong>A down-arrow number as well as an up-arrow number?</strong>
+Only you push to your own branch, so there is normally no down-arrow
+number. If there is one, newer commits were put on your branch on
+GitHub, usually by your lead, who merged the project’s newest changes
+into it. After you have checked the branch name, click <strong>Sync
+Changes</strong> as usual. VS Code asks for confirmation: the question
+says it will pull and push commits from and to
+<code>origin/student-yourname</code>. Click <strong>OK</strong>. It
+first downloads the newer commits, then sends yours.</p>
+<p>If VS Code then says there are <strong>merge conflicts</strong>, or
+lists files under <strong>Merge Changes</strong> in the Source Control
+tab, nothing has been sent to GitHub and nothing of yours is lost.
+<strong>Stop, and do not edit anything.</strong> Press
+<code>Cmd+Shift+P</code>, type <code
+class="cmd">Git: Abort Merge</code>, and press Enter: this puts
+everything back as it was before you clicked. Then send your lead a
+screenshot.</p>
+</div>
 <div class="checkpoint">
 <p>The big blue button no longer shows an up-arrow number, and your
 branch appears on <a
@@ -550,7 +674,9 @@ href="https://github.com/villano-lab/NSDF-Data/branches"
 class="uri">https://github.com/villano-lab/NSDF-Data/branches</a>.</p>
 </div>
 <p>This step is <code>git push</code> (the first time,
-<code>git push -u origin student-yourname</code>).</p>
+<code>git push -u origin student-yourname</code>). <strong>Sync
+Changes</strong> runs <code>git pull</code> first, to bring in anything
+newer on GitHub, and then <code>git push</code>.</p>
 <h2 id="macos-step-6.-bring-in-the-newest-project-changes">Step 6. Bring
 in the newest project changes</h2>
 <p>The project keeps changing. When <em>Updating your setup</em> (guide
@@ -558,6 +684,10 @@ in the newest project changes</h2>
 that step here instead of typing the two lines. Do all the other steps
 of guide 7 as written, because they update your environment.</p>
 <ol type="1">
+<li><strong>Sync first.</strong> Look at the big blue button in the
+Source Control tab. If it shows an up-arrow or a down-arrow number,
+click <strong>Sync Changes</strong> (Step 5) so that your branch and
+GitHub agree before you start. If it shows no number, go on.</li>
 <li>Press <code>Cmd+Shift+P</code>. A box opens at the top of the
 window.</li>
 <li>Type <code class="cmd">Git: Fetch</code> and press Enter. This
@@ -568,17 +698,28 @@ class="cmd">Git: Merge...</code>, and press Enter.</li>
 <li>A list of branches opens. Choose <strong>origin/develop</strong>,
 under <em>remote branches</em>. This combines it with your branch
 (<code>git merge --no-edit origin/develop</code>).</li>
+<li>Look at the big blue button again. If it now shows an up-arrow
+number, click <strong>Sync Changes</strong> (Step 5) to send the result
+to GitHub.</li>
 </ol>
 <div class="checkpoint">
 <p>VS Code finishes without an error message, and the Source Control tab
-shows no conflict.</p>
+shows no conflict. Then look at the big blue button. If it shows an
+up-arrow number, the newest project changes are now on your branch and
+waiting to go to GitHub (point 6). If it shows no number, you already
+had the newest changes. VS Code says nothing when there is nothing to
+merge, whereas the terminal prints <code>Already up to date.</code>, so
+it can look as if the command did nothing. Nothing went wrong.</p>
 </div>
 <div class="careful">
-<p>If VS Code reports a <strong>conflict</strong>, or opens a window
-with two versions of a file side by side, <strong>stop. Do not click
-anything in that window and do not edit anything.</strong> Send your
+<p>If VS Code reports a <strong>conflict</strong>, lists files under
+<strong>Merge Changes</strong>, or opens a window with two versions of a
+file side by side, <strong>stop. Do not click anything in that window
+and do not edit anything.</strong> To put everything back as it was,
+press <code>Cmd+Shift+P</code>, type <code
+class="cmd">Git: Abort Merge</code>, and press Enter. Then send your
 lead a screenshot or the message. This is the same rule as the terminal
-guides.</p>
+guides: stop, and send it to your lead.</p>
 </div>
 <h2 id="macos-step-7.-open-a-pull-request">Step 7. Open a pull
 request</h2>
@@ -590,9 +731,10 @@ Code</h3>
 <p>VS Code can also open pull requests for you, with an extension made
 by GitHub.</p>
 <div class="careful">
-<p>This part was written from the extension’s own documentation and has
-<strong>not yet been tried on a student’s computer</strong>. If a screen
-differs, stop, and use guide 4 instead.</p>
+<p>This part was written from the extension’s own documentation and its
+list of commands, and has <strong>not yet been tried all the way through
+on a student’s computer</strong>. If a screen differs, stop, and use
+guide 4 instead.</p>
 </div>
 <ol type="1">
 <li>Press <code>Cmd+Shift+X</code> to open
@@ -604,10 +746,33 @@ mark next to the name.</li>
 <strong>Sign in</strong>. A web page opens in your browser: sign in to
 GitHub there. <strong>Never type your GitHub password into VS Code or
 into the terminal.</strong></li>
-<li>Your branch is listed in the extension’s view, with a button to
-create a pull request. Follow the prompts, and write the pull request
-description as guide 4 says.</li>
+<li>Your branch will <strong>not</strong> be listed in the extension’s
+view: that view lists pull requests, not branches, so a branch that has
+no pull request yet does not appear in it. To start one, click the
+<strong>Create Pull Request</strong> button. It is a <strong>very small
+icon</strong>, the pull-request symbol with a plus sign on it, at the
+right end of the title bar of the <strong>Pull Requests</strong> view
+(the view you open with the GitHub icon in the bar on the left). Move
+the mouse over it and a label says <em>Create Pull Request</em>. Or
+press <code>Cmd+Shift+P</code>, type <code
+class="cmd">GitHub Pull Requests: Create Pull Request</code>, and press
+Enter. The button and the command only appear after you have signed in
+(point 3) and pushed your branch (Step 5).</li>
+<li>A form opens. Check that the <strong>base</strong> is
+<code>develop</code> (it may offer <code>master</code>: change it) and
+that the branch being compared is <code>student-yourname</code>. Write
+the title and the description as guide 4 says, then click
+<strong>Create</strong>. Your pull request is then listed in the
+view.</li>
 </ol>
+<p><img src="src/img/vscode-pull-requests-view.png"
+style="width:75.0%" /></p>
+<p><strong>Figure 1.</strong> The <strong>Pull Requests</strong> view of
+the GitHub extension. The button that starts a pull request is the first
+icon in the title bar, the pull-request symbol with a plus sign
+(outlined in red). It is small. The other icons are <em>Refresh</em>,
+<em>Collapse All</em> and a menu. Your own branch is not in the list
+below until its pull request exists.</p>
 <h2 id="macos-the-same-steps-in-the-terminal">The same steps in the
 terminal</h2>
 <div class="table-scroll">
@@ -643,7 +808,7 @@ terminal</h2>
 <td><strong>Publish Branch</strong> (first time), then <strong>Sync
 Changes</strong></td>
 <td><code>git push -u origin student-yourname</code>, then
-<code>git push</code></td>
+<code>git pull</code> and <code>git push</code></td>
 </tr>
 <tr>
 <td><code class="cmd">Git: Fetch</code> and <code
@@ -651,9 +816,22 @@ class="cmd">Git: Merge...</code> with <code>origin/develop</code></td>
 <td><code>git fetch origin</code> and
 <code>git merge --no-edit origin/develop</code></td>
 </tr>
+<tr>
+<td>The <strong>Create Pull Request</strong> button of the GitHub
+extension (Step 7)</td>
+<td><code>gh pr create --base develop --title "Add note: your title" --body "One sentence on what the note answers."</code></td>
+</tr>
 </tbody>
 </table>
 </div>
+<p>The last row uses the <code>gh</code> command, which guide 1
+installed and signed in to GitHub in its Step 8. Run it from the
+<code>NSDF-Data</code> folder, on your own branch, after your commits
+are pushed (Step 5); it prints the address of your pull request. This
+way has <strong>not yet been tried on a student’s computer</strong>:
+guide 4 (Step 3), on github.com, is the route that has been tested step
+by step. Whichever way you use, the base must be
+<code>develop</code>.</p>
 <h2 id="macos-when-something-looks-wrong">When something looks
 wrong</h2>
 <div class="table-scroll">
@@ -697,13 +875,40 @@ found”</td>
 <tr>
 <td><strong>Sync Changes</strong> shows a down-arrow number as well as
 an up-arrow number</td>
-<td>There are newer commits on GitHub too.</td>
-<td>Ask your lead, or see guide 7, Step 2.</td>
+<td>There are newer commits on your branch on GitHub: your lead merged
+the project’s newest changes into it.</td>
+<td>Check the branch name, click <strong>Sync Changes</strong>, and
+click <strong>OK</strong> on the question (Step 5).</td>
+</tr>
+<tr>
+<td>VS Code says there are merge conflicts, or lists files under
+<strong>Merge Changes</strong></td>
+<td>Git cannot combine two changes by itself. Nothing has been sent to
+GitHub.</td>
+<td>Stop. Do not edit anything. Press <code>Cmd+Shift+P</code>, run
+<code class="cmd">Git: Abort Merge</code>, and send your lead a
+screenshot.</td>
 </tr>
 <tr>
 <td>A window with two versions of a file side by side</td>
 <td>A conflict.</td>
-<td>Stop. Click nothing. Send it to your lead.</td>
+<td>Stop. Click nothing. Run <code class="cmd">Git: Abort Merge</code>
+as in the row above, and send it to your lead.</td>
+</tr>
+<tr>
+<td>Your branch is not in the <strong>Pull Requests</strong> view of the
+GitHub extension</td>
+<td>That view lists pull requests, not branches.</td>
+<td>Use the <strong>Create Pull Request</strong> button or command (Step
+7), and check that the base is <code>develop</code>.</td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Merge...</code> finishes and nothing seems to
+have happened</td>
+<td>You already had the newest changes. VS Code says nothing when there
+is nothing to merge.</td>
+<td>Look at the big blue button (Step 6). No number means you were up to
+date.</td>
 </tr>
 <tr>
 <td>“Make sure you configure your user.name and user.email”, or a
@@ -717,12 +922,17 @@ Code.</td>
 </table>
 </div>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 2, 14 October 2026, macOS edition. The Git steps were
+<p>Guide version 3, 14 October 2026, macOS edition. The Git steps were
 checked in a browser version of VS Code on a test copy of the project,
 on Windows (commit, the branch list, the merge list, and installing the
-extension). The install step for your system, the sign-in, and the
-pull-request part have not been tried on a student’s computer yet.
-Please tell the project lead where a step was unclear.</p>
+extension). The names of the commands (<code>Git: Fetch</code>,
+<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
+against VS Code 1.141. The <strong>Sync Changes</strong> question and
+the way out of a conflict were written from VS Code’s documentation and
+have not been tried on a real conflict. The install step for your
+system, the sign-in, and the pull-request part have not been tried on a
+student’s computer yet. Please tell the project lead where a step was
+unclear.</p>
 <h2 id="macos-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -745,7 +955,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — Linux edition,
-optional &middot; Version 2 · 14 October 2026</p>
+optional &middot; Version 3 · 14 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -903,6 +1113,25 @@ either button. They send your commits to GitHub, so they must say your
 own branch. If the corner shows anything other than
 <code>student-yourname</code>, stop and ask your lead.</p>
 </div>
+<div class="careful">
+<p><strong>A down-arrow number as well as an up-arrow number?</strong>
+Only you push to your own branch, so there is normally no down-arrow
+number. If there is one, newer commits were put on your branch on
+GitHub, usually by your lead, who merged the project’s newest changes
+into it. After you have checked the branch name, click <strong>Sync
+Changes</strong> as usual. VS Code asks for confirmation: the question
+says it will pull and push commits from and to
+<code>origin/student-yourname</code>. Click <strong>OK</strong>. It
+first downloads the newer commits, then sends yours.</p>
+<p>If VS Code then says there are <strong>merge conflicts</strong>, or
+lists files under <strong>Merge Changes</strong> in the Source Control
+tab, nothing has been sent to GitHub and nothing of yours is lost.
+<strong>Stop, and do not edit anything.</strong> Press
+<code>Ctrl+Shift+P</code>, type <code
+class="cmd">Git: Abort Merge</code>, and press Enter: this puts
+everything back as it was before you clicked. Then send your lead a
+screenshot.</p>
+</div>
 <div class="checkpoint">
 <p>The big blue button no longer shows an up-arrow number, and your
 branch appears on <a
@@ -910,7 +1139,9 @@ href="https://github.com/villano-lab/NSDF-Data/branches"
 class="uri">https://github.com/villano-lab/NSDF-Data/branches</a>.</p>
 </div>
 <p>This step is <code>git push</code> (the first time,
-<code>git push -u origin student-yourname</code>).</p>
+<code>git push -u origin student-yourname</code>). <strong>Sync
+Changes</strong> runs <code>git pull</code> first, to bring in anything
+newer on GitHub, and then <code>git push</code>.</p>
 <h2 id="linux-step-6.-bring-in-the-newest-project-changes">Step 6. Bring
 in the newest project changes</h2>
 <p>The project keeps changing. When <em>Updating your setup</em> (guide
@@ -918,6 +1149,10 @@ in the newest project changes</h2>
 that step here instead of typing the two lines. Do all the other steps
 of guide 7 as written, because they update your environment.</p>
 <ol type="1">
+<li><strong>Sync first.</strong> Look at the big blue button in the
+Source Control tab. If it shows an up-arrow or a down-arrow number,
+click <strong>Sync Changes</strong> (Step 5) so that your branch and
+GitHub agree before you start. If it shows no number, go on.</li>
 <li>Press <code>Ctrl+Shift+P</code>. A box opens at the top of the
 window.</li>
 <li>Type <code class="cmd">Git: Fetch</code> and press Enter. This
@@ -928,17 +1163,28 @@ class="cmd">Git: Merge...</code>, and press Enter.</li>
 <li>A list of branches opens. Choose <strong>origin/develop</strong>,
 under <em>remote branches</em>. This combines it with your branch
 (<code>git merge --no-edit origin/develop</code>).</li>
+<li>Look at the big blue button again. If it now shows an up-arrow
+number, click <strong>Sync Changes</strong> (Step 5) to send the result
+to GitHub.</li>
 </ol>
 <div class="checkpoint">
 <p>VS Code finishes without an error message, and the Source Control tab
-shows no conflict.</p>
+shows no conflict. Then look at the big blue button. If it shows an
+up-arrow number, the newest project changes are now on your branch and
+waiting to go to GitHub (point 6). If it shows no number, you already
+had the newest changes. VS Code says nothing when there is nothing to
+merge, whereas the terminal prints <code>Already up to date.</code>, so
+it can look as if the command did nothing. Nothing went wrong.</p>
 </div>
 <div class="careful">
-<p>If VS Code reports a <strong>conflict</strong>, or opens a window
-with two versions of a file side by side, <strong>stop. Do not click
-anything in that window and do not edit anything.</strong> Send your
+<p>If VS Code reports a <strong>conflict</strong>, lists files under
+<strong>Merge Changes</strong>, or opens a window with two versions of a
+file side by side, <strong>stop. Do not click anything in that window
+and do not edit anything.</strong> To put everything back as it was,
+press <code>Ctrl+Shift+P</code>, type <code
+class="cmd">Git: Abort Merge</code>, and press Enter. Then send your
 lead a screenshot or the message. This is the same rule as the terminal
-guides.</p>
+guides: stop, and send it to your lead.</p>
 </div>
 <h2 id="linux-step-7.-open-a-pull-request">Step 7. Open a pull
 request</h2>
@@ -950,9 +1196,10 @@ Code</h3>
 <p>VS Code can also open pull requests for you, with an extension made
 by GitHub.</p>
 <div class="careful">
-<p>This part was written from the extension’s own documentation and has
-<strong>not yet been tried on a student’s computer</strong>. If a screen
-differs, stop, and use guide 4 instead.</p>
+<p>This part was written from the extension’s own documentation and its
+list of commands, and has <strong>not yet been tried all the way through
+on a student’s computer</strong>. If a screen differs, stop, and use
+guide 4 instead.</p>
 </div>
 <ol type="1">
 <li>Press <code>Ctrl+Shift+X</code> to open
@@ -964,10 +1211,33 @@ mark next to the name.</li>
 <strong>Sign in</strong>. A web page opens in your browser: sign in to
 GitHub there. <strong>Never type your GitHub password into VS Code or
 into the terminal.</strong></li>
-<li>Your branch is listed in the extension’s view, with a button to
-create a pull request. Follow the prompts, and write the pull request
-description as guide 4 says.</li>
+<li>Your branch will <strong>not</strong> be listed in the extension’s
+view: that view lists pull requests, not branches, so a branch that has
+no pull request yet does not appear in it. To start one, click the
+<strong>Create Pull Request</strong> button. It is a <strong>very small
+icon</strong>, the pull-request symbol with a plus sign on it, at the
+right end of the title bar of the <strong>Pull Requests</strong> view
+(the view you open with the GitHub icon in the bar on the left). Move
+the mouse over it and a label says <em>Create Pull Request</em>. Or
+press <code>Ctrl+Shift+P</code>, type <code
+class="cmd">GitHub Pull Requests: Create Pull Request</code>, and press
+Enter. The button and the command only appear after you have signed in
+(point 3) and pushed your branch (Step 5).</li>
+<li>A form opens. Check that the <strong>base</strong> is
+<code>develop</code> (it may offer <code>master</code>: change it) and
+that the branch being compared is <code>student-yourname</code>. Write
+the title and the description as guide 4 says, then click
+<strong>Create</strong>. Your pull request is then listed in the
+view.</li>
 </ol>
+<p><img src="src/img/vscode-pull-requests-view.png"
+style="width:75.0%" /></p>
+<p><strong>Figure 1.</strong> The <strong>Pull Requests</strong> view of
+the GitHub extension. The button that starts a pull request is the first
+icon in the title bar, the pull-request symbol with a plus sign
+(outlined in red). It is small. The other icons are <em>Refresh</em>,
+<em>Collapse All</em> and a menu. Your own branch is not in the list
+below until its pull request exists.</p>
 <h2 id="linux-the-same-steps-in-the-terminal">The same steps in the
 terminal</h2>
 <div class="table-scroll">
@@ -1003,7 +1273,7 @@ terminal</h2>
 <td><strong>Publish Branch</strong> (first time), then <strong>Sync
 Changes</strong></td>
 <td><code>git push -u origin student-yourname</code>, then
-<code>git push</code></td>
+<code>git pull</code> and <code>git push</code></td>
 </tr>
 <tr>
 <td><code class="cmd">Git: Fetch</code> and <code
@@ -1011,9 +1281,22 @@ class="cmd">Git: Merge...</code> with <code>origin/develop</code></td>
 <td><code>git fetch origin</code> and
 <code>git merge --no-edit origin/develop</code></td>
 </tr>
+<tr>
+<td>The <strong>Create Pull Request</strong> button of the GitHub
+extension (Step 7)</td>
+<td><code>gh pr create --base develop --title "Add note: your title" --body "One sentence on what the note answers."</code></td>
+</tr>
 </tbody>
 </table>
 </div>
+<p>The last row uses the <code>gh</code> command, which guide 1
+installed and signed in to GitHub in its Step 8. Run it from the
+<code>NSDF-Data</code> folder, on your own branch, after your commits
+are pushed (Step 5); it prints the address of your pull request. This
+way has <strong>not yet been tried on a student’s computer</strong>:
+guide 4 (Step 3), on github.com, is the route that has been tested step
+by step. Whichever way you use, the base must be
+<code>develop</code>.</p>
 <h2 id="linux-when-something-looks-wrong">When something looks
 wrong</h2>
 <div class="table-scroll">
@@ -1057,13 +1340,40 @@ found”</td>
 <tr>
 <td><strong>Sync Changes</strong> shows a down-arrow number as well as
 an up-arrow number</td>
-<td>There are newer commits on GitHub too.</td>
-<td>Ask your lead, or see guide 7, Step 2.</td>
+<td>There are newer commits on your branch on GitHub: your lead merged
+the project’s newest changes into it.</td>
+<td>Check the branch name, click <strong>Sync Changes</strong>, and
+click <strong>OK</strong> on the question (Step 5).</td>
+</tr>
+<tr>
+<td>VS Code says there are merge conflicts, or lists files under
+<strong>Merge Changes</strong></td>
+<td>Git cannot combine two changes by itself. Nothing has been sent to
+GitHub.</td>
+<td>Stop. Do not edit anything. Press <code>Ctrl+Shift+P</code>, run
+<code class="cmd">Git: Abort Merge</code>, and send your lead a
+screenshot.</td>
 </tr>
 <tr>
 <td>A window with two versions of a file side by side</td>
 <td>A conflict.</td>
-<td>Stop. Click nothing. Send it to your lead.</td>
+<td>Stop. Click nothing. Run <code class="cmd">Git: Abort Merge</code>
+as in the row above, and send it to your lead.</td>
+</tr>
+<tr>
+<td>Your branch is not in the <strong>Pull Requests</strong> view of the
+GitHub extension</td>
+<td>That view lists pull requests, not branches.</td>
+<td>Use the <strong>Create Pull Request</strong> button or command (Step
+7), and check that the base is <code>develop</code>.</td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Merge...</code> finishes and nothing seems to
+have happened</td>
+<td>You already had the newest changes. VS Code says nothing when there
+is nothing to merge.</td>
+<td>Look at the big blue button (Step 6). No number means you were up to
+date.</td>
 </tr>
 <tr>
 <td>“Make sure you configure your user.name and user.email”, or a
@@ -1077,12 +1387,17 @@ Code.</td>
 </table>
 </div>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 2, 14 October 2026, Linux edition. The Git steps were
+<p>Guide version 3, 14 October 2026, Linux edition. The Git steps were
 checked in a browser version of VS Code on a test copy of the project,
 on Windows (commit, the branch list, the merge list, and installing the
-extension). The install step for your system, the sign-in, and the
-pull-request part have not been tried on a student’s computer yet.
-Please tell the project lead where a step was unclear.</p>
+extension). The names of the commands (<code>Git: Fetch</code>,
+<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
+against VS Code 1.141. The <strong>Sync Changes</strong> question and
+the way out of a conflict were written from VS Code’s documentation and
+have not been tried on a real conflict. The install step for your
+system, the sign-in, and the pull-request part have not been tried on a
+student’s computer yet. Please tell the project lead where a step was
+unclear.</p>
 <h2 id="linux-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"

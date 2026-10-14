@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 19 · 13 October 2026"
+date: "Version 20 · 14 October 2026"
 ---
 
 ::: tip
@@ -16,7 +16,7 @@ date: "Version 19 · 13 October 2026"
 - **Folder:** you do not need to be in any particular folder yet. Each step below tells you where to go.
 
 ::: maintenance
-**Keep your setup up to date.** The first code cell in Step 4 checks your environment against the project's current list and warns you if it is out of date. If you see a WARNING, follow [Updating your setup (Windows)](https://villano-lab.github.io/NSDF-Data/students/update-windows.html). Do the same after every new release the project lead announces.
+**Keep your setup up to date.** The first code cell in Step 4 checks your environment against the project's current list and warns you if it is out of date. If you see a WARNING, follow [Updating your setup](https://villano-lab.github.io/NSDF-Data/students/update.html). Do the same after every new release the project lead announces.
 :::
 
 ## Words you will meet
@@ -445,7 +445,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 19, 13 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 20, 14 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

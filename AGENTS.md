@@ -60,6 +60,8 @@ Needs python, pandoc, and a LaTeX install with xelatex, tcolorbox and titlesec. 
 PYTHON=python MAINFONT=Arial MONOFONT="Latin Modern Mono" sh docs/students/src/build.sh
 ```
 
+The setup, first-analysis and updating guides are one web page each, with a Windows / macOS / Linux switch (`setup.html`, `first-analysis.html`, `update.html`; `docs/students/src/build_os_pages.py` assembles them, and the old per-system addresses are small forwarding pages), but still one PDF per computer.
+
 Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDFs whose source did not change (`git checkout -- <pdf>`) before committing. Every guide has a "Where to get help" section naming the project lead. Check the rebuilt pages for text running past the margin and for `?`/replacement characters (the sources must be written as UTF-8).
 
 ## Data and environment

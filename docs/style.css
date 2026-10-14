@@ -207,3 +207,20 @@ a.agent-link:hover, a.agent-link:focus-visible { border-color: var(--link); back
 }
 .maintenance-box p { margin: 0 0 6px; }
 .maintenance-box p:last-child { margin-bottom: 0; }
+
+/* student guides table on the front page */
+table.guides { font-size: 0.95rem; }
+table.guides tbody tr:nth-child(even) { background: transparent; }
+table.guides tbody tr:last-child td { border-bottom: none; }
+table.guides tr.group th { background: var(--head-bg); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 6px 10px; position: static; border-bottom: 1px solid var(--border); }
+table.guides td { vertical-align: middle; padding: 10px; }
+table.guides tbody tr:not(.group):hover { background: var(--row-alt); }
+table.guides .gnum { width: 3.2rem; text-align: center; }
+table.guides .badge { display: inline-block; min-width: 1.9rem; padding: 2px 0; border-radius: 999px; background: var(--link); color: var(--bg); font-weight: 700; font-size: 0.9rem; }
+table.guides .gtitle a { font-weight: 600; font-size: 1.02rem; }
+table.guides .gdesc { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+table.guides .gtime { white-space: nowrap; color: var(--muted); }
+table.guides .gsys { white-space: nowrap; }
+table.guides .tag { display: inline-block; padding: 1px 8px; margin: 1px 0; border: 1px solid var(--border); border-radius: 999px; background: var(--code-bg); font-size: 0.78rem; color: var(--fg); }
+table.guides .tag.any { background: transparent; color: var(--muted); }
+@media (max-width: 640px) { table.guides .gsys { white-space: normal; } table.guides th:nth-child(3), table.guides td.gtime { display: none; } }

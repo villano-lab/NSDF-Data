@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git in VS Code (NSDF-Data student guide 9 — for every computer,
+optional)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="git-in-vscode.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Git in VS Code</h1>
+<p class="meta">NSDF-Data student guide 9 — for every computer,
+optional &middot; Version 1 · 14 October 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#before-you-start" id="toc-before-you-start">Before you
+start</a></li>
+<li><a href="#step-1.-open-the-project-folder"
+id="toc-step-1.-open-the-project-folder">Step 1. Open the project
+folder</a></li>
+<li><a href="#step-2.-check-your-branch"
+id="toc-step-2.-check-your-branch">Step 2. Check your branch</a></li>
+<li><a href="#step-3.-save-your-work-as-a-commit"
+id="toc-step-3.-save-your-work-as-a-commit">Step 3. Save your work as a
+commit</a></li>
+<li><a href="#step-4.-send-your-commits-to-github"
+id="toc-step-4.-send-your-commits-to-github">Step 4. Send your commits
+to GitHub</a></li>
+<li><a href="#step-5.-bring-in-the-newest-project-changes"
+id="toc-step-5.-bring-in-the-newest-project-changes">Step 5. Bring in
+the newest project changes</a></li>
+<li><a href="#step-6.-open-a-pull-request"
+id="toc-step-6.-open-a-pull-request">Step 6. Open a pull
+request</a></li>
+<li><a href="#the-same-steps-in-the-terminal"
+id="toc-the-same-steps-in-the-terminal">The same steps in the
+terminal</a></li>
+<li><a href="#when-something-looks-wrong"
+id="toc-when-something-looks-wrong">When something looks wrong</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>This is guide 9, and it is optional.</strong> It does the
+same Git steps as the terminal guides, with buttons in VS Code instead
+of typed commands. If you are happy with the terminal, you do not need
+this guide. If a screen here does not match what you see, trust the
+terminal version, and tell your lead which step differed.</p>
+</div>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>You finished the setup guide (guide 1), including Step 8, which made
+your branch <code>student-yourname</code>.</li>
+<li><a href="https://code.visualstudio.com/">VS Code</a> is installed.
+If you wrote a note in Markdown (guide 3), you already have it.</li>
+<li>You have read <em>Git in five minutes</em> (guide 8). It explains
+the words used here: commit, branch, push, pull request.</li>
+</ul>
+<p>VS Code uses the Git that guide 1 installed, so nothing else has to
+be set up.</p>
+<h2 id="step-1.-open-the-project-folder">Step 1. Open the project
+folder</h2>
+<ol type="1">
+<li>Start VS Code.</li>
+<li>Choose <strong>File</strong>, then <strong>Open Folder</strong>, and
+pick the <code>NSDF-Data</code> folder.</li>
+<li>VS Code may ask whether you trust the authors of the files in this
+folder. This is your own copy of the project: choose <strong>Yes, I
+trust the authors</strong>.</li>
+</ol>
+<div class="careful">
+<p>Until you trust the folder, the <strong>Source Control</strong> tab
+(Step 3) stays empty and says that Git does not work in Restricted Mode.
+Nothing is broken: trust the folder and it fills in.</p>
+</div>
+<h2 id="step-2.-check-your-branch">Step 2. Check your branch</h2>
+<p>Look at the bottom-left corner of the VS Code window. It shows the
+name of your branch.</p>
+<div class="checkpoint">
+<p>The corner shows <code>student-yourname</code> (your own branch).
+This is the same check as <code>git branch --show-current</code> in the
+terminal guides.</p>
+</div>
+<div class="careful">
+<p>If it shows <code>develop</code> or <code>master</code>, <strong>stop
+and ask your lead</strong>. Do not commit, and do not press any button
+in the Source Control tab. Your own work belongs on your own branch.</p>
+</div>
+<p>To change branch, click the name in the corner and pick yours from
+the list.</p>
+<h2 id="step-3.-save-your-work-as-a-commit">Step 3. Save your work as a
+commit</h2>
+<ol type="1">
+<li>Open <strong>Source Control</strong>: click the branch-shaped icon
+in the bar on the left, or press <code>Ctrl+Shift+G</code> (on a Mac,
+<code>Cmd+Shift+G</code>).</li>
+<li>Under <strong>Changes</strong>, every file you changed is listed
+with a letter: <strong>M</strong> for changed, <strong>U</strong> for
+new. Read the list before you do anything else.</li>
+</ol>
+<div class="checkpoint">
+<p>The list contains only your own files (your notebook, your note, its
+pictures). If it shows data files (a folder named <code>idx</code>, or
+<code>.bin</code> files) or other people’s files, do not stage them: ask
+your lead.</p>
+</div>
+<ol start="3" type="1">
+<li>Move the mouse over one of your files and click the
+<strong>+</strong> (Stage Changes). The file moves to <strong>Staged
+Changes</strong>. Do this for each of your files. This is
+<code>git add</code>.</li>
+<li>Click the box that says <strong>Message</strong> and write what you
+changed, in a few words. This is the <code>-m "..."</code> of
+<code>git commit</code>.</li>
+<li>Click <strong>Commit</strong>.</li>
+</ol>
+<div class="careful">
+<p>If VS Code says that there are no staged changes and asks whether to
+stage everything and commit, choose <strong>Cancel</strong>, and stage
+your files yourself with the <strong>+</strong> button. “Commit all” is
+how data files and other people’s files get in by mistake.</p>
+</div>
+<h2 id="step-4.-send-your-commits-to-github">Step 4. Send your commits
+to GitHub</h2>
+<p>After a commit, the big blue button under the message box shows what
+is left to send.</p>
+<ul>
+<li>The first time on your branch, it reads <strong>Publish
+Branch</strong>. Click it. If VS Code asks which remote, choose
+<code>origin</code>.</li>
+<li>After that, it reads <strong>Sync Changes</strong> with a number and
+an arrow. The up-arrow number is how many of your commits are waiting to
+go to GitHub. Click it to send them.</li>
+</ul>
+<div class="careful">
+<p>Read the branch name in the bottom-left corner before you click
+either button. They send your commits to GitHub, so they must say your
+own branch. If the corner shows anything other than
+<code>student-yourname</code>, stop and ask your lead.</p>
+</div>
+<div class="checkpoint">
+<p>The big blue button no longer shows an up-arrow number, and your
+branch appears on <a
+href="https://github.com/villano-lab/NSDF-Data/branches"
+class="uri">https://github.com/villano-lab/NSDF-Data/branches</a>.</p>
+</div>
+<p>This step is <code>git push</code> (the first time,
+<code>git push -u origin student-yourname</code>).</p>
+<h2 id="step-5.-bring-in-the-newest-project-changes">Step 5. Bring in
+the newest project changes</h2>
+<p>The project keeps changing. When <em>Updating your setup</em> (guide
+7) tells you to bring in the newest changes (its Step 2), you can do
+that step here instead of typing the two lines. Do all the other steps
+of guide 7 as written, because they update your environment.</p>
+<ol type="1">
+<li>Press <code>Ctrl+Shift+P</code> (<code>Cmd+Shift+P</code> on a Mac).
+A box opens at the top of the window.</li>
+<li>Type <code class="cmd">Git: Fetch</code> and press Enter. This
+downloads the newest changes without touching your files
+(<code>git fetch origin</code>).</li>
+<li>Press <code>Ctrl+Shift+P</code> again, type <code
+class="cmd">Git: Merge...</code>, and press Enter.</li>
+<li>A list of branches opens. Choose <strong>origin/develop</strong>,
+under <em>remote branches</em>. This combines it with your branch
+(<code>git merge --no-edit origin/develop</code>).</li>
+</ol>
+<div class="checkpoint">
+<p>VS Code finishes without an error message, and the Source Control tab
+shows no conflict.</p>
+</div>
+<div class="careful">
+<p>If VS Code reports a <strong>conflict</strong>, or opens a window
+with two versions of a file side by side, <strong>stop. Do not click
+anything in that window and do not edit anything.</strong> Send your
+lead a screenshot or the message. This is the same rule as the terminal
+guides.</p>
+</div>
+<h2 id="step-6.-open-a-pull-request">Step 6. Open a pull request</h2>
+<p>When a note or a piece of work is ready for review, open the pull
+request the way guide 4 (Step 3) shows, on github.com. That route has
+been tested step by step, and it is the one to use.</p>
+<h3 id="optional-from-inside-vs-code">Optional: from inside VS Code</h3>
+<p>VS Code can also open pull requests for you, with an extension made
+by GitHub.</p>
+<div class="careful">
+<p>This part was written from the extension’s own documentation and has
+<strong>not yet been tried on a student’s computer</strong>. If a screen
+differs, stop, and use guide 4 instead.</p>
+</div>
+<ol type="1">
+<li>Press <code>Ctrl+Shift+X</code> (<code>Cmd+Shift+X</code> on a Mac)
+to open <strong>Extensions</strong>.</li>
+<li>Search for <code class="cmd">GitHub Pull Requests</code>. Install
+the one whose publisher is <strong>GitHub</strong>, with the blue check
+mark next to the name.</li>
+<li>A GitHub icon appears in the bar on the left. Click it and choose
+<strong>Sign in</strong>. A web page opens in your browser: sign in to
+GitHub there. <strong>Never type your GitHub password into VS Code or
+into the terminal.</strong></li>
+<li>Your branch is listed in the extension’s view, with a button to
+create a pull request. Follow the prompts, and write the pull request
+description as guide 4 says.</li>
+</ol>
+<h2 id="the-same-steps-in-the-terminal">The same steps in the
+terminal</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>In VS Code</th>
+<th>In the terminal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The corner of the window</td>
+<td><code>git branch --show-current</code></td>
+</tr>
+<tr>
+<td>The list of changes in Source Control</td>
+<td><code>git status</code></td>
+</tr>
+<tr>
+<td>The <strong>+</strong> button</td>
+<td><code>git add your-file</code></td>
+</tr>
+<tr>
+<td>Message box and <strong>Commit</strong></td>
+<td><code>git commit -m "..."</code></td>
+</tr>
+<tr>
+<td><strong>Publish Branch</strong> (first time), then <strong>Sync
+Changes</strong></td>
+<td><code>git push -u origin student-yourname</code>, then
+<code>git push</code></td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Fetch</code> and <code
+class="cmd">Git: Merge...</code> with <code>origin/develop</code></td>
+<td><code>git fetch origin</code> and
+<code>git merge --no-edit origin/develop</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="when-something-looks-wrong">When something looks wrong</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>You see</th>
+<th>What it means</th>
+<th>What to do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The Source Control tab is empty and mentions Restricted Mode</td>
+<td>VS Code has not been told to trust this folder.</td>
+<td>Step 1, point 3.</td>
+</tr>
+<tr>
+<td>The corner shows <code>develop</code> or <code>master</code></td>
+<td>You are not on your own branch.</td>
+<td>Stop. Do not commit or push. Ask your lead.</td>
+</tr>
+<tr>
+<td>No <strong>Source Control</strong> icon, or “no repository
+found”</td>
+<td>The folder you opened is not the <code>NSDF-Data</code> folder.</td>
+<td><strong>File</strong>, <strong>Open Folder</strong>, and pick the
+<code>NSDF-Data</code> folder itself.</td>
+</tr>
+<tr>
+<td>A question about staging everything and committing</td>
+<td>Nothing is staged yet.</td>
+<td><strong>Cancel</strong>, then stage your files with
+<strong>+</strong> (Step 3).</td>
+</tr>
+<tr>
+<td><strong>Sync Changes</strong> shows a down-arrow number as well as
+an up-arrow number</td>
+<td>There are newer commits on GitHub too.</td>
+<td>Ask your lead, or see guide 7, Step 2.</td>
+</tr>
+<tr>
+<td>A window with two versions of a file side by side</td>
+<td>A conflict.</td>
+<td>Stop. Click nothing. Send it to your lead.</td>
+</tr>
+<tr>
+<td>“Make sure you configure your user.name and user.email”, or a
+permission error</td>
+<td>Git does not know your name, or you are not signed in to
+GitHub.</td>
+<td>Setup guide, Step 8. Never type your GitHub password into VS
+Code.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 1, 14 October 2026. Written for every computer. The
+steps were checked in a browser version of VS Code on a test copy of the
+project (commit, the branch list, the merge list, and installing the
+extension). The sign-in and the pull-request part have not been tried
+yet. Please tell the project lead where a step was unclear.</p>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, include a screenshot of the VS Code window and the
+message that worried you.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+<li>Student guides: <a href="../index.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
+<li>VS Code: <a href="https://code.visualstudio.com/"
+class="uri">https://code.visualstudio.com/</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="git-in-vscode.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

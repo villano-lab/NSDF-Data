@@ -266,7 +266,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 **Next:** *First analysis* (the guide for Windows).
 
 ::: maintenance
-**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup (Windows)](https://villano-lab.github.io/NSDF-Data/students/update.html?os=windows).** It takes about 10 minutes.
+**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup](https://villano-lab.github.io/NSDF-Data/students/update.html).** It takes about 10 minutes.
 :::
 
 ## If something goes wrong

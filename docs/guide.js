@@ -228,7 +228,11 @@
       });
     }
 
-    var chosen = fromUrl() || fromHash() || stored() || detect();
+    /* A link that names a system (?os=macos) is a deliberate choice, so remember it: the guides link to each
+       other without naming a system, and the next page then opens on the same one. */
+    var urlOs = fromUrl();
+    if (urlOs) { try { localStorage.setItem(KEY, urlOs); } catch (e) { /* private mode: ignore */ } }
+    var chosen = urlOs || fromHash() || stored() || detect();
     show(chosen);
     if (location.hash && chosen) {
       var el = null;

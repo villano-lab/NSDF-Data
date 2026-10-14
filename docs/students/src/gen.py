@@ -106,7 +106,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 19 · 13 October 2026"
+date: "Version 20 · 14 October 2026"
 ---
 
 ::: tip
@@ -339,7 +339,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 **Next:** *First analysis* (the guide for @NAME@).
 
 ::: maintenance
-**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup (@NAME@)](https://villano-lab.github.io/NSDF-Data/students/update-@FILE@.html).** It takes about 10 minutes.
+**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup (@NAME@)](https://villano-lab.github.io/NSDF-Data/students/update.html?os=@FILE@).** It takes about 10 minutes.
 :::
 
 ## If something goes wrong
@@ -356,7 +356,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -369,7 +369,7 @@ Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 19 · 13 October 2026"
+date: "Version 20 · 14 October 2026"
 ---
 
 ::: tip
@@ -384,7 +384,7 @@ date: "Version 19 · 13 October 2026"
 - **Folder:** you do not need to be in any particular folder yet. Each step below tells you where to go.
 
 ::: maintenance
-**Keep your setup up to date.** The first code cell in Step 4 checks your environment against the project's current list and warns you if it is out of date. If you see a WARNING, follow [Updating your setup (@NAME@)](https://villano-lab.github.io/NSDF-Data/students/update-@FILE@.html). Do the same after every new release the project lead announces.
+**Keep your setup up to date.** The first code cell in Step 4 checks your environment against the project's current list and warns you if it is out of date. If you see a WARNING, follow [Updating your setup (@NAME@)](https://villano-lab.github.io/NSDF-Data/students/update.html?os=@FILE@). Do the same after every new release the project lead announces.
 :::
 
 ## Words you will meet
@@ -796,7 +796,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 19, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

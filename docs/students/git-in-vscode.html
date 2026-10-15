@@ -28,7 +28,7 @@
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — Windows edition,
-optional &middot; Version 3 · 14 October 2026</p>
+optional &middot; Version 4 · 15 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -120,6 +120,13 @@ trust the authors</strong>.</li>
 <p>Until you trust the folder, the <strong>Source Control</strong> tab
 (Step 4) stays empty and says that Git does not work in Restricted Mode.
 Nothing is broken: trust the folder and it fills in.</p>
+<p>If you closed the question without answering it, click
+<strong>Restricted Mode</strong> in the bottom-left status bar (it is
+easy to miss on a large screen), or press <code>Ctrl+Shift+P</code>,
+type <code class="cmd">Workspaces: Manage Workspace Trust</code>, and
+press Enter. Then choose <strong>Trust</strong>. <a
+href="https://code.visualstudio.com/docs/editing/workspaces/workspace-trust">VS
+Code’s page on workspace trust</a> explains it.</p>
 </div>
 <h2 id="windows-step-3.-check-your-branch">Step 3. Check your
 branch</h2>
@@ -130,13 +137,18 @@ name of your branch.</p>
 This is the same check as <code>git branch --show-current</code> in the
 terminal guides.</p>
 </div>
+<p>If it shows <code>develop</code> or <code>master</code>, or a branch
+that is not yours, switch to yours first: click the name in the corner
+and pick <code>student-yourname</code> from the list. Changes you have
+not committed yet come with you to your branch.</p>
 <div class="careful">
-<p>If it shows <code>develop</code> or <code>master</code>, <strong>stop
-and ask your lead</strong>. Do not commit, and do not press any button
-in the Source Control tab. Your own work belongs on your own branch.</p>
+<p>If VS Code or Git shows a <strong>warning</strong> when you switch
+(for example that your changes would be overwritten), <strong>stop and
+ask your lead</strong>, and do not force it. Do not commit, and do not
+press <strong>Sync Changes</strong>, while the corner shows
+<code>develop</code> or <code>master</code>: your own work belongs on
+your own branch.</p>
 </div>
-<p>To change branch, click the name in the corner and pick yours from
-the list.</p>
 <h2 id="windows-step-4.-save-your-work-as-a-commit">Step 4. Save your
 work as a commit</h2>
 <ol type="1">
@@ -153,14 +165,18 @@ pictures). If it shows data files (a folder named <code>idx</code>, or
 your lead.</p>
 </div>
 <ol start="3" type="1">
-<li>Move the mouse over one of your files and click the
+<li><p>Move the mouse over one of your files and click the
 <strong>+</strong> (Stage Changes). The file moves to <strong>Staged
 Changes</strong>. Do this for each of your files. This is
-<code>git add</code>.</li>
-<li>Click the box that says <strong>Message</strong> and write what you
-changed, in a few words. This is the <code>-m "..."</code> of
-<code>git commit</code>.</li>
-<li>Click <strong>Commit</strong>.</li>
+<code>git add</code>.</p>
+<p><em>To stage several files at once:</em> click the first, then
+<strong>Shift</strong>-click the last to select everything in between
+(or <strong>Ctrl</strong>-click to pick single files), and click the
+<strong>+</strong> on any selected file: it stages all of them.</p></li>
+<li><p>Click the box that says <strong>Message</strong> and write what
+you changed, in a few words. This is the <code>-m "..."</code> of
+<code>git commit</code>.</p></li>
+<li><p>Click <strong>Commit</strong>.</p></li>
 </ol>
 <div class="careful">
 <p>If VS Code says that there are no staged changes and asks whether to
@@ -170,8 +186,8 @@ how data files and other people’s files get in by mistake.</p>
 </div>
 <h2 id="windows-step-5.-send-your-commits-to-github">Step 5. Send your
 commits to GitHub</h2>
-<p>After a commit, the big blue button under the message box shows what
-is left to send.</p>
+<p>After a commit, the big button under the message box shows what is
+left to send.</p>
 <ul>
 <li>The first time on your branch, it reads <strong>Publish
 Branch</strong>. Click it. If VS Code asks which remote, choose
@@ -206,9 +222,8 @@ everything back as it was before you clicked. Then send your lead a
 screenshot.</p>
 </div>
 <div class="checkpoint">
-<p>The big blue button no longer shows an up-arrow number, and your
-branch appears on <a
-href="https://github.com/villano-lab/NSDF-Data/branches"
+<p>The big button no longer shows an up-arrow number, and your branch
+appears on <a href="https://github.com/villano-lab/NSDF-Data/branches"
 class="uri">https://github.com/villano-lab/NSDF-Data/branches</a>.</p>
 </div>
 <p>This step is <code>git push</code> (the first time,
@@ -222,10 +237,10 @@ Bring in the newest project changes</h2>
 that step here instead of typing the two lines. Do all the other steps
 of guide 7 as written, because they update your environment.</p>
 <ol type="1">
-<li><strong>Sync first.</strong> Look at the big blue button in the
-Source Control tab. If it shows an up-arrow or a down-arrow number,
-click <strong>Sync Changes</strong> (Step 5) so that your branch and
-GitHub agree before you start. If it shows no number, go on.</li>
+<li><strong>Sync first.</strong> Look at the big button in the Source
+Control tab. If it shows an up-arrow or a down-arrow number, click
+<strong>Sync Changes</strong> (Step 5) so that your branch and GitHub
+agree before you start. If it shows no number, go on.</li>
 <li>Press <code>Ctrl+Shift+P</code>. A box opens at the top of the
 window.</li>
 <li>Type <code class="cmd">Git: Fetch</code> and press Enter. This
@@ -236,25 +251,26 @@ class="cmd">Git: Merge...</code>, and press Enter.</li>
 <li>A list of branches opens. Choose <strong>origin/develop</strong>,
 under <em>remote branches</em>. This combines it with your branch
 (<code>git merge --no-edit origin/develop</code>).</li>
-<li>Look at the big blue button again. If it now shows an up-arrow
-number, click <strong>Sync Changes</strong> (Step 5) to send the result
-to GitHub.</li>
+<li>Look at the big button again. If it now shows an up-arrow number,
+click <strong>Sync Changes</strong> (Step 5) to send the result to
+GitHub.</li>
 </ol>
 <div class="checkpoint">
 <p>VS Code finishes without an error message, and the Source Control tab
-shows no conflict. Then look at the big blue button. If it shows an
-up-arrow number, the newest project changes are now on your branch and
-waiting to go to GitHub (point 6). If it shows no number, you already
-had the newest changes. VS Code says nothing when there is nothing to
-merge, whereas the terminal prints <code>Already up to date.</code>, so
-it can look as if the command did nothing. Nothing went wrong.</p>
+shows no conflict. Then look at the big button. If it shows an up-arrow
+number, the newest project changes are now on your branch and waiting to
+go to GitHub (point 6). If it shows no number, you already had the
+newest changes. VS Code says nothing when there is nothing to merge,
+whereas the terminal prints <code>Already up to date.</code>, so it can
+look as if the command did nothing. Nothing went wrong.</p>
 </div>
 <div class="careful">
-<p>If VS Code reports a <strong>conflict</strong>, lists files under
-<strong>Merge Changes</strong>, or opens a window with two versions of a
-file side by side, <strong>stop. Do not click anything in that window
-and do not edit anything.</strong> To put everything back as it was,
-press <code>Ctrl+Shift+P</code>, type <code
+<p>If VS Code reports a <strong>conflict</strong>, or lists files under
+<strong>Merge Changes</strong> in the Source Control tab, <strong>stop.
+Do not edit anything.</strong> (Two versions of a file side by side is
+not a sign of a conflict: VS Code shows that comparison whenever you
+click a changed file.) To put everything back as it was, press
+<code>Ctrl+Shift+P</code>, type <code
 class="cmd">Git: Abort Merge</code>, and press Enter. Then send your
 lead a screenshot or the message. This is the same rule as the terminal
 guides: stop, and send it to your lead.</p>
@@ -278,8 +294,8 @@ guide 4 instead.</p>
 <li>Press <code>Ctrl+Shift+X</code> to open
 <strong>Extensions</strong>.</li>
 <li>Search for <code class="cmd">GitHub Pull Requests</code>. Install
-the one whose publisher is <strong>GitHub</strong>, with the blue check
-mark next to the name.</li>
+the one whose publisher is <strong>GitHub</strong>, with the check mark
+(verified publisher) next to the name.</li>
 <li>A GitHub icon appears in the bar on the left. Click it and choose
 <strong>Sign in</strong>. A web page opens in your browser: sign in to
 GitHub there. <strong>Never type your GitHub password into VS Code or
@@ -327,7 +343,7 @@ terminal</h2>
 </thead>
 <tbody>
 <tr>
-<td>The corner of the window</td>
+<td>The branch name in the corner of the window</td>
 <td><code>git branch --show-current</code></td>
 </tr>
 <tr>
@@ -343,16 +359,21 @@ terminal</h2>
 <td><code>git commit -m "..."</code></td>
 </tr>
 <tr>
-<td><strong>Publish Branch</strong> (first time), then <strong>Sync
-Changes</strong></td>
-<td><code>git push -u origin student-yourname</code>, then
-<code>git pull</code> and <code>git push</code></td>
+<td><strong>Publish Branch</strong> (first time)</td>
+<td><code>git push -u origin student-yourname</code></td>
 </tr>
 <tr>
-<td><code class="cmd">Git: Fetch</code> and <code
-class="cmd">Git: Merge...</code> with <code>origin/develop</code></td>
-<td><code>git fetch origin</code> and
-<code>git merge --no-edit origin/develop</code></td>
+<td><strong>Sync Changes</strong></td>
+<td><code>git pull</code>, then <code>git push</code></td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Fetch</code></td>
+<td><code>git fetch origin</code></td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Merge...</code> with
+<code>origin/develop</code></td>
+<td><code>git merge --no-edit origin/develop</code></td>
 </tr>
 <tr>
 <td>The <strong>Create Pull Request</strong> button of the GitHub
@@ -390,12 +411,14 @@ wrong</h2>
 <tr>
 <td>The Source Control tab is empty and mentions Restricted Mode</td>
 <td>VS Code has not been told to trust this folder.</td>
-<td>Step 2, point 3.</td>
+<td>Click <strong>Restricted Mode</strong> in the bottom-left status bar
+and choose <strong>Trust</strong> (Step 2).</td>
 </tr>
 <tr>
 <td>The corner shows <code>develop</code> or <code>master</code></td>
 <td>You are not on your own branch.</td>
-<td>Stop. Do not commit or push. Ask your lead.</td>
+<td>Switch to your own branch (Step 3). Stop and ask your lead only if
+Git warns when you switch.</td>
 </tr>
 <tr>
 <td>No <strong>Source Control</strong> icon, or “no repository
@@ -428,24 +451,18 @@ GitHub.</td>
 screenshot.</td>
 </tr>
 <tr>
-<td>A window with two versions of a file side by side</td>
-<td>A conflict.</td>
-<td>Stop. Click nothing. Run <code class="cmd">Git: Abort Merge</code>
-as in the row above, and send it to your lead.</td>
-</tr>
-<tr>
-<td>Your branch is not in the <strong>Pull Requests</strong> view of the
-GitHub extension</td>
-<td>That view lists pull requests, not branches.</td>
-<td>Use the <strong>Create Pull Request</strong> button or command (Step
-7), and check that the base is <code>develop</code>.</td>
+<td>Two versions of a file side by side</td>
+<td>A comparison (a “diff”). VS Code shows it whenever you click a
+changed file. It is not a conflict.</td>
+<td>Nothing: close it, or go on. A real conflict is announced as in the
+row above.</td>
 </tr>
 <tr>
 <td><code class="cmd">Git: Merge...</code> finishes and nothing seems to
 have happened</td>
 <td>You already had the newest changes. VS Code says nothing when there
 is nothing to merge.</td>
-<td>Look at the big blue button (Step 6). No number means you were up to
+<td>Look at the big button (Step 6). No number means you were up to
 date.</td>
 </tr>
 <tr>
@@ -460,16 +477,19 @@ Code.</td>
 </table>
 </div>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 3, 14 October 2026, Windows edition. The Git steps were
-checked in a browser version of VS Code on a test copy of the project,
-on Windows (commit, the branch list, the merge list, and installing the
-extension). The names of the commands (<code>Git: Fetch</code>,
-<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
-against VS Code 1.141. The <strong>Sync Changes</strong> question and
-the way out of a conflict were written from VS Code’s documentation and
-have not been tried on a real conflict. The install step for your
-system, the sign-in, and the pull-request part have not been tried on a
-student’s computer yet. Please tell the project lead where a step was
+<p>Guide version 4, 15 October 2026, Windows edition. Kitty Mickelson
+went through the steps on Ubuntu, where they already use Git through VS
+Code, on 15 October and found them accurate; version 4 follows their
+review. The Git steps were also checked in a browser version of VS Code
+on a test copy of the project, on Windows (commit, the branch list, the
+merge list, and installing the extension). The names of the commands
+(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
+<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
+<strong>Sync Changes</strong> question and the way out of a conflict
+were written from VS Code’s documentation and have not been tried on a
+real conflict. The install on a computer that does not have VS Code yet,
+the sign-in, and the pull-request part have not been tried on a
+student’s computer. Please tell the project lead where a step was
 unclear.</p>
 <h2 id="windows-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
@@ -493,7 +513,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — macOS edition,
-optional &middot; Version 3 · 14 October 2026</p>
+optional &middot; Version 4 · 15 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -583,6 +603,13 @@ trust the authors</strong>.</li>
 <p>Until you trust the folder, the <strong>Source Control</strong> tab
 (Step 4) stays empty and says that Git does not work in Restricted Mode.
 Nothing is broken: trust the folder and it fills in.</p>
+<p>If you closed the question without answering it, click
+<strong>Restricted Mode</strong> in the bottom-left status bar (it is
+easy to miss on a large screen), or press <code>Cmd+Shift+P</code>, type
+<code class="cmd">Workspaces: Manage Workspace Trust</code>, and press
+Enter. Then choose <strong>Trust</strong>. <a
+href="https://code.visualstudio.com/docs/editing/workspaces/workspace-trust">VS
+Code’s page on workspace trust</a> explains it.</p>
 </div>
 <h2 id="macos-step-3.-check-your-branch">Step 3. Check your branch</h2>
 <p>Look at the bottom-left corner of the VS Code window. It shows the
@@ -592,13 +619,18 @@ name of your branch.</p>
 This is the same check as <code>git branch --show-current</code> in the
 terminal guides.</p>
 </div>
+<p>If it shows <code>develop</code> or <code>master</code>, or a branch
+that is not yours, switch to yours first: click the name in the corner
+and pick <code>student-yourname</code> from the list. Changes you have
+not committed yet come with you to your branch.</p>
 <div class="careful">
-<p>If it shows <code>develop</code> or <code>master</code>, <strong>stop
-and ask your lead</strong>. Do not commit, and do not press any button
-in the Source Control tab. Your own work belongs on your own branch.</p>
+<p>If VS Code or Git shows a <strong>warning</strong> when you switch
+(for example that your changes would be overwritten), <strong>stop and
+ask your lead</strong>, and do not force it. Do not commit, and do not
+press <strong>Sync Changes</strong>, while the corner shows
+<code>develop</code> or <code>master</code>: your own work belongs on
+your own branch.</p>
 </div>
-<p>To change branch, click the name in the corner and pick yours from
-the list.</p>
 <h2 id="macos-step-4.-save-your-work-as-a-commit">Step 4. Save your work
 as a commit</h2>
 <ol type="1">
@@ -615,14 +647,18 @@ pictures). If it shows data files (a folder named <code>idx</code>, or
 your lead.</p>
 </div>
 <ol start="3" type="1">
-<li>Move the mouse over one of your files and click the
+<li><p>Move the mouse over one of your files and click the
 <strong>+</strong> (Stage Changes). The file moves to <strong>Staged
 Changes</strong>. Do this for each of your files. This is
-<code>git add</code>.</li>
-<li>Click the box that says <strong>Message</strong> and write what you
-changed, in a few words. This is the <code>-m "..."</code> of
-<code>git commit</code>.</li>
-<li>Click <strong>Commit</strong>.</li>
+<code>git add</code>.</p>
+<p><em>To stage several files at once:</em> click the first, then
+<strong>Shift</strong>-click the last to select everything in between
+(or <strong>Cmd</strong>-click to pick single files), and click the
+<strong>+</strong> on any selected file: it stages all of them.</p></li>
+<li><p>Click the box that says <strong>Message</strong> and write what
+you changed, in a few words. This is the <code>-m "..."</code> of
+<code>git commit</code>.</p></li>
+<li><p>Click <strong>Commit</strong>.</p></li>
 </ol>
 <div class="careful">
 <p>If VS Code says that there are no staged changes and asks whether to
@@ -632,8 +668,8 @@ how data files and other people’s files get in by mistake.</p>
 </div>
 <h2 id="macos-step-5.-send-your-commits-to-github">Step 5. Send your
 commits to GitHub</h2>
-<p>After a commit, the big blue button under the message box shows what
-is left to send.</p>
+<p>After a commit, the big button under the message box shows what is
+left to send.</p>
 <ul>
 <li>The first time on your branch, it reads <strong>Publish
 Branch</strong>. Click it. If VS Code asks which remote, choose
@@ -668,9 +704,8 @@ everything back as it was before you clicked. Then send your lead a
 screenshot.</p>
 </div>
 <div class="checkpoint">
-<p>The big blue button no longer shows an up-arrow number, and your
-branch appears on <a
-href="https://github.com/villano-lab/NSDF-Data/branches"
+<p>The big button no longer shows an up-arrow number, and your branch
+appears on <a href="https://github.com/villano-lab/NSDF-Data/branches"
 class="uri">https://github.com/villano-lab/NSDF-Data/branches</a>.</p>
 </div>
 <p>This step is <code>git push</code> (the first time,
@@ -684,10 +719,10 @@ in the newest project changes</h2>
 that step here instead of typing the two lines. Do all the other steps
 of guide 7 as written, because they update your environment.</p>
 <ol type="1">
-<li><strong>Sync first.</strong> Look at the big blue button in the
-Source Control tab. If it shows an up-arrow or a down-arrow number,
-click <strong>Sync Changes</strong> (Step 5) so that your branch and
-GitHub agree before you start. If it shows no number, go on.</li>
+<li><strong>Sync first.</strong> Look at the big button in the Source
+Control tab. If it shows an up-arrow or a down-arrow number, click
+<strong>Sync Changes</strong> (Step 5) so that your branch and GitHub
+agree before you start. If it shows no number, go on.</li>
 <li>Press <code>Cmd+Shift+P</code>. A box opens at the top of the
 window.</li>
 <li>Type <code class="cmd">Git: Fetch</code> and press Enter. This
@@ -698,25 +733,26 @@ class="cmd">Git: Merge...</code>, and press Enter.</li>
 <li>A list of branches opens. Choose <strong>origin/develop</strong>,
 under <em>remote branches</em>. This combines it with your branch
 (<code>git merge --no-edit origin/develop</code>).</li>
-<li>Look at the big blue button again. If it now shows an up-arrow
-number, click <strong>Sync Changes</strong> (Step 5) to send the result
-to GitHub.</li>
+<li>Look at the big button again. If it now shows an up-arrow number,
+click <strong>Sync Changes</strong> (Step 5) to send the result to
+GitHub.</li>
 </ol>
 <div class="checkpoint">
 <p>VS Code finishes without an error message, and the Source Control tab
-shows no conflict. Then look at the big blue button. If it shows an
-up-arrow number, the newest project changes are now on your branch and
-waiting to go to GitHub (point 6). If it shows no number, you already
-had the newest changes. VS Code says nothing when there is nothing to
-merge, whereas the terminal prints <code>Already up to date.</code>, so
-it can look as if the command did nothing. Nothing went wrong.</p>
+shows no conflict. Then look at the big button. If it shows an up-arrow
+number, the newest project changes are now on your branch and waiting to
+go to GitHub (point 6). If it shows no number, you already had the
+newest changes. VS Code says nothing when there is nothing to merge,
+whereas the terminal prints <code>Already up to date.</code>, so it can
+look as if the command did nothing. Nothing went wrong.</p>
 </div>
 <div class="careful">
-<p>If VS Code reports a <strong>conflict</strong>, lists files under
-<strong>Merge Changes</strong>, or opens a window with two versions of a
-file side by side, <strong>stop. Do not click anything in that window
-and do not edit anything.</strong> To put everything back as it was,
-press <code>Cmd+Shift+P</code>, type <code
+<p>If VS Code reports a <strong>conflict</strong>, or lists files under
+<strong>Merge Changes</strong> in the Source Control tab, <strong>stop.
+Do not edit anything.</strong> (Two versions of a file side by side is
+not a sign of a conflict: VS Code shows that comparison whenever you
+click a changed file.) To put everything back as it was, press
+<code>Cmd+Shift+P</code>, type <code
 class="cmd">Git: Abort Merge</code>, and press Enter. Then send your
 lead a screenshot or the message. This is the same rule as the terminal
 guides: stop, and send it to your lead.</p>
@@ -740,8 +776,8 @@ guide 4 instead.</p>
 <li>Press <code>Cmd+Shift+X</code> to open
 <strong>Extensions</strong>.</li>
 <li>Search for <code class="cmd">GitHub Pull Requests</code>. Install
-the one whose publisher is <strong>GitHub</strong>, with the blue check
-mark next to the name.</li>
+the one whose publisher is <strong>GitHub</strong>, with the check mark
+(verified publisher) next to the name.</li>
 <li>A GitHub icon appears in the bar on the left. Click it and choose
 <strong>Sign in</strong>. A web page opens in your browser: sign in to
 GitHub there. <strong>Never type your GitHub password into VS Code or
@@ -789,7 +825,7 @@ terminal</h2>
 </thead>
 <tbody>
 <tr>
-<td>The corner of the window</td>
+<td>The branch name in the corner of the window</td>
 <td><code>git branch --show-current</code></td>
 </tr>
 <tr>
@@ -805,16 +841,21 @@ terminal</h2>
 <td><code>git commit -m "..."</code></td>
 </tr>
 <tr>
-<td><strong>Publish Branch</strong> (first time), then <strong>Sync
-Changes</strong></td>
-<td><code>git push -u origin student-yourname</code>, then
-<code>git pull</code> and <code>git push</code></td>
+<td><strong>Publish Branch</strong> (first time)</td>
+<td><code>git push -u origin student-yourname</code></td>
 </tr>
 <tr>
-<td><code class="cmd">Git: Fetch</code> and <code
-class="cmd">Git: Merge...</code> with <code>origin/develop</code></td>
-<td><code>git fetch origin</code> and
-<code>git merge --no-edit origin/develop</code></td>
+<td><strong>Sync Changes</strong></td>
+<td><code>git pull</code>, then <code>git push</code></td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Fetch</code></td>
+<td><code>git fetch origin</code></td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Merge...</code> with
+<code>origin/develop</code></td>
+<td><code>git merge --no-edit origin/develop</code></td>
 </tr>
 <tr>
 <td>The <strong>Create Pull Request</strong> button of the GitHub
@@ -852,12 +893,14 @@ wrong</h2>
 <tr>
 <td>The Source Control tab is empty and mentions Restricted Mode</td>
 <td>VS Code has not been told to trust this folder.</td>
-<td>Step 2, point 3.</td>
+<td>Click <strong>Restricted Mode</strong> in the bottom-left status bar
+and choose <strong>Trust</strong> (Step 2).</td>
 </tr>
 <tr>
 <td>The corner shows <code>develop</code> or <code>master</code></td>
 <td>You are not on your own branch.</td>
-<td>Stop. Do not commit or push. Ask your lead.</td>
+<td>Switch to your own branch (Step 3). Stop and ask your lead only if
+Git warns when you switch.</td>
 </tr>
 <tr>
 <td>No <strong>Source Control</strong> icon, or “no repository
@@ -890,24 +933,18 @@ GitHub.</td>
 screenshot.</td>
 </tr>
 <tr>
-<td>A window with two versions of a file side by side</td>
-<td>A conflict.</td>
-<td>Stop. Click nothing. Run <code class="cmd">Git: Abort Merge</code>
-as in the row above, and send it to your lead.</td>
-</tr>
-<tr>
-<td>Your branch is not in the <strong>Pull Requests</strong> view of the
-GitHub extension</td>
-<td>That view lists pull requests, not branches.</td>
-<td>Use the <strong>Create Pull Request</strong> button or command (Step
-7), and check that the base is <code>develop</code>.</td>
+<td>Two versions of a file side by side</td>
+<td>A comparison (a “diff”). VS Code shows it whenever you click a
+changed file. It is not a conflict.</td>
+<td>Nothing: close it, or go on. A real conflict is announced as in the
+row above.</td>
 </tr>
 <tr>
 <td><code class="cmd">Git: Merge...</code> finishes and nothing seems to
 have happened</td>
 <td>You already had the newest changes. VS Code says nothing when there
 is nothing to merge.</td>
-<td>Look at the big blue button (Step 6). No number means you were up to
+<td>Look at the big button (Step 6). No number means you were up to
 date.</td>
 </tr>
 <tr>
@@ -922,16 +959,19 @@ Code.</td>
 </table>
 </div>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 3, 14 October 2026, macOS edition. The Git steps were
-checked in a browser version of VS Code on a test copy of the project,
-on Windows (commit, the branch list, the merge list, and installing the
-extension). The names of the commands (<code>Git: Fetch</code>,
-<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
-against VS Code 1.141. The <strong>Sync Changes</strong> question and
-the way out of a conflict were written from VS Code’s documentation and
-have not been tried on a real conflict. The install step for your
-system, the sign-in, and the pull-request part have not been tried on a
-student’s computer yet. Please tell the project lead where a step was
+<p>Guide version 4, 15 October 2026, macOS edition. Kitty Mickelson went
+through the steps on Ubuntu, where they already use Git through VS Code,
+on 15 October and found them accurate; version 4 follows their review.
+The Git steps were also checked in a browser version of VS Code on a
+test copy of the project, on Windows (commit, the branch list, the merge
+list, and installing the extension). The names of the commands
+(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
+<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
+<strong>Sync Changes</strong> question and the way out of a conflict
+were written from VS Code’s documentation and have not been tried on a
+real conflict. The install on a computer that does not have VS Code yet,
+the sign-in, and the pull-request part have not been tried on a
+student’s computer. Please tell the project lead where a step was
 unclear.</p>
 <h2 id="macos-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
@@ -955,7 +995,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — Linux edition,
-optional &middot; Version 3 · 14 October 2026</p>
+optional &middot; Version 4 · 15 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1021,15 +1061,21 @@ to Step 2.</p>
 <p>This guide uses Ubuntu or Debian commands. If you use another
 distribution, follow <a
 href="https://code.visualstudio.com/docs/setup/linux">Microsoft’s
-instructions for Linux</a> instead. Go to <a
-href="https://code.visualstudio.com/">code.visualstudio.com</a> and
-download the <code>.deb</code> file. In a terminal, go to the folder
-with the file (usually <code>cd ~/Downloads</code>) and run:</p>
-<pre><code>sudo apt install ./code_*.deb</code></pre>
+instructions for Linux</a> instead. On Ubuntu the simplest way needs no
+download. In a terminal, run:</p>
+<pre><code>sudo snap install --classic code</code></pre>
 <p>It asks for your password. Nothing appears while you type it; that is
-normal. If you have downloaded more than one such file, use the exact
-file name instead of the <code>*</code>. When it finishes, start
-<strong>Visual Studio Code</strong> from your applications menu.</p>
+normal. (The <code>--classic</code> is needed: without it the command
+fails.) When it finishes, start <strong>Visual Studio Code</strong> from
+your applications menu.</p>
+<p>If you cannot use <code>snap</code>, use the <code>.deb</code> file
+instead. Go to <a
+href="https://code.visualstudio.com/">code.visualstudio.com</a> and
+download it. In a terminal, go to the folder with the file (usually
+<code>cd ~/Downloads</code>) and run:</p>
+<pre><code>sudo apt install ./code_*.deb</code></pre>
+<p>If you have downloaded more than one such file, use the exact file
+name instead of the <code>*</code>.</p>
 <div class="checkpoint">
 <p>VS Code starts and shows a <strong>Welcome</strong> page.</p>
 </div>
@@ -1048,6 +1094,13 @@ trust the authors</strong>.</li>
 <p>Until you trust the folder, the <strong>Source Control</strong> tab
 (Step 4) stays empty and says that Git does not work in Restricted Mode.
 Nothing is broken: trust the folder and it fills in.</p>
+<p>If you closed the question without answering it, click
+<strong>Restricted Mode</strong> in the bottom-left status bar (it is
+easy to miss on a large screen), or press <code>Ctrl+Shift+P</code>,
+type <code class="cmd">Workspaces: Manage Workspace Trust</code>, and
+press Enter. Then choose <strong>Trust</strong>. <a
+href="https://code.visualstudio.com/docs/editing/workspaces/workspace-trust">VS
+Code’s page on workspace trust</a> explains it.</p>
 </div>
 <h2 id="linux-step-3.-check-your-branch">Step 3. Check your branch</h2>
 <p>Look at the bottom-left corner of the VS Code window. It shows the
@@ -1057,13 +1110,18 @@ name of your branch.</p>
 This is the same check as <code>git branch --show-current</code> in the
 terminal guides.</p>
 </div>
+<p>If it shows <code>develop</code> or <code>master</code>, or a branch
+that is not yours, switch to yours first: click the name in the corner
+and pick <code>student-yourname</code> from the list. Changes you have
+not committed yet come with you to your branch.</p>
 <div class="careful">
-<p>If it shows <code>develop</code> or <code>master</code>, <strong>stop
-and ask your lead</strong>. Do not commit, and do not press any button
-in the Source Control tab. Your own work belongs on your own branch.</p>
+<p>If VS Code or Git shows a <strong>warning</strong> when you switch
+(for example that your changes would be overwritten), <strong>stop and
+ask your lead</strong>, and do not force it. Do not commit, and do not
+press <strong>Sync Changes</strong>, while the corner shows
+<code>develop</code> or <code>master</code>: your own work belongs on
+your own branch.</p>
 </div>
-<p>To change branch, click the name in the corner and pick yours from
-the list.</p>
 <h2 id="linux-step-4.-save-your-work-as-a-commit">Step 4. Save your work
 as a commit</h2>
 <ol type="1">
@@ -1080,14 +1138,18 @@ pictures). If it shows data files (a folder named <code>idx</code>, or
 your lead.</p>
 </div>
 <ol start="3" type="1">
-<li>Move the mouse over one of your files and click the
+<li><p>Move the mouse over one of your files and click the
 <strong>+</strong> (Stage Changes). The file moves to <strong>Staged
 Changes</strong>. Do this for each of your files. This is
-<code>git add</code>.</li>
-<li>Click the box that says <strong>Message</strong> and write what you
-changed, in a few words. This is the <code>-m "..."</code> of
-<code>git commit</code>.</li>
-<li>Click <strong>Commit</strong>.</li>
+<code>git add</code>.</p>
+<p><em>To stage several files at once:</em> click the first, then
+<strong>Shift</strong>-click the last to select everything in between
+(or <strong>Ctrl</strong>-click to pick single files), and click the
+<strong>+</strong> on any selected file: it stages all of them.</p></li>
+<li><p>Click the box that says <strong>Message</strong> and write what
+you changed, in a few words. This is the <code>-m "..."</code> of
+<code>git commit</code>.</p></li>
+<li><p>Click <strong>Commit</strong>.</p></li>
 </ol>
 <div class="careful">
 <p>If VS Code says that there are no staged changes and asks whether to
@@ -1097,8 +1159,8 @@ how data files and other people’s files get in by mistake.</p>
 </div>
 <h2 id="linux-step-5.-send-your-commits-to-github">Step 5. Send your
 commits to GitHub</h2>
-<p>After a commit, the big blue button under the message box shows what
-is left to send.</p>
+<p>After a commit, the big button under the message box shows what is
+left to send.</p>
 <ul>
 <li>The first time on your branch, it reads <strong>Publish
 Branch</strong>. Click it. If VS Code asks which remote, choose
@@ -1133,9 +1195,8 @@ everything back as it was before you clicked. Then send your lead a
 screenshot.</p>
 </div>
 <div class="checkpoint">
-<p>The big blue button no longer shows an up-arrow number, and your
-branch appears on <a
-href="https://github.com/villano-lab/NSDF-Data/branches"
+<p>The big button no longer shows an up-arrow number, and your branch
+appears on <a href="https://github.com/villano-lab/NSDF-Data/branches"
 class="uri">https://github.com/villano-lab/NSDF-Data/branches</a>.</p>
 </div>
 <p>This step is <code>git push</code> (the first time,
@@ -1149,10 +1210,10 @@ in the newest project changes</h2>
 that step here instead of typing the two lines. Do all the other steps
 of guide 7 as written, because they update your environment.</p>
 <ol type="1">
-<li><strong>Sync first.</strong> Look at the big blue button in the
-Source Control tab. If it shows an up-arrow or a down-arrow number,
-click <strong>Sync Changes</strong> (Step 5) so that your branch and
-GitHub agree before you start. If it shows no number, go on.</li>
+<li><strong>Sync first.</strong> Look at the big button in the Source
+Control tab. If it shows an up-arrow or a down-arrow number, click
+<strong>Sync Changes</strong> (Step 5) so that your branch and GitHub
+agree before you start. If it shows no number, go on.</li>
 <li>Press <code>Ctrl+Shift+P</code>. A box opens at the top of the
 window.</li>
 <li>Type <code class="cmd">Git: Fetch</code> and press Enter. This
@@ -1163,25 +1224,26 @@ class="cmd">Git: Merge...</code>, and press Enter.</li>
 <li>A list of branches opens. Choose <strong>origin/develop</strong>,
 under <em>remote branches</em>. This combines it with your branch
 (<code>git merge --no-edit origin/develop</code>).</li>
-<li>Look at the big blue button again. If it now shows an up-arrow
-number, click <strong>Sync Changes</strong> (Step 5) to send the result
-to GitHub.</li>
+<li>Look at the big button again. If it now shows an up-arrow number,
+click <strong>Sync Changes</strong> (Step 5) to send the result to
+GitHub.</li>
 </ol>
 <div class="checkpoint">
 <p>VS Code finishes without an error message, and the Source Control tab
-shows no conflict. Then look at the big blue button. If it shows an
-up-arrow number, the newest project changes are now on your branch and
-waiting to go to GitHub (point 6). If it shows no number, you already
-had the newest changes. VS Code says nothing when there is nothing to
-merge, whereas the terminal prints <code>Already up to date.</code>, so
-it can look as if the command did nothing. Nothing went wrong.</p>
+shows no conflict. Then look at the big button. If it shows an up-arrow
+number, the newest project changes are now on your branch and waiting to
+go to GitHub (point 6). If it shows no number, you already had the
+newest changes. VS Code says nothing when there is nothing to merge,
+whereas the terminal prints <code>Already up to date.</code>, so it can
+look as if the command did nothing. Nothing went wrong.</p>
 </div>
 <div class="careful">
-<p>If VS Code reports a <strong>conflict</strong>, lists files under
-<strong>Merge Changes</strong>, or opens a window with two versions of a
-file side by side, <strong>stop. Do not click anything in that window
-and do not edit anything.</strong> To put everything back as it was,
-press <code>Ctrl+Shift+P</code>, type <code
+<p>If VS Code reports a <strong>conflict</strong>, or lists files under
+<strong>Merge Changes</strong> in the Source Control tab, <strong>stop.
+Do not edit anything.</strong> (Two versions of a file side by side is
+not a sign of a conflict: VS Code shows that comparison whenever you
+click a changed file.) To put everything back as it was, press
+<code>Ctrl+Shift+P</code>, type <code
 class="cmd">Git: Abort Merge</code>, and press Enter. Then send your
 lead a screenshot or the message. This is the same rule as the terminal
 guides: stop, and send it to your lead.</p>
@@ -1205,8 +1267,8 @@ guide 4 instead.</p>
 <li>Press <code>Ctrl+Shift+X</code> to open
 <strong>Extensions</strong>.</li>
 <li>Search for <code class="cmd">GitHub Pull Requests</code>. Install
-the one whose publisher is <strong>GitHub</strong>, with the blue check
-mark next to the name.</li>
+the one whose publisher is <strong>GitHub</strong>, with the check mark
+(verified publisher) next to the name.</li>
 <li>A GitHub icon appears in the bar on the left. Click it and choose
 <strong>Sign in</strong>. A web page opens in your browser: sign in to
 GitHub there. <strong>Never type your GitHub password into VS Code or
@@ -1254,7 +1316,7 @@ terminal</h2>
 </thead>
 <tbody>
 <tr>
-<td>The corner of the window</td>
+<td>The branch name in the corner of the window</td>
 <td><code>git branch --show-current</code></td>
 </tr>
 <tr>
@@ -1270,16 +1332,21 @@ terminal</h2>
 <td><code>git commit -m "..."</code></td>
 </tr>
 <tr>
-<td><strong>Publish Branch</strong> (first time), then <strong>Sync
-Changes</strong></td>
-<td><code>git push -u origin student-yourname</code>, then
-<code>git pull</code> and <code>git push</code></td>
+<td><strong>Publish Branch</strong> (first time)</td>
+<td><code>git push -u origin student-yourname</code></td>
 </tr>
 <tr>
-<td><code class="cmd">Git: Fetch</code> and <code
-class="cmd">Git: Merge...</code> with <code>origin/develop</code></td>
-<td><code>git fetch origin</code> and
-<code>git merge --no-edit origin/develop</code></td>
+<td><strong>Sync Changes</strong></td>
+<td><code>git pull</code>, then <code>git push</code></td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Fetch</code></td>
+<td><code>git fetch origin</code></td>
+</tr>
+<tr>
+<td><code class="cmd">Git: Merge...</code> with
+<code>origin/develop</code></td>
+<td><code>git merge --no-edit origin/develop</code></td>
 </tr>
 <tr>
 <td>The <strong>Create Pull Request</strong> button of the GitHub
@@ -1317,12 +1384,14 @@ wrong</h2>
 <tr>
 <td>The Source Control tab is empty and mentions Restricted Mode</td>
 <td>VS Code has not been told to trust this folder.</td>
-<td>Step 2, point 3.</td>
+<td>Click <strong>Restricted Mode</strong> in the bottom-left status bar
+and choose <strong>Trust</strong> (Step 2).</td>
 </tr>
 <tr>
 <td>The corner shows <code>develop</code> or <code>master</code></td>
 <td>You are not on your own branch.</td>
-<td>Stop. Do not commit or push. Ask your lead.</td>
+<td>Switch to your own branch (Step 3). Stop and ask your lead only if
+Git warns when you switch.</td>
 </tr>
 <tr>
 <td>No <strong>Source Control</strong> icon, or “no repository
@@ -1355,24 +1424,18 @@ GitHub.</td>
 screenshot.</td>
 </tr>
 <tr>
-<td>A window with two versions of a file side by side</td>
-<td>A conflict.</td>
-<td>Stop. Click nothing. Run <code class="cmd">Git: Abort Merge</code>
-as in the row above, and send it to your lead.</td>
-</tr>
-<tr>
-<td>Your branch is not in the <strong>Pull Requests</strong> view of the
-GitHub extension</td>
-<td>That view lists pull requests, not branches.</td>
-<td>Use the <strong>Create Pull Request</strong> button or command (Step
-7), and check that the base is <code>develop</code>.</td>
+<td>Two versions of a file side by side</td>
+<td>A comparison (a “diff”). VS Code shows it whenever you click a
+changed file. It is not a conflict.</td>
+<td>Nothing: close it, or go on. A real conflict is announced as in the
+row above.</td>
 </tr>
 <tr>
 <td><code class="cmd">Git: Merge...</code> finishes and nothing seems to
 have happened</td>
 <td>You already had the newest changes. VS Code says nothing when there
 is nothing to merge.</td>
-<td>Look at the big blue button (Step 6). No number means you were up to
+<td>Look at the big button (Step 6). No number means you were up to
 date.</td>
 </tr>
 <tr>
@@ -1387,16 +1450,19 @@ Code.</td>
 </table>
 </div>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 3, 14 October 2026, Linux edition. The Git steps were
-checked in a browser version of VS Code on a test copy of the project,
-on Windows (commit, the branch list, the merge list, and installing the
-extension). The names of the commands (<code>Git: Fetch</code>,
-<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
-against VS Code 1.141. The <strong>Sync Changes</strong> question and
-the way out of a conflict were written from VS Code’s documentation and
-have not been tried on a real conflict. The install step for your
-system, the sign-in, and the pull-request part have not been tried on a
-student’s computer yet. Please tell the project lead where a step was
+<p>Guide version 4, 15 October 2026, Linux edition. Kitty Mickelson went
+through the steps on Ubuntu, where they already use Git through VS Code,
+on 15 October and found them accurate; version 4 follows their review.
+The Git steps were also checked in a browser version of VS Code on a
+test copy of the project, on Windows (commit, the branch list, the merge
+list, and installing the extension). The names of the commands
+(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
+<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
+<strong>Sync Changes</strong> question and the way out of a conflict
+were written from VS Code’s documentation and have not been tried on a
+real conflict. The install on a computer that does not have VS Code yet,
+the sign-in, and the pull-request part have not been tried on a
+student’s computer. Please tell the project lead where a step was
 unclear.</p>
 <h2 id="linux-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a

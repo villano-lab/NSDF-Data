@@ -151,3 +151,12 @@
 @media print {
   .guide .os-switch, .guide .os-prompt { display: none !important; }
 }
+
+/* Flower motif on the callout boxes: a small, muted corner cluster (see style.css) */
+.guide div.tip, .guide div.careful, .guide div.checkpoint, .guide div.navigate, .guide div.maintenance { position: relative; }
+.guide div.tip::after, .guide div.careful::after, .guide div.checkpoint::after, .guide div.navigate::after, .guide div.maintenance::after {
+  content: ""; position: absolute; top: 6px; right: 8px; width: 64px; height: 28px; pointer-events: none;
+  background: var(--fl-corner) no-repeat right top / contain; opacity: calc(var(--fl-op) * 0.6);
+}
+@media (max-width: 640px) { .guide div.tip::after, .guide div.careful::after, .guide div.checkpoint::after, .guide div.navigate::after, .guide div.maintenance::after { display: none; } }
+@media print { .guide div.tip::after, .guide div.careful::after, .guide div.checkpoint::after, .guide div.navigate::after, .guide div.maintenance::after { display: none !important; } }

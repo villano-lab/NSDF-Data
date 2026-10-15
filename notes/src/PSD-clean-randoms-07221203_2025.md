@@ -22,7 +22,7 @@ We are using the file 07221203_2025_F0001, which is series 07221203_2025, Dump 1
 
 It may also be useful to have a diagram of the detector and which channels are working during the R76 run period at UMN. 
 
-![Two sides of detector S104, the 7 working channels are displayed on the top and bottom (Side 1 & 2).](img\channel-status-07221203_2025_F0001.png)
+![Two sides of detector S104, the 7 working channels are displayed on the top and bottom (Side 1 & 2).](img/channel-status-07221203_2025_F0001.png)
 
 ## The question
 

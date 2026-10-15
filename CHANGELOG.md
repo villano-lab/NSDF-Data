@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-14
+
+The student guides get easier to use and to find. *Setting up your computer*, *Your first analysis* and *Updating your setup* (guides 1, 2 and 7) are now one page each with a Windows / macOS / Linux switch (the old addresses forward to the new pages, and the PDFs stay one per computer). A new optional guide, *Git in VS Code* (guide 9), does the Git steps with buttons instead of typed commands, also on one page with the switch. The front page lists all the student guides in one table, and the front page and the guide pages get a muted flower motif (not the notes, not the PDFs). Note 8 is published. Nothing in the environment changed in this release (the package list and the Python version are the same as in 0.7.0), so there is nothing for students to reinstall: bring in the newest project changes as usual (guide 7, Step 2, or guide 9, Step 6).
+
 ### Added
 
 - **Student guide 9, *Git in VS Code* (optional).** One page with a Windows / macOS / Linux switch (and a PDF for each), like guides 1, 2 and 7. The same Git steps as the terminal guides, done with buttons in VS Code: install it for your system, open and trust the folder, check your branch, stage and commit, publish and sync, bring in `origin/develop` (`Git: Fetch` and `Git: Merge...`), and open a pull request (the GitHub web page route from guide 4, or, as untried options, GitHub's pull-request extension, with a picture of its small Create Pull Request button, or `gh pr create`). It covers what to do when **Sync Changes** shows a down-arrow number as well as an up-arrow one (newer commits on the branch, usually your lead's merge of `develop`; click OK on the pull-and-push question), sync before and after bringing in `develop`, and what to do on a conflict (stop, run `Git: Abort Merge`, send a screenshot); it also says that `Git: Merge...` is silent when there is nothing to merge. The terminal guides stay the main version. *Git in five minutes* (guide 8, now version 2) has a short pointer to it, and the front-page table lists it.
@@ -158,7 +162,10 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.5.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.8.0...develop
+[0.8.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.2.0...v0.3.0

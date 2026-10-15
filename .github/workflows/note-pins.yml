@@ -1,0 +1,75 @@
+name: Note pins
+
+# Every note links to files at an exact commit. This keeps those links honest (issue 51):
+#  - check: every pinned link must resolve (the commit and the file exist). This is the check that can fail.
+#  - report: which pinned files have changed, moved or been removed since. Shown in the run's summary; it never fails.
+#  - a warning when docs/notes/pin-moves.json (what the "latest" links use for moved files) is out of date.
+#  - every Monday: the report is also posted as a comment on a standing issue (assigned to the maintainer, so GitHub
+#    sends a notification), but only when the list of files that need a look has changed since the last comment.
+# It runs on every pull request and push, because renaming a file that a note links to is done in a pull request that
+# does not touch the notes.
+
+on:
+  pull_request:
+  push:
+    branches: [develop, master]
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  pins:
+    name: Pinned links in the notes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Every pinned link resolves
+        run: python tools/check_note_pins.py check
+      - name: Report (which pinned files changed since) and the moves file
+        if: always()
+        run: python tools/check_note_pins.py report --check-moves --summary "$GITHUB_STEP_SUMMARY"
+
+  weekly-issue:
+    name: Post the report on the standing issue
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Comment on the standing issue when the list has changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          TITLE="Pinned links in the notes: report"
+          python tools/check_note_pins.py report > report.md
+          # the part of the report that matters: which pinned files need a look
+          HASH=$(sed -n '/^## Needs a look/,$p' report.md | sha256sum | cut -c1-12)
+          ISSUE=$(gh issue list --state open --limit 100 --json number,title \
+                    --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n 1)
+          if [ -z "$ISSUE" ]; then
+            ISSUE=$(gh issue create --title "$TITLE" --body-file .github/note-pins-issue.md \
+                      --assignee "${{ github.repository_owner == 'villano-lab' && 'villaa' || github.repository_owner }}" | grep -o '[0-9]*$')
+            echo "created issue $ISSUE"
+          fi
+          LAST=$(gh issue view "$ISSUE" --json comments \
+                   --jq '[.comments[] | select(.body | contains("<!-- note-pins:"))] | last | .body // ""')
+          if printf '%s' "$LAST" | grep -q "note-pins:$HASH"; then
+            echo "The list is the same as in the last comment: nothing to post."
+            exit 0
+          fi
+          { echo "<!-- note-pins:$HASH -->"; cat report.md; } > comment.md
+          gh issue comment "$ISSUE" --body-file comment.md
+          echo "posted on issue $ISSUE"

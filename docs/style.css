@@ -268,3 +268,7 @@ body.home h2:nth-of-type(3n)::before, .guide h2:nth-of-type(3n)::before { backgr
   header.site::after, footer::before, h2::before, .maintenance-box::after { display: none !important; }
   body.home header.site, .guide header.site { padding-bottom: 12px; }
 }
+
+/* The small "latest" link that notes-pins.js adds after a link pinned to a commit */
+.pin-note { font-size: 0.85em; color: var(--muted); margin-left: 0.25em; white-space: nowrap; }
+.pin-note a { font-weight: 600; }

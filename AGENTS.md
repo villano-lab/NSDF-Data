@@ -19,6 +19,7 @@ The maintainer is Anthony Villano (@villaa).
 1. `git status` and `git log --oneline -3`. Pull first. Confirm the tree is clean and in sync, and that you are on a `feature/*` branch made from an up-to-date `develop`.
 2. Run the tests: `cd python && python -m pytest -q` (62 or more should pass).
 3. Run `git status` again before any `checkout`, `reset` or `clean`. Two notebooks (`07221203_2025_dump1_bstd_time.ipynb`, `good_pulses_overlay.ipynb`) often show as modified after re-execution; check whether the source really changed before committing.
+4. **One working copy per session.** More than one session (or person) can be working on this project at the same time, often in the same folder. Two of them editing one working copy overwrite each other: a rebuild such as `build.sh` or `gen.py` rewrites many files, `git add -A` commits the other's half-finished edits, and a `git switch` changes the files under them. So: if `git status` shows changes you did not make, or another session may be using this folder, stop and do not touch them. Do your work in your own Git worktree instead, `git worktree add ../NSDF-Data-<task> -b feature/<name> origin/develop` (it is a second working copy of the same repository, on its own branch), and remove it when you are done (`git worktree remove ../NSDF-Data-<task>`). Commit only the files you changed.
 
 ## Git rules
 

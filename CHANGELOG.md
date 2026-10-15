@@ -10,6 +10,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Changed
 
+- **Guide 9, *Git in VS Code*, version 4 (from Kitty Mickelson's review on Ubuntu, issue 82).** Linux install: `sudo snap install --classic code` first, the `.deb` file second. How to trust the folder when the popup was dismissed (the *Restricted Mode* item in the status bar). Switching to your own branch comes first when the corner shows `develop` or `master`, and you stop and ask only if Git warns when you switch. A tip for staging several files at once (Shift-click or Ctrl-click, then **+**). No colors in the wording (the buttons change color with the theme). Two versions of a file side by side is no longer called a conflict (it is the normal comparison for any changed file). The table of equivalents has one row per button or command, and the row about the Pull Requests view is gone.
 - **Note 3 (noise PSD from selected traces) is now marked Superseded (reference/link) by Note 6.** The front-page table says so, and the note page links to Note 6. The note stays up for reference.
 
 ## [0.8.0] - 2026-10-14

@@ -1,7 +1,7 @@
 ---
 title: "Git in five minutes"
 subtitle: "NSDF-Data student guide 8 — for every computer"
-date: "Version 1 · 13 October 2026"
+date: "Version 2 · 14 October 2026"
 ---
 
 ::: tip
@@ -69,6 +69,10 @@ Before every commit, type `git status` and read the list. It should show only yo
 
 The project keeps changing. To bring the newest shared changes into your branch, follow *Updating your setup* (guide 7, Step 2). It uses two lines, `git fetch origin` and `git merge --no-edit origin/develop`, and tells you what to do if Git reports a `CONFLICT`: stop, and send the message to your lead.
 
+## Prefer buttons to typing?
+
+Everything above can also be done with buttons in VS Code. Guide 9 (*Git in VS Code*) shows how. It is optional: the terminal version stays the main one.
+
 ## When something looks wrong
 
 ::: careful
@@ -102,7 +106,7 @@ These are outside websites, which you can read at your own pace. None is require
 
 ## Session Info
 
-Guide version 1, 13 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 2, 14 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

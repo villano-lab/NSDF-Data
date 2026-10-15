@@ -110,6 +110,7 @@ def page(header, slug, body_html):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Note {html.escape(header['id'])}: {html.escape(header['title'])}</title>
 <link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
 </head>
 <body>
 <div class="wrap note">

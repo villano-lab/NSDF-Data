@@ -124,3 +124,39 @@
   color: var(--careful-border); text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.9rem;
 }
 .guide div.maintenance > :last-child { margin-bottom: 0; }
+
+/* One page per guide, with a version for each computer (Windows, macOS, Linux). docs/guide.js shows
+   the version for the visitor's system; without JavaScript every version is shown, one after the other. */
+.guide .os-switch { display: none; }
+.js .guide .os-switch {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0 16px; padding: 8px 12px;
+  border: 1px solid var(--tip-border); border-radius: 6px; background: var(--tip-bg);
+}
+.guide .os-switch-label { font-weight: 700; }
+.guide .os-switch button {
+  font: inherit; padding: 4px 14px; border: 1px solid var(--tip-border); border-radius: 6px;
+  background: transparent; color: inherit; cursor: pointer;
+}
+.guide .os-switch button:hover { background: var(--tip-border); color: var(--tip-bg); }
+.guide .os-switch button[aria-pressed="true"] { background: var(--tip-border); color: var(--tip-bg); font-weight: 700; }
+.guide .os-switch .os-pdf { margin-left: auto; }
+.guide .os-name { margin: 22px 0 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--tip-border); }
+.guide .os-variant + .os-variant { border-top: 3px solid var(--tip-border); margin-top: 28px; }
+.js .guide .os-name { display: none; }
+.js .guide .os-variant { display: none; }
+.js .guide .os-variant.active { display: block; }
+.js .guide .os-variant + .os-variant { border-top: 0; margin-top: 0; }
+.guide .os-prompt { padding: 10px 14px; border: 1px solid var(--nav-border); border-radius: 6px; background: var(--nav-bg); }
+.guide .os-prompt[hidden], .guide .os-pdf[hidden] { display: none; }
+@media print {
+  .guide .os-switch, .guide .os-prompt { display: none !important; }
+}
+
+/* Flower motif on the callout boxes: a small, muted corner cluster (see style.css) */
+.guide div.tip, .guide div.careful, .guide div.checkpoint, .guide div.navigate, .guide div.maintenance { position: relative; }
+.guide div.tip::after, .guide div.careful::after, .guide div.checkpoint::after, .guide div.navigate::after, .guide div.maintenance::after {
+  content: ""; position: absolute; top: 6px; right: 8px; width: 64px; height: 28px; pointer-events: none;
+  background: var(--fl-corner) no-repeat right top / contain; opacity: calc(var(--fl-op) * 0.6);
+}
+@media (max-width: 640px) { .guide div.tip::after, .guide div.careful::after, .guide div.checkpoint::after, .guide div.navigate::after, .guide div.maintenance::after { display: none; } }
+@media print { .guide div.tip::after, .guide div.careful::after, .guide div.checkpoint::after, .guide div.navigate::after, .guide div.maintenance::after { display: none !important; } }

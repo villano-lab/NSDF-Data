@@ -1,0 +1,15 @@
+<section class="os-variant" id="os-$os$" data-os="$os$">
+<p class="os-name">$osname$ edition</p>
+
+<h1>$if(html-title)$$html-title$$else$$title$$endif$</h1>
+<p class="meta">$if(html-subtitle)$$html-subtitle$$else$$if(subtitle)$$subtitle$$endif$$if(date)$ &middot; $date$$endif$$endif$</p>
+
+$if(toc)$
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+$table-of-contents$
+</nav>
+$endif$
+
+$body$
+</section>

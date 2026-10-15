@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 19 · 13 October 2026"
+date: "Version 20 · 14 October 2026"
 ---
 
 ::: tip
@@ -266,7 +266,7 @@ The terminal shows `Switched to a new branch 'student-yourname'`.
 **Next:** *First analysis* (the guide for Windows).
 
 ::: maintenance
-**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup (Windows)](https://villano-lab.github.io/NSDF-Data/students/update-windows.html).** It takes about 10 minutes.
+**Your setup is not a one-time job.** The project keeps changing: new releases bring new code and guides, and sometimes a new version of Python or of the packages. **Every time the project lead announces a new release, and whenever the environment check warns you, follow [Updating your setup](https://villano-lab.github.io/NSDF-Data/students/update.html).** It takes about 10 minutes.
 :::
 
 ## If something goes wrong
@@ -283,7 +283,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 19, 13 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 20, 14 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

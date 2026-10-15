@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@TITLE@</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script>document.documentElement.className += ' js';</script>
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a></nav></header>
+
+<div class="os-switch" role="group" aria-label="Choose your computer">
+<span class="os-switch-label">Your computer:</span>
+<button type="button" data-os="windows" aria-pressed="false">Windows</button>
+<button type="button" data-os="macos" aria-pressed="false">macOS</button>
+<button type="button" data-os="linux" aria-pressed="false">Linux</button>
+<a class="pdf-link os-pdf" href="@BASE@-windows.pdf" data-base="@BASE@">PDF for Windows (download or print)</a>
+</div>
+<p class="os-prompt" hidden>Choose your computer above. This guide has one version for each, and the page remembers your choice.</p>
+
+@VARIANTS@
+
+<footer>This guide is also available as a PDF for each computer, for printing or offline use: <a href="@BASE@-windows.pdf">Windows</a> &middot; <a href="@BASE@-macos.pdf">macOS</a> &middot; <a href="@BASE@-linux.pdf">Linux</a>. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

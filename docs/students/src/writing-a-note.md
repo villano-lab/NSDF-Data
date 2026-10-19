@@ -53,6 +53,19 @@ Most notes open the same way, so a reader knows where to look. Each section you 
 
 Use one `##` heading for each part, and leave out any part that has nothing to say.
 
+**Notes come in different kinds, and the kind shapes the headings.** A few kinds, and what each one tends to need after the opening:
+
+| If your note is... | After the opening it might have... | An example here |
+|---|---|---|
+| **A result**: a question and its answer | what you did; the figures; what it means and does not show; next steps | [Note 7](https://villano-lab.github.io/NSDF-Data/notes/note-07-psd-peaks-204khz.html) |
+| **A check**: does this method or cut work? | what was checked and how; the outcome; where it might fail on other data; what to try | [Note 4](https://villano-lab.github.io/NSDF-Data/notes/note-04-pulse-library.html) |
+| **An explanation**: how something is built or used | the idea; how it is organized; a worked example; what is still unfinished | [Note 1a](https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html) |
+| **An investigation** of where something is, or why | the method; what was found; what was not checked | [Note 8](https://villano-lab.github.io/NSDF-Data/notes/note-08-umn-k100-data-location.html) |
+| **A log** of problems and fixes | one short entry per problem: what happened, and what fixed it | none yet |
+| **A brainstorm**: ideas, without results | the ideas, clearly marked as not results (give it the status *Brainstorm*) | none yet |
+
+A note can be two kinds at once, and a title does not have to be a question when the note is a check or an explanation. Choose the kind that is closest, and let the headings follow it.
+
 **Examples from the site.** The notes already there do not share one list of headings. These three go like this:
 
 | Note | What it is about | Its headings |

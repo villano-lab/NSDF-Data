@@ -11,6 +11,10 @@ student notes (notes/src/*.md). It needs `git` and the repository's history (in 
         is not pinned to a commit (for example .../blob/master/...) is also an error. Exit status 1 if anything is wrong.
         This is the CI check.
 
+    python tools/check_note_pins.py signature [--head REF]
+        A short fingerprint of the files that need a look, without the notes' status labels. The weekly post on the
+        standing issue is made only when it changes.
+
     python tools/check_note_pins.py report [--head REF] [--summary FILE] [--write-moves] [--check-moves]
         The report for the maintainer: for each pinned link, whether the file is unchanged since the pin, changed
         (how many commits, and when), moved or removed. --summary appends the report to FILE (use
@@ -21,6 +25,7 @@ The pages show a small "latest" link after every pinned link (docs/notes-pins.js
 Only the Python standard library is used.
 """
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -216,6 +221,14 @@ def build_report(root, head):
     return rows, "\n".join(lines) + "\n"
 
 
+def signature(rows):
+    """A short fingerprint of what needs a look: which pinned links are not current, and why.
+    It leaves out the notes' own status labels, so marking a note Superseded or Complete does not look like
+    a change in the files. The weekly report is posted on the standing issue only when this changes."""
+    parts = sorted(f"{r['note']}|{r['ref']}|{r['path']}|{r['state']}|{r['detail']}" for r in rows if r["state"] != "current")
+    return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()[:12]
+
+
 def moves_json(rows):
     moves = {}
     for r in rows:
@@ -229,6 +242,8 @@ def main(argv=None):
     ap.add_argument("--root", default=str(ROOT), help="the repository to look at (default: this one)")
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("check", help="every pinned link must resolve (the CI check)")
+    sg = sub.add_parser("signature", help="print a short fingerprint of the files that need a look (used by the weekly post)")
+    sg.add_argument("--head", default="HEAD", help="compare with this commit or branch (default HEAD)")
     rp = sub.add_parser("report", help="which pinned files have changed since, for the maintainer")
     rp.add_argument("--head", default="HEAD", help="compare with this commit or branch (default HEAD)")
     rp.add_argument("--summary", help="append the report to this file (GITHUB_STEP_SUMMARY in CI)")
@@ -249,6 +264,11 @@ def main(argv=None):
             print("\n".join(problems))
             return 1
         print(f"All {n} pinned links resolve.")
+        return 0
+
+    if a.cmd == "signature":
+        rows, _ = build_report(root, a.head)
+        print(signature(rows))
         return 0
 
     rows, text = build_report(root, a.head)

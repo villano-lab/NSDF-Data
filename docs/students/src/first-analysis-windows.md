@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 20 · 14 October 2026"
+date: "Version 21 · 19 October 2026"
 ---
 
 ::: tip
@@ -90,7 +90,7 @@ Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit in
 nsdf-cli config --output-global %USERPROFILE%\idx
 ```
 
-Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`.nexus-dm/config.json`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
+Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`.nexus-dm\config.json`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
 :::
 
 ::: careful
@@ -103,7 +103,7 @@ If the message says the folder already exists, the data may already be there. To
 
 ## Step 3. Open Jupyter in the right folder
 
-Every student works in a folder of their own, inside `data_analysis/R76/student` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
+Every student works in a folder of their own, inside `data_analysis\R76\student` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
 
 ```
 conda activate darkmatter_cli_env
@@ -247,7 +247,8 @@ Commit only your notebook. Check the list from `git status` before committing. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis/R76/student` (Step 3). |
+| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis\R76\student` (Step 3). |
+| `fatal: pathspec '...' did not match any files` when you run `git add` | You are not in the project folder, or the file name is not the one you saved. | Open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**), run `cd %USERPROFILE%\Research\NSDF-Data`{.cmd}, then `git status`{.cmd}, and copy the notebook's path exactly as Git prints it into `git add`. Use the Miniforge Prompt, not PowerShell: PowerShell does not understand `%USERPROFILE%`. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |
 | The kernel is not `darkmatter_cli_env` | Click the kernel name at the top right and choose **darkmatter_cli_env**. |
@@ -301,7 +302,7 @@ REPO = next((p for p in [here, *here.parents]
              if (p / "python" / "pulse_io.py").exists()), None)
 ```
 
-Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
+Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python\pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
 :::
 
 ::: explain
@@ -445,7 +446,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 20, 14 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 21, 19 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

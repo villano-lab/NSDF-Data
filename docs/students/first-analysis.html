@@ -28,7 +28,7 @@
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Windows
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 21 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -251,7 +251,7 @@ go.</strong> Type this one time, and every later download goes to your
 <code>idx</code> folder, whichever folder you are in:</p>
 <pre><code>nsdf-cli config --output-global %USERPROFILE%\idx</code></pre>
 <p>Type <code>nsdf-cli config</code> to see the setting. It is saved in
-a small file in your home folder (<code>.nexus-dm/config.json</code>),
+a small file in your home folder (<code>.nexus-dm\config.json</code>),
 so you do not repeat it. Two more <code>nsdf-cli</code> options you may
 see: <code>nsdf-cli download SERIES --all</code> downloads
 <strong>every</strong> dump of a series (the series in this guide has 30
@@ -275,7 +275,7 @@ folder yet. Ask the project lead before you delete anything.</p>
 <h2 id="windows-step-3.-open-jupyter-in-the-right-folder">Step 3. Open
 Jupyter in the right folder</h2>
 <p>Every student works in a folder of their own, inside
-<code>data_analysis/R76/student</code> in the project. Use the same name
+<code>data_analysis\R76\student</code> in the project. Use the same name
 as in your branch name (<code>student-yourname</code>), without spaces,
 in place of <code>yourname</code>. In the terminal, type these
 lines:</p>
@@ -477,8 +477,14 @@ Kernel</strong>).</td>
 <tr>
 <td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
 <td>Jupyter was started from the wrong folder. Close it and start it
-again from your own folder in <code>data_analysis/R76/student</code>
+again from your own folder in <code>data_analysis\R76\student</code>
 (Step 3).</td>
+</tr>
+<tr>
+<td><code>fatal: pathspec '...' did not match any files</code> when you
+run <code>git add</code></td>
+<td>You are not in the project folder, or the file name is not the one
+you saved.</td>
 </tr>
 <tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
@@ -560,7 +566,7 @@ kind of computer.</p>
              if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)</code></pre>
 <p>Look at <code>here</code> and then at each folder above it, one after
 another, and take the first one that contains the file
-<code>python/pulse_io.py</code>. That folder is the whole NSDF-Data
+<code>python\pulse_io.py</code>. That folder is the whole NSDF-Data
 project. If there is none, <code>REPO</code> is <code>None</code>.</p>
 </div>
 <div class="explain">
@@ -678,7 +684,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, Windows edition. Written for
+<p>Guide version 21, 19 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="windows-key-links">Key links</h2>
 <ul>
@@ -699,7 +705,7 @@ class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 21 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1134,6 +1140,12 @@ again from your own folder in <code>data_analysis/R76/student</code>
 (Step 3).</td>
 </tr>
 <tr>
+<td><code>fatal: pathspec '...' did not match any files</code> when you
+run <code>git add</code></td>
+<td>You are not in the project folder, or the file name is not the one
+you saved.</td>
+</tr>
+<tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
 <td>The download did not finish, or it went somewhere else. Check the
 folder in Step 2.</td>
@@ -1331,7 +1343,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, macOS edition. Written for
+<p>Guide version 21, 19 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="macos-key-links">Key links</h2>
 <ul>
@@ -1352,7 +1364,7 @@ class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Linux
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 21 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1787,6 +1799,12 @@ again from your own folder in <code>data_analysis/R76/student</code>
 (Step 3).</td>
 </tr>
 <tr>
+<td><code>fatal: pathspec '...' did not match any files</code> when you
+run <code>git add</code></td>
+<td>You are not in the project folder, or the file name is not the one
+you saved.</td>
+</tr>
+<tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
 <td>The download did not finish, or it went somewhere else. Check the
 folder in Step 2.</td>
@@ -1984,7 +2002,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, Linux edition. Written for
+<p>Guide version 21, 19 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="linux-key-links">Key links</h2>
 <ul>

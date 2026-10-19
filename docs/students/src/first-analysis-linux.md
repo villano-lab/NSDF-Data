@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Linux edition"
-date: "Version 20 · 14 October 2026"
+date: "Version 21 · 19 October 2026"
 ---
 
 ::: tip
@@ -239,6 +239,7 @@ Commit only your notebook. Check the list from `git status` before committing. I
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
 | `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis/R76/student` (Step 3). |
+| `fatal: pathspec '...' did not match any files` when you run `git add` | You are not in the project folder, or the file name is not the one you saved. | Open a terminal (Step 1 of the setup guide), run `cd ~/Research/NSDF-Data`{.cmd}, then `git status`{.cmd}, and copy the notebook's path exactly as Git prints it into `git add`. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |
 | The kernel is not `darkmatter_cli_env` | Click the kernel name at the top right and choose **darkmatter_cli_env**. |
@@ -436,7 +437,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 20, 14 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 21, 19 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

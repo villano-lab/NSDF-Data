@@ -29,6 +29,10 @@ OS = {
   NEWLINE_NOTE="",
   CRLF_NOTE="::: tip\n**You may see a warning about LF and CRLF.** On Windows, `git add` can print a line like this one:\n\n`warning: in the working copy of 'data_analysis/R76/student/yourname/`\\\n`first-analysis-yourname.ipynb', LF will be replaced by CRLF the next time Git touches it`\n\nThis is harmless, and your file was still added, so carry on with `git commit`. Every line of a text file ends with an invisible marker. Windows uses two characters for it (CRLF), macOS and Linux use one (LF). Git for Windows keeps LF in the repository and gives you CRLF in your own copy, so it is telling you that it will convert this file the next time it writes it.\n:::\n\n",
   CAREFUL_EXTRA="Windows may show a blue warning box when you run an installer (\"Windows protected your PC\"). Click **More info**, then **Run anyway**, only if you downloaded the file from the link in this guide.",
+  P_CONFIG=".nexus-dm\\config.json",
+  P_STUDENT="data_analysis\\R76\\student",
+  P_PULSEIO="python\\pulse_io.py",
+  PS_NOTE=" Use the Miniforge Prompt, not PowerShell: PowerShell does not understand `%USERPROFILE%`.",
 ),
 "macos": dict(
   NAME="macOS", FILE="macos", SHORT="macOS",
@@ -59,6 +63,10 @@ OS = {
   HOMEEX="`/Users/YourName`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="macOS may say an app is from an unidentified developer when you open it. You do not need to open any app in this guide, so you can ignore this.",
   CRLF_NOTE="",
+  P_CONFIG=".nexus-dm/config.json",
+  P_STUDENT="data_analysis/R76/student",
+  P_PULSEIO="python/pulse_io.py",
+  PS_NOTE="",
 ),
 "linux": dict(
   NAME="Linux", FILE="linux", SHORT="Linux",
@@ -89,6 +97,10 @@ OS = {
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.",
   CRLF_NOTE="",
+  P_CONFIG=".nexus-dm/config.json",
+  P_STUDENT="data_analysis/R76/student",
+  P_PULSEIO="python/pulse_io.py",
+  PS_NOTE="",
 ),
 }
 
@@ -375,7 +387,7 @@ Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 20 · 14 October 2026"
+date: "Version 21 · 19 October 2026"
 ---
 
 ::: tip
@@ -456,7 +468,7 @@ Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit in
 nsdf-cli config --output-global @IDXPATH@
 ```
 
-Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`.nexus-dm/config.json`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
+Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`@P_CONFIG@`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
 :::
 
 ::: careful
@@ -469,7 +481,7 @@ If the message says the folder already exists, the data may already be there. To
 
 ## Step 3. Open Jupyter in the right folder
 
-Every student works in a folder of their own, inside `data_analysis/R76/student` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
+Every student works in a folder of their own, inside `@P_STUDENT@` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
 
 ```
 conda activate darkmatter_cli_env
@@ -604,7 +616,8 @@ Commit only your notebook. Check the list from `git status` before committing. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis/R76/student` (Step 3). |
+| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `@P_STUDENT@` (Step 3). |
+| `fatal: pathspec '...' did not match any files` when you run `git add` | You are not in the project folder, or the file name is not the one you saved. | Open @OPEN_TERM@, run `@CD_REPO@`{.cmd}, then `git status`{.cmd}, and copy the notebook's path exactly as Git prints it into `git add`.@PS_NOTE@ |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |
 | The kernel is not `darkmatter_cli_env` | Click the kernel name at the top right and choose **darkmatter_cli_env**. |
@@ -658,7 +671,7 @@ REPO = next((p for p in [here, *here.parents]
              if (p / "python" / "pulse_io.py").exists()), None)
 ```
 
-Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
+Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `@P_PULSEIO@`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
 :::
 
 ::: explain
@@ -802,7 +815,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 21, 19 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -1203,7 +1216,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST), ("update", UPDATE), ("git-in-vscode", GITVSCODE)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","IDXPATH","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE","MOD","VSC_INSTALL"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","IDXPATH","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE","MOD","VSC_INSTALL","P_CONFIG","P_STUDENT","P_PULSEIO","PS_NOTE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

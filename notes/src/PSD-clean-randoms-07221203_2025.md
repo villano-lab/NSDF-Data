@@ -78,7 +78,7 @@ X[k] = sum over n of  x[n] exp(-2πi k n / N)
 S[k] = (2 Δt / N) · (1/M) · sum over the M traces of |X[k]|²        (counts² / Hz)
 ```
 
-where the factor 2 folds the negative frequencies onto the positive ones (it is left out for the zero-frequency and Nyquist bins), and the 1/N and Δt make S independent of the trace length and the sampling rate, so that its integral over frequency equals the variance of the trace. This is the convention used in the notebook (`noise-psd-randoms-buddy.ipynb`); Note 3 plotted the raw |X[k]|² instead, which differs from S only by the constant 2Δt/N.
+where the factor 2 folds the negative frequencies onto the positive ones (it is left out for the zero-frequency and Nyquist bins), and the 1/N and Δt make S independent of the trace length and the sampling rate, so that its integral over frequency equals the mean square of the trace (its variance, if the trace has zero mean). This is the convention used in the notebook (`noise-psd-randoms-buddy.ipynb`); Note 3 plotted the raw |X[k]|² instead, which differs from S only by the constant 2Δt/N.
 
 ### References
 

@@ -68,6 +68,8 @@ While setting this up in the Jupyter notebook [`chan0-cut-on-all-channels-buddy.
 
 ## Caveats
 
+- **`Side2pB` (Detector 2 / Channel 0, DCRC4) may not be a normal phonon channel.** Its noise is flat and about an order of magnitude below the other working channels at low frequencies (Figure 5), and it passes the quiet-noise cut for 958 of the 1008 randoms, against 101 to 180 for the others. This could mean the channel is superconducting or otherwise not biased into its transition. The [UMN wiki](https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76.html) does not say so: it never mentions superconducting channels, and its only related remark is that three channels (`pB`, `pD`, `pE`, with no side given) "had railed in the middle of the data period" in October. The run configuration we read for another series (`07220916_2200`) lists zero QET bias on all four DCRC4 channels, with the feedback of channel 0 disabled, which fits a channel that is not in transition but does not prove it. Until this is confirmed, the spectra of `Side2pB` should not be taken as a phonon noise measurement.
+
 ## Next steps
 
 ## Appendix A: the strictest cut (every working channel)

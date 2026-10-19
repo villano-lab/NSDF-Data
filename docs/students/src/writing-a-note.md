@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 14 · 12 October 2026"
+date: "Version 15 · 19 October 2026"
 ---
 
 ::: tip
@@ -33,7 +33,7 @@ If your note does not answer these, it is not finished, however long it is.
 
 **Only the header is required.** Every other section is a suggestion. Use the sections that help your reader, and leave out the ones that do not apply. A short note with a header and one clear result is complete. A long note with no caveats is not.
 
-The table below lists the sections most notes use, in a sensible order. Each one you use becomes a heading, with an outline link.
+Most notes open the same way, so a reader knows where to look. Each section you use becomes a heading, with an outline link.
 
 | Section | What goes in it | Length |
 |---|---|---|
@@ -42,10 +42,26 @@ The table below lists the sections most notes use, in a sensible order. Each one
 | **Code repository** | The notebook and library files you used, each pinned to the commit that produced the results. | a short list |
 | **Data and setup** | Which series, dump and detector; which quantities; which windows and cuts. Define any word a newcomer would not know. | one or two paragraphs |
 | **The question** | The question again, and why it matters. | a paragraph |
-| **Results** | Your figures and tables, each with a caption that says what the reader is looking at. | as needed |
-| **Reading** | What you think the results mean, and what they do *not* show. | a few bullets |
-| **Caveats** | What could be wrong. Small sample? One channel only? A cut you chose by eye? | a short list |
-| **Next steps** | Concrete things to do next. | a short list |
+
+**After the question, the note is yours.** There is no fixed list of headings from here. Let the story decide the order, and name each heading for what is under it: "What the cut removes" tells a reader more than "Results". Depending on your work, you might include:
+
+- the figures or tables that answer the question, each with a caption that says what to look at;
+- a method, or a check you made along the way, if the reader needs it to trust a number;
+- what you think the results mean, and what they do *not* show;
+- what could be wrong (a small sample, one channel only, a cut you chose by eye);
+- what you would do next, as a short list that the next reader can pick up.
+
+Use one `##` heading for each part, and leave out any part that has nothing to say.
+
+**Examples from the site.** The notes already there do not share one list of headings. These three go like this:
+
+| Note | What it is about | Its headings |
+|---|---|---|
+| [Note 5](https://villano-lab.github.io/NSDF-Data/notes/note-05-triggered-pulses.html) | Choosing a cut for real pulses | Goal; The cut; a check made while writing the note; Status / Next steps |
+| [Note 6](https://villano-lab.github.io/NSDF-Data/notes/note-06-ai-pulse-veto-archive.html) | A veto that removes pulse-like traces | Motivation; The pulse-shape criterion; What it removes; Effect on the noise PSD; The good_noise archive; Status / Next steps |
+| [Note 8](https://villano-lab.github.io/NSDF-Data/notes/note-08-umn-k100-data-location.html) | Where the UMN data lives | The question; Method; What Processing.xlsx records; What is actually on cdms3 today; Other users' copies of the k100 pipeline; Reading; Next steps |
+
+What they share is the shape, not the headings: each says what was asked, shows what was done and found, and ends by saying what comes next.
 
 ::: tip
 **Caveats are strongly suggested.** A note that states its limits is trusted more than one that does not, however good the plots look. If you leave caveats out, be sure there is nothing you would want a reader to know about your result.
@@ -185,7 +201,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 14, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 15, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

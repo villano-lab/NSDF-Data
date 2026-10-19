@@ -16,7 +16,7 @@ every computer)</title>
 
 <h1>Writing a note</h1>
 <p class="meta">NSDF-Data student guide 3 — writing a note, for every
-computer &middot; Version 14 · 12 October 2026</p>
+computer &middot; Version 15 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -91,8 +91,8 @@ it is.</p>
 a suggestion. Use the sections that help your reader, and leave out the
 ones that do not apply. A short note with a header and one clear result
 is complete. A long note with no caveats is not.</p>
-<p>The table below lists the sections most notes use, in a sensible
-order. Each one you use becomes a heading, with an outline link.</p>
+<p>Most notes open the same way, so a reader knows where to look. Each
+section you use becomes a heading, with an outline link.</p>
 <div class="table-scroll">
 <table>
 <colgroup>
@@ -136,32 +136,132 @@ cuts. Define any word a newcomer would not know.</td>
 <td>The question again, and why it matters.</td>
 <td>a paragraph</td>
 </tr>
+</tbody>
+</table>
+</div>
+<p><strong>After the question, the note is yours.</strong> There is no
+fixed list of headings from here. Let the story decide the order, and
+name each heading for what is under it: “What the cut removes” tells a
+reader more than “Results”. Depending on your work, you might
+include:</p>
+<ul>
+<li>the figures or tables that answer the question, each with a caption
+that says what to look at;</li>
+<li>a method, or a check you made along the way, if the reader needs it
+to trust a number;</li>
+<li>what you think the results mean, and what they do <em>not</em>
+show;</li>
+<li>what could be wrong (a small sample, one channel only, a cut you
+chose by eye);</li>
+<li>what you would do next, as a short list that the next reader can
+pick up.</li>
+</ul>
+<p>Use one <code>##</code> heading for each part, and leave out any part
+that has nothing to say.</p>
+<p><strong>Notes come in different kinds, and the kind shapes the
+headings.</strong> A few kinds, and what each one tends to need after
+the opening:</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
 <tr>
-<td><strong>Results</strong></td>
-<td>Your figures and tables, each with a caption that says what the
-reader is looking at.</td>
-<td>as needed</td>
+<th>If your note is…</th>
+<th>After the opening it might have…</th>
+<th>An example here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A result</strong>: a question and its answer</td>
+<td>what you did; the figures; what it means and does not show; next
+steps</td>
+<td><a href="../notes/note-07-psd-peaks-204khz.html">Note 7</a></td>
 </tr>
 <tr>
-<td><strong>Reading</strong></td>
-<td>What you think the results mean, and what they do <em>not</em>
-show.</td>
-<td>a few bullets</td>
+<td><strong>A check</strong>: does this method or cut work?</td>
+<td>what was checked and how; the outcome; where it might fail on other
+data; what to try</td>
+<td><a href="../notes/note-04-pulse-library.html">Note 4</a></td>
 </tr>
 <tr>
-<td><strong>Caveats</strong></td>
-<td>What could be wrong. Small sample? One channel only? A cut you chose
-by eye?</td>
-<td>a short list</td>
+<td><strong>An explanation</strong>: how something is built or used</td>
+<td>the idea; how it is organized; a worked example; what is still
+unfinished</td>
+<td><a href="../notes/note-01a-pulse-library-structure.html">Note
+1a</a></td>
 </tr>
 <tr>
-<td><strong>Next steps</strong></td>
-<td>Concrete things to do next.</td>
-<td>a short list</td>
+<td><strong>An investigation</strong> of where something is, or why</td>
+<td>the method; what was found; what was not checked</td>
+<td><a href="../notes/note-08-umn-k100-data-location.html">Note
+8</a></td>
+</tr>
+<tr>
+<td><strong>A log</strong> of problems and fixes</td>
+<td>one short entry per problem: what happened, and what fixed it</td>
+<td>none yet</td>
+</tr>
+<tr>
+<td><strong>A brainstorm</strong>: ideas, without results</td>
+<td>the ideas, clearly marked as not results (give it the status
+<em>Brainstorm</em>)</td>
+<td>none yet</td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>A note can be two kinds at once, and a title does not have to be a
+question when the note is a check or an explanation. Choose the kind
+that is closest, and let the headings follow it.</p>
+<p><strong>Examples from the site.</strong> The notes already there do
+not share one list of headings. These three go like this:</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Note</th>
+<th>What it is about</th>
+<th>Its headings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../notes/note-05-triggered-pulses.html">Note 5</a></td>
+<td>Choosing a cut for real pulses</td>
+<td>Goal; The cut; a check made while writing the note; Status / Next
+steps</td>
+</tr>
+<tr>
+<td><a href="../notes/note-06-ai-pulse-veto-archive.html">Note
+6</a></td>
+<td>A veto that removes pulse-like traces</td>
+<td>Motivation; The pulse-shape criterion; What it removes; Effect on
+the noise PSD; The good_noise archive; Status / Next steps</td>
+</tr>
+<tr>
+<td><a href="../notes/note-08-umn-k100-data-location.html">Note
+8</a></td>
+<td>Where the UMN data lives</td>
+<td>The question; Method; What Processing.xlsx records; What is actually
+on cdms3 today; Other users’ copies of the k100 pipeline; Reading; Next
+steps</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>What they share is the shape, not the headings: each says what was
+asked, shows what was done and found, and ends by saying what comes
+next.</p>
 <div class="tip">
 <p><strong>Caveats are strongly suggested.</strong> A note that states
 its limits is trusted more than one that does not, however good the
@@ -393,7 +493,7 @@ concrete.</label></li>
 for a word a newcomer would not know.</label></li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 14, 12 October 2026. Written for every computer. Please
+<p>Guide version 15, 19 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="next">Next</h2>
 <p>When the note is written and checked, go to <strong>student guide 4:

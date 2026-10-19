@@ -16,7 +16,7 @@ every computer)</title>
 
 <h1>Writing a note</h1>
 <p class="meta">NSDF-Data student guide 3 — writing a note, for every
-computer &middot; Version 15 · 19 October 2026</p>
+computer &middot; Version 16 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -434,19 +434,69 @@ the conversion. Use a bold label such as <strong>Correction.</strong> at
 the start of the paragraph, or add the <code>:::</code> lines to the
 Markdown after converting.</p>
 <h2 id="figures-and-tables">Figures and tables</h2>
-<ul>
-<li><strong>Every figure needs a caption</strong> that says what is
-plotted, for which data, and what to look for. “Bstd against event
-number, dump 1. Grey: trigger type Unknown.” is a good caption.</li>
-<li><strong>Label the axes with units.</strong> ADC counts,
-microseconds, or samples. Do not leave the units out.</li>
-<li><strong>Save figures as PNG</strong> from your notebook, at a
-readable size, into the note’s image folder
+<p>A figure is often the first thing a reader looks at, and sometimes
+the only thing. Make each one able to stand on its own.</p>
+<h3 id="making-a-good-plot">Making a good plot</h3>
+<ol type="1">
+<li><strong>One figure, one message.</strong> Decide what you want the
+reader to see, and make the plot show that. If you have two messages,
+make two figures, or two panels.</li>
+<li><strong>Label both axes with the quantity and its units</strong>, in
+the form <code>Pulse height (ADC counts)</code>, <code>Time (µs)</code>
+or <code>Event number</code>. A bare “x” or “counts” is not a label. If
+an axis is logarithmic, say so in the label or the caption.</li>
+<li><strong>Choose the range to show the data.</strong> Do not leave
+half the plot empty. If you zoom in and cut off data, say so in the
+caption. Use the same axes on plots the reader will compare.</li>
+<li><strong>Make it readable at the size it will be shown.</strong> Text
+on the figure should be about as large as the text of the note (font
+size 11 or 12, a figure about 6 inches wide). Hairline lines and tiny
+markers disappear on the page.</li>
+<li><strong>Do not rely on color alone.</strong> Some readers cannot
+tell red from green, and a printout may be grey. Use different line
+styles or markers as well, and name each curve (“Detector 0, 12 traces”,
+not “Series 1”). Put the legend where it does not cover data.</li>
+<li><strong>Mark what matters.</strong> A dashed line at a threshold, a
+shaded band for a cut, an arrow at the feature the caption talks
+about.</li>
+<li><strong>Save it from the notebook, not as a screenshot</strong>, so
+that it can be made again.</li>
+</ol>
+<p>A starting point in matplotlib (replace the names with your own
+arrays and numbers):</p>
+<pre class="python"><code>import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.plot(time_us, trace, lw=1, label=&quot;Detector 0, Channel 0&quot;)
+ax.axhline(threshold, ls=&quot;--&quot;, color=&quot;gray&quot;, label=&quot;Cut threshold&quot;)
+ax.set_xlabel(&quot;Time (µs)&quot;)
+ax.set_ylabel(&quot;Pulse height (ADC counts)&quot;)
+ax.legend(frameon=False)
+fig.savefig(&quot;baseline-in-dump-one-fig1.png&quot;, dpi=200, bbox_inches=&quot;tight&quot;)</code></pre>
+<p>Save the PNG into the note’s image folder
 (<code>notes/src/img/</code>, named as in <em>Where and how to
-write</em>) or, in a Word document, into the document.</li>
-<li><strong>Use a table</strong> when you are comparing numbers. Use a
-figure when you are showing shape.</li>
+write</em>) or, in a Word document, put it into the document.</p>
+<h3 id="the-caption">The caption</h3>
+<p>Every figure has a number and a caption directly under it.
+<strong>Begin the caption with the label in bold, “Figure 1.”</strong>,
+then say, in a sentence or two:</p>
+<ul>
+<li><strong>what is plotted</strong>, and for which data (series, dump,
+detector, channel, how many traces);</li>
+<li><strong>what the lines, colors and symbols mean</strong>, if the
+plot does not say so itself;</li>
+<li><strong>what to look for</strong>: where the reader’s eye should
+go.</li>
 </ul>
+<p>In Markdown, the label and the caption are the text inside the square
+brackets:</p>
+<pre><code>![**Figure 1.** Bstd against event number, dump 1 (1517 traces). Grey: trigger type Unknown. Look for the step at event 11000.](img/baseline-in-dump-one-fig1.png)</code></pre>
+<p>Number the figures in the order they appear, and refer to each one in
+the text (“Figure 1 shows…”). In a Word document, type the caption in
+the line under the picture, and make “Figure 1.” bold.</p>
+<h3 id="tables">Tables</h3>
+<p>Use a table when you are comparing numbers, and a figure when you are
+showing shape.</p>
 <h2 id="pinning-your-code">Pinning your code</h2>
 <p>A note is only useful if the reader can find the code that made its
 numbers. Link to your notebook and library files at a <strong>specific
@@ -478,8 +528,9 @@ you submit</h2>
 question.</label></li>
 <li><label><input type="checkbox" />Every number in the text can be
 found in your notebook output.</label></li>
-<li><label><input type="checkbox" />Every figure has a caption with
-units and a sentence on what to look for.</label></li>
+<li><label><input type="checkbox" />Every figure has a number, a bold
+label (“Figure 1.”) and a caption that says what is plotted and what to
+look for, and both axes are labelled with units.</label></li>
 <li><label><input type="checkbox" />Every notebook link is pinned to a
 commit.</label></li>
 <li><label><input type="checkbox" />The header is complete.</label></li>
@@ -493,7 +544,7 @@ concrete.</label></li>
 for a word a newcomer would not know.</label></li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 15, 19 October 2026. Written for every computer. Please
+<p>Guide version 16, 19 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="next">Next</h2>
 <p>When the note is written and checked, go to <strong>student guide 4:

@@ -26,14 +26,14 @@ It may also be useful to have a diagram of the detector and which channels are w
 
 1. **The channel table.** The *Setup* table of the [UMN Run 76 summary](https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76.html) lists the 12 channels by board, with the detector channel in its Label column (`Side1pA` to `Side2pF`). We used that column. The HV columns repeat entries and look like typos.
 2. **The board order.** The table does not say which board is detector 0, 1 or 2. The raw file of another Run 76 series (`07220916_2200`; the raw file for our series is not on NSDF) holds the run configuration. It enables boards DCRC1, DCRC3 and DCRC4, and the three records of each event carry the codes 9, 11 and 12, which are the board numbers plus 8. So detector 0, 1, 2 = DCRC1, DCRC3, DCRC4. This is inferred and not confirmed.
-3. **The channels within a board.** We assumed they follow the table's row order. The data agree: the channels that read a constant value (channel 2 of DCRC1 and DCRC3, and channels 1 to 3 of DCRC4) are the ones that configuration lists with zero QET bias.
+3. **The channels within a board.** We assumed they follow the table's row order. The data agree: the dead channels, whose signal never changes (channel 2 of DCRC1 and DCRC3, and channels 1 to 3 of DCRC4) are the ones that configuration lists with zero QET bias.
 4. **The faces.** The wiki's source-position figure draws Side 2 as seen after flipping the detector over, which is how the figure below shows it.
 
 The mapping is kept in [`python/pulse_channels.py`](https://github.com/villano-lab/NSDF-Data/blob/fb4df33/python/pulse_channels.py), marked as under development, and section 7 of the notebook gives the evidence.
 
 ![](img/channel-status-07221203_2025_F0001.png)
 
-**Figure 1: The channels of detector S104.** Side 1 is on the left and Side 2 on the right (as seen after flipping the detector over). The 7 working channels are coloured; the 5 that read a constant value are grey and hatched.
+**Figure 1: The channels of detector S104.** Side 1 is on the left and Side 2 on the right (as seen after flipping the detector over). The 7 working channels are coloured; the 5 dead channels (whose signal never changes) are grey and hatched.
 
 ## The question
 
@@ -50,7 +50,7 @@ To use that cut I have to decide how to apply it to all of the channels. A pileu
 
 ![](img/chan0-cut-on-all-channels-full-07221203_2025_F0001.png)
 
-**Figure 2: The 141 randoms that pass the Channel 0 cut, in every channel.** One tile per channel (rows are the boards DCRC1, DCRC3 and DCRC4); the traces are drawn over each other with transparency, baseline-subtracted, on a free vertical scale. The cut is made on `Side2pC` (Detector 0 / Channel 0, framed). Blue is Side 1, orange is Side 2, and red marks a trace that contains a pulse. The 5 tiles with grey text are the channels that read a constant value. Several traces carry large baseline ramps in the Side 1 and DCRC3 channels even though they are quiet in `Side2pC`.
+**Figure 2: The 141 randoms that pass the Channel 0 cut, in every channel.** One tile per channel (rows are the boards DCRC1, DCRC3 and DCRC4); the traces are drawn over each other with transparency, baseline-subtracted, on a free vertical scale. The cut is made on `Side2pC` (Detector 0 / Channel 0, framed). Blue is Side 1, orange is Side 2, and red marks a trace that contains a pulse. The 5 tiles with grey text are the dead channels. Several traces carry large baseline ramps in the Side 1 and DCRC3 channels even though they are quiet in `Side2pC`.
 
 Based on what was seen in Figure 2. I developed a cut that will select noise for PBS1. It will hopefully not be as strict as requiring the analogous cut to be true on *all* channels. That leaves only 31 traces (see [Appendix A](#appendix-a-the-strictest-cut-every-working-channel)). 
 
@@ -58,7 +58,7 @@ Instead of doing *all* channels I selected instead one channel on each side to a
 
 ![](img/cut-on-S1-and-S2-full-07221203_2025_F0001.png)
 
-**Figure 3: The randoms that pass the cut on one channel of each side, in every channel.** The cut is the quiet-noise cut on `Side2pC` (Side 2) **and** on `Side1pB` (Side 1), both framed. One tile per channel, with the traces drawn over each other with transparency on a free vertical scale. Blue is Side 1, orange is Side 2, and red would mark a trace that contains a pulse. The 5 tiles with grey text are the channels that read a constant value.
+**Figure 3: The randoms that pass the cut on one channel of each side, in every channel.** The cut is the quiet-noise cut on `Side2pC` (Side 2) **and** on `Side1pB` (Side 1), both framed. One tile per channel, with the traces drawn over each other with transparency on a free vertical scale. Blue is Side 1, orange is Side 2, and red would mark a trace that contains a pulse. The 5 tiles with grey text are the dead channels.
 
 While setting this up in the Jupyter notebook [`chan0-cut-on-all-channels-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/8413311/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb), I checked if there were similar traces left in S2 after selecting on PBS1, just like we saw in S1 after selecting on PCS2. [Appendix B](#appendix-b-the-cut-on-side1pb-only) shows the traces left in S1 after the PCS2 cut (Figure 6), and then the S1 cut itself (Figures 7 and 8). To my surprise there *were not* traces in S2 that were very apparent. That means that for some reason only cutting on S1 is more pure. Since only cutting on S1 is also less restrictive by definition, this led to more accepted randoms (101, compared with 71 for one channel on each side and 31 for all channels).
 
@@ -74,17 +74,17 @@ While setting this up in the Jupyter notebook [`chan0-cut-on-all-channels-buddy.
 
 ## Appendix A: the strictest cut (every working channel)
 
-The strictest version of the selection keeps a random only if it passes the quiet-noise cut (the Tight excursion band and `log10(bstd) < 0.5`) in **every working channel**. Seven of the 12 channels work and five read a constant value, so the cut is applied to the seven. It keeps **31 of the 1008 randoms**, far fewer than the 141 that pass on `Side2pC` alone. Each of the six working channels on DCRC1 and DCRC3 passes the cut for only 101 to 180 randoms on its own (DCRC4's `Side2pB` for 958), and the events that fail are not the same in all of them. Any two channels share 62% to 95% of the smaller set (well above the 10 to 30 events expected by chance), but each further channel removes more, so only 31 events pass in all of them, 31% of the 101 of `Side1pB`, the strictest channel. The Tight excursion band does most of the rejecting: only 116 to 189 of the 1008 randoms fall in the band on each of those six channels, while the `log10(bstd) < 0.5` condition keeps 770 to 895.
+The strictest version of the selection keeps a random only if it passes the quiet-noise cut (the Tight excursion band and `log10(bstd) < 0.5`) in **every working channel**. Seven of the 12 channels work and five are dead (their signal never changes), so the cut is applied to the seven. It keeps **31 of the 1008 randoms**, far fewer than the 141 that pass on `Side2pC` alone. Each of the six working channels on DCRC1 and DCRC3 passes the cut for only 101 to 180 randoms on its own (DCRC4's `Side2pB` for 958), and the events that fail are not the same in all of them. Any two channels share 62% to 95% of the smaller set (well above the 10 to 30 events expected by chance), but each further channel removes more, so only 31 events pass in all of them, 31% of the 101 of `Side1pB`, the strictest channel. The Tight excursion band does most of the rejecting: only 116 to 189 of the 1008 randoms fall in the band on each of those six channels, while the `log10(bstd) < 0.5` condition keeps 770 to 895.
 
 Figure 4 shows the 31 traces themselves in every channel (section 12 of `chan0-cut-on-all-channels-buddy.ipynb`): none of them has a pulse or a ramp, and they all look like noise, but there are only 31 of them. Figure 5 shows their noise power spectra, the mean of the 31 traces in each channel (section 11 of `noise-psd-randoms-buddy.ipynb`). With so few traces the spectra are jagged from bin to bin, and no spread between the traces is drawn. This is why a cut that is not required to hold on all channels, and so keeps more traces, is worth looking for.
 
 ![](img/global-cut-traces-07221203_2025_F0001.png)
 
-**Figure 4: The 31 randoms that pass the quiet-noise cut in every working channel, in every channel.** One tile per channel (rows are the boards DCRC1, DCRC3 and DCRC4), with the traces drawn over each other with transparency, baseline-subtracted, on a free vertical scale. Blue is Side 1 and orange is Side 2; no trace contains a pulse. The 5 tiles with grey text are the channels that read a constant value.
+**Figure 4: The 31 randoms that pass the quiet-noise cut in every working channel, in every channel.** One tile per channel (rows are the boards DCRC1, DCRC3 and DCRC4), with the traces drawn over each other with transparency, baseline-subtracted, on a free vertical scale. Blue is Side 1 and orange is Side 2; no trace contains a pulse. The 5 tiles with grey text are the dead channels.
 
 ![](img/allchan-psd-by-side-07221203_2025_F0001.png)
 
-**Figure 5: Noise spectra of the 31 randoms that pass the quiet-noise cut in every working channel, by side.** Side 1 on the left (3 working channels) and Side 2 on the right (4 working channels), one colour per channel within each panel (the colours are not shared between the panels). Each curve is the one-sided PSD (counts$^2$/Hz), computed as the mean over the 31 traces of the squared Fourier amplitude of each trace (baseline-subtracted, first samples skipped) scaled to a one-sided density; the spread between traces is not drawn. Both panels share the same axes. The five channels that read a constant value are not shown.
+**Figure 5: Noise spectra of the 31 randoms that pass the quiet-noise cut in every working channel, by side.** Side 1 on the left (3 working channels) and Side 2 on the right (4 working channels), one colour per channel within each panel (the colours are not shared between the panels). Each curve is the one-sided PSD (counts$^2$/Hz), computed as the mean over the 31 traces of the squared Fourier amplitude of each trace (baseline-subtracted, first samples skipped) scaled to a one-sided density; the spread between traces is not drawn. Both panels share the same axes. The five dead channels are not shown.
 
 ## Appendix B: the cut on `Side2pC` and the cut on `Side1pB`
 
@@ -92,13 +92,13 @@ Figure 4 shows the 31 traces themselves in every channel (section 12 of `chan0-c
 
 ![](img/chan0-cut-with-pulses-or-big-tails-07221203_2025_F0001.png)
 
-**Figure 6: The 10 randoms that pass the `Side2pC` cut but have a pulse or a big tail, in every channel.** The cut is made on `Side2pC` (framed). One colour per event, the same in every tile, and the legend gives the event numbers and whether each has a pulse or a big tail (a sag of more than 30 counts across the trace). One tile per channel (rows are the boards DCRC1, DCRC3 and DCRC4), baseline-subtracted, on a free vertical scale. The 5 tiles with grey text are the channels that read a constant value.
+**Figure 6: The 10 randoms that pass the `Side2pC` cut but have a pulse or a big tail, in every channel.** The cut is made on `Side2pC` (framed). One colour per event, the same in every tile, and the legend gives the event numbers and whether each has a pulse or a big tail (a sag of more than 30 counts across the trace). One tile per channel (rows are the boards DCRC1, DCRC3 and DCRC4), baseline-subtracted, on a free vertical scale. The 5 tiles with grey text are the dead channels.
 
 **The cut on `Side1pB` only.** The cut we will use is the one of Notes 2 and 2a on `Side1pB` alone: a random whose trace passes the Tight excursion band and `log10(bstd) < 0.5` on that channel. It keeps **101 of the 1008 randoms**, more than the 71 of the cut on one channel of each side and the 31 of the cut on all channels, but fewer than the 141 of the `Side2pC` cut. There is nothing in it that is not noise: none of the 101 events contains a pulse in any working channel, and the largest baseline sag in a Side 2 channel is 13 counts, where a sag of more than 30 counts counts as a big tail (section 10 of the notebook). Figure 7 shows the 101 events in every channel at full scale, and Figure 8 zooms on the noise.
 
 ![](img/cut-on-S1-only-full-07221203_2025_F0001.png)
 
-**Figure 7: The 101 randoms that pass the cut on `Side1pB`, in every channel, at full scale.** The cut is made on `Side1pB` (framed). One tile per channel, with the traces drawn over each other with transparency, baseline-subtracted. Blue is Side 1 and orange is Side 2; no trace contains a pulse. The 5 tiles with grey text are the channels that read a constant value.
+**Figure 7: The 101 randoms that pass the cut on `Side1pB`, in every channel, at full scale.** The cut is made on `Side1pB` (framed). One tile per channel, with the traces drawn over each other with transparency, baseline-subtracted. Blue is Side 1 and orange is Side 2; no trace contains a pulse. The 5 tiles with grey text are the dead channels.
 
 ![](img/cut-on-S1-only-zoom-07221203_2025_F0001.png)
 

@@ -56,7 +56,10 @@ jobs:
           TITLE="Pinned links in the notes: report"
           python tools/check_note_pins.py report > report.md
           # the part of the report that matters: which pinned files need a look
-          HASH=$(sed -n '/^## Needs a look/,$p' report.md | sha256sum | cut -c1-12)
+          HASH=$(python tools/check_note_pins.py signature)
+          # comments before 19 October were marked with a hash of the whole table, including the notes' status labels;
+          # accept that one too, so the change of method does not post a second, identical report
+          LEGACY=$(sed -n '/^## Needs a look/,$p' report.md | sha256sum | cut -c1-12)
           ISSUE=$(gh issue list --state open --limit 100 --json number,title \
                     --jq ".[] | select(.title == \"$TITLE\") | .number" | head -n 1)
           if [ -z "$ISSUE" ]; then
@@ -66,7 +69,7 @@ jobs:
           fi
           LAST=$(gh issue view "$ISSUE" --json comments \
                    --jq '[.comments[] | select(.body | contains("<!-- note-pins:"))] | last | .body // ""')
-          if printf '%s' "$LAST" | grep -q "note-pins:$HASH"; then
+          if printf '%s' "$LAST" | grep -q -e "note-pins:$HASH" -e "note-pins:$LEGACY"; then
             echo "The list is the same as in the last comment: nothing to post."
             exit 0
           fi

@@ -66,9 +66,26 @@ While setting this up in the Jupyter notebook [`chan0-cut-on-all-channels-buddy.
 
 ## Noise Power Spectral Densities
 
-The key parameter we want to get out of pulses in these detectors is the overall "amplitude" because it should be proportional to the energy deposited in a scattering event. That's hard to do for the small signals (near the noise baseline) that we have for dark matter direct detection (reference?) so we use an algorithm called the Optimal Filter (OF) (Golwala reference) instead of a simpler procedure like integrating the pulses. The crucial part of the OF is that it takes into account the electronic noise environment of the sensor, rather than blinding integrating. The noise is summarized by the Power Spectral Density (PSD) constructed with traces that have no pulses present--the ones we are selecting here.
+The key parameter we want to get out of pulses in these detectors is the overall "amplitude" because it should be proportional to the energy deposited in a scattering event. That's hard to do for the small signals (near the noise baseline) that we have for dark matter direct detection (see the review by Schnee [1]) so we use an algorithm called the Optimal Filter (OF) (Gatti and Manfredi [2]; Golwala [3]) instead of a simpler procedure like integrating the pulses. The crucial part of the OF is that it takes into account the electronic noise environment of the sensor, rather than blindly integrating. The noise is summarized by the Power Spectral Density (PSD) constructed with traces that have no pulses present--the ones we are selecting here.
 
-The PSD is sort of like the standard deviation of different frequency components in a trace (reference for functions being composed of )
+The PSD is sort of like the standard deviation of different frequency components in a trace (any trace can be written as a sum of sinusoids of different frequencies, the Fourier decomposition [4]). The PSD can be calculated for discrete data sampling as below:
+
+Take a trace of N samples x[n], n = 0 … N−1, taken every Δt (here Δt = 1.6 µs), with its baseline subtracted. Its discrete Fourier transform is X[k], and bin k sits at the frequency f[k] = k / (N Δt). Averaging over M traces with no pulse in them (here the M = 101 traces of the `clean_randoms` cut, or the 31 of Appendix A), the one-sided PSD is
+
+```
+X[k] = sum over n of  x[n] exp(-2πi k n / N)
+
+S[k] = (2 Δt / N) · (1/M) · sum over the M traces of |X[k]|²        (counts² / Hz)
+```
+
+where the factor 2 folds the negative frequencies onto the positive ones (it is left out for the zero-frequency and Nyquist bins), and the 1/N and Δt make S independent of the trace length and the sampling rate, so that its integral over frequency equals the variance of the trace. This is the convention used in the notebook (`noise-psd-randoms-buddy.ipynb`); Note 3 plotted the raw |X[k]|² instead, which differs from S only by the constant 2Δt/N.
+
+### References
+
+1. R. W. Schnee, "Introduction to dark matter experiments," in *Physics of the Large and the Small, TASI 2009* (World Scientific, 2011), [arXiv:1101.5205](https://arxiv.org/abs/1101.5205).
+2. E. Gatti and P. F. Manfredi, "Processing the signals from solid-state detectors in elementary-particle physics," *Rivista del Nuovo Cimento* **9**(1), 1 (1986).
+3. S. R. Golwala, *Exclusion Limits on the WIMP-Nucleon Elastic-Scattering Cross-Section from the Cryogenic Dark Matter Search*, PhD thesis, University of California, Berkeley (2000), Appendix B, "Noise and Optimal Filtering".
+4. W. H. Press, S. A. Teukolsky, W. T. Vetterling and B. P. Flannery, *Numerical Recipes: The Art of Scientific Computing*, 3rd ed. (Cambridge University Press, 2007), chapters 12 and 13.
 
 ## Caveats
 

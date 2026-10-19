@@ -64,7 +64,11 @@ While setting this up in the Jupyter notebook [`chan0-cut-on-all-channels-buddy.
 
 **We will use this cut going forward:** the cut of Notes 2 and 2a (a random trigger in the Tight excursion band with `log10(bstd) < 0.5`) made on `Side1pB` (S1, Detector 1 / Channel 1). In the notebook it is defined in one place, `clean_randoms_cut`, and the selection it makes is called `clean_randoms`.
 
-## Reading
+## Noise Power Spectral Densities
+
+The key parameter we want to get out of pulses in these detectors is the overall "amplitude" because it should be proportional to the energy deposited in a scattering event. That's hard to do for the small signals (near the noise baseline) that we have for dark matter direct detection (reference?) so we use an algorithm called the Optimal Filter (OF) (Golwala reference) instead of a simpler procedure like integrating the pulses. The crucial part of the OF is that it takes into account the electronic noise environment of the sensor, rather than blinding integrating. The noise is summarized by the Power Spectral Density (PSD) constructed with traces that have no pulses present--the ones we are selecting here.
+
+The PSD is sort of like the standard deviation of different frequency components in a trace (reference for functions being composed of )
 
 ## Caveats
 

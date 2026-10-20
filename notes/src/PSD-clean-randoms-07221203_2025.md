@@ -10,7 +10,12 @@ description: "I took all of the clean randoms selected in Note 2 and produced a 
 
 ## Code repository
 
-- [`noise-psd-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/fb4df33/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb) — the notebook for everything below. Pinned to `fb4df33`: the link shows the notebook as it was at that commit, which may be older than the latest version, and the file may have moved since (see `data_analysis/README.md`).
+All code is pinned to commit `e7b087f`: each link shows the file as it was when the results below were made, which may be older than the latest version, and the file may have moved since (see `data_analysis/README.md`). On the published page a small "latest" link after each one opens the file on `develop` today.
+
+- [`psd-clean-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb): the PSDs of every channel from the `clean_randoms` cut, and the saved HDF5 file [`psd-clean-randoms-07221203_2025_F0001.h5`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5) (Noise Power Spectral Densities).
+- [`chan0-cut-on-all-channels-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb): how good the Channel 0 cut is on the other channels, and the definition of the cut we use (`clean_randoms`) (Selection of Randoms in All Channels, Appendices A and B).
+- [`noise-psd-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb): the channel map and the noise spectra of the 31 events of the strictest cut (Data and setup, Appendix A).
+- [`pulse_channels.py`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/python/pulse_channels.py), [`pulse_cuts.py`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/python/pulse_cuts.py) and [`pulse_quantities.py`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/python/pulse_quantities.py): the library for the channel names, the randoms and excursion-band cuts, and the PSD.
 
 ## Data and setup
 
@@ -29,7 +34,7 @@ It may also be useful to have a diagram of the detector and which channels are w
 3. **The channels within a board.** We assumed they follow the table's row order. The data agree: the dead channels, whose signal never changes (channel 2 of DCRC1 and DCRC3, and channels 1 to 3 of DCRC4) are the ones that configuration lists with zero QET bias.
 4. **The faces.** The wiki's source-position figure draws Side 2 as seen after flipping the detector over, which is how the figure below shows it.
 
-The mapping is kept in [`python/pulse_channels.py`](https://github.com/villano-lab/NSDF-Data/blob/fb4df33/python/pulse_channels.py), marked as under development, and section 7 of the notebook gives the evidence.
+The mapping is kept in [`python/pulse_channels.py`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/python/pulse_channels.py), marked as under development, and section 7 of the notebook gives the evidence.
 
 ![](img/channel-status-07221203_2025_F0001.png)
 
@@ -60,7 +65,7 @@ Instead of doing *all* channels I selected instead one channel on each side to a
 
 **Figure 3: The randoms that pass the cut on one channel of each side, in every channel.** The cut is the quiet-noise cut on `Side2pC` (Side 2) **and** on `Side1pB` (Side 1), both framed. One tile per channel, with the traces drawn over each other with transparency on a free vertical scale. Blue is Side 1, orange is Side 2, and red would mark a trace that contains a pulse. The 5 tiles with grey text are the dead channels.
 
-While setting this up in the Jupyter notebook [`chan0-cut-on-all-channels-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/8413311/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb), I checked if there were similar traces left in S2 after selecting on PBS1, just like we saw in S1 after selecting on PCS2. [Appendix B](#appendix-b-the-cut-on-side1pb-only) shows the traces left in S1 after the PCS2 cut (Figure 6), and then the S1 cut itself (Figure 7). To my surprise there *were not* traces in S2 that were very apparent. That means that for some reason only cutting on S1 is more pure. Since only cutting on S1 is also less restrictive by definition, this led to more accepted randoms (101, compared with 71 for one channel on each side and 31 for all channels).
+While setting this up in the Jupyter notebook [`chan0-cut-on-all-channels-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb), I checked if there were similar traces left in S2 after selecting on PBS1, just like we saw in S1 after selecting on PCS2. [Appendix B](#appendix-b-the-cut-on-side1pb-only) shows the traces left in S1 after the PCS2 cut (Figure 6), and then the S1 cut itself (Figure 7). To my surprise there *were not* traces in S2 that were very apparent. That means that for some reason only cutting on S1 is more pure. Since only cutting on S1 is also less restrictive by definition, this led to more accepted randoms (101, compared with 71 for one channel on each side and 31 for all channels).
 
 **We will use this cut going forward:** the cut of Notes 2 and 2a (a random trigger in the Tight excursion band with `log10(bstd) < 0.5`) made on `Side1pB` (S1, Detector 1 / Channel 1). In the notebook it is defined in one place, `clean_randoms_cut`, and the selection it makes is called `clean_randoms`.
 

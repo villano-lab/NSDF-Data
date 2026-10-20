@@ -3,7 +3,7 @@ id: "9"
 title: "What is the current best PSD estimate from series 07221203_2025?"
 author: "Buddy Holly (A. Villano)"
 date: "2026-10-05"
-status: "In progress"
+status: "Complete"
 keywords: "PSD, Noise, Randoms, PuBe"
 description: "I created a sample of clean randoms selected in the same way as Note 2 and produced a noise PSD for 07221203_2025. The randoms selection is updated/improved but the technique is the same. Since there are no known real pulses in those noise traces this is a true characterization of our noise environment."
 ---

@@ -124,6 +124,10 @@ pre code { background: none; padding: 0; font-size: inherit; }
 figure { margin: 18px 0; }
 figure img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
 figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
+/* A picture whose caption is its own paragraph (not inside the brackets of the Markdown image) is a plain
+   image in a paragraph, not a figure. Scale it to the column like a figure's image; without this it shows at
+   its natural size and the note scrolls sideways. */
+.note p > img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
 
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }

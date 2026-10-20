@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note with an AI assistant"
 subtitle: "NSDF-Data student guide 5 — with Claude Code or a similar assistant"
-date: "Version 4 · 12 October 2026"
+date: "Version 5 · 20 October 2026"
 ---
 
 ::: tip
@@ -41,7 +41,7 @@ Start with a brief like this, and fill in the brackets:
 > 1. If the draft is a `.docx`, convert it with `python tools/word_to_note.py [path to the .docx] [note-name]`, as in student guide 4, Step 1. That puts the note in `notes/src/` and its pictures in `notes/src/img/`. Keep the header block and set `id: "TBD"`.
 > 2. Check every number in the text against the notebook output, and list any number that does not match or that I have not shown.
 > 3. Pin every notebook link to the commit above.
-> 4. Run `python tools/build_notes.py check` and fix each message it reports, without changing my sentences except where a fix needs it.
+> 4. Run `python tools/check_note.py notes/src/[note-name].md`. Fix each problem it reports (the structure and the pinned links), without changing my sentences except where a fix needs it, and list the numbers it says are not in the notebook output, without changing them.
 > 5. Show me the diff and stop. Do not commit or push until I say so.
 
 ## The checks you still do yourself
@@ -52,7 +52,7 @@ After the assistant has finished, go through these yourself:
 - [ ] Pick three numbers at random and find them in your notebook output.
 - [ ] Check that every picture looks the way your caption says.
 - [ ] Look at the diff. Are there changes to any file outside `notes/src/`? If so, ask why, and revert them unless you understand them.
-- [ ] Run `python tools/build_notes.py check` yourself and confirm it reports *N note(s) valid*.
+- [ ] Run `python tools/check_note.py notes/src/your-note-name.md` yourself and confirm that its last line says *ready for review*. Then look at each number it lists as not found.
 
 ## Committing and opening the pull request
 
@@ -67,7 +67,7 @@ Once you are satisfied, follow guide 4 from Step 2 onward. You can ask the assis
 
 ## Session Info
 
-Guide version 4, 12 October 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
+Guide version 5, 20 October 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
 
 ## Where to get help
 

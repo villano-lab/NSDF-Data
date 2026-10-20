@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 19 · 19 October 2026"
+date: "Version 20 · 20 October 2026"
 ---
 
 ::: tip
@@ -257,10 +257,10 @@ Go through this list before you ask for review:
 
 ### Checking the numbers with a tool
 
-With your environment active, run this from the `NSDF-Data` folder, with your own note's file name:
+The command that checks your whole note, `python tools/check_note.py notes/src/your-note-name.md`, includes this check (guide 4, Step 2, says what the rest of it does). To run only the numbers, with your environment active, run this from the `NSDF-Data` folder, with your own note's file name:
 
 ```
-python tools/check_note_numbers.py notes/src/your-note-name.md
+python tools/check_note.py notes/src/your-note-name.md --only numbers
 ```
 
 It reads the notebook your note links to (at the commit you pinned) and looks at each number in your text and captions. For each one it says whether the number is in the notebook's **saved output**, only in its **code**, or **NOT FOUND**. The notebook must have been saved with its outputs, so do not clear them before you commit.
@@ -275,7 +275,7 @@ The tool is a help, not a judge: it matches numbers at the digits you wrote (0.5
 
 ## Session Info
 
-Guide version 19, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 20, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

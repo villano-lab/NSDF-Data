@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 9 · 13 October 2026"
+date: "Version 10 · 20 October 2026"
 ---
 
 ::: tip
@@ -77,9 +77,27 @@ The program printed `Wrote notes/src/your-note-name.md` and the number of pictur
 
 Your lead will replace `id: "TBD"` with a number.
 
-## Step 2. Commit to your branch
+## Step 2. Check your note, then commit to your branch
 
-In the terminal, from the `NSDF-Data` folder:
+In the terminal, from the `NSDF-Data` folder, with your environment active, run the checks on your note (change the file name to yours):
+
+```
+python tools/check_note.py notes/src/your-note-name.md
+```
+
+This runs, in one go, the same checks that GitHub runs on your pull request, and shows only what concerns your note:
+
+- **Structure:** the header, the status, the pictures. A problem fails the check.
+- **Pinned links:** every link to your code is pinned to a commit that exists. A problem fails the check. Push your notebook commit before you open the pull request: GitHub only sees pushed commits.
+- **Numbers:** the numbers in your text that are not in your notebook's saved output. This is advice only (guide 3 explains what to do with each line), and it does not fail the check.
+
+Read the last line. *ready for review* means the structure and the links are fine. If it says to fix the problems, fix them (Step 4 has a table of the common messages) and run it again.
+
+::: tip
+**Behind the project?** If you have not updated your branch for a while, do the *Updating your setup* guide first, so you have the newest checks. A few commits behind is fine.
+:::
+
+Then commit and push, from the `NSDF-Data` folder:
 
 ```
 git checkout student-yourname
@@ -114,7 +132,7 @@ Click **Create pull request**.
 
 ## Step 4. Read the check
 
-The check starts automatically and takes less than a minute. When it finishes, click **Details** on the check, and read its messages. Each message names the file and the problem. Here are the common ones and what to do:
+The check starts automatically and takes less than a minute. It is the structure check of Step 2, and for the notes your pull request changes it also lists, as warnings, the numbers that are not in the notebook output. When it finishes, click **Details** on the check, and read its messages. Each message names the file and the problem. Here are the common ones and what to do:
 
 | Message says | What to do |
 |---|---|
@@ -176,7 +194,7 @@ Then commit, push, and open a new pull request (or add to the open one). Let the
 
 ## Session Info
 
-Guide version 9, 13 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 10, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

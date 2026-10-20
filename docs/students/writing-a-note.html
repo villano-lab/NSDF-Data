@@ -16,7 +16,7 @@ every computer)</title>
 
 <h1>Writing a note</h1>
 <p class="meta">NSDF-Data student guide 3 — writing a note, for every
-computer &middot; Version 19 · 19 October 2026</p>
+computer &middot; Version 20 · 20 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -560,9 +560,12 @@ reader needs. Empty or filler sections are removed.</label></li>
 </ul>
 <h3 id="checking-the-numbers-with-a-tool">Checking the numbers with a
 tool</h3>
-<p>With your environment active, run this from the
+<p>The command that checks your whole note,
+<code>python tools/check_note.py notes/src/your-note-name.md</code>,
+includes this check (guide 4, Step 2, says what the rest of it does). To
+run only the numbers, with your environment active, run this from the
 <code>NSDF-Data</code> folder, with your own note’s file name:</p>
-<pre><code>python tools/check_note_numbers.py notes/src/your-note-name.md</code></pre>
+<pre><code>python tools/check_note.py notes/src/your-note-name.md --only numbers</code></pre>
 <p>It reads the notebook your note links to (at the commit you pinned)
 and looks at each number in your text and captions. For each one it says
 whether the number is in the notebook’s <strong>saved output</strong>,
@@ -588,7 +591,7 @@ labels such as “Figure 1”, dates and the reference list. - [ ] If you
 wrote next steps, they are concrete. - [ ] You have read it aloud once,
 looking for a word a newcomer would not know.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 19, 19 October 2026. Written for every computer. Please
+<p>Guide version 20, 20 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="next">Next</h2>
 <p>When the note is written and checked, go to <strong>student guide 4:

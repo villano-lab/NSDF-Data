@@ -2,7 +2,7 @@ name: Student notes
 
 on:
   pull_request:
-    paths: ["notes/src/**", "tools/build_notes.py"]
+    paths: ["notes/src/**", "tools/build_notes.py", "tools/check_note.py", "tools/check_note_numbers.py"]
   push:
     # develop is what the site is served from (GitHub Pages), so notes merged there go live.
     # master (releases and hotfixes) is built too, in case a note reaches it first.
@@ -22,11 +22,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the number check reads the notebook at the commit the note links to
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Validate student notes
         run: python tools/build_notes.py check
+      - name: Advice on the numbers of the notes changed in this pull request
+        # Advisory: the number check never fails the pull request (it is a help, not a proof). The notes that
+        # changed are listed in the job summary and as warnings. Run it yourself first: tools/check_note.py.
+        run: python tools/check_note.py --changed "origin/${{ github.base_ref }}" --only numbers --github
 
   build:
     if: github.event_name == 'push'

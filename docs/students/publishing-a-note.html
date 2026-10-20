@@ -16,7 +16,7 @@ computer)</title>
 
 <h1>Publishing a note</h1>
 <p class="meta">NSDF-Data student guide 4 — for every
-computer &middot; Version 9 · 13 October 2026</p>
+computer &middot; Version 10 · 20 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -29,9 +29,9 @@ start</a></li>
 <li><a href="#step-1.-get-your-note-into-notessrc"
 id="toc-step-1.-get-your-note-into-notessrc">Step 1. Get your note into
 <code>notes/src/</code></a></li>
-<li><a href="#step-2.-commit-to-your-branch"
-id="toc-step-2.-commit-to-your-branch">Step 2. Commit to your
-branch</a></li>
+<li><a href="#step-2.-check-your-note-then-commit-to-your-branch"
+id="toc-step-2.-check-your-note-then-commit-to-your-branch">Step 2.
+Check your note, then commit to your branch</a></li>
 <li><a href="#step-3.-open-the-pull-request"
 id="toc-step-3.-open-the-pull-request">Step 3. Open the pull
 request</a></li>
@@ -153,9 +153,34 @@ short two-section document with one picture first. If the headings and
 the picture both come through, convert the real note.</p>
 </div>
 <p>Your lead will replace <code>id: "TBD"</code> with a number.</p>
-<h2 id="step-2.-commit-to-your-branch">Step 2. Commit to your
-branch</h2>
-<p>In the terminal, from the <code>NSDF-Data</code> folder:</p>
+<h2 id="step-2.-check-your-note-then-commit-to-your-branch">Step 2.
+Check your note, then commit to your branch</h2>
+<p>In the terminal, from the <code>NSDF-Data</code> folder, with your
+environment active, run the checks on your note (change the file name to
+yours):</p>
+<pre><code>python tools/check_note.py notes/src/your-note-name.md</code></pre>
+<p>This runs, in one go, the same checks that GitHub runs on your pull
+request, and shows only what concerns your note:</p>
+<ul>
+<li><strong>Structure:</strong> the header, the status, the pictures. A
+problem fails the check.</li>
+<li><strong>Pinned links:</strong> every link to your code is pinned to
+a commit that exists. A problem fails the check. Push your notebook
+commit before you open the pull request: GitHub only sees pushed
+commits.</li>
+<li><strong>Numbers:</strong> the numbers in your text that are not in
+your notebook’s saved output. This is advice only (guide 3 explains what
+to do with each line), and it does not fail the check.</li>
+</ul>
+<p>Read the last line. <em>ready for review</em> means the structure and
+the links are fine. If it says to fix the problems, fix them (Step 4 has
+a table of the common messages) and run it again.</p>
+<div class="tip">
+<p><strong>Behind the project?</strong> If you have not updated your
+branch for a while, do the <em>Updating your setup</em> guide first, so
+you have the newest checks. A few commits behind is fine.</p>
+</div>
+<p>Then commit and push, from the <code>NSDF-Data</code> folder:</p>
 <pre><code>git checkout student-yourname
 git add notes/src/your-note-name.md notes/src/img
 git status
@@ -203,10 +228,12 @@ lead adds the change as a commit on your branch, so you do not edit
 in your pull request.</p>
 </div>
 <h2 id="step-4.-read-the-check">Step 4. Read the check</h2>
-<p>The check starts automatically and takes less than a minute. When it
-finishes, click <strong>Details</strong> on the check, and read its
-messages. Each message names the file and the problem. Here are the
-common ones and what to do:</p>
+<p>The check starts automatically and takes less than a minute. It is
+the structure check of Step 2, and for the notes your pull request
+changes it also lists, as warnings, the numbers that are not in the
+notebook output. When it finishes, click <strong>Details</strong> on the
+check, and read its messages. Each message names the file and the
+problem. Here are the common ones and what to do:</p>
 <div class="table-scroll">
 <table>
 <colgroup>
@@ -319,7 +346,7 @@ one). Let the check run again. If a result was wrong, say so in the
 note, with the date, as guide 3 explains. Do not delete a published note
 to hide a mistake.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 9, 13 October 2026. Written for every computer. Please
+<p>Guide version 10, 20 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a

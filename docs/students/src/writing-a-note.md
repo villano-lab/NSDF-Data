@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 17 · 19 October 2026"
+date: "Version 18 · 19 October 2026"
 ---
 
 ::: tip
@@ -237,6 +237,8 @@ A note is only useful if the reader can find the code that made its numbers. Lin
 
 Say in the note which commit you pinned.
 
+**You do not write a second link for the current version.** The published note adds one for you: after each pinned link to a file, a small **[latest]** link opens the same file on the `develop` branch as it is today (and, if the file has moved since your commit, at its new place; if it was removed, the link is left out). So the pinned link shows the code that made your numbers and **[latest]** shows where that code is now. It appears only on the published page, not in the VS Code preview, and only for links in the form shown above (full `https://github.com/villano-lab/NSDF-Data/blob/<commit>/...` addresses), so do not shorten them.
+
 ## Outline and links
 
 If your note has more than two or three sections, add a short outline near the top, with a link to each one. Readers use it to jump to what they need. The site builds the outline from your `##` headings, so use one `##` heading for each section. A note with no `##` headings simply has no outline.
@@ -248,7 +250,7 @@ Go through this list before you ask for review:
 - [ ] The title is a question.
 - [ ] Every number in the text can be found in your notebook output.
 - [ ] Every figure has a number, a bold label ("Figure 1.") and a caption that says what is plotted and what to look for, and both axes are labelled with units.
-- [ ] Every notebook link is pinned to a commit.
+- [ ] Every notebook link is pinned to a commit, as a full `https://github.com/villano-lab/NSDF-Data/blob/<commit>/...` address (the published note then adds the **[latest]** link itself).
 - [ ] The header is complete.
 - [ ] Any section you use says something a reader needs. Empty or filler sections are removed.
 - [ ] You have said what you did *not* check, if the note makes a claim.
@@ -257,7 +259,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 17, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 18, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

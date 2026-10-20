@@ -115,7 +115,7 @@ print(len(events), "events;", len(psd), "channels:", ", ".join(psd))
 print(f"Side1pB at {freq[100]:.0f} Hz: {mean[100]:.2e} +/- {sem[100]:.1e} counts^2/Hz")
 ```
 
-Run it from the `NSDF-Data` folder. It prints the number of events and the 7 working channels (`Side1pB`, `Side1pE`, `Side1pF`, `Side2pB`, `Side2pC`, `Side2pE`, `Side2pF`); the dead channels have no spectrum. The PSDs are the mean over the 101 events of the `clean_randoms` cut, in counts$^2$/Hz, with the standard error of the mean; the layout of the file is described in section 7 of [`psd-clean-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb), which also makes them. The caveats above apply, in particular to `Side2pB`.
+Run it from the `NSDF-Data` folder. It prints the number of events and the 7 working channels (`Side1pB`, `Side1pE`, `Side1pF`, `Side2pB`, `Side2pC`, `Side2pE`, `Side2pF`); the dead channels have no spectrum. The PSDs are the mean over the 101 events of the `clean_randoms` cut, in counts²/Hz, with the standard error of the mean; the layout of the file is described in section 7 of [`psd-clean-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb), which also makes them. The caveats above apply, in particular to `Side2pB`.
 
 ## Appendix A: the strictest cut (every working channel)
 
@@ -129,7 +129,7 @@ Figure 4 shows the 31 traces themselves in every channel (section 12 of `chan0-c
 
 ![](img/allchan-psd-by-side-07221203_2025_F0001.png)
 
-**Figure 5: Noise spectra of the 31 randoms that pass the quiet-noise cut in every working channel, by side.** Side 1 on the left (3 working channels) and Side 2 on the right (4 working channels), one colour per channel within each panel (the colours are not shared between the panels). Each curve is the one-sided PSD (counts$^2$/Hz), computed as the mean over the 31 traces of the squared Fourier amplitude of each trace (baseline-subtracted, first samples skipped) scaled to a one-sided density; the spread between traces is not drawn. Both panels share the same axes. The five dead channels are not shown.
+**Figure 5: Noise spectra of the 31 randoms that pass the quiet-noise cut in every working channel, by side.** Side 1 on the left (3 working channels) and Side 2 on the right (4 working channels), one colour per channel within each panel (the colours are not shared between the panels). Each curve is the one-sided PSD (counts²/Hz), computed as the mean over the 31 traces of the squared Fourier amplitude of each trace (baseline-subtracted, first samples skipped) scaled to a one-sided density; the spread between traces is not drawn. Both panels share the same axes. The five dead channels are not shown.
 
 ## Appendix B: the cut on `Side2pC` and the cut on `Side1pB`
 

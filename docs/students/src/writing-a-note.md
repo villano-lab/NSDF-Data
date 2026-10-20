@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 16 · 19 October 2026"
+date: "Version 17 · 19 October 2026"
 ---
 
 ::: tip
@@ -91,7 +91,7 @@ Write your note in whatever you are comfortable with. Two routes are supported, 
 1. Install VS Code, start it, and choose **File**, then **Open Folder**, and pick the `NSDF-Data` folder.
 2. In the file list on the left, open `notes/src`. Copy `_template.md` (right-click it, **Copy**, then right-click the folder and **Paste**) and rename the copy `your-note-name.md`. Use lowercase letters and hyphens, for example `baseline-in-dump-one.md`.
 3. Write. To see the preview in its own tab next to the text, press `Ctrl+K`, let go, then press `V` (on macOS: `Cmd+K`, then `V`). The preview follows as you type and scroll. (`Ctrl+Shift+V` also works, but it replaces the text with the preview in the same tab.)
-4. Save each figure as a PNG in `notes/src/img/`, with your note's name at the start of the file name (`baseline-in-dump-one-fig1.png`) and refer to it as `![caption](img/baseline-in-dump-one-fig1.png)`. All notes share that one folder, so the name prefix keeps your pictures from being mixed up with someone else's. Put the picture directly in `img/`, not in a subfolder.
+4. Save each figure as a PNG in `notes/src/img/`, with your note's name at the start of the file name (`baseline-in-dump-one-fig1.png`) and refer to it as `![caption](img/baseline-in-dump-one-fig1.png)`. All notes share that one folder, so the name prefix keeps your pictures from being mixed up with someone else's. Put the picture directly in `img/`, not in a subfolder. How to make the plot and write its caption (bold **Figure 1.** label, what is plotted, what to look for) is in [Making a good plot](#making-a-good-plot) and [The caption](#the-caption).
 5. Keep your notebook and any scripts in your own folder under `data_analysis/R76/student/`, and commit as you go (guide 2, Step 7).
 
 Any other plain text editor works for this route too (Notepad, TextEdit set to **Format**, then **Make Plain Text**, or gedit). Save the file as `your-note-name.md`, as UTF-8, and check on Windows that the name does not end in `.md.txt` (File Explorer, **View**, then tick **File name extensions**). The GitHub web editor also works, with no install at all.
@@ -102,7 +102,7 @@ If you write better in Word or Google Docs, write there. Keep the file anywhere 
 
 - **Use Heading styles for section titles.** In Word, select a section title and choose **Home**, then **Heading 1** (main sections) or **Heading 2** (sub-sections). Do not just make the title bold or bigger. Only Heading-styled text becomes a heading, and without headings there is no outline.
 - **Avoid underline and superscript.** Underlined text and superscripts (the raised "th" in 5th, for example) do not convert. Use plain text instead.
-- **Insert pictures into the document** with **Insert**, then **Pictures** (or paste them in), and put the caption in the line under each one. Pictures that are only linked, not embedded, are lost.
+- **Insert pictures into the document** with **Insert**, then **Pictures** (or paste them in), and put the caption in the line under each one (see [The caption](#the-caption)). Pictures that are only linked, not embedded, are lost.
 
 Keep code out of the document where you can: link to the notebook instead (see *Pinning your code*). Word turns straight quotes into curly ones, which breaks any code you paste in.
 
@@ -257,7 +257,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 16, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 17, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

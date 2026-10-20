@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 21 · 20 October 2026"
+date: "Version 22 · 20 October 2026"
 ---
 
 ::: tip
@@ -125,6 +125,8 @@ description: "One sentence: what you did and what you found."
 Leave `id` as `TBD`. The reviewer gives your note its number (the next free one, for example 8) before it is published. Notes have one continuous set of numbers, whoever wrote them.
 
 **Status** is one of: *In progress* (you are still working on it), *Complete* (the question is answered and you are not going to change it), or *Superseded (reference/link)* (a later note has taken its place; this one stays up for reference and links to the newer note). New notes start as *In progress*.
+
+**You do not type the date you finished.** When the note is published with the status *Complete*, the front page shows *Complete (date)*, the day the note was first published as Complete, taken from Git. If you reopen a note (back to *In progress*) and publish it as *Complete* again, the page shows *Complete (first date), revised (date)*, and puts a red box *Revised (date)* at the top of the note unless you have already put a box there that starts with **Revised.**, **Correction.** or **Update.** Say in that box what changed.
 
 ## If your note replaces an earlier note
 
@@ -287,7 +289,7 @@ The tool is a help, not a judge: it matches numbers at the digits you wrote (0.5
 
 ## Session Info
 
-Guide version 21, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 22, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

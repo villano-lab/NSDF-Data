@@ -116,6 +116,9 @@ table.compact td, table.compact th { padding: 5px 10px; }
   padding: 10px 14px;
   margin: 16px 0;
 }
+/* A note that was reopened and completed again, when its author did not say so at the top (build_notes.py). */
+.revised-box { background: var(--jw-bg); color: var(--jw-fg); border: 2px solid var(--jw-border); border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+.revised-box a { color: inherit; text-decoration: underline; }
 .callout strong.tag { text-transform: uppercase; letter-spacing: 0.03em; }
 
 pre { background: var(--code-bg); padding: 12px 14px; border-radius: 6px; overflow-x: auto; font-size: 0.88rem; line-height: 1.45; }

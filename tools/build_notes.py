@@ -83,6 +83,63 @@ def check_note(path, header, body, taken_ids, strict):
     return problems
 
 
+STATUS_LINE = re.compile(r'^status:\s*"(.*)"\s*$', re.M)
+REVISED_MARK = re.compile(r":::\s*callout\s*\n\s*\*\*(Revised|Revision|Correction|Update)", re.I)
+
+
+def _git(root, *args):
+    r = subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, encoding="utf-8")
+    return r.stdout if r.returncode == 0 else None
+
+
+def completion_dates(rel_path, root=ROOT):
+    """The dates a note became Complete on the branch that is checked out: (first, revised).
+
+    `first` is the date of the first commit on the branch (following first parents, so a merged pull request counts as
+    the day of its merge) in which the note's status is Complete after it was something else. `revised` is the date of the
+    last such commit if the note went back to another status and became Complete again, otherwise None. Both are None
+    if the note is not Complete now, or if the history is not there (a shallow clone, or no Git)."""
+    shallow = _git(root, "rev-parse", "--is-shallow-repository")
+    if shallow is None or shallow.strip() != "false":
+        return None, None
+    log = _git(root, "log", "--first-parent", "--reverse", "--format=%H %cs", "--", rel_path)
+    if not log:
+        return None, None
+    dates, complete = [], False
+    for line in log.splitlines():
+        sha, day = line.split()
+        text = _git(root, "show", f"{sha}:{rel_path}") or ""
+        m = STATUS_LINE.search(text)
+        now = bool(m) and m.group(1) == "Complete"
+        if now and not complete:
+            dates.append(day)
+        complete = now
+    if not complete or not dates:
+        return None, None
+    return dates[0], (dates[-1] if len(dates) > 1 else None)
+
+
+def status_text(header):
+    """The status as shown: Complete (first date), and ", revised (date)" if it was reopened and completed again."""
+    text = header["status"]
+    first, revised = header.get("_first"), header.get("_revised")
+    if text == "Complete" and first:
+        text += f" ({first})" + (f", revised ({revised})" if revised else "")
+    return text
+
+
+def revised_box(header, body):
+    """A red box for the top of a note that was reopened and completed again, unless the author already
+    put a box that starts with Revised, Revision, Correction or Update at the top of the note's text."""
+    first, revised = header.get("_first"), header.get("_revised")
+    if not revised or REVISED_MARK.search(body):
+        return ""
+    history = f"https://github.com/villano-lab/NSDF-Data/commits/develop/{header.get('_src', 'notes/src')}"
+    return (f'<div class="revised-box"><strong>Revised {revised}.</strong> This note was first marked Complete on {first}, '
+            f'reopened, and marked Complete again on {revised}. The author has not said what changed, in a box at the top of the '
+            f'note; <a href="{history}">the history of the note\'s source file</a> shows every change.</div>')
+
+
 def slug_of(path):
     return re.sub(r"[^a-z0-9]+", "-", path.stem.lower()).strip("-")
 
@@ -118,8 +175,8 @@ def page(header, slug, body_html):
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>{html.escape(header['title'])}</h1>
-<p class="meta"><strong>Note {html.escape(header['id'])}</strong> &middot; Author(s): {html.escape(header['author'])} &middot; {html.escape(header['date'])} &middot; Status: <span class="status {status_class}">{html.escape(header['status'])}</span></p>
-
+<p class="meta"><strong>Note {html.escape(header['id'])}</strong> &middot; Author(s): {html.escape(header['author'])} &middot; {html.escape(header['date'])} &middot; Status: <span class="status {status_class}">{html.escape(status_text(header))}</span></p>
+{header.get('_revised_box', '')}
 {outline_block}
 
 {body_html}
@@ -156,7 +213,7 @@ def index_rows(notes):
       <td>{html.escape(h['title'])}</td>
       <td class="desc">{html.escape(h['description'])}</td>
       <td class="kw">{html.escape(h['keywords'])}</td>
-      <td><span class="status {STATUSES[h['status']]}">{html.escape(h['status'])}</span></td>
+      <td><span class="status {STATUSES[h['status']]}">{html.escape(status_text(h))}</span></td>
       <td></td>
     </tr>"""))
     return rows
@@ -215,6 +272,7 @@ def load_all(strict):
         if found:
             problems.setdefault(p.name, []).extend(found)
         if not any(e for e in problems.get(p.name, [])):
+            h["_src"] = f"notes/src/{p.name}"
             notes.append((slug_of(p), h, body))
     return notes, problems
 
@@ -251,6 +309,9 @@ def prune(notes):
 def build(notes):
     out_dir = DOCS / "notes"
     for slug, h, body in notes:
+        if h["status"] == "Complete":
+            h["_first"], h["_revised"] = completion_dates(h["_src"])
+            h["_revised_box"] = revised_box(h, body)
         body_html = to_html(body.replace("](img/", f"](img/student-{slug}/"))
         (out_dir / f"student-{slug}.html").write_text(page(h, slug, body_html), encoding="utf-8")
         img_dst = out_dir / "img" / f"student-{slug}"

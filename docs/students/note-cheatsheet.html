@@ -14,7 +14,7 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="note-cheatsheet.pdf">PDF version (download or print)</a></nav></header>
 
 <h1>From note to live page</h1>
-<p class="meta">NSDF-Data student cheat-sheet · version 4, 12 October
+<p class="meta">NSDF-Data student cheat-sheet · version 5, 19 October
 2026</p>
 
 
@@ -38,7 +38,10 @@ Remove the template’s <code>img/example.png</code> line, and any
 <code>&lt;sub&gt;</code> or <code>&lt;span&gt;</code> tags.</li>
 <li>Optional: with your environment active, run
 <code>python tools/build_notes.py check</code>. It finds the problems
-the PR check would.</li>
+the PR check would. Then run
+<code>python tools/check_note_numbers.py notes/src/your-note-name.md</code>:
+it lists the numbers in your text that are not in your notebook’s
+output.</li>
 </ul>
 <p><strong>Commands</strong>, from the <code>NSDF-Data</code> folder, on
 your own branch:</p>

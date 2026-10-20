@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 18 · 19 October 2026"
+date: "Version 19 · 19 October 2026"
 ---
 
 ::: tip
@@ -248,18 +248,34 @@ If your note has more than two or three sections, add a short outline near the t
 Go through this list before you ask for review:
 
 - [ ] The title is a question.
-- [ ] Every number in the text can be found in your notebook output.
+- [ ] Every number in the text can be found in your notebook output (a tool can check this for you, see below).
 - [ ] Every figure has a number, a bold label ("Figure 1.") and a caption that says what is plotted and what to look for, and both axes are labelled with units.
 - [ ] Every notebook link is pinned to a commit, as a full `https://github.com/villano-lab/NSDF-Data/blob/<commit>/...` address (the published note then adds the **[latest]** link itself).
 - [ ] The header is complete.
 - [ ] Any section you use says something a reader needs. Empty or filler sections are removed.
 - [ ] You have said what you did *not* check, if the note makes a claim.
+
+### Checking the numbers with a tool
+
+With your environment active, run this from the `NSDF-Data` folder, with your own note's file name:
+
+```
+python tools/check_note_numbers.py notes/src/your-note-name.md
+```
+
+It reads the notebook your note links to (at the commit you pinned) and looks at each number in your text and captions. For each one it says whether the number is in the notebook's **saved output**, only in its **code**, or **NOT FOUND**. The notebook must have been saved with its outputs, so do not clear them before you commit.
+
+- **Found in the output:** nothing to do.
+- **Only in the code:** it is a value you chose (a threshold, a bin width), not a result. Say so in the note.
+- **NOT FOUND:** check the number. A typing mistake, a number from an older run of the notebook, a number you worked out by hand, or a number read off a plot all show up here. Fix the note, or add the calculation to the notebook so it prints the number, and run it again. If a number is right and cannot come from the notebook (for example a value from a paper), put `<!-- numbers-ok -->` at the end of its line, and say where it comes from in the text.
+
+The tool is a help, not a judge: it matches numbers at the digits you wrote (0.52 matches 0.5213), and it skips the header, code, links, labels such as "Figure 1", dates and the reference list.
 - [ ] If you wrote next steps, they are concrete.
 - [ ] You have read it aloud once, looking for a word a newcomer would not know.
 
 ## Session Info
 
-Guide version 18, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 19, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

@@ -11,6 +11,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Changed
 
+- **Guide 3 (version 19) and the note cheat-sheet (version 5): how to run the number checker.** A new section *Checking the numbers with a tool* explains `tools/check_note_numbers.py` and what to do with each result (found, only in the code, NOT FOUND, and `<!-- numbers-ok -->`); the checklist and the cheat-sheet point to it.
 - **Guide 3 (version 18): explains the automatic "latest" link next to each pinned link.** *Pinning your code* now says that students write only the pinned link, and the published note adds a **[latest]** link to the same file on `develop` (following the file if it moved). The checklist asks for full GitHub addresses so the link can be added.
 - **Guide 3 (version 17): point 4 of *Where and how to write* links to the plot and caption sections.** Where a student is told how to save and refer to a figure, the guide now points to *Making a good plot* and *The caption*; the Word route links to *The caption* too.
 - **Guide 2 (version 22): the `git add` row of the *Common problems* table was cut short, now fixed; a row for `IndexError`; clearer wording for the plotting step.** Version 21 added a row with one cell too many, so Markdown dropped the "what to do" cell and the page showed only the symptom. It is now a two-cell row. Another new row covers `IndexError: too many indices for array`, which a student got from `pulses[1,2,3]`, and the plotting step now says to try `1`, then `2`, then `3`, one at a time, and why `pulses[1,2,3]` fails.

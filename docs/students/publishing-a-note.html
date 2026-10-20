@@ -16,7 +16,7 @@ computer)</title>
 
 <h1>Publishing a note</h1>
 <p class="meta">NSDF-Data student guide 4 — for every
-computer &middot; Version 10 · 20 October 2026</p>
+computer &middot; Version 11 · 20 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -43,6 +43,9 @@ id="toc-step-5.-wait-for-review">Step 5. Wait for review</a></li>
 merge</a></li>
 <li><a href="#changing-a-note-later"
 id="toc-changing-a-note-later">Changing a note later</a></li>
+<li><a href="#appendix.-the-pull-request-form-step-by-step"
+id="toc-appendix.-the-pull-request-form-step-by-step">Appendix. The pull
+request form, step by step</a></li>
 <li><a href="#session-info" id="toc-session-info">Session Info</a></li>
 <li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
 help</a></li>
@@ -219,6 +222,14 @@ example <code>Supersedes Note 3</code>).</li>
 </ul>
 <p>Click <strong>Create pull request</strong>.</p>
 <div class="careful">
+<p><strong>The description box is already filled in</strong>, with a
+checklist written for the project’s developers. Do not be put off by it,
+and do not delete it. For a note, the <em>Appendix</em> at the end of
+this guide gives you the exact text to paste into the box and says where
+to change it. The same form appears if you start the pull request from
+VS Code.</p>
+</div>
+<div class="careful">
 <p><strong>If your note replaces an earlier note</strong>, that note’s
 status must change and it must link to yours, and this has to travel in
 the same pull request. Guide 3 (<em>If your note replaces an earlier
@@ -345,8 +356,90 @@ git diff notes/src/your-note-name.md</code></pre>
 one). Let the check run again. If a result was wrong, say so in the
 note, with the date, as guide 3 explains. Do not delete a published note
 to hide a mistake.</p>
+<h2 id="appendix.-the-pull-request-form-step-by-step">Appendix. The pull
+request form, step by step</h2>
+<p>When you start a pull request, on github.com or from VS Code, the
+form has four parts. This is what to do with each one, for a student
+note.</p>
+<p><strong>1. The two branches.</strong> At the top, the
+<strong>base</strong> must be <code>develop</code> and the branch you
+are comparing (the <em>compare</em> or <em>merge</em> branch) must be
+<code>student-yourname</code>.</p>
+<ul>
+<li>On <strong>github.com</strong> these are two drop-down buttons at
+the top of the form, labelled <em>base</em> and <em>compare</em>. Change
+<em>base</em> to <code>develop</code> if it says something else.</li>
+<li>In the <strong>VS Code</strong> panel they are the two lines
+<strong>BASE</strong> and <strong>MERGE</strong>. The branch name next
+to BASE is a button even though it looks like plain text: click it and
+choose <code>develop</code>. If both lines show the same branch, the
+panel says there are no commits to compare and the
+<strong>Create</strong> button stays grey. Changing BASE to
+<code>develop</code> fixes it.</li>
+</ul>
+<p><strong>2. The title.</strong> One line that says what the note is
+about, for example the title of your note.</p>
+<p><strong>3. The description.</strong> GitHub fills this box with a
+checklist. Click inside the box, select everything in it
+(<code>Ctrl+A</code>, or <code>Cmd+A</code> on a Mac) and replace it
+with the text below. Copy it from here, then change the two parts that
+are in angle brackets, <code>&lt;like this&gt;</code>, and nothing
+else.</p>
+<pre><code>&gt; **Target branch:** open feature PRs against **`develop`**.
+&gt; Only `release/*` and `hotfix/*` branches target `master`. See `RELEASING.md`.
+
+## What and why
+
+&lt;One or two sentences: the question your note answers and what you did.
+If it replaces an earlier note, say so, for example &quot;Supersedes Note 3&quot;.&gt;
+
+## What changed
+
+- [ ] Library code (`python/`) n/a
+- [x] Notebooks (`data_analysis/`)
+- [ ] Notes site or hand-written notes (`docs/`) n/a
+- [ ] Student guides (`docs/students/src/`) n/a
+- [x] Student note (`notes/src/`)
+- [ ] CI or build files (`.github/`, `tools/`) n/a
+
+## Checklist
+
+Tick what applies, and say &quot;n/a&quot; for the rest.
+
+- [ ] Tests pass (`python -m pytest -q` in `python/`) n/a
+- [ ] New or changed library functions have tests and a `@status` tag n/a
+- [ ] A new or renamed note has its row in `docs/index.html` n/a
+- [ ] Guides: edited the sources, rebuilt, committed sources and PDFs n/a
+- [ ] Guides: bumped the version and date n/a
+- [ ] Changed package pins? Updated `requirements.txt` and the guide n/a
+- [x] Student note: left `id: &quot;TBD&quot;` and ran `check_note.py` on it
+- [ ] Added a line under `[Unreleased]` in `CHANGELOG.md` n/a
+- [x] No raw data, credentials or tokens committed
+- [x] If an AI assistant helped: a `Co-Authored-By:` trailer is in the commits
+
+## How I tested it
+
+&lt;Say what you ran and what you saw. For a note: that you ran
+`python tools/check_note.py notes/src/your-note-name.md`, which of the three
+checks said OK, and anything it listed that you checked by hand.&gt;</code></pre>
+<p><strong>4. Ticks and “n/a”.</strong> The square brackets are the box
+itself: <code>[ ]</code> is empty and <code>[x]</code> is ticked. To
+tick a box, put an <code>x</code> between the brackets. To say that a
+line does not apply, leave the box empty and type <code>n/a</code> at
+the end of the line, outside the brackets. Do not type inside the
+brackets: the line would stop being a box. Nothing reads the boxes by
+machine, so a missed one costs nothing; they tell your lead what you
+checked.</p>
+<div class="checkpoint">
+<p>Before you click <strong>Create</strong>: the base is
+<code>develop</code>, the title says what the note is about, and the two
+parts in angle brackets have been replaced by your own sentences (no
+<code>&lt;like this&gt;</code> text is left). Then click <strong>Create
+pull request</strong> (or <strong>Create</strong>) and go on to Step
+4.</p>
+</div>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 10, 20 October 2026. Written for every computer. Please
+<p>Guide version 11, 20 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a

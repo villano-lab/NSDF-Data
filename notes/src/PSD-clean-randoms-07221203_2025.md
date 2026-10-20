@@ -76,15 +76,17 @@ The key parameter we want to get out of pulses in these detectors is the overall
 
 The PSD is sort of like the standard deviation of different frequency components in a trace (any trace can be written as a sum of sinusoids of different frequencies, the Fourier decomposition [4]). The PSD can be calculated for discrete data sampling as below:
 
-Take a trace of N samples x[n], n = 0 … N−1, taken every Δt (here Δt = 1.6 µs), with its baseline subtracted. Its discrete Fourier transform is X[k], and bin k sits at the frequency f[k] = k / (N Δt). Averaging over M traces with no pulse in them (here the M = 101 traces of the `clean_randoms` cut, or the 31 of Appendix A), the one-sided PSD is
+Take a trace of $N$ samples $x[n]$, $n = 0, \ldots, N-1$, taken every $\Delta t$ (here $\Delta t = 1.6\,\mu\mathrm{s}$), with its baseline subtracted. Its discrete Fourier transform is $X[k]$, and bin $k$ sits at the frequency $f[k] = k/(N\,\Delta t)$. Averaging over $M$ traces with no pulse in them (here the $M = 101$ traces of the `clean_randoms` cut, or the 31 of Appendix A), the one-sided PSD is
 
-```
-X[k] = sum over n of  x[n] exp(-2πi k n / N)
+$$
+\begin{aligned}
+X_m[k] &= \sum_{n=0}^{N-1} x_m[n]\, e^{-2\pi i\, k n / N}, \\
+S[k] &= \frac{2\,\Delta t}{N}\cdot\frac{1}{M}\sum_{m=1}^{M}\left|X_m[k]\right|^2
+\qquad \left(\mathrm{counts}^2/\mathrm{Hz}\right),
+\end{aligned}
+$$
 
-S[k] = (2 Δt / N) · (1/M) · sum over the M traces of |X[k]|²        (counts² / Hz)
-```
-
-where the factor 2 folds the negative frequencies onto the positive ones (it is left out for the zero-frequency and Nyquist bins), and the 1/N and Δt make S independent of the trace length and the sampling rate, so that its integral over frequency equals the mean square of the trace (its variance, if the trace has zero mean). This is the convention used in the notebook ([`noise-psd-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb)); Note 3 plotted the raw |X[k]|² instead, which differs from S only by the constant 2Δt/N.
+where $x_m[n]$ is trace $m$ and $X_m[k]$ its transform. The factor 2 folds the negative frequencies onto the positive ones (it is left out for the zero-frequency and Nyquist bins), and the $1/N$ and $\Delta t$ make $S$ independent of the trace length and the sampling rate, so that its integral over frequency equals the mean square of the trace (its variance, if the trace has zero mean). This is the convention used in the notebook ([`noise-psd-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb)); Note 3 plotted the raw $|X[k]|^2$ instead, which differs from $S$ only by the constant $2\,\Delta t/N$.
 
 Figure 4 shows the PSDs of the 101 events of the `clean_randoms` cut, the cut used from now on. Above 100 kHz the mean PSD is flat, between 5.6e-6 and 6.7e-6 counts²/Hz in five of the seven channels; the narrow lines of the DCRC3 channels `Side1pE` and `Side2pE` raise their means to 1.3e-5 and 1.7e-5 counts²/Hz. `Side2pB` is the odd one: between 1 and 10 kHz its mean PSD is 6.8e-6 counts²/Hz, against 4.5e-5 to 1.5e-4 for the others (see Caveats).
 

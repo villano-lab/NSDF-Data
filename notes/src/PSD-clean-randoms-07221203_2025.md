@@ -96,7 +96,26 @@ where the factor 2 folds the negative frequencies onto the positive ones (it is 
 
 - **`Side2pB` (Detector 2 / Channel 0, DCRC4) may not be a normal phonon channel.** Its noise is flat and about an order of magnitude below the other working channels at low frequencies (Figure 5), and it passes the quiet-noise cut for 958 of the 1008 randoms, against 101 to 180 for the others. This could mean the channel is superconducting or otherwise not biased into its transition. The [UMN wiki](https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76.html) does not say so: it never mentions superconducting channels, and its only related remark is that three channels (`pB`, `pD`, `pE`, with no side given) "had railed in the middle of the data period" in October. The run configuration we read for another series (`07220916_2200`) lists zero QET bias on all four DCRC4 channels, with the feedback of channel 0 disabled, which fits a channel that is not in transition but does not prove it. Until this is confirmed, the spectra of `Side2pB` should not be taken as a phonon noise measurement.
 
-## Next steps
+## Results/Next steps
+
+I've made the current best estimate of the noise PSD specifically focusing on the series `07221203_2025`. The PSDs are accessible via [`psd-clean-randoms-07221203_2025_F0001.h5`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5) file (pinned to `e7b087f`, 270 kB), and can be accessed by:
+
+```python
+import h5py
+import numpy as np
+
+with h5py.File("data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5", "r") as f:
+    freq = f["frequency_hz"][:]                       # Hz, shared by all channels
+    events = f["event_numbers"][:]                    # the 101 clean_randoms events
+    psd = {name: (g["psd_mean"][:], g["psd_sem"][:])  # counts^2/Hz and its standard error
+           for name, g in f["channels"].items()}
+
+mean, sem = psd["Side1pB"]
+print(len(events), "events;", len(psd), "channels:", ", ".join(psd))
+print(f"Side1pB at {freq[100]:.0f} Hz: {mean[100]:.2e} +/- {sem[100]:.1e} counts^2/Hz")
+```
+
+Run it from the `NSDF-Data` folder. It prints the number of events and the 7 working channels (`Side1pB`, `Side1pE`, `Side1pF`, `Side2pB`, `Side2pC`, `Side2pE`, `Side2pF`); the dead channels have no spectrum. The PSDs are the mean over the 101 events of the `clean_randoms` cut, in counts$^2$/Hz, with the standard error of the mean; the layout of the file is described in section 7 of [`psd-clean-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb), which also makes them. The caveats above apply, in particular to `Side2pB`.
 
 ## Appendix A: the strictest cut (every working channel)
 

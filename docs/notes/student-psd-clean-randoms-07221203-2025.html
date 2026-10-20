@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 9: What is the current best PSD estimate from series 07221203_2025?</title>
+<link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>What is the current best PSD estimate from series 07221203_2025?</h1>
+<p class="meta"><strong>Note 9</strong> &middot; Author(s): Buddy Holly (A. Villano) &middot; 2026-10-05 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ol>
+  <li><a href="#code-repository">Code repository</a></li>
+  <li><a href="#data-and-setup">Data and setup</a></li>
+  <li><a href="#the-question">The question</a></li>
+  <li><a href="#selection-of-randoms-in-all-channels">Selection of Randoms in
+All Channels</a></li>
+  <li><a href="#noise-power-spectral-densities">Noise Power Spectral
+Densities</a></li>
+  <li><a href="#caveats">Caveats</a></li>
+  <li><a href="#results">Results</a></li>
+  <li><a href="#next-steps">Next steps</a></li>
+  <li><a href="#appendix-a-the-strictest-cut-every-working-channel">Appendix A:
+the strictest cut (every working channel)</a></li>
+  <li><a href="#appendix-b-the-cut-on-side2pc-and-the-cut-on-side1pb">Appendix
+B: the cut on <code>Side2pC</code> and the cut on
+<code>Side1pB</code></a></li>
+</ol>
+</nav>
+
+<h2 id="code-repository">Code repository</h2>
+<p>All code is pinned to commit <code>bf0ed61</code>: each link shows
+the file as it was when the results below were made, which may be older
+than the latest version, and the file may have moved since (see
+<code>data_analysis/README.md</code>). On the published page a small
+“latest” link after each one opens the file on <code>develop</code>
+today.</p>
+<ul>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>:
+the PSDs of every channel from the <code>clean_randoms</code> cut, and
+the saved HDF5 file <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
+(Noise Power Spectral Densities).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>:
+how good the Channel 0 cut is on the other channels, and the definition
+of the cut we use (<code>clean_randoms</code>) (Selection of Randoms in
+All Channels, Data and setup for the timing of the randoms, Appendices A
+and B).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>:
+the channel map and the noise spectra of the 31 events of the strictest
+cut (Data and setup, Appendix A).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/extract_odb_facts.py"><code>extract_odb_facts.py</code></a>
+and <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/odb-facts-07220916_2200.json"><code>odb-facts-07220916_2200.json</code></a>:
+the run configuration of series <code>07220916_2200</code> (board order,
+QET biases, random rates) read from its raw file, which is not in the
+repository, and the numbers it gave; section 12 of
+<code>noise-psd-randoms-buddy.ipynb</code> prints them (Data and setup,
+Caveats).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/python/pulse_channels.py"><code>pulse_channels.py</code></a>,
+<a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/python/pulse_cuts.py"><code>pulse_cuts.py</code></a>
+and <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/python/pulse_quantities.py"><code>pulse_quantities.py</code></a>:
+the library for the channel names, the randoms and excursion-band cuts,
+and the PSD.</li>
+</ul>
+<h2 id="data-and-setup">Data and setup</h2>
+<p>We are using the file 07221203_2025_F0001, which is series
+07221203_2025, Dump 1. The first 1000 events are
+<code>random'' triggers (the</code>Beginning of Run Randoms’’, taken at
+about 20 Hz: 1000 events in 49 seconds); random triggers are snapshots
+of our detector traces taken at any time (rather than when a pulse
+occurs) to sample the noise environment. The line in the third code
+block of the <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>
+notebook shows the randoms cut defined as
+<code>quiet_noise = pc.excursion_band(pulses, config_500) &amp; (np.log10(bstd_500) &lt; 0.5)</code>
+in addition to selecting the trigger specification for random events.
+The other 8 of the 1008 events that carry the randoms label are
+`<code>in-run'' randoms: they are spread through the rest of the dump, one every 1 to 2 seconds (all 8 in the last 9 seconds of the dump; the timestamps have one-second resolution). The run configuration of series</code>07220916_2200`
+lists 5 Hz for in-run randoms, which does not match what we see here, so
+that rate should not be assumed for this series.</p>
+<div class="callout">
+<p><strong>Note.</strong> The trigger specifications have the wrong
+wording (see <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html#randoms">Note
+2a</a>)</p>
+</div>
+<p>It may also be useful to have a diagram of the detector and which
+channels are working during the R76 run period at UMN. The figure below
+was reconstructed from the archive of the <a
+href="https://villano-lab.github.io/R76Analysis/index.html">UMN
+Wiki</a>.</p>
+<p><strong>How we found which channel is which.</strong> The data are
+numbered by detector (0 to 2) and channel (0 to 3), but there is one
+detector, S104, read out by three four-channel electronics boards
+(DCRC1, DCRC3, DCRC4). We matched them to the detector’s channels in
+four steps:</p>
+<ol type="1">
+<li><strong>The channel table.</strong> The <em>Setup</em> table of the
+<a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76.html">UMN
+Run 76 summary</a> lists the 12 channels by board, with the detector
+channel in its Label column (<code>Side1pA</code> to
+<code>Side2pF</code>). We used that column. The HV columns repeat
+entries and look like typos.</li>
+<li><strong>The board order.</strong> The table does not say which board
+is detector 0, 1 or 2. The raw file of another Run 76 series
+(<code>07220916_2200</code>; the raw file for our series is not on NSDF)
+holds the run configuration. It enables boards DCRC1, DCRC3 and DCRC4,
+and the three records of each event carry the codes 9, 11 and 12, which
+are the board numbers plus 8. So detector 0, 1, 2 = DCRC1, DCRC3, DCRC4.
+This is inferred and not confirmed.</li>
+<li><strong>The channels within a board.</strong> We assumed they follow
+the table’s row order. The data agree: the dead channels, whose signal
+never changes (channel 2 of DCRC1 and DCRC3, and channels 1 to 3 of
+DCRC4) are the ones that configuration lists with zero QET bias.</li>
+<li><strong>The faces.</strong> The wiki’s source-position figure draws
+Side 2 as seen after flipping the detector over, which is how the figure
+below shows it.</li>
+</ol>
+<p>The mapping is kept in <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/python/pulse_channels.py"><code>python/pulse_channels.py</code></a>,
+marked as under development, and section 7 of the notebook gives the
+evidence.</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/channel-status-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 1: The channels of detector S104.</strong> Side 1 is
+on the left and Side 2 on the right (as seen after flipping the detector
+over). The 7 working channels are coloured; the 5 dead channels (whose
+signal never changes) are grey and hatched.</p>
+<h2 id="the-question">The question</h2>
+<p>Based on this series’ “Beginning of Run Randoms (BORR),” what is our
+best estimate for the noise environment of the experimental setup? The
+noise environment is typically summarized in terms of the Power Spectral
+Density (PSD).</p>
+<h2 id="selection-of-randoms-in-all-channels">Selection of Randoms in
+All Channels</h2>
+<p>Typically, BORR are taken in the first events of the first “dump”
+(file) of a series’ raw data. In this series that is the case and there
+are 1000 BORR. Often many of the initial traces are “contaminated” with
+a real physics pulse that just happened to be in the random’s readout
+window. We call this a “pileup” pulse. Those occurances can mess up the
+noise computation and therefore the Optimal Filter amplitudes. Here I
+describe how we make a cut on the data to be sure those pileups are
+removed.</p>
+<p>This sort of thing has been done on one channel, Detector 0 / Channel
+0, and it is the topic of <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-02-noise-selection.html">Note
+2</a> and <a
+href="https://villano-lab.github.io/NSDF-Data/notes/note-02a-bstd-vs-time.html">Note
+2a</a>. Note 2 develops the noise-pulse selection: an excursion cut on a
+500-sample pretrigger window (the Tight band) together with a cut on the
+baseline scatter, <code>log10(bstd) &lt; 0.5</code>, which keeps 179 of
+the 1517 traces. Note 2a adds the trigger cut that keeps only the
+randoms, 141 of those 179 (the other 38 are real triggers), and looks at
+how the baseline scatter changes with time.</p>
+<p>To use that cut I have to decide how to apply it to all of the
+channels. A pileup should show up in all channels simultaneously,
+because the origin is a real physics event. It is possible the amplitude
+in some channels could be small enough so that it’s not obvious. Figure
+2 is a plot based on the cut for PCS2 only (see the <a
+href="#data-and-setup">Data and setup</a> section). To my slight
+surprise I found that this cut <em>does not remove</em> some traces that
+are either glitches or tails of pulses on Side 1. I don’t want those
+pulses in the noise sample.</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/chan0-cut-on-all-channels-full-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 2: The 141 randoms that pass the Channel 0 cut, in
+every channel.</strong> One tile per channel (rows are the boards DCRC1,
+DCRC3 and DCRC4); the traces are drawn over each other with
+transparency, baseline-subtracted, on a free vertical scale. The cut is
+made on <code>Side2pC</code> (Detector 0 / Channel 0, framed). Blue is
+Side 1, orange is Side 2, and red marks a trace that contains a pulse.
+The 5 tiles with grey text are the dead channels. Several traces carry
+large baseline ramps in the Side 1 and DCRC3 channels even though they
+are quiet in <code>Side2pC</code>.</p>
+<p>Based on what was seen in Figure 2. I developed a cut that will
+select noise for PBS1. It will hopefully not be as strict as requiring
+the analogous cut to be true on <em>all</em> channels. That leaves only
+31 traces (see <a
+href="#appendix-a-the-strictest-cut-every-working-channel">Appendix
+A</a>).</p>
+<p>Instead of doing <em>all</em> channels I selected instead one channel
+on each side to apply the standard cut to and then took the logical
+“AND.” In that case the remaining number of traces was somewhat small
+(71) but the quality looked pristine.</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/cut-on-S1-and-S2-full-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 3: The randoms that pass the cut on one channel of
+each side, in every channel.</strong> The cut is the quiet-noise cut on
+<code>Side2pC</code> (Side 2) <strong>and</strong> on
+<code>Side1pB</code> (Side 1), both framed. One tile per channel, with
+the traces drawn over each other with transparency on a free vertical
+scale. Blue is Side 1, orange is Side 2, and red would mark a trace that
+contains a pulse. The 5 tiles with grey text are the dead channels.</p>
+<p>While setting this up in the Jupyter notebook <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>,
+I checked if there were similar traces left in S2 after selecting on
+PBS1, just like we saw in S1 after selecting on PCS2. <a
+href="#appendix-b-the-cut-on-side2pc-and-the-cut-on-side1pb">Appendix
+B</a> shows the traces left in S1 after the PCS2 cut (Figure 6), and
+then the S1 cut itself (Figure 7). To my surprise there <em>were
+not</em> traces in S2 that were very apparent. That means that for some
+reason only cutting on S1 is more pure. Since only cutting on S1 is also
+less restrictive by definition, this led to more accepted randoms (101,
+compared with 71 for one channel on each side and 31 for all
+channels).</p>
+<p><strong>We will use this cut going forward:</strong> the cut of Notes
+2 and 2a (a random trigger in the Tight excursion band with
+<code>log10(bstd) &lt; 0.5</code>) made on <code>Side1pB</code> (S1,
+Detector 1 / Channel 1). In the notebook it is defined in one place,
+<code>clean_randoms_cut</code>, and the selection it makes is called
+<code>clean_randoms</code>.</p>
+<h2 id="noise-power-spectral-densities">Noise Power Spectral
+Densities</h2>
+<p>The key parameter we want to get out of pulses in these detectors is
+the overall “amplitude” because it should be proportional to the energy
+deposited in a scattering event. That’s hard to do for the small signals
+(near the noise baseline) that we have for dark matter direct detection
+(see the review by Schnee [1]) so we use an algorithm called the Optimal
+Filter (OF) (Gatti and Manfredi [2]; Golwala [3]) instead of a simpler
+procedure like integrating the pulses. The crucial part of the OF is
+that it takes into account the electronic noise environment of the
+sensor, rather than blindly integrating. The noise is summarized by the
+Power Spectral Density (PSD) constructed with traces that have no pulses
+present–the ones we are selecting here.</p>
+<p>The PSD is sort of like the standard deviation of different frequency
+components in a trace (any trace can be written as a sum of sinusoids of
+different frequencies, the Fourier decomposition [4]). The PSD can be
+calculated for discrete data sampling as below:</p>
+<p>Take a trace of N samples x[n], n = 0 … N−1, taken every Δt (here Δt
+= 1.6 µs), with its baseline subtracted. Its discrete Fourier transform
+is X[k], and bin k sits at the frequency f[k] = k / (N Δt). Averaging
+over M traces with no pulse in them (here the M = 101 traces of the
+<code>clean_randoms</code> cut, or the 31 of Appendix A), the one-sided
+PSD is</p>
+<pre><code>X[k] = sum over n of  x[n] exp(-2πi k n / N)
+
+S[k] = (2 Δt / N) · (1/M) · sum over the M traces of |X[k]|²        (counts² / Hz)</code></pre>
+<p>where the factor 2 folds the negative frequencies onto the positive
+ones (it is left out for the zero-frequency and Nyquist bins), and the
+1/N and Δt make S independent of the trace length and the sampling rate,
+so that its integral over frequency equals the mean square of the trace
+(its variance, if the trace has zero mean). This is the convention used
+in the notebook (<a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>);
+Note 3 plotted the raw |X[k]|² instead, which differs from S only by the
+constant 2Δt/N.</p>
+<h3 id="references">References</h3>
+<ol type="1">
+<li>R. W. Schnee, “Introduction to dark matter experiments,” in
+<em>Physics of the Large and the Small, TASI 2009</em> (World
+Scientific, 2011), <a
+href="https://arxiv.org/abs/1101.5205">arXiv:1101.5205</a>.</li>
+<li>E. Gatti and P. F. Manfredi, “Processing the signals from
+solid-state detectors in elementary-particle physics,” <em>Rivista del
+Nuovo Cimento</em> <strong>9</strong>(1), 1 (1986).</li>
+<li>S. R. Golwala, <em>Exclusion Limits on the WIMP-Nucleon
+Elastic-Scattering Cross-Section from the Cryogenic Dark Matter
+Search</em>, PhD thesis, University of California, Berkeley (2000),
+Appendix B, “Noise and Optimal Filtering”.</li>
+<li>W. H. Press, S. A. Teukolsky, W. T. Vetterling and B. P. Flannery,
+<em>Numerical Recipes: The Art of Scientific Computing</em>, 3rd
+ed. (Cambridge University Press, 2007), chapters 12 and 13.</li>
+</ol>
+<h2 id="caveats">Caveats</h2>
+<ul>
+<li><strong><code>Side2pB</code> (Detector 2 / Channel 0, DCRC4) may not
+be a normal phonon channel.</strong> Its noise is flat and about an
+order of magnitude below the other working channels at low frequencies
+(Figure 5), and it passes the quiet-noise cut for 958 of the 1008
+randoms, against 101 to 180 for the others. This could mean the channel
+is superconducting or otherwise not biased into its transition. The <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76.html">UMN
+wiki</a> does not say so: it never mentions superconducting channels,
+and its only related remark is that three channels (<code>pB</code>,
+<code>pD</code>, <code>pE</code>, with no side given) “had railed in the
+middle of the data period” in October. The run configuration we read for
+another series (<code>07220916_2200</code>) lists zero QET bias on all
+four DCRC4 channels, with the feedback of channel 0 disabled, which fits
+a channel that is not in transition but does not prove it. Until this is
+confirmed, the spectra of <code>Side2pB</code> should not be taken as a
+phonon noise measurement.</li>
+</ul>
+<h2 id="results">Results</h2>
+<h3 id="the-cut-clean_randoms">The cut: <code>clean_randoms</code></h3>
+<p>The selection of randoms that we use from now on is called
+<strong><code>clean_randoms</code></strong>. It is the cut of Notes 2
+and 2a, made on <code>Side1pB</code> (Detector 1 / Channel 1, S1): a
+random trigger (<code>pc.randoms</code>) whose trace falls in the Tight
+excursion band of the 500-sample pretrigger window
+(<code>pc.excursion_band</code>) and has
+<code>log10(bstd) &lt; 0.5</code>. In series <code>07221203_2025</code>,
+dump F0001 it keeps <strong>101 of the 1008 randoms</strong>, none with
+a pulse or a big tail in any channel (Appendix B). It is defined by the
+function <code>clean_randoms_cut</code> in <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>
+(section 13), and the code below is that function.
+<code>clean_randoms</code> is a True/False value for every event of the
+dump; because the three boards share their events in the same order, the
+same list selects the clean random traces of every channel.</p>
+<pre class="python"><code>import sys
+from pathlib import Path
+import numpy as np
+from nsdf_dark_matter.idx import load_all_data
+
+REPO = next(p for p in [Path.cwd().resolve(), *Path.cwd().resolve().parents] if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists())
+sys.path.insert(0, str(REPO / &quot;python&quot;))
+import pulse_io as pio
+import pulse_quantities as pq
+import pulse_cuts as pc
+from pulse_config import PulseConfig
+
+config = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=1.6e-6)
+
+def clean_randoms_cut(pulses, trigger_types, config=config):
+    &quot;&quot;&quot;Randoms with no pulse: a random trigger in the Tight excursion band with log10(bstd) &lt; 0.5.&quot;&quot;&quot;
+    with np.errstate(all=&quot;ignore&quot;):
+        quiet = pc.excursion_band(pulses, config) &amp; (np.log10(pq.bstd(pulses, config)) &lt; 0.5)
+    return pc.randoms(trigger_types) &amp; quiet
+
+cdms = load_all_data(str(Path.home() / &quot;idx&quot; / &quot;07221203_2025_F0001&quot;))
+det1 = pio.filter_by_detector(cdms.get_detector_ids(), 1)
+_, pulses = pio.load_channel_batch(cdms, det1, 1)               # Side1pB: detector 1, channel 1
+clean_randoms = clean_randoms_cut(pulses, pio.trigger_types(cdms, det1))   # True for the events of the cut
+print(clean_randoms.sum(), &quot;of&quot;, len(clean_randoms), &quot;events&quot;)
+
+det0 = pio.filter_by_detector(cdms.get_detector_ids(), 0)
+_, other = pio.load_channel_batch(cdms, det0, 0)                # any other channel: same events, same order
+traces = other[clean_randoms]                                   # its clean random traces
+print(traces.shape)</code></pre>
+<p>Run it from inside the <code>NSDF-Data</code> folder, after
+downloading the dump to <code>~/idx</code>. It prints
+<code>101 of 1517 events</code> and <code>(101, 4096)</code>. The
+library prints a warning that <code>pc.randoms</code> is under
+development, because it assumes the trigger labels are swapped (Note
+2a).</p>
+<h3 id="the-psds">The PSDs</h3>
+<p>I’ve made the current best estimate of the noise PSD specifically
+focusing on the series <code>07221203_2025</code>. The PSDs are
+accessible via <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
+file (pinned to <code>bf0ed61</code>, 270 kB), and can be accessed
+by:</p>
+<pre class="python"><code>import h5py
+import numpy as np
+
+with h5py.File(&quot;data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5&quot;, &quot;r&quot;) as f:
+    freq = f[&quot;frequency_hz&quot;][:]                       # Hz, shared by all channels
+    events = f[&quot;event_numbers&quot;][:]                    # the 101 clean_randoms events
+    psd = {name: (g[&quot;psd_mean&quot;][:], g[&quot;psd_sem&quot;][:])  # counts^2/Hz and its standard error
+           for name, g in f[&quot;channels&quot;].items()}
+
+mean, sem = psd[&quot;Side1pB&quot;]
+print(len(events), &quot;events;&quot;, len(psd), &quot;channels:&quot;, &quot;, &quot;.join(psd))
+print(f&quot;Side1pB at {freq[100]:.0f} Hz: {mean[100]:.2e} +/- {sem[100]:.1e} counts^2/Hz&quot;)</code></pre>
+<p>Run it from the <code>NSDF-Data</code> folder. It prints the number
+of events and the 7 working channels (<code>Side1pB</code>,
+<code>Side1pE</code>, <code>Side1pF</code>, <code>Side2pB</code>,
+<code>Side2pC</code>, <code>Side2pE</code>, <code>Side2pF</code>); the
+dead channels have no spectrum. The PSDs are the mean over the 101
+events of the <code>clean_randoms</code> cut, in counts²/Hz, with the
+standard error of the mean; the layout of the file is described in
+section 7 of <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>,
+which also makes them. The caveats above apply, in particular to
+<code>Side2pB</code>.</p>
+<h2 id="next-steps">Next steps</h2>
+<p><strong>Next steps.</strong> There are two possibilities:</p>
+<ol type="1">
+<li><strong>Calibrate the PSD in amps.</strong> Get the calibration for
+the PSD so that we can write the noise in amps, and later compare it
+with the theoretical best resolution. This will probably be difficult,
+because it is not clear that the <a
+href="https://villano-lab.github.io/R76Analysis/index.html">UMN wiki</a>
+has the necessary information. As far as we found, the <a
+href="https://villano-lab.github.io/R76Analysis/cdms/dcrc/dcrcv3.html">DCRC
+v3 page</a> gives the size of one ADC bin (14 bits over ±1.25 V, 152.6
+µV per bin) but not the feedback resistor, the SQUID coil ratio or the
+TES bias power, which are needed to turn counts into amps.</li>
+<li><strong>Find triggered pulses.</strong> Find triggered pulses in
+dump 2 or later, so we can continue on the path of running the Optimal
+Filter on pulses.</li>
+</ol>
+<h2 id="appendix-a-the-strictest-cut-every-working-channel">Appendix A:
+the strictest cut (every working channel)</h2>
+<p>The strictest version of the selection keeps a random only if it
+passes the quiet-noise cut (the Tight excursion band and
+<code>log10(bstd) &lt; 0.5</code>) in <strong>every working
+channel</strong>. Seven of the 12 channels work and five are dead (their
+signal never changes), so the cut is applied to the seven. It keeps
+<strong>31 of the 1008 randoms</strong>, far fewer than the 141 that
+pass on <code>Side2pC</code> alone. Each of the six working channels on
+DCRC1 and DCRC3 passes the cut for only 101 to 180 randoms on its own
+(DCRC4’s <code>Side2pB</code> for 958), and the events that fail are not
+the same in all of them. Any two of those six channels share 62% to 89%
+of the smaller set (well above the 11 to 29 events expected by chance),
+but each further channel removes more, so only 31 events pass in all of
+them, 31% of the 101 of <code>Side1pB</code>, the strictest channel. The
+Tight excursion band does most of the rejecting: only 116 to 189 of the
+1008 randoms fall in the band on each of those six channels, while the
+<code>log10(bstd) &lt; 0.5</code> condition keeps 770 to 895.</p>
+<p>Figure 4 shows the 31 traces themselves in every channel (section 12
+of <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>):
+none of them has a pulse or a ramp, and they all look like noise, but
+there are only 31 of them. Figure 5 shows their noise power spectra, the
+mean of the 31 traces in each channel (section 11 of <a
+href="https://github.com/villano-lab/NSDF-Data/blob/bf0ed61/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>).
+With so few traces the spectra are jagged from bin to bin, and no spread
+between the traces is drawn. This is why a cut that is not required to
+hold on all channels, and so keeps more traces, is worth looking
+for.</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/global-cut-traces-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 4: The 31 randoms that pass the quiet-noise cut in
+every working channel, in every channel.</strong> One tile per channel
+(rows are the boards DCRC1, DCRC3 and DCRC4), with the traces drawn over
+each other with transparency, baseline-subtracted, on a free vertical
+scale. Blue is Side 1 and orange is Side 2; no trace contains a pulse.
+The 5 tiles with grey text are the dead channels.</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/allchan-psd-by-side-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 5: Noise spectra of the 31 randoms that pass the
+quiet-noise cut in every working channel, by side.</strong> Side 1 on
+the left (3 working channels) and Side 2 on the right (4 working
+channels), one colour per channel within each panel (the colours are not
+shared between the panels). Each curve is the one-sided PSD
+(counts²/Hz), computed as the mean over the 31 traces of the squared
+Fourier amplitude of each trace (baseline-subtracted, first samples
+skipped) scaled to a one-sided density; the spread between traces is not
+drawn. Both panels share the same axes. The five dead channels are not
+shown.</p>
+<h2 id="appendix-b-the-cut-on-side2pc-and-the-cut-on-side1pb">Appendix
+B: the cut on <code>Side2pC</code> and the cut on
+<code>Side1pB</code></h2>
+<p><strong>What the <code>Side2pC</code> cut lets through.</strong> Of
+the 141 randoms that pass the cut on <code>Side2pC</code> (Detector 0 /
+Channel 0), 10 have a pulse or a big tail in some channel: 2 contain a
+pulse and 8 more have a baseline sag of more than 30 counts across the
+trace. Figure 6 shows only these 10, each in its own colour, which is
+the same in every tile. Event 10550 (light green) steps up by about 273
+counts in <code>Side1pF</code> (at sample 1139) and by about 359 counts
+in <code>Side2pE</code> (at sample 1171), falls back at sample 1219 in
+both, and steps up again at samples 1323 and 1355. Event 10034 (light
+blue) is a long decay in the three DCRC3 channels, down to about -100
+counts. The big tails are in DCRC3, and the sag is largest in
+<code>Side1pB</code> for 8 of the 10 events (up to 133 counts for event
+10027). In the framed <code>Side2pC</code> tile, and in
+<code>Side2pB</code> on DCRC4, the same 10 traces lie in the same noise
+band as all the others, which is why the <code>Side2pC</code> cut cannot
+see them.</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/chan0-cut-with-pulses-or-big-tails-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 6: The 10 randoms that pass the <code>Side2pC</code>
+cut but have a pulse or a big tail in some channel.</strong> They are
+drawn in every channel, but the tails are in a few of them (mainly the
+three DCRC3 channels, on both sides); the other channels show only
+noise. The cut is made on <code>Side2pC</code> (framed). One colour per
+event, the same in every tile, and the legend gives the event numbers
+and whether each has a pulse or a big tail (a sag of more than 30 counts
+across the trace). One tile per channel (rows are the boards DCRC1,
+DCRC3 and DCRC4), baseline-subtracted, on a free vertical scale. The 5
+tiles with grey text are the dead channels.</p>
+<p><strong>The cut on <code>Side1pB</code> only.</strong> The cut we
+will use is the one of Notes 2 and 2a on <code>Side1pB</code> alone: a
+random whose trace passes the Tight excursion band and
+<code>log10(bstd) &lt; 0.5</code> on that channel. It keeps <strong>101
+of the 1008 randoms</strong>, more than the 71 of the cut on one channel
+of each side and the 31 of the cut on all channels, but fewer than the
+141 of the <code>Side2pC</code> cut. There is nothing in it that is not
+noise: none of the 101 events contains a pulse in any working channel,
+and the largest baseline sag in a Side 2 channel is 13 counts, where a
+sag of more than 30 counts counts as a big tail (section 10 of the
+notebook). Figure 7 shows the 101 events in every channel at full
+scale.</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/cut-on-S1-only-full-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 7: The 101 randoms that pass the cut on
+<code>Side1pB</code>, in every channel, at full scale.</strong> The cut
+is made on <code>Side1pB</code> (framed). One tile per channel, with the
+traces drawn over each other with transparency, baseline-subtracted.
+Blue is Side 1 and orange is Side 2; no trace contains a pulse. The 5
+tiles with grey text are the dead channels.</p>
+
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

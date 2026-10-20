@@ -23,7 +23,7 @@ Tick what applies, and say "n/a" for the rest. See `AGENTS.md` for the details o
 - [ ] Guides: edited the **sources** (`gen.py` or the guide's `.md`), rebuilt, and committed sources **and** PDFs together
 - [ ] Guides: bumped the version and date in the header and *Session Info*
 - [ ] Changed package pins? Updated the guide's Step 5, `requirements.txt` and `.devcontainer/` together
-- [ ] Student note: left `id: "TBD"` and ran `python tools/build_notes.py check`
+- [ ] Student note: left `id: "TBD"` and ran `python tools/check_note.py notes/src/<your-note>.md` (structure, pinned links, numbers)
 - [ ] Added a line under `[Unreleased]` in `CHANGELOG.md` for anything a user or student would notice
 - [ ] No raw data, credentials or tokens committed
 - [ ] If an AI assistant helped: a `Co-Authored-By:` trailer is in the commit messages

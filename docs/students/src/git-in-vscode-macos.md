@@ -1,7 +1,7 @@
 ---
 title: "Git in VS Code"
 subtitle: "NSDF-Data student guide 9 — macOS edition, optional"
-date: "Version 4 · 15 October 2026"
+date: "Version 5 · 20 October 2026"
 ---
 
 ::: tip
@@ -76,7 +76,12 @@ If VS Code says that there are no staged changes and asks whether to stage every
 After a commit, the big button under the message box shows what is left to send.
 
 - The first time on your branch, it reads **Publish Branch**. Click it. If VS Code asks which remote, choose `origin`.
-- After that, it reads **Sync Changes** with a number and an arrow. The up-arrow number is how many of your commits are waiting to go to GitHub. Click it to send them.
+- After that, it reads **Sync Changes** with a number and an arrow. The up-arrow number is how many of your commits are waiting to go to GitHub. Click it to send them. A down-arrow number is how many commits on GitHub you do not have yet. **Figure 1** shows what each case looks like.
+- When your branch and GitHub already agree and you have nothing to commit, there is **no Sync Changes button**: the big button is a greyed-out **Commit**.
+
+![](img/vscode-sync-button.png){width=100%}
+
+**Figure 1.** The big button in the Source Control tab. **A:** the branch and GitHub agree and nothing is waiting to be committed, so the button is a greyed-out **Commit**. **B:** one commit of yours is waiting to go to GitHub (up-arrow). **C:** GitHub has one commit you do not have yet (down-arrow). **D:** both. The colors change with your VS Code theme, but the number and the arrow do not.
 
 ::: careful
 Read the branch name in the bottom-left corner before you click either button. They send your commits to GitHub, so they must say your own branch. If the corner shows anything other than `student-yourname`, stop and ask your lead.
@@ -98,7 +103,7 @@ This step is `git push` (the first time, `git push -u origin student-yourname`).
 
 The project keeps changing. When *Updating your setup* (guide 7) tells you to bring in the newest changes (its Step 2), you can do that step here instead of typing the two lines. Do all the other steps of guide 7 as written, because they update your environment.
 
-1. **Sync first.** Look at the big button in the Source Control tab. If it shows an up-arrow or a down-arrow number, click **Sync Changes** (Step 5) so that your branch and GitHub agree before you start. If it shows no number, go on.
+1. **Sync first.** Look at the big button in the Source Control tab. If it reads **Sync Changes** with an up-arrow or a down-arrow number (B, C or D in Figure 1), click it (Step 5) so that your branch and GitHub agree before you start. If it is the greyed-out **Commit** (A), or has no number, go on.
 2. Press `Cmd+Shift+P`. A box opens at the top of the window.
 3. Type `Git: Fetch`{.cmd} and press Enter. This downloads the newest changes without touching your files (`git fetch origin`).
 4. Press `Cmd+Shift+P` again, type `Git: Merge...`{.cmd}, and press Enter.
@@ -133,7 +138,7 @@ This part was written from the extension's own documentation and its list of com
 
 ![](img/vscode-pull-requests-view.png){width=75%}
 
-**Figure 1.** The **Pull Requests** view of the GitHub extension. The button that starts a pull request is the first icon in the title bar, the pull-request symbol with a plus sign (outlined in red). It is small. The other icons are *Refresh*, *Collapse All* and a menu. Your own branch is not in the list below until its pull request exists.
+**Figure 2.** The **Pull Requests** view of the GitHub extension. The button that starts a pull request is the first icon in the title bar, the pull-request symbol with a plus sign (outlined in red). It is small. The other icons are *Refresh*, *Collapse All* and a menu. Your own branch is not in the list below until its pull request exists.
 
 ## The same steps in the terminal
 
@@ -167,7 +172,7 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 
 ## Session Info
 
-Guide version 4, 15 October 2026, macOS edition. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
+Guide version 5, 20 October 2026, macOS edition. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

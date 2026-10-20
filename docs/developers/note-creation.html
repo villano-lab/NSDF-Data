@@ -15,7 +15,7 @@
 
 <h1>Creating a note</h1>
 <p class="meta">Developer quick-sheet · hand-written notes in
-docs/notes/ · version 5, 19 October 2026</p>
+docs/notes/ · version 6, 20 October 2026</p>
 
 
 <p>For a note you write yourself: an HTML page in
@@ -96,15 +96,19 @@ whole data-taking period.</p>
 <div class="tip">
 <p><strong>Reviewing a student note.</strong> The PR into
 <code>develop</code> shows a green check and nothing is public. Change
-<code>id: "TBD"</code> to the next note number
-(<code>python tools/build_notes.py next</code> prints it; it is the same
-numbering as the hand-written notes), commit it to the PR branch, and
-merge. The bot builds the page and its row in the Analysis Notes table,
-placed by number among the hand-written rows, and it is live in 2 to 3
-minutes. When a student updates a published note, check the header still
-has its note number: <code>TBD</code> passes the PR check, but the build
-refuses it and nothing is published until you fix it. To remove a note,
-delete its source file in a PR; the next build removes the page.</p>
+<code>id: "TBD"</code> to the next note number: the <em>Student
+notes</em> check posts it on the PR as a suggestion on the
+<code>id</code> line, so press <strong>Commit suggestion</strong> (no
+checkout; <code>python tools/build_notes.py next</code> prints the same
+number, in the same numbering as the hand-written notes), and merge.
+With two note PRs open at once both are offered the same number: merge
+one, then re-run the check of the other to refresh its suggestion. The
+bot builds the page and its row in the Analysis Notes table, placed by
+number among the hand-written rows, and it is live in 2 to 3 minutes.
+When a student updates a published note, check the header still has its
+note number: <code>TBD</code> passes the PR check, but the build refuses
+it and nothing is published until you fix it. To remove a note, delete
+its source file in a PR; the next build removes the page.</p>
 </div>
 
 <footer>This guide is also available as a <a href="note-creation.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

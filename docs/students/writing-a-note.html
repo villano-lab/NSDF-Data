@@ -16,7 +16,7 @@ every computer)</title>
 
 <h1>Writing a note</h1>
 <p class="meta">NSDF-Data student guide 3 — writing a note, for every
-computer &middot; Version 17 · 19 October 2026</p>
+computer &middot; Version 20 · 20 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -518,6 +518,17 @@ guide).</p></li>
 <pre><code>https://github.com/villano-lab/NSDF-Data/blob/a1b2c3d/PATH</code></pre></li>
 </ol>
 <p>Say in the note which commit you pinned.</p>
+<p><strong>You do not write a second link for the current
+version.</strong> The published note adds one for you: after each pinned
+link to a file, a small <strong>[latest]</strong> link opens the same
+file on the <code>develop</code> branch as it is today (and, if the file
+has moved since your commit, at its new place; if it was removed, the
+link is left out). So the pinned link shows the code that made your
+numbers and <strong>[latest]</strong> shows where that code is now. It
+appears only on the published page, not in the VS Code preview, and only
+for links in the form shown above (full
+<code>https://github.com/villano-lab/NSDF-Data/blob/&lt;commit&gt;/...</code>
+addresses), so do not shorten them.</p>
 <h2 id="outline-and-links">Outline and links</h2>
 <p>If your note has more than two or three sections, add a short outline
 near the top, with a link to each one. Readers use it to jump to what
@@ -531,24 +542,56 @@ you submit</h2>
 <li><label><input type="checkbox" />The title is a
 question.</label></li>
 <li><label><input type="checkbox" />Every number in the text can be
-found in your notebook output.</label></li>
+found in your notebook output (a tool can check this for you, see
+below).</label></li>
 <li><label><input type="checkbox" />Every figure has a number, a bold
 label (“Figure 1.”) and a caption that says what is plotted and what to
 look for, and both axes are labelled with units.</label></li>
 <li><label><input type="checkbox" />Every notebook link is pinned to a
-commit.</label></li>
+commit, as a full
+<code>https://github.com/villano-lab/NSDF-Data/blob/&lt;commit&gt;/...</code>
+address (the published note then adds the <strong>[latest]</strong> link
+itself).</label></li>
 <li><label><input type="checkbox" />The header is complete.</label></li>
 <li><label><input type="checkbox" />Any section you use says something a
 reader needs. Empty or filler sections are removed.</label></li>
 <li><label><input type="checkbox" />You have said what you did
 <em>not</em> check, if the note makes a claim.</label></li>
-<li><label><input type="checkbox" />If you wrote next steps, they are
-concrete.</label></li>
-<li><label><input type="checkbox" />You have read it aloud once, looking
-for a word a newcomer would not know.</label></li>
 </ul>
+<h3 id="checking-the-numbers-with-a-tool">Checking the numbers with a
+tool</h3>
+<p>The command that checks your whole note,
+<code>python tools/check_note.py notes/src/your-note-name.md</code>,
+includes this check (guide 4, Step 2, says what the rest of it does). To
+run only the numbers, with your environment active, run this from the
+<code>NSDF-Data</code> folder, with your own note’s file name:</p>
+<pre><code>python tools/check_note.py notes/src/your-note-name.md --only numbers</code></pre>
+<p>It reads the notebook your note links to (at the commit you pinned)
+and looks at each number in your text and captions. For each one it says
+whether the number is in the notebook’s <strong>saved output</strong>,
+only in its <strong>code</strong>, or <strong>NOT FOUND</strong>. The
+notebook must have been saved with its outputs, so do not clear them
+before you commit.</p>
+<ul>
+<li><strong>Found in the output:</strong> nothing to do.</li>
+<li><strong>Only in the code:</strong> it is a value you chose (a
+threshold, a bin width), not a result. Say so in the note.</li>
+<li><strong>NOT FOUND:</strong> check the number. A typing mistake, a
+number from an older run of the notebook, a number you worked out by
+hand, or a number read off a plot all show up here. Fix the note, or add
+the calculation to the notebook so it prints the number, and run it
+again. If a number is right and cannot come from the notebook (for
+example a value from a paper), put
+<code>&lt;!-- numbers-ok --&gt;</code> at the end of its line, and say
+where it comes from in the text.</li>
+</ul>
+<p>The tool is a help, not a judge: it matches numbers at the digits you
+wrote (0.52 matches 0.5213), and it skips the header, code, links,
+labels such as “Figure 1”, dates and the reference list. - [ ] If you
+wrote next steps, they are concrete. - [ ] You have read it aloud once,
+looking for a word a newcomer would not know.</p>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 17, 19 October 2026. Written for every computer. Please
+<p>Guide version 20, 20 October 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="next">Next</h2>
 <p>When the note is written and checked, go to <strong>student guide 4:

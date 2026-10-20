@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 14 · 12 October 2026"
+date: "Version 17 · 19 October 2026"
 ---
 
 ::: tip
@@ -33,7 +33,7 @@ If your note does not answer these, it is not finished, however long it is.
 
 **Only the header is required.** Every other section is a suggestion. Use the sections that help your reader, and leave out the ones that do not apply. A short note with a header and one clear result is complete. A long note with no caveats is not.
 
-The table below lists the sections most notes use, in a sensible order. Each one you use becomes a heading, with an outline link.
+Most notes open the same way, so a reader knows where to look. Each section you use becomes a heading, with an outline link.
 
 | Section | What goes in it | Length |
 |---|---|---|
@@ -42,10 +42,39 @@ The table below lists the sections most notes use, in a sensible order. Each one
 | **Code repository** | The notebook and library files you used, each pinned to the commit that produced the results. | a short list |
 | **Data and setup** | Which series, dump and detector; which quantities; which windows and cuts. Define any word a newcomer would not know. | one or two paragraphs |
 | **The question** | The question again, and why it matters. | a paragraph |
-| **Results** | Your figures and tables, each with a caption that says what the reader is looking at. | as needed |
-| **Reading** | What you think the results mean, and what they do *not* show. | a few bullets |
-| **Caveats** | What could be wrong. Small sample? One channel only? A cut you chose by eye? | a short list |
-| **Next steps** | Concrete things to do next. | a short list |
+
+**After the question, the note is yours.** There is no fixed list of headings from here. Let the story decide the order, and name each heading for what is under it: "What the cut removes" tells a reader more than "Results". Depending on your work, you might include:
+
+- the figures or tables that answer the question, each with a caption that says what to look at;
+- a method, or a check you made along the way, if the reader needs it to trust a number;
+- what you think the results mean, and what they do *not* show;
+- what could be wrong (a small sample, one channel only, a cut you chose by eye);
+- what you would do next, as a short list that the next reader can pick up.
+
+Use one `##` heading for each part, and leave out any part that has nothing to say.
+
+**Notes come in different kinds, and the kind shapes the headings.** A few kinds, and what each one tends to need after the opening:
+
+| If your note is... | After the opening it might have... | An example here |
+|---|---|---|
+| **A result**: a question and its answer | what you did; the figures; what it means and does not show; next steps | [Note 7](https://villano-lab.github.io/NSDF-Data/notes/note-07-psd-peaks-204khz.html) |
+| **A check**: does this method or cut work? | what was checked and how; the outcome; where it might fail on other data; what to try | [Note 4](https://villano-lab.github.io/NSDF-Data/notes/note-04-pulse-library.html) |
+| **An explanation**: how something is built or used | the idea; how it is organized; a worked example; what is still unfinished | [Note 1a](https://villano-lab.github.io/NSDF-Data/notes/note-01a-pulse-library-structure.html) |
+| **An investigation** of where something is, or why | the method; what was found; what was not checked | [Note 8](https://villano-lab.github.io/NSDF-Data/notes/note-08-umn-k100-data-location.html) |
+| **A log** of problems and fixes | one short entry per problem: what happened, and what fixed it | none yet |
+| **A brainstorm**: ideas, without results | the ideas, clearly marked as not results (give it the status *Brainstorm*) | none yet |
+
+A note can be two kinds at once, and a title does not have to be a question when the note is a check or an explanation. Choose the kind that is closest, and let the headings follow it.
+
+**Examples from the site.** The notes already there do not share one list of headings. These three go like this:
+
+| Note | What it is about | Its headings |
+|---|---|---|
+| [Note 5](https://villano-lab.github.io/NSDF-Data/notes/note-05-triggered-pulses.html) | Choosing a cut for real pulses | Goal; The cut; a check made while writing the note; Status / Next steps |
+| [Note 6](https://villano-lab.github.io/NSDF-Data/notes/note-06-ai-pulse-veto-archive.html) | A veto that removes pulse-like traces | Motivation; The pulse-shape criterion; What it removes; Effect on the noise PSD; The good_noise archive; Status / Next steps |
+| [Note 8](https://villano-lab.github.io/NSDF-Data/notes/note-08-umn-k100-data-location.html) | Where the UMN data lives | The question; Method; What Processing.xlsx records; What is actually on cdms3 today; Other users' copies of the k100 pipeline; Reading; Next steps |
+
+What they share is the shape, not the headings: each says what was asked, shows what was done and found, and ends by saying what comes next.
 
 ::: tip
 **Caveats are strongly suggested.** A note that states its limits is trusted more than one that does not, however good the plots look. If you leave caveats out, be sure there is nothing you would want a reader to know about your result.
@@ -62,7 +91,7 @@ Write your note in whatever you are comfortable with. Two routes are supported, 
 1. Install VS Code, start it, and choose **File**, then **Open Folder**, and pick the `NSDF-Data` folder.
 2. In the file list on the left, open `notes/src`. Copy `_template.md` (right-click it, **Copy**, then right-click the folder and **Paste**) and rename the copy `your-note-name.md`. Use lowercase letters and hyphens, for example `baseline-in-dump-one.md`.
 3. Write. To see the preview in its own tab next to the text, press `Ctrl+K`, let go, then press `V` (on macOS: `Cmd+K`, then `V`). The preview follows as you type and scroll. (`Ctrl+Shift+V` also works, but it replaces the text with the preview in the same tab.)
-4. Save each figure as a PNG in `notes/src/img/`, with your note's name at the start of the file name (`baseline-in-dump-one-fig1.png`) and refer to it as `![caption](img/baseline-in-dump-one-fig1.png)`. All notes share that one folder, so the name prefix keeps your pictures from being mixed up with someone else's. Put the picture directly in `img/`, not in a subfolder.
+4. Save each figure as a PNG in `notes/src/img/`, with your note's name at the start of the file name (`baseline-in-dump-one-fig1.png`) and refer to it as `![caption](img/baseline-in-dump-one-fig1.png)`. All notes share that one folder, so the name prefix keeps your pictures from being mixed up with someone else's. Put the picture directly in `img/`, not in a subfolder. How to make the plot and write its caption (bold **Figure 1.** label, what is plotted, what to look for) is in [Making a good plot](#making-a-good-plot) and [The caption](#the-caption).
 5. Keep your notebook and any scripts in your own folder under `data_analysis/R76/student/`, and commit as you go (guide 2, Step 7).
 
 Any other plain text editor works for this route too (Notepad, TextEdit set to **Format**, then **Make Plain Text**, or gedit). Save the file as `your-note-name.md`, as UTF-8, and check on Windows that the name does not end in `.md.txt` (File Explorer, **View**, then tick **File name extensions**). The GitHub web editor also works, with no install at all.
@@ -73,7 +102,7 @@ If you write better in Word or Google Docs, write there. Keep the file anywhere 
 
 - **Use Heading styles for section titles.** In Word, select a section title and choose **Home**, then **Heading 1** (main sections) or **Heading 2** (sub-sections). Do not just make the title bold or bigger. Only Heading-styled text becomes a heading, and without headings there is no outline.
 - **Avoid underline and superscript.** Underlined text and superscripts (the raised "th" in 5th, for example) do not convert. Use plain text instead.
-- **Insert pictures into the document** with **Insert**, then **Pictures** (or paste them in), and put the caption in the line under each one. Pictures that are only linked, not embedded, are lost.
+- **Insert pictures into the document** with **Insert**, then **Pictures** (or paste them in), and put the caption in the line under each one (see [The caption](#the-caption)). Pictures that are only linked, not embedded, are lost.
 
 Keep code out of the document where you can: link to the notebook instead (see *Pinning your code*). Word turns straight quotes into curly ones, which breaks any code you paste in.
 
@@ -146,10 +175,53 @@ If you write in Word or Google Docs, a coloured box does not survive the convers
 
 ## Figures and tables
 
-- **Every figure needs a caption** that says what is plotted, for which data, and what to look for. "Bstd against event number, dump 1. Grey: trigger type Unknown." is a good caption.
-- **Label the axes with units.** ADC counts, microseconds, or samples. Do not leave the units out.
-- **Save figures as PNG** from your notebook, at a readable size, into the note's image folder (`notes/src/img/`, named as in *Where and how to write*) or, in a Word document, into the document.
-- **Use a table** when you are comparing numbers. Use a figure when you are showing shape.
+A figure is often the first thing a reader looks at, and sometimes the only thing. Make each one able to stand on its own.
+
+### Making a good plot
+
+1. **One figure, one message.** Decide what you want the reader to see, and make the plot show that. If you have two messages, make two figures, or two panels.
+2. **Label both axes with the quantity and its units**, in the form `Pulse height (ADC counts)`, `Time (µs)` or `Event number`. A bare "x" or "counts" is not a label. If an axis is logarithmic, say so in the label or the caption.
+3. **Choose the range to show the data.** Do not leave half the plot empty. If you zoom in and cut off data, say so in the caption. Use the same axes on plots the reader will compare.
+4. **Make it readable at the size it will be shown.** Text on the figure should be about as large as the text of the note (font size 11 or 12, a figure about 6 inches wide). Hairline lines and tiny markers disappear on the page.
+5. **Do not rely on color alone.** Some readers cannot tell red from green, and a printout may be grey. Use different line styles or markers as well, and name each curve ("Detector 0, 12 traces", not "Series 1"). Put the legend where it does not cover data.
+6. **Mark what matters.** A dashed line at a threshold, a shaded band for a cut, an arrow at the feature the caption talks about.
+7. **Save it from the notebook, not as a screenshot**, so that it can be made again.
+
+A starting point in matplotlib (replace the names with your own arrays and numbers):
+
+```python
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(6, 4))
+ax.plot(time_us, trace, lw=1, label="Detector 0, Channel 0")
+ax.axhline(threshold, ls="--", color="gray", label="Cut threshold")
+ax.set_xlabel("Time (µs)")
+ax.set_ylabel("Pulse height (ADC counts)")
+ax.legend(frameon=False)
+fig.savefig("baseline-in-dump-one-fig1.png", dpi=200, bbox_inches="tight")
+```
+
+Save the PNG into the note's image folder (`notes/src/img/`, named as in *Where and how to write*) or, in a Word document, put it into the document.
+
+### The caption
+
+Every figure has a number and a caption directly under it. **Begin the caption with the label in bold, "Figure 1."**, then say, in a sentence or two:
+
+- **what is plotted**, and for which data (series, dump, detector, channel, how many traces);
+- **what the lines, colors and symbols mean**, if the plot does not say so itself;
+- **what to look for**: where the reader's eye should go.
+
+In Markdown, the label and the caption are the text inside the square brackets:
+
+```
+![**Figure 1.** Bstd against event number, dump 1 (1517 traces). Grey: trigger type Unknown. Look for the step at event 11000.](img/baseline-in-dump-one-fig1.png)
+```
+
+Number the figures in the order they appear, and refer to each one in the text ("Figure 1 shows..."). In a Word document, type the caption in the line under the picture, and make "Figure 1." bold.
+
+### Tables
+
+Use a table when you are comparing numbers, and a figure when you are showing shape.
 
 ## Pinning your code
 
@@ -175,7 +247,7 @@ Go through this list before you ask for review:
 
 - [ ] The title is a question.
 - [ ] Every number in the text can be found in your notebook output.
-- [ ] Every figure has a caption with units and a sentence on what to look for.
+- [ ] Every figure has a number, a bold label ("Figure 1.") and a caption that says what is plotted and what to look for, and both axes are labelled with units.
 - [ ] Every notebook link is pinned to a commit.
 - [ ] The header is complete.
 - [ ] Any section you use says something a reader needs. Empty or filler sections are removed.
@@ -185,7 +257,7 @@ Go through this list before you ask for review:
 
 ## Session Info
 
-Guide version 14, 12 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 17, 19 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

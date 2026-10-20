@@ -15,15 +15,14 @@
 
 <h1>Creating a note</h1>
 <p class="meta">Developer quick-sheet · hand-written notes in
-docs/notes/ · version 4, 12 October 2026</p>
+docs/notes/ · version 5, 19 October 2026</p>
 
 
 <p>For a note you write yourself: an HTML page in
 <code>docs/notes/</code> and one row in the front-page table. (Student
 notes are Markdown in <code>notes/src/</code>; see the box at the bottom
-and the <a
-href="https://villano-lab.github.io/NSDF-Data/students/note-cheatsheet.html">student
-cheat-sheet</a>.) Start from <code>develop</code>, on a branch:
+and the <a href="note-cheatsheet.html">student cheat-sheet</a>.) Start
+from <code>develop</code>, on a branch:
 <code>git switch -c feature/note-NN-short-name</code> (NN is the next
 note number, which student notes share:
 <code>python tools/build_notes.py next</code> prints it; a follow-up
@@ -49,9 +48,10 @@ question), the meta line
 (<code>Note NN · Author(s) · date · Status</code>), and the
 <code>&lt;nav class="outline"&gt;</code> with an <code>id</code> on
 every <code>&lt;h2&gt;</code>. Sections: Code Repository, Data and
-setup, The question, one section per result
-(<code>&lt;figure&gt;</code>, alt text, caption), Reading, Caveats, Next
-steps.</li>
+setup, The question, then the headings your story needs (one section per
+result with a <code>&lt;figure&gt;</code>, alt text and a caption; what
+it means and what could be wrong; next steps). Student guide 3 shows
+three notes with their headings.</li>
 <li><strong>Pin the code.</strong> Every link to a notebook or to
 <code>python/</code> uses the commit hash, never a branch name: under
 the repository URL, <code>blob/&lt;hash&gt;/&lt;path&gt;</code> for a

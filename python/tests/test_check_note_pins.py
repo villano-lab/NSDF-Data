@@ -127,6 +127,26 @@ def test_moves_file_lists_only_moved_and_removed_links(repo):
                                                 f"{first}/old_dir/mover.py": "data_analysis/mover.py"}
 
 
+def test_signature_ignores_the_status_labels_and_current_links_but_sees_a_real_change(repo):
+    r, first = repo
+    note(r, [("blob", first, "lib/edit.py"), ("blob", first, "old_dir/mover.py")])
+    index = r / "docs" / "index.html"
+    index.write_text('<tr><td class="num">1</td><td class="link"><a href="notes/note-01-test.html">Open</a></td>'
+                     '<td><span class="status in-progress">In progress</span></td></tr>', encoding="utf-8")
+    before = cnp.signature(cnp.build_report(r, "HEAD")[0])
+    # a note's status label changes: the files did not, so the signature must not
+    index.write_text(index.read_text(encoding="utf-8").replace("in-progress", "superseded").replace("In progress", "Superseded (reference/link)"), encoding="utf-8")
+    assert cnp.signature(cnp.build_report(r, "HEAD")[0]) == before
+    # adding a link to a file that is unchanged does not change what needs a look
+    note(r, [("blob", first, "lib/edit.py"), ("blob", first, "old_dir/mover.py"), ("blob", first, "lib/keep.py")])
+    assert cnp.signature(cnp.build_report(r, "HEAD")[0]) == before
+    # a pinned file changes again: that is a real change
+    (r / "lib" / "edit.py").write_text("b = 3\n", encoding="utf-8")
+    commit(r, "edit again")
+    after = cnp.signature(cnp.build_report(r, "HEAD")[0])
+    assert after != before and len(after) == 12
+
+
 def test_command_line_exit_status(repo, capsys):
     r, first = repo
     note(r, [("blob", first, "lib/keep.py")])
@@ -134,6 +154,8 @@ def test_command_line_exit_status(repo, capsys):
     note(r, [("blob", first, "lib/typo.py")])
     assert cnp.main(["--root", str(r), "check"]) == 1
     assert "do not resolve" in capsys.readouterr().out
+    assert cnp.main(["--root", str(r), "signature"]) == 0
+    assert len(capsys.readouterr().out.strip()) == 12
 
 
 def test_the_real_notes_resolve():

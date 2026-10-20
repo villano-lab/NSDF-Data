@@ -96,7 +96,7 @@ where the factor 2 folds the negative frequencies onto the positive ones (it is 
 
 - **`Side2pB` (Detector 2 / Channel 0, DCRC4) may not be a normal phonon channel.** Its noise is flat and about an order of magnitude below the other working channels at low frequencies (Figure 5), and it passes the quiet-noise cut for 958 of the 1008 randoms, against 101 to 180 for the others. This could mean the channel is superconducting or otherwise not biased into its transition. The [UMN wiki](https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76.html) does not say so: it never mentions superconducting channels, and its only related remark is that three channels (`pB`, `pD`, `pE`, with no side given) "had railed in the middle of the data period" in October. The run configuration we read for another series (`07220916_2200`) lists zero QET bias on all four DCRC4 channels, with the feedback of channel 0 disabled, which fits a channel that is not in transition but does not prove it. Until this is confirmed, the spectra of `Side2pB` should not be taken as a phonon noise measurement.
 
-## Results/Next steps
+## Results
 
 I've made the current best estimate of the noise PSD specifically focusing on the series `07221203_2025`. The PSDs are accessible via [`psd-clean-randoms-07221203_2025_F0001.h5`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5) file (pinned to `e7b087f`, 270 kB), and can be accessed by:
 
@@ -116,6 +116,13 @@ print(f"Side1pB at {freq[100]:.0f} Hz: {mean[100]:.2e} +/- {sem[100]:.1e} counts
 ```
 
 Run it from the `NSDF-Data` folder. It prints the number of events and the 7 working channels (`Side1pB`, `Side1pE`, `Side1pF`, `Side2pB`, `Side2pC`, `Side2pE`, `Side2pF`); the dead channels have no spectrum. The PSDs are the mean over the 101 events of the `clean_randoms` cut, in counts²/Hz, with the standard error of the mean; the layout of the file is described in section 7 of [`psd-clean-randoms-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb), which also makes them. The caveats above apply, in particular to `Side2pB`.
+
+## Next steps
+
+**Next steps.** There are two possibilities:
+
+1. **Calibrate the PSD in amps.** Get the calibration for the PSD so that we can write the noise in amps, and later compare it with the theoretical best resolution. This will probably be difficult, because it is not clear that the [UMN wiki](https://villano-lab.github.io/R76Analysis/index.html) has the necessary information. As far as we found, the [DCRC v3 page](https://villano-lab.github.io/R76Analysis/cdms/dcrc/dcrcv3.html) gives the size of one ADC bin (14 bits over ±1.25 V, 152.6 µV per bin) but not the feedback resistor, the SQUID coil ratio or the TES bias power, which are needed to turn counts into amps.
+2. **Find triggered pulses.** Find triggered pulses in dump 2 or later, so we can continue on the path of running the Optimal Filter on pulses.
 
 ## Appendix A: the strictest cut (every working channel)
 

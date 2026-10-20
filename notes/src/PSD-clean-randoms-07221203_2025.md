@@ -5,7 +5,7 @@ author: "Buddy Holly (A. Villano)"
 date: "2026-10-05"
 status: "In progress"
 keywords: "PSD, Noise, Randoms, PuBe"
-description: "I took all of the clean randoms selected in Note 2 and produced a noise PSD for 07221203_2025. Since there are no known real pulses in those noise traces this is a true characterization of our noise environment."
+description: "I created a sample of clean randoms selected in the same way as Note 2 and produced a noise PSD for 07221203_2025. The randoms selection is updated/improved but the technique is the same. Since there are no known real pulses in those noise traces this is a true characterization of our noise environment."
 ---
 
 ## Code repository
@@ -97,6 +97,47 @@ where the factor 2 folds the negative frequencies onto the positive ones (it is 
 - **`Side2pB` (Detector 2 / Channel 0, DCRC4) may not be a normal phonon channel.** Its noise is flat and about an order of magnitude below the other working channels at low frequencies (Figure 5), and it passes the quiet-noise cut for 958 of the 1008 randoms, against 101 to 180 for the others. This could mean the channel is superconducting or otherwise not biased into its transition. The [UMN wiki](https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76.html) does not say so: it never mentions superconducting channels, and its only related remark is that three channels (`pB`, `pD`, `pE`, with no side given) "had railed in the middle of the data period" in October. The run configuration we read for another series (`07220916_2200`) lists zero QET bias on all four DCRC4 channels, with the feedback of channel 0 disabled, which fits a channel that is not in transition but does not prove it. Until this is confirmed, the spectra of `Side2pB` should not be taken as a phonon noise measurement.
 
 ## Results
+
+### The cut: `clean_randoms`
+
+The selection of randoms that we use from now on is called **`clean_randoms`**. It is the cut of Notes 2 and 2a, made on `Side1pB` (Detector 1 / Channel 1, S1): a random trigger (`pc.randoms`) whose trace falls in the Tight excursion band of the 500-sample pretrigger window (`pc.excursion_band`) and has `log10(bstd) < 0.5`. In series `07221203_2025`, dump F0001 it keeps **101 of the 1008 randoms**, none with a pulse or a big tail in any channel (Appendix B). It is defined by the function `clean_randoms_cut` in [`chan0-cut-on-all-channels-buddy.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb) (section 13), and the code below is that function. `clean_randoms` is a True/False value for every event of the dump; because the three boards share their events in the same order, the same list selects the clean random traces of every channel.
+
+```python
+import sys
+from pathlib import Path
+import numpy as np
+from nsdf_dark_matter.idx import load_all_data
+
+REPO = next(p for p in [Path.cwd().resolve(), *Path.cwd().resolve().parents] if (p / "python" / "pulse_io.py").exists())
+sys.path.insert(0, str(REPO / "python"))
+import pulse_io as pio
+import pulse_quantities as pq
+import pulse_cuts as pc
+from pulse_config import PulseConfig
+
+config = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=1.6e-6)
+
+def clean_randoms_cut(pulses, trigger_types, config=config):
+    """Randoms with no pulse: a random trigger in the Tight excursion band with log10(bstd) < 0.5."""
+    with np.errstate(all="ignore"):
+        quiet = pc.excursion_band(pulses, config) & (np.log10(pq.bstd(pulses, config)) < 0.5)
+    return pc.randoms(trigger_types) & quiet
+
+cdms = load_all_data(str(Path.home() / "idx" / "07221203_2025_F0001"))
+det1 = pio.filter_by_detector(cdms.get_detector_ids(), 1)
+_, pulses = pio.load_channel_batch(cdms, det1, 1)               # Side1pB: detector 1, channel 1
+clean_randoms = clean_randoms_cut(pulses, pio.trigger_types(cdms, det1))   # True for the events of the cut
+print(clean_randoms.sum(), "of", len(clean_randoms), "events")
+
+det0 = pio.filter_by_detector(cdms.get_detector_ids(), 0)
+_, other = pio.load_channel_batch(cdms, det0, 0)                # any other channel: same events, same order
+traces = other[clean_randoms]                                   # its clean random traces
+print(traces.shape)
+```
+
+Run it from inside the `NSDF-Data` folder, after downloading the dump to `~/idx`. It prints `101 of 1517 events` and `(101, 4096)`. The library prints a warning that `pc.randoms` is under development, because it assumes the trigger labels are swapped (Note 2a).
+
+### The PSDs
 
 I've made the current best estimate of the noise PSD specifically focusing on the series `07221203_2025`. The PSDs are accessible via [`psd-clean-randoms-07221203_2025_F0001.h5`](https://github.com/villano-lab/NSDF-Data/blob/e7b087f/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5) file (pinned to `e7b087f`, 270 kB), and can be accessed by:
 

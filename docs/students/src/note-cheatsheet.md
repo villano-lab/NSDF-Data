@@ -2,7 +2,7 @@
 title-meta: "From note to live page"
 author-meta: "NSDF-Data"
 html-title: "From note to live page"
-html-subtitle: "NSDF-Data student cheat-sheet · version 4, 12 October 2026"
+html-subtitle: "NSDF-Data student cheat-sheet · version 5, 19 October 2026"
 ---
 
 ```{=latex}
@@ -13,7 +13,7 @@ html-subtitle: "NSDF-Data student cheat-sheet · version 4, 12 October 2026"
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} From note to live page}\\[0.2em]
-{\small NSDF-Data student cheat-sheet \textperiodcentered{} version 4, 12 October 2026}
+{\small NSDF-Data student cheat-sheet \textperiodcentered{} version 5, 19 October 2026}
 \end{center}
 \vspace{0.3em}
 ```
@@ -33,7 +33,7 @@ A one-page reminder. The full steps are in [guide 3, writing a note](https://vil
 
 - Your note is `notes/src/your-note-name.md`, your pictures are in `notes/src/img/`, the header is complete, and it says `id: "TBD"`.
 - Every link to your code is pinned to a **commit hash**: not `develop`, `master` or `COMMIT`. Remove the template's `img/example.png` line, and any `<u>`, `<sup>`, `<sub>` or `<span>` tags.
-- Optional: with your environment active, run `python tools/build_notes.py check`. It finds the problems the PR check would.
+- Optional: with your environment active, run `python tools/build_notes.py check`. It finds the problems the PR check would. Then run `python tools/check_note_numbers.py notes/src/your-note-name.md`: it lists the numbers in your text that are not in your notebook's output.
 
 **Commands**, from the `NSDF-Data` folder, on your own branch:
 

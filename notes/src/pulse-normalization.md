@@ -1,11 +1,11 @@
 ---
 id: "TBD"
-title: "A question, written as a sentence"
-author: "Your Name"
-date: "2026-10-05"
+title: "How can we normalize our pulses to TES current?"
+author: "Anthony"
+date: "2026-10-21"
 status: "In progress"
-keywords: "keyword one, keyword two"
-description: "One sentence: what you did and what you found."
+keywords: "pulse, normalization, current, squid"
+description: "Want a refresher on how to analyze the SQUID readout chain for SuperCDMS detectors and include tests (e.g. IbIs) that allow us to get the absolutely normalized TES output current. Scan the UMN Wiki for records of such tests for R76 data."
 ---
 
 ## Code repository

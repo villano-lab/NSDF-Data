@@ -17,7 +17,7 @@ Which notebook: the notebooks the note links to at a pinned commit (https://gith
 <commit>/path/name.ipynb), read from Git at that commit, or from your working copy if Git does not have it.
 The notebook must have been saved with its outputs (do not clear them before you commit).
 
-What counts as a number in the note: digits in the text and captions, including decimals, thousands separators
+What counts as a number in the note: digits in the text and captions (not inside a formula, $...$ or $$...$$), including decimals, thousands separators
 (1,517), percentages and scientific notation. Not counted: the header, code (blocks and `inline`), links and
 addresses, HTML tags, a References section, "Figure 1", "Note 2", "Step 3" and similar labels, list numbers, dates and years, names such as
 07221203_2025 or S104. To leave a line out, end it with <!-- numbers-ok -->.
@@ -94,9 +94,20 @@ def clean_note_line(line):
     return line
 
 
+# A formula: $$ ... $$ (it may run over several lines) or $ ... $ on one line, written as pandoc reads them (no space
+# inside the dollar signs, and the closing one is not followed by a digit, so "$5 and $7" is not a formula).
+MATH = re.compile(r"\$\$.+?\$\$|(?<![\\$])\$(?=\S)(?:\\.|[^$\\\n])+?(?<=\S)\$(?!\d)", re.S)
+
+
+def blank_math(text):
+    """The text with every formula replaced by a letter (and the same number of line breaks)."""
+    return MATH.sub(lambda m: "M" + "\n" * m.group(0).count("\n"), text)
+
+
 def note_numbers(md_text, all_small=False):
-    """[(line number, Num, line text)] for every number to check in a note's text."""
-    lines = md_text.splitlines()
+    """[(line number, Num, line text)] for every number to check in a note's text (not those inside a formula)."""
+    shown = md_text.splitlines()
+    lines = blank_math(md_text).splitlines()
     i = 0
     if lines and lines[0].strip() == "---":                        # skip the header
         i = 1
@@ -121,7 +132,7 @@ def note_numbers(md_text, all_small=False):
                     continue
                 if not all_small and t.value < 10:
                     continue
-            found.append((n + 1, t, raw.strip()))
+            found.append((n + 1, t, shown[n].strip()))
     return found
 
 

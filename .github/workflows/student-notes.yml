@@ -48,6 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the dates a note became Complete come from Git's history
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

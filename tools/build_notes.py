@@ -168,6 +168,7 @@ def page(header, slug, body_html):
 <title>Note {html.escape(header['id'])}: {html.escape(header['title'])}</title>
 <link rel="stylesheet" href="../style.css">
 <script src="../notes-pins.js" defer></script>
+<script src="../notes-extras.js" defer></script>
 </head>
 <body>
 <div class="wrap note">
@@ -214,7 +215,6 @@ def index_rows(notes):
       <td class="desc">{html.escape(h['description'])}</td>
       <td class="kw">{html.escape(h['keywords'])}</td>
       <td><span class="status {STATUSES[h['status']]}">{html.escape(status_text(h))}</span></td>
-      <td></td>
     </tr>"""))
     return rows
 

@@ -133,7 +133,7 @@ figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 6px; }
 /* Formulas in a note ($...$ and $$...$$ in the Markdown) are drawn by the browser as MathML (pandoc --mathml). */
 .note math { font-size: 1.05em; }
 .note math[display="block"] { margin: 0.8em 0; overflow-x: auto; overflow-y: hidden; }
-.note p > img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
+.note p > img, .note p > a > img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
 
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
@@ -282,3 +282,8 @@ body.home h2:nth-of-type(3n)::before, .guide h2:nth-of-type(3n)::before { backgr
 /* The small "latest" link that notes-pins.js adds after a link pinned to a commit */
 .pin-note { font-size: 0.85em; color: var(--muted); margin-left: 0.25em; white-space: nowrap; }
 .pin-note a { font-weight: 600; }
+
+/* Copy button on the code blocks of a student note (notes-copy.js). */
+.code-wrap { position: relative; }
+.code-wrap .copy-btn { position: absolute; top: 6px; right: 6px; font: inherit; font-size: 0.78rem; padding: 2px 8px; border: 1px solid var(--border, #bbb); border-radius: 4px; background: var(--bg, #fff); color: inherit; cursor: pointer; opacity: 0.75; }
+.code-wrap .copy-btn:hover, .code-wrap .copy-btn:focus { opacity: 1; }

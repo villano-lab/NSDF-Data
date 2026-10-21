@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 20 · 20 October 2026"
+date: "Version 22 · 20 October 2026"
 ---
 
 ::: tip
@@ -126,6 +126,8 @@ Leave `id` as `TBD`. The reviewer gives your note its number (the next free one,
 
 **Status** is one of: *In progress* (you are still working on it), *Complete* (the question is answered and you are not going to change it), or *Superseded (reference/link)* (a later note has taken its place; this one stays up for reference and links to the newer note). New notes start as *In progress*.
 
+**You do not type the date you finished.** When the note is published with the status *Complete*, the front page shows *Complete (date)*, the day the note was first published as Complete, taken from Git. If you reopen a note (back to *In progress*) and publish it as *Complete* again, the page shows *Complete (first date), revised (date)*, and puts a red box *Revised (date)* at the top of the note unless you have already put a box there that starts with **Revised.**, **Correction.** or **Update.** Say in that box what changed.
+
 ## If your note replaces an earlier note
 
 Sometimes a new note redoes an earlier one with a better method. Then the two notes have to point at each other, and the older note's status has to change. Do this:
@@ -223,6 +225,18 @@ Number the figures in the order they appear, and refer to each one in the text (
 
 Use a table when you are comparing numbers, and a figure when you are showing shape.
 
+### Formulas
+
+Write a formula in LaTeX between dollar signs: `$\Delta t = 1.6\,\mu\mathrm{s}$` inside a sentence, or between double dollar signs on lines of their own for an equation:
+
+```
+$$
+S[k] = \frac{2\,\Delta t}{N}\cdot\frac{1}{M}\sum_{m=1}^{M}\left|X_m[k]\right|^2
+$$
+```
+
+VS Code's Markdown preview and the published page both draw it. Put no space just inside the dollar signs (`$x$`, not `$ x $`), or the text is not read as a formula. The number checker does not look inside formulas, so if a number in a formula is a result, say it in the sentence as well.
+
 ## Pinning your code
 
 A note is only useful if the reader can find the code that made its numbers. Link to your notebook and library files at a **specific commit**, not at a branch name such as `develop` or `master`, because branches keep changing:
@@ -275,7 +289,7 @@ The tool is a help, not a judge: it matches numbers at the digits you wrote (0.5
 
 ## Session Info
 
-Guide version 20, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 22, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

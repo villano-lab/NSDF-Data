@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="740" viewBox="0 0 680 370">
+<title>TES bias circuit coupled to a SQUID readout</title>
+<desc>A bias current source Ib feeds current down through two parallel branches to ground: a shunt resistor Rsh, and a branch of the TES, the parasitic resistance Rpar and the input inductor Li. Li is coupled by mutual inductance M to a SQUID ring with two Josephson junctions, biased by Isq. The SQUID voltage goes to an amplifier whose output Vout returns through a feedback resistor Rfb to a feedback coil Lf coupled to the SQUID by Mf.</desc>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #1a1a1a; }
+.t { font-size: 14px; }
+.th { font-size: 14px; font-weight: bold; }
+.ts { font-size: 12px; }
+.arr { stroke: #1a1a1a; stroke-width: 1.5; fill: none; }
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect width="680" height="370" fill="#ffffff"/>
+<g fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M225 36V48M225 84V110M160 110H290M160 300H500"/>
+<circle cx="225" cy="66" r="18"/>
+<path d="M160 110V150M160 186V300"/>
+<path d="M160 150L167 156L153 162L167 168L153 174L167 180L160 186"/>
+<path d="M290 110V126M290 162V176M290 212V226M290 274V300"/>
+<path d="M290 126L297 132L283 138L297 144L283 150L297 156L290 162"/>
+<path d="M290 176L297 182L283 188L297 194L283 200L297 206L290 212"/>
+<path d="M290 226a6 6 0 0 1 0 12a6 6 0 0 1 0 12a6 6 0 0 1 0 12a6 6 0 0 1 0 12"/>
+<path d="M360 200H440M440 200V229M440 241V270H360V241M360 229V200"/>
+<rect x="434" y="229" width="12" height="12"/>
+<path d="M434 229L446 241M446 229L434 241"/>
+<rect x="354" y="229" width="12" height="12"/>
+<path d="M354 229L366 241M366 229L354 241"/>
+<path d="M400 270V300M400 200V135H545"/>
+<path d="M545 165H528M528 165V172M521 172H535M524 176H532M527 180H529"/>
+<polygon points="545,115 545,185 612,150"/>
+<path d="M612 150H634V200H610"/>
+<path d="M610 200L604 193L598 207L592 193L586 207L580 193L574 200"/>
+<path d="M574 200H500V215"/>
+<path d="M500 215a6 6 0 0 0 0 12a6 6 0 0 0 0 12a6 6 0 0 0 0 12"/>
+<path d="M500 251V300"/>
+<path d="M225 300V310M213 310H237M218 315H232M222 320H228"/>
+</g>
+<g fill="#1a1a1a"><circle cx="225" cy="110" r="3"/><circle cx="290" cy="300" r="3"/><circle cx="225" cy="300" r="3"/><circle cx="400" cy="300" r="3"/><circle cx="500" cy="300" r="3"/><circle cx="634" cy="150" r="3"/></g>
+<line x1="225" y1="57" x2="225" y2="77" class="arr" marker-end="url(#arrow)"/>
+<line x1="276" y1="166" x2="304" y2="126" class="arr" marker-end="url(#arrow)"/>
+<line x1="412" y1="190" x2="412" y2="160" class="arr" marker-end="url(#arrow)"/>
+<line x1="306" y1="240" x2="350" y2="240" class="arr" stroke-dasharray="3 3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<line x1="450" y1="242" x2="492" y2="242" class="arr" stroke-dasharray="3 3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text class="th" x="190" y="352" text-anchor="middle">TES bias circuit</text>
+<text class="th" x="520" y="352" text-anchor="middle">SQUID readout</text>
+<text class="t" x="250" y="70">I<tspan dy="4" font-size="11">b</tspan></text>
+<text class="t" x="176" y="172">R<tspan dy="4" font-size="11">sh</tspan></text>
+<text class="t" x="274" y="148" text-anchor="end">TES</text>
+<text class="t" x="274" y="198" text-anchor="end">R<tspan dy="4" font-size="11">par</tspan></text>
+<text class="t" x="274" y="256" text-anchor="end">L<tspan dy="4" font-size="11">i</tspan></text>
+<text class="t" x="328" y="226" text-anchor="middle">M</text>
+<text class="t" x="400" y="240" text-anchor="middle" dominant-baseline="central">SQUID</text>
+<text class="t" x="422" y="180">I<tspan dy="4" font-size="11">sq</tspan></text>
+<text class="t" x="471" y="228" text-anchor="middle">M<tspan dy="4" font-size="11">f</tspan></text>
+<text class="t" x="512" y="240">L<tspan dy="4" font-size="11">f</tspan></text>
+<text class="t" x="592" y="226" text-anchor="middle">R<tspan dy="4" font-size="11">fb</tspan></text>
+<text class="ts" x="551" y="139" dominant-baseline="central">+</text>
+<text class="ts" x="551" y="165" dominant-baseline="central">−</text>
+<text class="t" x="634" y="132" text-anchor="middle">V<tspan dy="4" font-size="11">out</tspan></text>
+</svg>

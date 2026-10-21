@@ -1,6 +1,6 @@
 ---
 id: "TBD"
-title: "How can we normalize our pulses to TES current?"
+title: "How can we normalize our pulses to QET current?"
 author: "Anthony"
 date: "2026-10-21"
 status: "In progress"
@@ -14,11 +14,15 @@ description: "Want a refresher on how to analyze the SQUID readout chain for Sup
 
 ## Data and setup
 
-Say which series, dump, detector and channel you used, and define every quantity.
+This study is partly a search through our historical records and partly an exposition of how we work with the circuits that read out our detectors. The main historical records we have for R76 is the [UMN CDMS Wiki](https://villano-lab.github.io/R76Analysis/index.html) (or the recovered copy of it).
+
+![](img/tes-squid-readout-circuit.png)
+
+**Figure 1: The TES bias and SQUID readout circuit.** The bias current $I_\mathrm{b}$ flows down from the top through two parallel branches to ground: the shunt resistor $R_\mathrm{sh}$, and the TES in series with the parasitic resistance $R_\mathrm{par}$ and the input inductor $L_\mathrm{i}$. $L_\mathrm{i}$ is coupled (mutual inductance $M$) to the SQUID, which is biased with a small current $I_\mathrm{sq}$. The amplifier reads the SQUID voltage, and its output $V_\mathrm{out}$ returns through the feedback resistor $R_\mathrm{fb}$ to the feedback coil $L_\mathrm{f}$ (mutual inductance $M_\mathrm{f}$) to hold the SQUID flux fixed, so $V_\mathrm{out}$ is proportional to the TES current.
 
 ## The question
 
-Say the question again, and why it matters.
+How can we normalize our pulses to QET current? The most basic parameter we read out with our phonon sensors is the current through the Quasi-particle Electro-thermal-feedback Transition Edge Sensors (QETs) that make up our phonon channels. If we want to model our noise environment properly we must know what current the "pulses" are reading; typically pulses are read out in arbitrary voltage units depending on the Analog-to-Digital (ADC) conversion. 
 
 ## (Your own headings from here)
 

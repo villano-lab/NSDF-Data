@@ -2,7 +2,7 @@
 title-meta: "Developer workflow"
 author-meta: "NSDF-Data maintainers"
 html-title: "Developer workflow"
-html-subtitle: "NSDF-Data · Git Flow and semantic versioning · version 2, 12 October 2026"
+html-subtitle: "NSDF-Data · Git Flow and semantic versioning · version 3, 21 October 2026"
 ---
 
 ```{=latex}
@@ -13,7 +13,7 @@ html-subtitle: "NSDF-Data · Git Flow and semantic versioning · version 2, 12 O
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} Developer workflow}\\[0.2em]
-{\small NSDF-Data \textperiodcentered{} Git Flow and semantic versioning \textperiodcentered{} version 2, 12 October 2026}
+{\small NSDF-Data \textperiodcentered{} Git Flow and semantic versioning \textperiodcentered{} version 3, 21 October 2026}
 \end{center}
 \vspace{0.3em}
 ```
@@ -58,7 +58,7 @@ git switch develop && git pull && git branch -d feature/my-change   # 10
 
 **Making a release**, when there is something to version: branch `release/X.Y.Z` from `develop`, set `VERSION` and date `CHANGELOG.md`, open a PR into `master` and merge it, tag `vX.Y.Z` on the merge commit, merge `master` back into `develop`, publish the GitHub release, delete the branch. Bump **major** for a breaking library change (not while 0.x), **minor** for a new capability, **patch** for fixes and content. A guide or site fix is an ordinary feature PR. A **hotfix** is only for a bug in a released version.
 
-**Special cases.** *A student note:* the PR into `develop` runs the check only, and nothing is visible; you replace `TBD` with the next note number (`python tools/build_notes.py next` prints it) and merge, the bot builds the page, and it is live in 2 to 3 minutes (delete the source file to remove a note). *A contributor such as Kitty:* they open a PR into `develop`, you are requested automatically, and you add other reviewers by hand. *An AI agent:* may open PRs, and never merges without your go-ahead.
+**Special cases.** *A student note:* the PR into `develop` runs the check only, and nothing is visible; you replace `TBD` with the next note number (`python tools/build_notes.py next`{.cmd} prints it) and merge, the bot builds the page, and it is live in 2 to 3 minutes (delete the source file to remove a note). *A contributor such as Kitty:* they open a PR into `develop`, you are requested automatically, and you add other reviewers by hand. *An AI agent:* may open PRs, and never merges without your go-ahead.
 
 **Never** commit directly to `master` or `develop`, and never force-push (the rulesets block both).\
 Details are in the repository: `RELEASING.md`, `AGENTS.md`, `CHANGELOG.md`.

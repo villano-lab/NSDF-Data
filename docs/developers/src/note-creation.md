@@ -2,7 +2,7 @@
 title-meta: "Developer quick-sheet: creating a note"
 author-meta: "NSDF-Data maintainers"
 html-title: "Creating a note"
-html-subtitle: "Developer quick-sheet · hand-written notes in docs/notes/ · version 6, 20 October 2026"
+html-subtitle: "Developer quick-sheet · hand-written notes in docs/notes/ · version 7, 21 October 2026"
 ---
 
 ```{=latex}
@@ -13,7 +13,7 @@ html-subtitle: "Developer quick-sheet · hand-written notes in docs/notes/ · ve
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} Creating a note}\\[0.2em]
-{\small Developer quick-sheet \textperiodcentered{} hand-written notes in \texttt{docs/notes/} \textperiodcentered{} version 6, 20 October 2026}
+{\small Developer quick-sheet \textperiodcentered{} hand-written notes in \texttt{docs/notes/} \textperiodcentered{} version 7, 21 October 2026}
 \end{center}
 \vspace{0.2em}
 ```
@@ -30,7 +30,7 @@ For a note you write yourself: an HTML page in `docs/notes/` and one row in the 
 2. **Figures.** Save the PNGs from the executed notebook into `docs/notes/img/`, named for the series and the content, for example `dump1_bstd_time.png`.
 3. **Page.** Copy the newest note, `note-02a-bstd-vs-time.html`, to `docs/notes/note-NN-slug.html`. Edit the `<title>`, the `<h1>` (write it as a question), the meta line (`Note NN · Author(s) · date · Status`), and the `<nav class="outline">` with an `id` on every `<h2>`. Sections: Code Repository, Data and setup, The question, then the headings your story needs (one section per result with a `<figure>`, alt text and a caption; what it means and what could be wrong; next steps). Student guide 3 shows three notes with their headings.
 4. **Pin the code.** Every link to a notebook or to `python/` uses the commit hash, never a branch name: under the repository URL, `blob/<hash>/<path>` for a file and `tree/<hash>/<folder>` for a folder. Check each one: `git cat-file -e <hash>:<path>` prints nothing when the file exists.
-5. **Index row.** Add one `<tr>` to the Analysis Notes table in `docs/index.html`, **newest note first**. Columns: Note #, Link, Date, Author, Title, Description, Keywords, Status, Presentation. The status badge is `<span class="status in-progress">` (or `complete`, `superseded`, `abandoned`, `brainstorm`).
+5. **Index row.** Add one `<tr>` to the Analysis Notes table in `docs/index.html`, **newest note first**. Columns: Note #, Link, Date, Author, Title, Description, Keywords, Status. The status badge is `<span class="status in-progress">` (or `complete`, `superseded`, `abandoned`, `brainstorm`).
 6. **Changelog and checks.** Add a line under `[Unreleased]` in `CHANGELOG.md` (a new note is a patch-level change). Open the page from disk in a browser: figures show, links work. If you touched `python/`, run `cd python && python -m pytest -q`.
 7. **PR.** `git push -u origin feature/note-NN-short-name`, then `gh pr create --base develop --fill`. When the checks are green, merge: the page is live in about two minutes.
 

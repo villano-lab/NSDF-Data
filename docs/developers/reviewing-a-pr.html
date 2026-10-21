@@ -15,7 +15,7 @@
 
 <h1>Reviewing a pull request</h1>
 <p class="meta">Developer quick-sheet · for the maintainer and for
-reviewers · version 1, 20 October 2026</p>
+reviewers · version 2, 21 October 2026</p>
 
 
 <p>A pull request (PR) is ready to merge when <strong>the checks are
@@ -65,7 +65,8 @@ say so.</li>
 <code>notes/src/</code>)</td>
 <td>Only <code>notes/src/*.md</code>, <code>notes/src/img/</code> and
 the student’s own folder under <code>data_analysis/R76/student/</code>.
-Run <code>python tools/check_note.py notes/src/&lt;note&gt;.md</code>
+Run <code
+class="cmd">python tools/check_note.py notes/src/&lt;note&gt;.md</code>
 (or read the job summary): the structure and the pinned links must be
 fine; look at each number listed NOT FOUND (advice only: a value from a
 paper is fine if the text says so, and it carries
@@ -94,8 +95,9 @@ deprecated; a changelog line.</td>
 <tr>
 <td><strong>Hand-written note</strong> (<code>docs/notes/</code>)</td>
 <td>One row in <code>docs/index.html</code>, newest first; every link
-pinned to a commit (<code>python tools/check_note_pins.py check</code>);
-a <strong>Complete</strong> note gets only a minimal correction.</td>
+pinned to a commit (<code
+class="cmd">python tools/check_note_pins.py check</code>); a
+<strong>Complete</strong> note gets only a minimal correction.</td>
 </tr>
 <tr>
 <td><strong>CI or tools</strong> (<code>.github/</code>,
@@ -125,20 +127,20 @@ in a comment, so that they pull before they edit again.</p>
 <li><strong>A student note first needs its number.</strong> The
 <em>Student notes</em> check posts the next free number on the PR as a
 suggestion on the <code>id: "TBD"</code> line. Press <strong>Commit
-suggestion</strong>, wait for the checks, then merge (no checkout:
-<code>python tools/build_notes.py next</code> prints the same number).
-Two note PRs open at once are offered the same number: merge one, then
-re-run the check of the other. The build refuses a note that still says
-<code>TBD</code>, and nothing is published.</li>
+suggestion</strong>, wait for the checks, then merge (no checkout: <code
+class="cmd">python tools/build_notes.py next</code> prints the same
+number). Two note PRs open at once are offered the same number: merge
+one, then re-run the check of the other. The build refuses a note that
+still says <code>TBD</code>, and nothing is published.</li>
 <li><strong>Merge with a merge commit</strong> (not squash or
 rebase).</li>
 <li><strong>After the merge</strong> the push to <code>develop</code>
 builds the notes: a bot commit adds the page and its table row, and the
 page is live in 2 to 3 minutes at <a href="../index.html"
-class="uri">https://villano-lab.github.io/NSDF-Data/</a>. Open it.
-<code>git pull</code> on <code>develop</code> before more work, because
-the bot commits there. Guides and quick-sheets are live in about two
-minutes.</li>
+class="uri">https://villano-lab.github.io/NSDF-Data/</a>. Open it. <code
+class="cmd">git pull</code> on <code>develop</code> before more work,
+because the bot commits there. Guides and quick-sheets are live in about
+two minutes.</li>
 <li><strong>Clean up.</strong> Delete a branch only if you created it
 and it is merged. A <code>student-&lt;name&gt;</code> branch is
 long-lived: never delete it. Remove any worktree you made for the

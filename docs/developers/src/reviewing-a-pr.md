@@ -2,7 +2,7 @@
 title-meta: "Developer quick-sheet: reviewing a pull request"
 author-meta: "NSDF-Data maintainers"
 html-title: "Reviewing a pull request"
-html-subtitle: "Developer quick-sheet · for the maintainer and for reviewers · version 1, 20 October 2026"
+html-subtitle: "Developer quick-sheet · for the maintainer and for reviewers · version 2, 21 October 2026"
 ---
 
 ```{=latex}
@@ -13,7 +13,7 @@ html-subtitle: "Developer quick-sheet · for the maintainer and for reviewers ·
 \vspace*{-1.2em}
 \begin{center}
 {\LARGE\bfseries\color{brand} Reviewing a pull request}\\[0.2em]
-{\small Developer quick-sheet \textperiodcentered{} for the maintainer and for reviewers \textperiodcentered{} version 1, 20 October 2026}
+{\small Developer quick-sheet \textperiodcentered{} for the maintainer and for reviewers \textperiodcentered{} version 2, 21 October 2026}
 \end{center}
 \vspace{0.2em}
 ```
@@ -35,10 +35,10 @@ A pull request (PR) is ready to merge when **the checks are green**, **the diff 
 
 | Kind | Look for |
 |---|---|
-| **Student note** (`student-<name>`, `notes/src/`) | Only `notes/src/*.md`, `notes/src/img/` and the student's own folder under `data_analysis/R76/student/`. Run `python tools/check_note.py notes/src/<note>.md` (or read the job summary): the structure and the pinned links must be fine; look at each number listed NOT FOUND (advice only: a value from a paper is fine if the text says so, and it carries `<!-- numbers-ok -->`). Read the note: the title is a question, each figure has a bold "Figure N" caption, it says what was *not* checked. Header: `id` (section 4), status, and, if it replaces an earlier note, that note's status and link change in the same PR. |
+| **Student note** (`student-<name>`, `notes/src/`) | Only `notes/src/*.md`, `notes/src/img/` and the student's own folder under `data_analysis/R76/student/`. Run `python tools/check_note.py notes/src/<note>.md`{.cmd} (or read the job summary): the structure and the pinned links must be fine; look at each number listed NOT FOUND (advice only: a value from a paper is fine if the text says so, and it carries `<!-- numbers-ok -->`). Read the note: the title is a question, each figure has a bold "Figure N" caption, it says what was *not* checked. Header: `id` (section 4), status, and, if it replaces an earlier note, that note's status and link change in the same PR. |
 | **Student guide** (`docs/students/src/`) | Sources edited, never the HTML or PDF by hand. The rebuilt pages and PDFs of the changed guides are committed with the sources, and only those (restore the others the build touched). Version and date bumped in the header and *Session Info*. No text past the margin in the PDF, and the check "PDFs copy as plain text" is green. |
 | **Library** (`python/`) | Tests added; every public function has a `@status` tag and a docstring; the generated reference page rebuilt (a test fails if it is stale); a breaking change updates the notebooks or marks them deprecated; a changelog line. |
-| **Hand-written note** (`docs/notes/`) | One row in `docs/index.html`, newest first; every link pinned to a commit (`python tools/check_note_pins.py check`); a **Complete** note gets only a minimal correction. |
+| **Hand-written note** (`docs/notes/`) | One row in `docs/index.html`, newest first; every link pinned to a commit (`python tools/check_note_pins.py check`{.cmd}); a **Complete** note gets only a minimal correction. |
 | **CI or tools** (`.github/`, `tools/`) | It runs on its own PR; permissions are as small as they can be; it works on all three systems if it checks the guides; a new check for notes goes into `tools/check_note.py`; the tool has tests and a changelog line. |
 | **Release or hotfix** | Maintainer only. Follow `RELEASING.md`. |
 
@@ -48,9 +48,9 @@ Comment on the line, one point per comment. Say what to change and why, and for 
 
 ## 4. Merge, then check
 
-1. **A student note first needs its number.** The *Student notes* check posts the next free number on the PR as a suggestion on the `id: "TBD"` line. Press **Commit suggestion**, wait for the checks, then merge (no checkout: `python tools/build_notes.py next` prints the same number). Two note PRs open at once are offered the same number: merge one, then re-run the check of the other. The build refuses a note that still says `TBD`, and nothing is published.
+1. **A student note first needs its number.** The *Student notes* check posts the next free number on the PR as a suggestion on the `id: "TBD"` line. Press **Commit suggestion**, wait for the checks, then merge (no checkout: `python tools/build_notes.py next`{.cmd} prints the same number). Two note PRs open at once are offered the same number: merge one, then re-run the check of the other. The build refuses a note that still says `TBD`, and nothing is published.
 2. **Merge with a merge commit** (not squash or rebase).
-3. **After the merge** the push to `develop` builds the notes: a bot commit adds the page and its table row, and the page is live in 2 to 3 minutes at <https://villano-lab.github.io/NSDF-Data/>. Open it. `git pull` on `develop` before more work, because the bot commits there. Guides and quick-sheets are live in about two minutes.
+3. **After the merge** the push to `develop` builds the notes: a bot commit adds the page and its table row, and the page is live in 2 to 3 minutes at <https://villano-lab.github.io/NSDF-Data/>. Open it. `git pull`{.cmd} on `develop` before more work, because the bot commits there. Guides and quick-sheets are live in about two minutes.
 4. **Clean up.** Delete a branch only if you created it and it is merged. A `student-<name>` branch is long-lived: never delete it. Remove any worktree you made for the review.
 
 ```{=latex}

@@ -15,38 +15,50 @@
 
 <h1>Creating a note</h1>
 <p class="meta">Developer quick-sheet · hand-written notes in
-docs/notes/ · version 7, 21 October 2026</p>
+docs/notes/ · version 8, 21 October 2026</p>
 
 
-<p>For a note you write yourself: an HTML page in
-<code>docs/notes/</code> and one row in the front-page table. (Student
-notes are Markdown in <code>notes/src/</code>; see the box at the bottom
-and the <a href="note-cheatsheet.html">student cheat-sheet</a>.) Start
-from <code>develop</code>, on a branch:
-<code>git switch -c feature/note-NN-short-name</code> (NN is the next
-note number, which student notes share:
-<code>python tools/build_notes.py next</code> prints it; a follow-up
-takes a letter, like 2a).</p>
+<p><strong>Two routes.</strong> <strong>Markdown, like a student
+note</strong> (the simpler one, and what Note 9 used): copy
+<code>notes/src/_template.md</code> to
+<code>notes/src/your-note-name.md</code>, write it as <a
+href="writing-a-note.html">student guide 3</a> says, keep
+<code>id: "TBD"</code>, check it with <code
+class="cmd">python tools/check_note.py notes/src/your-note-name.md</code>,
+and open the PR. The page and the index row are built when you merge it,
+and you give it its number then (see the box at the bottom), so there is
+no NN to track: skip the steps below. <strong>Hand-written
+HTML</strong>, for a page the Markdown build cannot make: an HTML page
+in <code>docs/notes/</code> and one row in the front-page table, as
+follows. Start from <code>develop</code>, on a branch: <code
+class="cmd">git switch -c feature/note-short-name</code>, with a name
+for the topic, for example <code>feature/note-psd-peaks</code>.
+<strong>Leave the number out of the branch name and do not look it up
+yet</strong> (the shared numbers are taken as notes are merged, so one
+found now may be gone by the time you finish). You pick
+<strong>NN</strong>, the note number, at step 6.</p>
 <p><img src="src/img/note-steps.png" style="width:100.0%"
 alt="Six steps for creating a note: notebook, figures, page, index row, check, pull request and merge." /></p>
 <ol type="1">
 <li><strong>Notebook.</strong> Do the analysis in
 <code>data_analysis/R76/notebooks/</code>, run it top to bottom, and
-commit it with any library change. Note the short hash:
-<code>git rev-parse --short HEAD</code>. Re-running some notebooks
-leaves metadata churn, so read <code>git diff</code> before committing.
-Never run <code>07221203_2025_dump1_noise.ipynb</code> without approval
-(it rewrites <code>data_analysis/archives/good_noise.h5</code>).</li>
+commit it with any library change. Note the short hash: <code
+class="cmd">git rev-parse --short HEAD</code>. Re-running some notebooks
+leaves metadata churn, so read <code class="cmd">git diff</code> before
+committing. Never run <code>07221203_2025_dump1_noise.ipynb</code>
+without approval (it rewrites
+<code>data_analysis/archives/good_noise.h5</code>).</li>
 <li><strong>Figures.</strong> Save the PNGs from the executed notebook
 into <code>docs/notes/img/</code>, named for the series and the content,
 for example <code>dump1_bstd_time.png</code>.</li>
 <li><strong>Page.</strong> Copy the newest note,
 <code>note-02a-bstd-vs-time.html</code>, to
-<code>docs/notes/note-NN-slug.html</code>. Edit the
+<code>docs/notes/note-NN-slug.html</code>, writing the letters
+<strong>NN</strong> literally for now. Edit the
 <code>&lt;title&gt;</code>, the <code>&lt;h1&gt;</code> (write it as a
 question), the meta line
-(<code>Note NN · Author(s) · date · Status</code>), and the
-<code>&lt;nav class="outline"&gt;</code> with an <code>id</code> on
+(<code>Note NN · Author(s) · date · Status</code>; keep NN for now), and
+the <code>&lt;nav class="outline"&gt;</code> with an <code>id</code> on
 every <code>&lt;h2&gt;</code>. Sections: Code Repository, Data and
 setup, The question, then the headings your story needs (one section per
 result with a <code>&lt;figure&gt;</code>, alt text and a caption; what
@@ -56,24 +68,34 @@ three notes with their headings.</li>
 <code>python/</code> uses the commit hash, never a branch name: under
 the repository URL, <code>blob/&lt;hash&gt;/&lt;path&gt;</code> for a
 file and <code>tree/&lt;hash&gt;/&lt;folder&gt;</code> for a folder.
-Check each one: <code>git cat-file -e &lt;hash&gt;:&lt;path&gt;</code>
-prints nothing when the file exists.</li>
+Check each one: <code
+class="cmd">git cat-file -e &lt;hash&gt;:&lt;path&gt;</code> prints
+nothing when the file exists.</li>
 <li><strong>Index row.</strong> Add one <code>&lt;tr&gt;</code> to the
 Analysis Notes table in <code>docs/index.html</code>, <strong>newest
-note first</strong>. Columns: Note #, Link, Date, Author, Title,
-Description, Keywords, Status. The status badge is
+note first</strong>. Columns: Note # (NN for now), Link, Date, Author,
+Title, Description, Keywords, Status. The status badge is
 <code>&lt;span class="status in-progress"&gt;</code> (or
 <code>complete</code>, <code>superseded</code>, <code>abandoned</code>,
 <code>brainstorm</code>).</li>
+<li><strong>Take the number.</strong> Last, just before the PR: <code
+class="cmd">git fetch</code> and <code
+class="cmd">git merge origin/develop</code> to bring in any notes merged
+meanwhile, then <code
+class="cmd">python tools/build_notes.py next</code>, which prints the
+next free number (student notes share the numbering; a follow-up takes a
+letter, like 2a). Replace <strong>NN</strong> with it in the file name,
+the meta line and the index row. If someone merges a note first, repeat
+this step: only the number changes.</li>
 <li><strong>Changelog and checks.</strong> Add a line under
 <code>[Unreleased]</code> in <code>CHANGELOG.md</code> (a new note is a
 patch-level change). Open the page from disk in a browser: figures show,
-links work. If you touched <code>python/</code>, run
-<code>cd python &amp;&amp; python -m pytest -q</code>.</li>
-<li><strong>PR.</strong>
-<code>git push -u origin feature/note-NN-short-name</code>, then
-<code>gh pr create --base develop --fill</code>. When the checks are
-green, merge: the page is live in about two minutes.</li>
+links work. If you touched <code>python/</code>, run <code
+class="cmd">cd python &amp;&amp; python -m pytest -q</code>.</li>
+<li><strong>PR.</strong> <code
+class="cmd">git push -u origin feature/note-short-name</code>, then
+<code class="cmd">gh pr create --base develop --fill</code>. When the
+checks are green, merge: the page is live in about two minutes.</li>
 </ol>
 <p><strong>Updating a note</strong> is the same loop, on a new branch
 from <code>develop</code>. Check its status first: a
@@ -99,16 +121,17 @@ whole data-taking period.</p>
 <code>id: "TBD"</code> to the next note number: the <em>Student
 notes</em> check posts it on the PR as a suggestion on the
 <code>id</code> line, so press <strong>Commit suggestion</strong> (no
-checkout; <code>python tools/build_notes.py next</code> prints the same
-number, in the same numbering as the hand-written notes), and merge.
-With two note PRs open at once both are offered the same number: merge
-one, then re-run the check of the other to refresh its suggestion. The
-bot builds the page and its row in the Analysis Notes table, placed by
-number among the hand-written rows, and it is live in 2 to 3 minutes.
-When a student updates a published note, check the header still has its
-note number: <code>TBD</code> passes the PR check, but the build refuses
-it and nothing is published until you fix it. To remove a note, delete
-its source file in a PR; the next build removes the page.</p>
+checkout; <code class="cmd">python tools/build_notes.py next</code>
+prints the same number, in the same numbering as the hand-written
+notes), and merge. With two note PRs open at once both are offered the
+same number: merge one, then re-run the check of the other to refresh
+its suggestion. The bot builds the page and its row in the Analysis
+Notes table, placed by number among the hand-written rows, and it is
+live in 2 to 3 minutes. When a student updates a published note, check
+the header still has its note number: <code>TBD</code> passes the PR
+check, but the build refuses it and nothing is published until you fix
+it. To remove a note, delete its source file in a PR; the next build
+removes the page.</p>
 </div>
 
 <footer>This guide is also available as a <a href="note-creation.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 22 · 20 October 2026"
+date: "Version 23 · 22 October 2026"
 ---
 
 ::: tip
@@ -255,7 +255,7 @@ Say in the note which commit you pinned.
 
 ## Outline and links
 
-If your note has more than two or three sections, add a short outline near the top, with a link to each one. Readers use it to jump to what they need. The site builds the outline from your `##` headings, so use one `##` heading for each section. A note with no `##` headings simply has no outline.
+**You do not write the outline.** The published note shows a clickable **Outline** box at the top, with a link to each section, which readers use to jump to what they need. The site builds it from your `##` headings, so use one `##` heading for each section (the template already does). It appears only on the published page, not in the VS Code preview. A note with no `##` headings has no outline.
 
 ## Checking your note before you submit
 
@@ -289,7 +289,7 @@ The tool is a help, not a judge: it matches numbers at the digits you wrote (0.5
 
 ## Session Info
 
-Guide version 22, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 23, 22 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

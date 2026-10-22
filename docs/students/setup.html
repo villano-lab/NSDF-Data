@@ -28,7 +28,7 @@
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Windows
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 21 · 22 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -61,6 +61,9 @@ id="windows-toc-step-7.-let-jupyter-notebooks-use-your-environment">Step
 <li><a href="#windows-step-8.-get-permission-to-save-your-work"
 id="windows-toc-step-8.-get-permission-to-save-your-work">Step 8. Get
 permission to save your work</a></li>
+<li><a href="#windows-using-a-second-or-a-new-computer"
+id="windows-toc-using-a-second-or-a-new-computer">Using a second or a
+new computer</a></li>
 <li><a href="#windows-rules-for-keeping-your-work-safe"
 id="windows-toc-rules-for-keeping-your-work-safe">Rules for keeping your
 work safe</a></li>
@@ -538,6 +541,41 @@ git checkout -b student-yourname</code></pre>
 <p>The terminal shows
 <code>Switched to a new branch 'student-yourname'</code>.</p>
 </div>
+<h2 id="windows-using-a-second-or-a-new-computer">Using a second or a
+new computer</h2>
+<p>Your work lives on GitHub, on your own branch, not on one computer.
+To work on another computer, or on a replacement, you do
+<strong>not</strong> make another folder under your name. Set the
+computer up like this:</p>
+<ol type="1">
+<li>Do Steps 1 to 7 as written.</li>
+<li>In Step 8, do items 3 and 4 only (tell Git your name and email, and
+sign in with <code>gh auth login</code>). You already have access, so
+skip items 1 and 2.</li>
+<li><strong>Skip item 5.</strong> <code>git checkout -b</code> makes a
+<em>new</em> branch, and yours already exists on GitHub. Bring it down
+instead, with your own name in place of <code>yourname</code>:</li>
+</ol>
+<pre><code>cd %USERPROFILE%\Research\NSDF-Data
+git fetch origin
+git switch student-yourname</code></pre>
+<div class="checkpoint">
+<p>Git says
+<code>branch 'student-yourname' set up to track 'origin/student-yourname'</code>,
+and <code class="cmd">git branch --show-current</code> prints
+<code>student-yourname</code>. Your notebooks and your folder under
+<code>data_analysis/R76/student/</code> are there, because they came
+with the branch.</p>
+</div>
+<ol start="4" type="1">
+<li>The data is <strong>not</strong> stored on GitHub, so download it
+again on the new computer (first analysis guide, Step 2).</li>
+</ol>
+<p>On the computer you are leaving, <strong>commit and push your work
+first</strong> (Sync Changes, or the steps in the first analysis guide,
+Step 7). Anything you did not push is only on that computer. If an old
+computer starts again later, open it and push before you do anything
+else.</p>
 <h2 id="windows-rules-for-keeping-your-work-safe">Rules for keeping your
 work safe</h2>
 <ul>
@@ -613,7 +651,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, Windows edition. Written for
+<p>Guide version 21, 22 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="windows-key-links">Key links</h2>
@@ -635,7 +673,7 @@ class="uri">https://git-scm.com</a></li>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — macOS
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 21 · 22 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -666,6 +704,9 @@ id="macos-toc-step-7.-let-jupyter-notebooks-use-your-environment">Step
 <li><a href="#macos-step-8.-get-permission-to-save-your-work"
 id="macos-toc-step-8.-get-permission-to-save-your-work">Step 8. Get
 permission to save your work</a></li>
+<li><a href="#macos-using-a-second-or-a-new-computer"
+id="macos-toc-using-a-second-or-a-new-computer">Using a second or a new
+computer</a></li>
 <li><a href="#macos-rules-for-keeping-your-work-safe"
 id="macos-toc-rules-for-keeping-your-work-safe">Rules for keeping your
 work safe</a></li>
@@ -1084,6 +1125,41 @@ git checkout -b student-yourname</code></pre>
 <p>The terminal shows
 <code>Switched to a new branch 'student-yourname'</code>.</p>
 </div>
+<h2 id="macos-using-a-second-or-a-new-computer">Using a second or a new
+computer</h2>
+<p>Your work lives on GitHub, on your own branch, not on one computer.
+To work on another computer, or on a replacement, you do
+<strong>not</strong> make another folder under your name. Set the
+computer up like this:</p>
+<ol type="1">
+<li>Do Steps 1 to 7 as written.</li>
+<li>In Step 8, do items 3 and 4 only (tell Git your name and email, and
+sign in with <code>gh auth login</code>). You already have access, so
+skip items 1 and 2.</li>
+<li><strong>Skip item 5.</strong> <code>git checkout -b</code> makes a
+<em>new</em> branch, and yours already exists on GitHub. Bring it down
+instead, with your own name in place of <code>yourname</code>:</li>
+</ol>
+<pre><code>cd ~/Research/NSDF-Data
+git fetch origin
+git switch student-yourname</code></pre>
+<div class="checkpoint">
+<p>Git says
+<code>branch 'student-yourname' set up to track 'origin/student-yourname'</code>,
+and <code class="cmd">git branch --show-current</code> prints
+<code>student-yourname</code>. Your notebooks and your folder under
+<code>data_analysis/R76/student/</code> are there, because they came
+with the branch.</p>
+</div>
+<ol start="4" type="1">
+<li>The data is <strong>not</strong> stored on GitHub, so download it
+again on the new computer (first analysis guide, Step 2).</li>
+</ol>
+<p>On the computer you are leaving, <strong>commit and push your work
+first</strong> (Sync Changes, or the steps in the first analysis guide,
+Step 7). Anything you did not push is only on that computer. If an old
+computer starts again later, open it and push before you do anything
+else.</p>
 <h2 id="macos-rules-for-keeping-your-work-safe">Rules for keeping your
 work safe</h2>
 <ul>
@@ -1159,7 +1235,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, macOS edition. Written for
+<p>Guide version 21, 22 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="macos-key-links">Key links</h2>
@@ -1181,7 +1257,7 @@ class="uri">https://git-scm.com</a></li>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Linux
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 21 · 22 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1212,6 +1288,9 @@ id="linux-toc-step-7.-let-jupyter-notebooks-use-your-environment">Step
 <li><a href="#linux-step-8.-get-permission-to-save-your-work"
 id="linux-toc-step-8.-get-permission-to-save-your-work">Step 8. Get
 permission to save your work</a></li>
+<li><a href="#linux-using-a-second-or-a-new-computer"
+id="linux-toc-using-a-second-or-a-new-computer">Using a second or a new
+computer</a></li>
 <li><a href="#linux-rules-for-keeping-your-work-safe"
 id="linux-toc-rules-for-keeping-your-work-safe">Rules for keeping your
 work safe</a></li>
@@ -1629,6 +1708,41 @@ git checkout -b student-yourname</code></pre>
 <p>The terminal shows
 <code>Switched to a new branch 'student-yourname'</code>.</p>
 </div>
+<h2 id="linux-using-a-second-or-a-new-computer">Using a second or a new
+computer</h2>
+<p>Your work lives on GitHub, on your own branch, not on one computer.
+To work on another computer, or on a replacement, you do
+<strong>not</strong> make another folder under your name. Set the
+computer up like this:</p>
+<ol type="1">
+<li>Do Steps 1 to 7 as written.</li>
+<li>In Step 8, do items 3 and 4 only (tell Git your name and email, and
+sign in with <code>gh auth login</code>). You already have access, so
+skip items 1 and 2.</li>
+<li><strong>Skip item 5.</strong> <code>git checkout -b</code> makes a
+<em>new</em> branch, and yours already exists on GitHub. Bring it down
+instead, with your own name in place of <code>yourname</code>:</li>
+</ol>
+<pre><code>cd ~/Research/NSDF-Data
+git fetch origin
+git switch student-yourname</code></pre>
+<div class="checkpoint">
+<p>Git says
+<code>branch 'student-yourname' set up to track 'origin/student-yourname'</code>,
+and <code class="cmd">git branch --show-current</code> prints
+<code>student-yourname</code>. Your notebooks and your folder under
+<code>data_analysis/R76/student/</code> are there, because they came
+with the branch.</p>
+</div>
+<ol start="4" type="1">
+<li>The data is <strong>not</strong> stored on GitHub, so download it
+again on the new computer (first analysis guide, Step 2).</li>
+</ol>
+<p>On the computer you are leaving, <strong>commit and push your work
+first</strong> (Sync Changes, or the steps in the first analysis guide,
+Step 7). Anything you did not push is only on that computer. If an old
+computer starts again later, open it and push before you do anything
+else.</p>
 <h2 id="linux-rules-for-keeping-your-work-safe">Rules for keeping your
 work safe</h2>
 <ul>
@@ -1704,7 +1818,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, Linux edition. Written for
+<p>Guide version 21, 22 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="linux-key-links">Key links</h2>

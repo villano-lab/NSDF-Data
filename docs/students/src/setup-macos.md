@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 20 · 14 October 2026"
+date: "Version 21 · 22 October 2026"
 ---
 
 ::: tip
@@ -239,6 +239,28 @@ git checkout -b student-yourname
 The terminal shows `Switched to a new branch 'student-yourname'`.
 :::
 
+## Using a second or a new computer
+
+Your work lives on GitHub, on your own branch, not on one computer. To work on another computer, or on a replacement, you do **not** make another folder under your name. Set the computer up like this:
+
+1. Do Steps 1 to 7 as written.
+2. In Step 8, do items 3 and 4 only (tell Git your name and email, and sign in with `gh auth login`). You already have access, so skip items 1 and 2.
+3. **Skip item 5.** `git checkout -b` makes a *new* branch, and yours already exists on GitHub. Bring it down instead, with your own name in place of `yourname`:
+
+```
+cd ~/Research/NSDF-Data
+git fetch origin
+git switch student-yourname
+```
+
+::: checkpoint
+Git says `branch 'student-yourname' set up to track 'origin/student-yourname'`, and `git branch --show-current`{.cmd} prints `student-yourname`. Your notebooks and your folder under `data_analysis/R76/student/` are there, because they came with the branch.
+:::
+
+4. The data is **not** stored on GitHub, so download it again on the new computer (first analysis guide, Step 2).
+
+On the computer you are leaving, **commit and push your work first** (Sync Changes, or the steps in the first analysis guide, Step 7). Anything you did not push is only on that computer. If an old computer starts again later, open it and push before you do anything else.
+
 ## Rules for keeping your work safe
 
 - **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
@@ -278,7 +300,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 20, 14 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 21, 22 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

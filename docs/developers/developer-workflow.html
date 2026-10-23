@@ -15,7 +15,7 @@
 
 <h1>Developer workflow</h1>
 <p class="meta">NSDF-Data · Git Flow and semantic versioning · version
-3, 21 October 2026</p>
+4, 23 October 2026</p>
 
 
 <p><strong>A pull request (PR)</strong> is a page on GitHub that says
@@ -39,14 +39,15 @@ alt="The branches over time: a feature branch splits off develop and merges back
 <p class="caption">Branches over time. A feature merges into <code>develop</code> through a PR. A release goes to <code>master</code>, is tagged, and <code>master</code> is merged back.</p>
 <p><strong>Making a release</strong>, when there is something to
 version: branch <code>release/X.Y.Z</code> from <code>develop</code>,
-set <code>VERSION</code> and date <code>CHANGELOG.md</code>, open a PR
-into <code>master</code> and merge it, tag <code>vX.Y.Z</code> on the
-merge commit, merge <code>master</code> back into <code>develop</code>,
-publish the GitHub release, delete the branch. Bump
-<strong>major</strong> for a breaking library change (not while 0.x),
-<strong>minor</strong> for a new capability, <strong>patch</strong> for
-fixes and content. A guide or site fix is an ordinary feature PR. A
-<strong>hotfix</strong> is only for a bug in a released version.</p>
+set <code>VERSION</code> (and <code>goldpan</code>’s own, if changed)
+and date <code>CHANGELOG.md</code>, open a PR into <code>master</code>
+and merge it, tag <code>vX.Y.Z</code> on the merge commit, merge
+<code>master</code> back into <code>develop</code>, publish the GitHub
+release, delete the branch. Bump <strong>major</strong> for a breaking
+library change (not while 0.x), <strong>minor</strong> for a new
+capability, <strong>patch</strong> for fixes and content. A guide or
+site fix is an ordinary feature PR. A <strong>hotfix</strong> is only
+for a bug in a released version.</p>
 <p><strong>Special cases.</strong> <em>A student note:</em> the PR into
 <code>develop</code> runs the check only, and nothing is visible; you
 replace <code>TBD</code> with the next note number (<code

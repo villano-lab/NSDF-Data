@@ -14,7 +14,7 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>What is the current best PSD estimate from series 07221203_2025?</h1>
-<p class="meta"><strong>Note 9</strong> &middot; Author(s): Buddy Holly (A. Villano) &middot; 2026-10-12 &middot; Status: <span class="status complete">Complete (2026-10-20)</span></p>
+<p class="meta"><strong>Note 9</strong> &middot; Author(s): Buddy Holly (A. Villano) &middot; 2026-10-12 &middot; Status: <span class="status in-progress">In progress</span></p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -36,45 +36,88 @@ cut on PCS2 and the cut on PBS1</a></li>
 </ol>
 </nav>
 
+<div class="callout revised-box">
+<p><strong>WARNING (22 October 2026): the sample time has
+changed.</strong> The phonon sample period is <strong>0.8 µs (1.25 MHz),
+not 1.6 µs (625 kHz)</strong>; a 4096-sample trace is 3.2768 ms. This
+note, its figures and its HDF5 file were made with 1.6 µs until
+2026-10-22, which was wrong (see <em>The sample period</em> in
+<code>python/README.md</code>). What changed in this note:
+<!-- numbers-ok --></p>
+<ul>
+<li>The frequency axis of Figures 4 and 6 now reaches 625 kHz (it ended
+at 312 kHz); every frequency is twice what it was, so a feature the old
+figures showed at 100 kHz is at 200 kHz. The frequency bins are 306 Hz
+apart (153 Hz before), from 306 Hz to 625 kHz. <!-- numbers-ok --></li>
+<li>The PSD is divided by 2 and the amplitude spectral density by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mn>2</mn></msqrt><annotation encoding="application/x-tex">\sqrt{2}</annotation></semantics></math>
+(the factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math>
+in the definition), so the ASD values quoted for Figure 4 changed: the
+plateau above 100 kHz is 1.70e-3 to 1.75e-3 counts/√Hz in four channels
+(it was 2.37e-3 to 2.59e-3 in five), and PBS2 between 1 and 10 kHz is
+2.06e-3 counts/√Hz against 6.29e-3 to 1.10e-2 (it was 2.61e-3 against
+6.71e-3 to 1.23e-2). Because the bands 1 to 10, 10 to 100 and above 100
+kHz stay the same while the frequencies doubled, they now cover
+different parts of the spectrum. <!-- numbers-ok --></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math>
+in the PSD definition is 0.8 µs, the code block no longer sets
+<code>sample_period_s</code> (the library default is used), and the HDF5
+file <code>psd-clean-randoms-07221203_2025_F0001.h5</code> has
+<code>sample_period_s</code> = 8e-07 and the frequencies of the new
+axis, so any analysis that used its frequencies must be redone.
+<!-- numbers-ok --></li>
+<li>Unchanged: everything counted in samples or counts (the cuts, the
+101, 141 and 31 events, the traces and pulse heights in all the figures
+other than 4 and 6 (they are identical pixel for pixel), the sample
+numbers quoted for the events). <!-- numbers-ok --></li>
+<li>The Code repository section is now pinned to the commit of the
+re-run (<code>6985a6c</code> for the notebooks and file,
+<code>ac55c3c</code> for the library). <!-- numbers-ok --></li>
+</ul>
+</div>
 <h2 id="code-repository">Code repository</h2>
-<p>All code is pinned to commit <code>618687c</code>: each link shows
-the file as it was when the results below were made, which may be older
-than the latest version, and the file may have moved since (see
+<p>All code is pinned to two commits: buddy’s notebooks, the saved HDF5
+file and the figures to <code>6985a6c</code>, the commit of the re-run
+with the corrected sample period (0.8 µs), and the library in
+<code>python/</code> to <code>ac55c3c</code>. Each link shows the file
+as it was when the results below were made, which may be older than the
+latest version, and the file may have moved since (see
 <code>data_analysis/README.md</code>). On the published page a small
 “latest” link after each one opens the file on <code>develop</code>
 today.</p>
 <ul>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>:
 the spectra of every channel from the <code>clean_randoms</code> cut,
 and the saved HDF5 file <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
 (Noise Power Spectral Densities).</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>:
 how good the PCS2 cut (the channel names are explained under Data and
 setup) is on the other channels, and the definition of the cut we use
 (<code>clean_randoms</code>) (Selection of Randoms in All Channels, Data
 and setup for the timing of the randoms, Appendices A and B).</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>:
 the channel map and the noise spectra of the 31 events of the strictest
 cut (Data and setup, Appendix A).</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/extract_odb_facts.py"><code>extract_odb_facts.py</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/extract_odb_facts.py"><code>extract_odb_facts.py</code></a>
 and <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/odb-facts-07220916_2200.json"><code>odb-facts-07220916_2200.json</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/odb-facts-07220916_2200.json"><code>odb-facts-07220916_2200.json</code></a>:
 the run configuration of series <code>07220916_2200</code> (board order,
 QET biases, random rates) read from its raw file, which is not in the
 repository, and the numbers it gave; section 12 of
 <code>noise-psd-randoms-buddy.ipynb</code> prints them (Data and setup,
 Caveats).</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/python/pulse_channels.py"><code>pulse_channels.py</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/pulse_channels.py"><code>pulse_channels.py</code></a>,
 <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/python/pulse_cuts.py"><code>pulse_cuts.py</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/pulse_cuts.py"><code>pulse_cuts.py</code></a>
 and <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/python/pulse_quantities.py"><code>pulse_quantities.py</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/pulse_quantities.py"><code>pulse_quantities.py</code></a>:
 the library for the channel names, the randoms and excursion-band cuts,
 and the PSD.</li>
 </ul>
@@ -85,7 +128,7 @@ and the PSD.</li>
 49 seconds); random triggers are snapshots of our detector traces taken
 at any time (rather than when a pulse occurs) to sample the noise
 environment. The line in the third code block of the <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>
 notebook shows the randoms cut defined as
 <code>quiet_noise = pc.excursion_band(pulses, config_500) &amp; (np.log10(bstd_500) &lt; 0.5)</code>
 in addition to selecting the trigger specification for random events.
@@ -151,9 +194,9 @@ Side 2 as seen after flipping the detector over, which is how the figure
 below shows it.</li>
 </ol>
 <p>The mapping is kept in <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/python/pulse_channels.py"><code>python/pulse_channels.py</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/pulse_channels.py"><code>python/pulse_channels.py</code></a>,
 marked as under development, and section 7 of <em>that</em> notebook, <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>,
 gives the evidence.</p>
 <p><strong>Channel names.</strong> In the text a channel is written as
 P, the letter of its sensor, and its side: PCS2 is the phonon channel C
@@ -297,7 +340,7 @@ transparency on a free vertical scale. Blue is Side 1, orange is Side 2,
 and red would mark a trace that contains a pulse. The 5 tiles with grey
 text are the dead channels.</p>
 <p>While setting this up in the Jupyter notebook <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>,
 I checked if there were similar traces left in S2 after selecting on
 PBS1, just like we saw in S1 after selecting on PCS2. <a
 href="#appendix-b-the-cut-on-pcs2-and-the-cut-on-pbs1">Appendix B</a>
@@ -341,7 +384,7 @@ samples
 taken every
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math>
 (here
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi><mo>=</mo><mn>1.6</mn><mspace width="0.167em"></mspace><mi>μ</mi><mi mathvariant="normal">s</mi></mrow><annotation encoding="application/x-tex">\Delta t = 1.6\,\mu\mathrm{s}</annotation></semantics></math>),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>t</mi><mo>=</mo><mn>0.8</mn><mspace width="0.167em"></mspace><mi>μ</mi><mi mathvariant="normal">s</mi></mrow><annotation encoding="application/x-tex">\Delta t = 0.8\,\mu\mathrm{s}</annotation></semantics></math>),
 with its baseline subtracted. Its discrete Fourier transform is
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>k</mi><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">X[k]</annotation></semantics></math>,
 with
@@ -392,10 +435,10 @@ integral over frequency equals the mean square of the trace (its
 variance, if the trace has zero mean). Here
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
 = 4086, the length of a trace after the leading glitch samples are
-dropped, so there are 2044 bins, from 153 Hz (the first non-zero bin) to
-312 kHz; the zero-frequency bin is not plotted. This is the convention
+dropped, so there are 2044 bins, from 306 Hz (the first non-zero bin) to
+625 kHz; the zero-frequency bin is not plotted. This is the convention
 used in the notebook (<a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>);
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>);
 Note 3 plotted the raw
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">|</mo><mi>X</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>k</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">|X[k]|^2</annotation></semantics></math>
 instead, which differs from
@@ -451,11 +494,11 @@ must use his scaling of the Fourier transform too.
 <!-- numbers-ok --></p>
 <p>Figure 4 shows the amplitude spectral density of the 101 events of
 the <code>clean_randoms</code> cut, the cut used from now on. Above 100
-kHz it is flat, between 2.37e-3 and 2.59e-3 counts/√Hz in five of the
-seven channels; the narrow lines of the DCRC3 channels PES1 and PES2
-raise their means to 3.65e-3 and 4.07e-3 counts/√Hz. PBS2 is the odd
-one: between 1 and 10 kHz its amplitude is 2.61e-3 counts/√Hz, against
-6.71e-3 to 1.23e-2 for the others (see Caveats).</p>
+kHz it is flat, between 1.70e-3 and 1.75e-3 counts/√Hz in four of the
+seven channels; the narrow lines of the DCRC3 channels PBS1, PES1 and
+PES2 raise their means to 1.98e-3, 2.64e-3 and 2.93e-3 counts/√Hz. PBS2
+is the odd one: between 1 and 10 kHz its amplitude is 2.06e-3
+counts/√Hz, against 6.29e-3 to 1.10e-2 for the others (see Caveats).</p>
 <p><img
 src="img/student-psd-clean-randoms-07221203-2025/psd-clean-randoms-by-side-07221203_2025_F0001.png" /></p>
 <p><strong>Figure 4: The noise amplitude spectral density of the 101
@@ -501,7 +544,7 @@ href="https://doi.org/10.1109/TAU.1967.1161901">doi:10.1109/TAU.1967.1161901</a>
 <li><strong>PBS2 (DCRC4) may not be a normally operating phonon
 channel.</strong> Its noise is flat and well below the other working
 channels at low frequencies (between 1 and 10 kHz its amplitude is
-2.61e-3 counts/√Hz, against 6.71e-3 to 1.23e-2 for the others; Figure
+2.06e-3 counts/√Hz, against 6.29e-3 to 1.10e-2 for the others; Figure
 4), and it passes the quiet-noise cut for 958 of the 1008 randoms,
 against 101 to 180 for the others. This could mean the channel is
 superconducting or otherwise not biased into its transition. The <a
@@ -527,7 +570,7 @@ pretrigger window (<code>pc.excursion_band</code>) and has
 dump F0001 it keeps <strong>101 of the 1008 randoms</strong>, none with
 a pulse or a big tail in any channel (Appendix B). It is defined by the
 function <code>clean_randoms_cut</code> in <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>
 (section 13), and the code below is that function.
 <code>clean_randoms</code> is a True/False value for every event of the
 dump; because the three boards share their events in the same order, the
@@ -544,7 +587,7 @@ import pulse_quantities as pq
 import pulse_cuts as pc
 from pulse_config import PulseConfig
 
-config = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=1.6e-6)
+config = PulseConfig(pretrigger_samples=500, glitch_samples=10)     # the sample period is the library default, 0.8 us
 
 def clean_randoms_cut(pulses, trigger_types, config=config):
     &quot;&quot;&quot;Randoms with no pulse: a random trigger in the Tight excursion band with log10(bstd) &lt; 0.5.&quot;&quot;&quot;
@@ -572,8 +615,8 @@ development, because it assumes the trigger labels are swapped (Note
 <p>I’ve made the current best estimate of the noise spectrum
 specifically focusing on the series <code>07221203_2025</code>. The
 spectra are accessible via <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
-file (pinned to <code>618687c</code>, 503 kB), and can be accessed
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
+file (pinned to <code>6985a6c</code>, 503 kB), and can be accessed
 by:</p>
 <pre class="python"><code>import h5py
 import numpy as np
@@ -598,7 +641,7 @@ spectral density of the 101 events of the <code>clean_randoms</code> cut
 (<code>asd_sem</code>), and the PSD it is the square root of
 (<code>psd_mean</code> and <code>psd_sem</code>, in counts²/Hz); the
 layout of the file is described in section 7 of <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>,
 which also makes them. The caveats above apply, in particular to
 PBS2.</p>
 <h2 id="next-steps">Next steps</h2>
@@ -638,11 +681,11 @@ of those six channels, while the <code>log10(bstd) &lt; 0.5</code>
 condition keeps 770 to 895.</p>
 <p>Figure 5 shows the 31 traces themselves in every channel (section 12
 of <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>):
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>):
 none of them has a pulse or a ramp, and they all look like noise, but
 there are only 31 of them. Figure 6 shows their noise amplitude spectral
 density, the mean of the 31 traces in each channel (section 11 of <a
-href="https://github.com/villano-lab/NSDF-Data/blob/618687c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>).
+href="https://github.com/villano-lab/NSDF-Data/blob/6985a6c/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>).
 With so few traces the spectra are jagged from bin to bin, and no spread
 between the traces is drawn. This is why a cut that is not required to
 hold on all channels, and so keeps more traces, is worth looking

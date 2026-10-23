@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PY = ROOT / "python"
-NOT_LIBRARY = {"check_environment"}
+NOT_LIBRARY = set()   # every *.py in python/ is a module of the library
 
 
 def project():

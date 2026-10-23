@@ -6,7 +6,7 @@
 # The name `goldpan` is for the analysis half of a planned pair (a future reduction package, `goldsluice`, would produce the
 # reduced quantities; this one reads pulses and quantities together and analyses them): see issue 71. It is not tied to this
 # repository or to one experiment. The version below is the library's own, not the repository's VERSION; how the two relate
-# is still open in issue 71. `check_environment.py` is a script, not part of the library.
+# is still open in issue 71. `check_environment` is included because the first-analysis guide imports it.
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
@@ -24,6 +24,7 @@ archive = ["h5py"]
 
 [tool.setuptools]
 py-modules = [
+    "check_environment",
     "pulse_archive",
     "pulse_channels",
     "pulse_config",

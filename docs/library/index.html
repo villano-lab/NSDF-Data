@@ -44,11 +44,12 @@
 <h2 id="pulse_config">pulse_config.py</h2>
 <p>Shared configuration for the pulse operations/cuts/quantities library.</p>
 <p>One <code>PulseConfig</code> instance is passed explicitly to every function in <code>pulse_operations.py</code>, <code>pulse_cuts.py</code>, and <code>pulse_quantities.py</code>, rather than having each function hardcode <code>PRETRIGGER_SAMPLES</code>/<code>GLITCH_SAMPLES</code> constants the way the exploratory notebooks did.</p>
-<h3><code>PulseConfig(pretrigger_samples: int = 1000, glitch_samples: int = 10, sample_period_s: Optional[float] = 1.6e-06) -&gt; None</code></h3>
+<p>The sample period (<code>sample_period_s</code>) is 0.8 us (1.25 MHz) for the phonon channels of the DCRC readout. Until 2026-10-22 the library used 1.6 us, which was wrong: see "The sample period" in <code>python/README.md</code> for the evidence. <code>PulseConfig</code> warns when 1.6e-6 is passed explicitly.</p>
+<h3><code>PulseConfig(pretrigger_samples: int = 1000, glitch_samples: int = 10, sample_period_s: Optional[float] = 8e-07) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
 <tr><td><code>pretrigger_samples</code></td><td>Number of leading samples that make up the pretrigger (baseline) window.</td></tr>
 <tr><td><code>glitch_samples</code></td><td>Leading samples within the pretrigger window to skip before computing baseline mean/std, to avoid a brief electronic-glitch step artifact seen at the very start of some traces (see 07221203_2025_dump1_noise.ipynb).</td></tr>
-<tr><td><code>sample_period_s</code></td><td>Seconds per sample (1.6 us -&gt; 625 kHz for this readout). None if unknown for a given dataset -- functions that need it (e.g. frequencies_hz) will raise rather than silently assume a value.</td></tr>
+<tr><td><code>sample_period_s</code></td><td>Seconds per sample (0.8 us -&gt; 1.25 MHz for the phonon channels of this readout). None if unknown for a given dataset -- functions that need it (e.g. frequencies_hz) will raise rather than silently assume a value.</td></tr>
 </tbody></table></div>
 
 <h2 id="pulse_operations">pulse_operations.py</h2>

@@ -7,7 +7,7 @@ from pulse_config import PulseConfig
 def test_save_and_load_round_trip(tmp_path):
     path = tmp_path / "archive.h5"
     ids = ["101_0_Phonon_4096", "205_0_Phonon_4096"]
-    config = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=1.6e-6)
+    config = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=0.8e-6)
 
     archive.save_good_events(
         path, series="07221203_2025", detector=0, channel=0, detector_ids=ids,
@@ -27,7 +27,7 @@ def test_save_and_load_round_trip(tmp_path):
     assert result["dump"] == "F0001"
     assert result["pretrigger_samples"] == 500
     assert result["glitch_samples"] == 10
-    assert result["sample_period_s"] == 1.6e-6
+    assert result["sample_period_s"] == 0.8e-6
     assert result["source_notebook"] == "07221203_2025_dump1_noise.ipynb"
     assert "created" in result
 

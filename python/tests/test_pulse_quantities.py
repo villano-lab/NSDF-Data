@@ -174,14 +174,14 @@ def test_rise_sample_batch_shape():
 
 
 def test_half_max_time_us_converts_the_half_max_sample_to_microseconds():
-    config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=1.6e-6)
+    config = PulseConfig(pretrigger_samples=10, glitch_samples=0, sample_period_s=0.8e-6)
     pulses = np.zeros((2, 30))
     pulses[0, 15:] = 20.0                 # half-max (10) reached at sample 15
     pulses[1, 12:14] = 4.0
     pulses[1, 14:] = 20.0                 # 4 < 10, so half-max is reached at sample 14
 
-    np.testing.assert_allclose(q.half_max_time_us(pulses, config), [15 * 1.6, 14 * 1.6])
-    np.testing.assert_allclose(q.rise_sample(pulses, config) * 1.6, q.half_max_time_us(pulses, config))
+    np.testing.assert_allclose(q.half_max_time_us(pulses, config), [15 * 0.8, 14 * 0.8])
+    np.testing.assert_allclose(q.rise_sample(pulses, config) * 0.8, q.half_max_time_us(pulses, config))
 
 
 def test_half_max_time_us_only_searches_after_the_pretrigger_window():

@@ -21,6 +21,7 @@ module knows about `h5py`; everything else in `python/` stays free of that
 dependency.
 """
 import json
+import warnings
 from datetime import datetime, timezone
 
 import h5py
@@ -88,6 +89,12 @@ def load_good_events(path, series: str, detector: int, channel: int) -> dict:
         out = {"detector_ids": grp["detector_ids"][()].astype(str)}
         for key, value in grp.attrs.items():
             out[key] = json.loads(value) if key == "cut_params" else value
+        if "sample_period_s" in out and abs(float(out["sample_period_s"]) - 1.6e-6) < 1e-12:
+            warnings.warn(
+                f"this archive ({path}) was made with sample_period_s = 1.6 us, which was wrong: the phonon sample "
+                "period is 0.8 us (see 'The sample period' in python/README.md). Anything derived from its time or "
+                "frequency axes is off by a factor of 2; the saved event lists themselves are not affected.",
+                UserWarning, stacklevel=2)
         return out
 
 

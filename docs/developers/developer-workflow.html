@@ -39,10 +39,9 @@ alt="The branches over time: a feature branch splits off develop and merges back
 <p class="caption">Branches over time. A feature merges into <code>develop</code> through a PR. A release goes to <code>master</code>, is tagged, and <code>master</code> is merged back.</p>
 <p><strong>Making a release</strong>, when there is something to
 version: branch <code>release/X.Y.Z</code> from <code>develop</code>,
-set <code>VERSION</code> (and the library’s own version in
-<code>python/pyproject.toml</code> if the library changed) and date
-<code>CHANGELOG.md</code>, open a PR into <code>master</code> and merge
-it, tag <code>vX.Y.Z</code> on the merge commit, merge
+set <code>VERSION</code> (and <code>goldpan</code>’s own, if changed)
+and date <code>CHANGELOG.md</code>, open a PR into <code>master</code>
+and merge it, tag <code>vX.Y.Z</code> on the merge commit, merge
 <code>master</code> back into <code>develop</code>, publish the GitHub
 release, delete the branch. Bump <strong>major</strong> for a breaking
 library change (not while 0.x), <strong>minor</strong> for a new

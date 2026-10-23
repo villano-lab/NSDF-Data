@@ -93,7 +93,17 @@ Student notes (`notes/src/*.md`) are feature work: a student branches from `deve
 
 To **take a note off the site**, delete `notes/src/<name>.md` (and any picture only it used) in a pull request into `develop`. The next build removes the generated page and figures itself (`prune()` in `tools/build_notes.py`), and the front-page table is regenerated. It only ever removes files named `student-*`, and only when every remaining note validates.
 
-The bot commits directly to `develop`, so a ruleset on `develop` must not require pull requests (deletion and force-push blocks are fine).
+### The notes bot and the pull-request rule
+
+The rulesets `protect-develop` and `protect-master` block deletion and force-push and **require a pull request** (0 approvals, merge commits only). The bot of the *Student notes* workflow commits the generated pages straight to `develop` (or `master`), so it needs a way past that rule. GitHub does not offer GitHub Actions as a bypass actor on this repository, so the bot pushes with a **deploy key**:
+
+1. On a computer with `ssh-keygen`, in an empty folder outside the repository: `ssh-keygen -t ed25519 -N "" -C "notes-bot" -f notes-bot`. It writes `notes-bot` (private) and `notes-bot.pub` (public).
+2. Add the public key as a deploy key **with write access**: `gh repo deploy-key add notes-bot.pub --allow-write --title notes-bot` (or Settings, Deploy keys).
+3. Store the private key as the Actions secret `NOTES_DEPLOY_KEY`: `gh secret set NOTES_DEPLOY_KEY < notes-bot`.
+4. **Delete both files** (`notes-bot` and `notes-bot.pub`). The key lives only in GitHub.
+5. In both rulesets, Bypass list, Add bypass, tick **Deploy keys** (mode Always).
+
+To check it, merge a student note (or a change to `tools/build_notes.py`) and see that the *Student notes* run on `develop` ends with "Publish student notes". If the run fails with "The push was rejected", the secret or the bypass is missing. To revoke the bot's access, delete the deploy key in Settings. A lost private key cannot be recovered: repeat the steps with a new pair.
 
 ## One-time repository settings (maintainer)
 

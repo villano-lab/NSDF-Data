@@ -146,3 +146,22 @@ def test_main_refuses_a_missing_note_and_an_empty_choice(tmp_path, capsys):
 def test_changed_with_nothing_changed_says_so(capsys):
     assert cn.main(["--changed", "HEAD"], runner=runner_for()) == 0
     assert "No student notes changed." in capsys.readouterr().out
+
+
+def test_it_prints_characters_a_windows_console_cannot_encode(tmp_path, monkeypatch, capsys):
+    """A note quotes arrows and Greek letters; printing them to a cp1252 stdout used to crash the check."""
+    import io
+    note = tmp_path / "notes" / "src"
+    note.mkdir(parents=True)
+    (note / NAME).write_text("---\ntitle: x\n---\n", encoding="utf-8")
+    numbers = ("== notes/src/my-note.md\n  notebook: data_analysis/x/nb.ipynb @ abc1234\n"
+               "  12 numbers: 11 found in output, 0 only in code, 1 NOT FOUND\n"
+               "    NOT FOUND  line   40  7            from \u03bc to \u2192 7 events\n")
+    monkeypatch.setattr(cn, "ROOT", tmp_path)
+    raw = io.BytesIO()
+    console = io.TextIOWrapper(raw, encoding="cp1252", errors="strict")
+    monkeypatch.setattr(sys, "stdout", console)
+    status = cn.main([str(note / NAME)], runner=runner_for(numbers=(0, numbers)))
+    console.flush()
+    assert status == 0
+    assert "7 events" in raw.getvalue().decode("utf-8")      # printed as UTF-8, not crashed

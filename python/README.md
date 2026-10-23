@@ -9,8 +9,10 @@ same convention as `nrFanoII_paper2022`'s `python/ba_bknd_lines.py`.
 `NSDF-Data` folder as the setup and updating guides do (or only the library: `python -m pip install -e ./python`).
 After that `import pulse_quantities` works from any folder, with no `sys.path` snippet, and an edit to a module takes
 effect at once. Nothing is renamed: the modules keep their flat names. The library has its own version, in
-`python/pyproject.toml` (`0.1.0`). This is phase 1 of issue 71. The snippet below still works, and is still what the
-notebooks use.
+`python/pyproject.toml` (`0.1.0`). This is phase 1 of issue 71. When the library is installed (the normal case), a plain
+`import pulse_quantities` is all a notebook needs, and `check_environment.py` warns if it is not installed. The snippet
+below is the fallback for a checkout where it is not installed; the notebooks and the first-analysis guide still use it
+for now.
 
 From a notebook anywhere inside the project, find the library by looking upward,
 so the code does not depend on how deep the notebook is:

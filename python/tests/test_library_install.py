@@ -36,3 +36,11 @@ def test_every_module_is_imported_by_its_plain_name():
     for name in project()["tool"]["setuptools"]["py-modules"]:
         assert "." not in name
         assert (PY / f"{name}.py").exists()
+
+
+def test_the_environment_check_sees_the_library_that_requirements_installs():
+    """requirements.txt installs the library whose name and version pyproject.toml gives, and check_environment pins it."""
+    import check_environment as ce
+    meta = project()["project"]
+    assert meta["name"] == "goldpan"
+    assert ce.library_pins(ROOT / "requirements.txt") == {"goldpan": meta["version"]}

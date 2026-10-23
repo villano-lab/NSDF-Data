@@ -3,14 +3,16 @@
 # repository folder (requirements.txt already does: its line `-e ./python[archive]`), after which
 # `import pulse_quantities` works from any folder, without the sys.path snippet.
 #
-# The version below is the library's own, not the repository's VERSION, and the name is provisional: whether to
-# change either is one of the open decisions in issue 71. `check_environment.py` is a script, not part of the library.
+# The name `goldpan` is for the analysis half of a planned pair (a future reduction package, `goldsluice`, would produce the
+# reduced quantities; this one reads pulses and quantities together and analyses them): see issue 71. It is not tied to this
+# repository or to one experiment. The version below is the library's own, not the repository's VERSION; how the two relate
+# is still open in issue 71. `check_environment.py` is a script, not part of the library.
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nsdf-data-library"
+name = "goldpan"
 version = "0.1.0"
 description = "Pulse operations, cuts and derived quantities for SuperCDMS-type traces (NSDF-Data)."
 requires-python = ">=3.12"

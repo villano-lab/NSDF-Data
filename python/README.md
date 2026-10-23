@@ -86,8 +86,30 @@ that needs `h5py`.
 
 A frozen dataclass (`pretrigger_samples`, `glitch_samples`, `sample_period_s`)
 passed explicitly to every function, instead of each notebook hardcoding its
-own copy of these constants. Current defaults (`1000`, `10`, `1.6e-6`) match
-`07221203_2025_dump1_noise.ipynb` / `07221203_2025_dump2_pulse.ipynb`.
+own copy of these constants. Current defaults: `1000`, `10`, `0.8e-6` (see below for
+the sample period; the first two match `07221203_2025_dump1_noise.ipynb` /
+`07221203_2025_dump2_pulse.ipynb`).
+
+### The sample period (changed on 2026-10-22)
+
+**The phonon channels of the DCRC readout sample every 0.8 us (1.25 MHz), so a trace of 4096
+samples is 3.2768 ms.** The library, the notebooks and the notes used 1.6 us (625 kHz) until
+2026-10-22; that value was wrong and has no known source. The evidence for 0.8 us:
+
+- The UMN run diaries of April and May 2022 (Run 76) count pulses "in 125 3.2768-ms traces" (4096 x 0.8 us),
+  and the diary of 2022-04-01 says "the DCRC sampling rate of 800 ns".
+- The ODB of series 07220916_2200 has `PhononWaveFormLength` = 8192 (bytes, 2 per sample, so 4096 samples)
+  and `PhononPrepulseSamples` = 500, our trace length and trigger sample.
+- The wiki's analysis settings: `P_SAMPLERATE` = 1.25e6 (Run 68 bats file) and `secPERsample = 8e-7` (Run 76).
+- The NaI trigger pulse in DCRC4 pA, in the pyRawIO plot of the paper notebook (N-MISC-23-001, page 24) on a
+  sample axis and in the BatViewer and wiki plots on a microsecond axis: 99 samples are 75 to 78 us,
+  the pulse rises at sample 500 = 402 us, and the traces end at 3270 to 3277 us.
+
+**What this means for older results.** Anything made with 1.6 us has times and energies twice too large,
+frequencies twice too small, PSDs twice too large and ASDs 1.41 times too large. Everything counted in
+samples or counts (cuts, selections, pulse heights) is unaffected. `PulseConfig(sample_period_s=1.6e-6)`
+now emits a `UserWarning` saying so, and `pulse_archive.load_good_events` warns for an archive written with
+1.6 us; remove the explicit value from your notebook so the default is used, and re-run it.
 
 ## Function status: `done` vs. `under_development`
 

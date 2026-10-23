@@ -262,7 +262,9 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-version: latest
+          # Pinned: on 23 Oct 2026 the newest Miniforge (26.9.4-0, published 22 Oct) made `conda init --all` fail on the Windows
+          # runner ("needs sudo ... conda.exe", exit code 1) inside this action. Move the pin forward when a newer release works.
+          miniforge-version: 26.7.2-0
           auto-activate-base: false
 
       - name: Setup Step 3 - conda is installed

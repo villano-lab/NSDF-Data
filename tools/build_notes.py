@@ -147,7 +147,9 @@ def slug_of(path):
 def to_html(body):
     out = subprocess.run(["pandoc", "-f", "markdown", "-t", "html5", "--no-highlight", "--mathml"],
                          input=body, capture_output=True, text=True, encoding="utf-8", check=True)
-    return out.stdout
+    # a box that starts with Revised, Correction, Warning ... is the red box (as the automatic Revised box)
+    return re.sub(r'<div class="callout">(\s*<p><strong>(?:Revised|Revision|Correction|Update|Warning|Caution))',
+                  r'<div class="callout revised-box">\1', out.stdout, flags=re.I)
 
 
 def page(header, slug, body_html):

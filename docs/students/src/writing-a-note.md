@@ -1,7 +1,7 @@
 ---
 title: "Writing a note"
 subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 23 · 22 October 2026"
+date: "Version 24 · 23 October 2026"
 ---
 
 ::: tip
@@ -167,7 +167,7 @@ used 1000 samples; with 500 it is 1.51 counts.
 :::
 ```
 
-Start the box with a bold label such as **Correction**, **Caveat** or **Note**. All boxes have the same colour (shaded, with a border); only the label tells the reader which kind it is.
+Start the box with a bold label such as **Correction**, **Caveat** or **Note**. Most boxes are shaded with a border, and the label tells the reader which kind it is. A box whose label is **Revised**, **Revision**, **Correction**, **Update**, **Warning** or **Caution** is drawn in red, because the reader must not miss it (use it when something in the note changed or is wrong).
 
 ::: careful
 **The VS Code preview does not draw the box.** It shows the two `:::` lines as plain text. That is expected: the box appears on the published page, not in the preview. Do not delete the `:::` lines.
@@ -289,7 +289,7 @@ The tool is a help, not a judge: it matches numbers at the digits you wrote (0.5
 
 ## Session Info
 
-Guide version 23, 22 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 24, 23 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 

@@ -48,7 +48,8 @@ NUMBER_TOTAL = re.compile(r"(\d+) numbers: (\d+) found in output, (\d+) only in 
 
 def run_tool(args, root=ROOT):
     """Run a tool of this repository. Returns (exit status, its output)."""
-    r = subprocess.run([sys.executable, *args], cwd=root, capture_output=True, text=True, encoding="utf-8")
+    env = {**os.environ, "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}     # the tools print UTF-8 on Windows too
+    r = subprocess.run([sys.executable, *args], cwd=root, capture_output=True, text=True, encoding="utf-8", env=env)
     return r.returncode, r.stdout + r.stderr
 
 
@@ -198,6 +199,11 @@ def find_note(arg, root=ROOT):
 
 
 def main(argv=None, runner=run_tool):
+    for stream in (sys.stdout, sys.stderr):      # a note quotes arrows, minus signs, Greek letters: a cp1252 console would crash
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     ap = argparse.ArgumentParser(description="Run every check on a student note.")
     ap.add_argument("notes", nargs="*", help="note files, for example notes/src/my-note.md")
     ap.add_argument("--changed", metavar="REF", help="check the notes under notes/src changed between REF and HEAD")

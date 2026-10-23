@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note 10: How can we normalize our pulses to QET current?</title>
+<link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
+<script src="../notes-extras.js" defer></script>
+</head>
+<body>
+<div class="wrap note">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
+
+<h1>How can we normalize our pulses to QET current?</h1>
+<p class="meta"><strong>Note 10</strong> &middot; Author(s): Anthony &middot; 2026-10-21 &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ol>
+  <li><a href="#code-repository">Code repository</a></li>
+  <li><a href="#data-and-setup">Data and setup</a></li>
+  <li><a href="#the-question">The question</a></li>
+  <li><a href="#pulses-in-qet-current-units">Pulses in QET current units</a></li>
+  <li><a href="#ib-is-curves">Ib-Is curves</a></li>
+  <li><a href="#dpdi-from-the-qet-current-to-the-absorbed-energy">dP/dI: from
+the QET current to the absorbed energy</a></li>
+  <li><a href="#references">References</a></li>
+</ol>
+</nav>
+
+<div class="callout revised-box">
+<p><strong>WARNING (22 October 2026): the sample time has
+changed.</strong> The phonon sample period is <strong>0.8 µs (1.25 MHz),
+not 1.6 µs (625 kHz)</strong>; a 4096-sample trace is 3.28 ms (see
+<em>The sample period</em> in <code>python/README.md</code> for the
+evidence). The first version of this note and its notebooks used 1.6 µs.
+What changed in this note: <!-- numbers-ok --></p>
+<ul>
+<li>Every time and every integral halved. The worked example (event
+11486, channel <code>Side2pF</code>) now peaks at 59 µs after the
+trigger (it was 118 µs), the charge in the integration window is 48.3 pC
+(it was 96.6 pC, over a window that is now 1.5 ms instead of 3 ms of the
+same samples), and the energies are <strong>0.30 keV</strong> in the
+channel (was 0.60), <strong>1.15 keV</strong> over the six sensors (was
+2.30), <strong>3.6 keV</strong> of phonon energy (was 7.2) and 0.13 keV
+if it were an electron recoil (was 0.25). Figure 2 is replaced.
+<!-- numbers-ok --></li>
+<li>The time windows of the notebooks were halved so that they cover the
+same samples: the pretrigger fit ends 75 µs before the trigger (94
+samples; it was written as 150 µs), the baseline tail starts 1.5 ms
+after the trigger, the plot windows are from -200 to 750 µs.
+<!-- numbers-ok --></li>
+<li>The noise check: frequencies double and the amplitude spectral
+density is divided by 1.41, so the flat part starts at 200 kHz (it was
+100 kHz), the low band is 2 to 20 kHz (it was 1 to 10 kHz), and the
+values are about 1.0
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>11</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\times 10^{-11}</annotation></semantics></math>
+and 3 to 5
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>11</mn></mrow></msup><mspace width="0.222em"></mspace><mi mathvariant="normal">A</mi><mi>/</mi><msqrt><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">z</mi></mrow></msqrt></mrow><annotation encoding="application/x-tex">\times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}</annotation></semantics></math>.
+<!-- numbers-ok --></li>
+<li>The <em>sample period</em> bullet of the unsettled list is settled
+and says so. <!-- numbers-ok --></li>
+<li>Unchanged: the selection (the same 48 events), every number in
+samples or counts, the counts-to-current conversion (170 counts per µA)
+and the Ib-Is check. <!-- numbers-ok --></li>
+</ul>
+</div>
+<div class="callout revised-box">
+<p><strong>WARNING (22 October 2026): the channel map has
+changed.</strong> The readout of this series is the Side-2 readout, so
+the detector has <strong>six sensors, all on Side 2</strong>
+(<code>Side2pA</code> to <code>Side2pF</code>), and DCRC4 pA is the
+trigger input of the NaI array, not a sensor; the first version of this
+note used the wrong column of the Setup table and named seven working
+channels on both sides. What changed in this note:</p>
+<ul>
+<li>The new paragraph <em>The channels</em> (in Data and setup) gives
+the map; the bullet <em>Which channels are QET channels</em> of the
+unsettled list is gone, because it is settled.</li>
+<li><code>VGAGain</code> 5 of the September 2022 ODB is on
+<code>Side2pB</code> and <code>Side2pD</code> (DCRC3 pA and pD), not on
+<code>Side1pE</code> and <code>Side2pE</code>.</li>
+<li>The noise comparison uses the six sensors (four flat above 200 kHz,
+not five of seven).</li>
+<li>The worked example is the same event and channel
+(<code>Side2pF</code>, event 11486), and its numbers (0.30 keV in the
+channel, 1.15 keV over the six sensors, 3.6 keV of phonon energy) are
+unchanged, because the NaI input was already left out of the sum; the
+table of the six channels in the notebook has the new names
+(<code>Side1pF</code> is now <code>Side2pE</code>, <code>Side1pE</code>
+is <code>Side2pB</code>, <code>Side1pB</code> is <code>Side2pA</code>,
+<code>Side2pE</code> is <code>Side2pD</code>) and no row for the NaI
+input.</li>
+<li>Unchanged: the selection (the same 48 events, the NaI input never
+carried the largest rise height of a selected event), the
+counts-to-current conversion, the Ib-Is check of <code>Side2pC</code>
+(its name and its Run 75 numbers are unchanged). The sample time is the
+subject of the other box. <!-- numbers-ok --></li>
+</ul>
+</div>
+<h2 id="code-repository">Code repository</h2>
+<p>All the code of this note is in the repository
+<code>villano-lab/NSDF-Data</code>, in
+<code>data_analysis/R76/notebooks/pulse-normalization/</code> and in
+<code>python/</code>. Every link below is pinned to a commit
+(<code>f685574</code> for the notebooks, the figure and the wiki
+summary, <code>ade25df</code> for the library): it shows the file as it
+was when the results of this note were made, which may be older than the
+latest version, and the file may have moved since (see
+<code>data_analysis/README.md</code>). The notebooks read dump 1 of
+series <code>07221203_2025</code> from <code>~/idx</code> (see Data and
+setup).</p>
+<ul>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/f685574/data_analysis/R76/notebooks/pulse-normalization/small-physics-triggers-07221203_2025.ipynb"><code>small-physics-triggers-07221203_2025.ipynb</code></a>:
+the selection of the small real triggers: the drift-robust rise height,
+the two-sided baseline compared with a straight line, the
+quiet-pretrigger cut, and the traces of all channels of a few events on
+one vertical scale.</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/f685574/data_analysis/R76/notebooks/pulse-normalization/detector-layout-small-triggers-07221203_2025.ipynb"><code>detector-layout-small-triggers-07221203_2025.ipynb</code></a>:
+the same events drawn over the detector layout (regions coloured by rise
+height, traces around the faces, a contact sheet).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/f685574/data_analysis/R76/notebooks/pulse-normalization/pulse-in-qet-current-07221203_2025.ipynb"><code>pulse-in-qet-current-07221203_2025.ipynb</code></a>:
+one pulse from counts to QET current, power and absorbed energy (Figure
+2), with all the constants of the conversion in one cell.</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/f685574/data_analysis/R76/notebooks/pulse-normalization/small_triggers.py"><code>small_triggers.py</code></a>
+and <a
+href="https://github.com/villano-lab/NSDF-Data/blob/f685574/data_analysis/R76/notebooks/pulse-normalization/detector_layout.py"><code>detector_layout.py</code></a>:
+the helper code of these notebooks (rise height, baselines, the
+quiet-pretrigger cut; the drawing of the layout).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/f685574/data_analysis/R76/notebooks/pulse-normalization/umn-wiki-qet-channel-notes.md"><code>umn-wiki-qet-channel-notes.md</code></a>:
+the working summary of what the UMN wiki says about the QET channels
+(per-channel values, bias settings, gains).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/f685574/data_analysis/R76/notebooks/figures/tes_squid_readout_circuit.svg"><code>tes_squid_readout_circuit.svg</code></a>:
+the source of the circuit diagram of Figure 1.</li>
+<li>Library files used by the notebooks: <a
+href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/pulse_io.py"><code>pulse_io.py</code></a>,
+<a
+href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/pulse_cuts.py"><code>pulse_cuts.py</code></a>,
+<a
+href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/pulse_channels.py"><code>pulse_channels.py</code></a>,
+<a
+href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/pulse_config.py"><code>pulse_config.py</code></a>,
+<a
+href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/pulse_quantities.py"><code>pulse_quantities.py</code></a>,
+<a
+href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/pulse_operations.py"><code>pulse_operations.py</code></a>
+and <a
+href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/check_environment.py"><code>check_environment.py</code></a>.
+<code>pulse_channels.py</code> and the trigger-type cuts of
+<code>pulse_cuts.py</code> are tagged under development.</li>
+</ul>
+<h2 id="data-and-setup">Data and setup</h2>
+<p>This study is partly a search through our historical records and
+partly an exposition of how we work with the circuits that read out our
+detectors. The main historical records we have for R76 is the <a
+href="https://villano-lab.github.io/R76Analysis/index.html">UMN CDMS
+Wiki</a> (or the recovered copy of it).</p>
+<figure>
+<img src="img/student-pulse-normalization/tes-squid-readout-circuit.png"
+alt="readout circuit of SuperCDMS" />
+<figcaption aria-hidden="true">readout circuit of SuperCDMS</figcaption>
+</figure>
+<p><strong>Figure 1: The TES bias and SQUID readout circuit.</strong>
+The bias current
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><annotation encoding="application/x-tex">I_\mathrm{b}</annotation></semantics></math>
+flows down from the top through two parallel branches to ground: the
+shunt resistor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{sh}</annotation></semantics></math>,
+and the TES in series with the parasitic resistance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{par}</annotation></semantics></math>
+and the input inductor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi mathvariant="normal">i</mi></msub><annotation encoding="application/x-tex">L_\mathrm{i}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi mathvariant="normal">i</mi></msub><annotation encoding="application/x-tex">L_\mathrm{i}</annotation></semantics></math>
+is coupled (mutual inductance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>)
+to the SQUID, which is biased with a small current
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">q</mi></mrow></msub><annotation encoding="application/x-tex">I_\mathrm{sq}</annotation></semantics></math>.
+The amplifier reads the SQUID voltage, and its output
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub><annotation encoding="application/x-tex">V_\mathrm{out}</annotation></semantics></math>
+returns through the feedback resistor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{fb}</annotation></semantics></math>
+to the feedback coil
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi mathvariant="normal">f</mi></msub><annotation encoding="application/x-tex">L_\mathrm{f}</annotation></semantics></math>
+(mutual inductance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi mathvariant="normal">f</mi></msub><annotation encoding="application/x-tex">M_\mathrm{f}</annotation></semantics></math>)
+to hold the SQUID flux fixed, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>V</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">t</mi></mrow></msub><annotation encoding="application/x-tex">V_\mathrm{out}</annotation></semantics></math>
+is proportional to the TES current.</p>
+<p><strong>The channels.</strong> The readout of series
+<code>07221203_2025</code> is the Side-2 readout <a
+href="#references">[7, 9]</a>: the detector has <strong>six sensors, all
+on Side 2</strong> (<code>Side2pA</code> to <code>Side2pF</code>, one
+for every region of the face), read by two DCRC boards. DCRC1 inputs pA,
+pB, pD are <code>Side2pC</code>, <code>Side2pF</code>,
+<code>Side2pE</code>; DCRC3 inputs pA, pB, pD are <code>Side2pB</code>,
+<code>Side2pA</code>, <code>Side2pD</code>; the pC inputs are not
+connected; and DCRC4 pA, the channel with a baseline of 7952 counts and
+no pulses, is the <strong>trigger input of the NaI array</strong>, not a
+sensor. The map is in <code>python/pulse_channels.py</code>; it is taken
+from the Setup table of the Run 76 summary (the columns <em>Label</em>
+and <em>HV output, Side2-readout</em>), and the dump’s detectors 0, 1, 2
+are inferred to be DCRC1, DCRC3, DCRC4. <!-- numbers-ok --></p>
+<p><strong>Tests we run on a channel</strong> (the characterization
+tests of SuperCDMS <a href="#references">[1]</a>; this list will grow).
+The Confluence pages describe the SNOLAB towers, with a shunt of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mo>=</mo><mn>5</mn><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">Ω</mi></mrow></mrow><annotation encoding="application/x-tex">R_\mathrm{sh} = 5\ \mathrm{m\Omega}</annotation></semantics></math>
+and different settings from the UMN runs (8.0 mΩ in the Run 75 numbers
+used below); the definitions are the same. <!-- numbers-ok --></p>
+<ul>
+<li><strong>SQUID tuning:</strong> find the SQUID bias and the lock
+point at which the SQUID output changes most for a small change of flux.
+A triangle wave is sent through the feedback circuit and the modulation
+curve is inspected. It comes first: the other tests need tuned SQUIDs
+and a closed loop <a href="#references">[1]</a>.
+<!-- numbers-ok --></li>
+<li><strong>RpRn:</strong> the resistance of the QET-branch circuit with
+the TES superconducting (QET bias 0, the parasitic resistance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">p</mi></msub><annotation encoding="application/x-tex">R_\mathrm{p}</annotation></semantics></math>)
+and with the TES normal (QET bias above 500
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">μ</mi><mi mathvariant="normal">A</mi></mrow><annotation encoding="application/x-tex">\mathrm{\mu A}</annotation></semantics></math>,
+the normal resistance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><annotation encoding="application/x-tex">R_\mathrm{n}</annotation></semantics></math>).
+A sine wave is sent down the TES line and the response is fitted;
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">p</mi></msub><annotation encoding="application/x-tex">R_\mathrm{p}</annotation></semantics></math>
+is measured first. Expected values are about 1 mΩ and 100 mΩ <a
+href="#references">[1]</a>. The UMN wiki only names it, in the group
+meeting of 4 December 2025 <a href="#references">[6]</a>.
+<!-- numbers-ok --></li>
+<li><strong>IbIs</strong>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><annotation encoding="application/x-tex">I_\mathrm{b}</annotation></semantics></math>
+against
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><annotation encoding="application/x-tex">I_\mathrm{s}</annotation></semantics></math>):
+scan the QET bias (strictly a voltage,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mi mathvariant="normal">b</mi></msub><mo>=</mo><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub></mrow><annotation encoding="application/x-tex">V_\mathrm{b} = I_\mathrm{b} R_\mathrm{sh}</annotation></semantics></math>)
+from 500
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">μ</mi><mi mathvariant="normal">A</mi></mrow><annotation encoding="application/x-tex">\mathrm{\mu A}</annotation></semantics></math>
+down and record the current through the TES. The offset of the current
+is removed with a straight line fitted to the normal branch, which has
+to pass through zero; with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">p</mi></msub><annotation encoding="application/x-tex">R_\mathrm{p}</annotation></semantics></math>
+known this gives the TES resistance and power along the transition, to
+choose the bias for a given resistance (for example 50% of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><annotation encoding="application/x-tex">R_\mathrm{n}</annotation></semantics></math>)
+<a href="#references">[1, 2, 3]</a>. See the section on Ib-Is curves
+below. <!-- numbers-ok --></li>
+<li><strong>Tc:</strong> the critical temperature. With QET bias 0 and a
+triangle wave (30 Hz) on the QET line, follow the wave while the fridge
+warms or cools between about 30 and 90 mK: it disappears as the TES
+resistance rises and reappears as it falls <a
+href="#references">[1]</a>. <!-- numbers-ok --></li>
+<li><strong>dIdV:</strong> send a square wave (25 Hz, 30 mV) through the
+QET at a chosen bias (0
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">μ</mi><mi mathvariant="normal">A</mi></mrow><annotation encoding="application/x-tex">\mathrm{\mu A}</annotation></semantics></math>
+superconducting, 200
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">μ</mi><mi mathvariant="normal">A</mi></mrow><annotation encoding="application/x-tex">\mathrm{\mu A}</annotation></semantics></math>
+transition, 500
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">μ</mi><mi mathvariant="normal">A</mi></mrow><annotation encoding="application/x-tex">\mathrm{\mu A}</annotation></semantics></math>
+normal) and fit the relaxation of the response (QETpy, two or three
+poles, after Irwin and Hilton <a href="#references">[10]</a>) to get the
+complex impedance, the loop gain (20 to 30), the current sensitivity
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+(below 1), the effective inductance (100 to 150 nH) and the thermal time
+constant (about 0.2 ms); it also gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>I</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>P</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}I/\mathrm{d}P</annotation></semantics></math>.
+Noise data with the same bias and trace length are needed <a
+href="#references">[1]</a>. The UMN procedure of 2016 used a triangle
+wave of 100 to 500 Hz and a known bias resistor,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><mo>=</mo><mi mathvariant="normal">d</mi><msub><mi>V</mi><mi mathvariant="normal">b</mi></msub><mi>/</mi><msub><mi>R</mi><mrow><mi mathvariant="normal">b</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">s</mi></mrow></msub></mrow><annotation encoding="application/x-tex">\mathrm{d}I_\mathrm{b} = \mathrm{d}V_\mathrm{b}/R_\mathrm{bias}</annotation></semantics></math>
+<a href="#references">[4, 5]</a>. <!-- numbers-ok --></li>
+<li><strong>Noise:</strong> random-trigger traces, taken at the start of
+a run (5000 at 2 Hz) and in the run (0.1 Hz), for the noise power
+spectral density; the typical noise is about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mrow><mo>−</mo><mn>10</mn></mrow></msup><mspace width="0.222em"></mspace><mi mathvariant="normal">A</mi><mi>/</mi><msqrt><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">z</mi></mrow></msqrt></mrow><annotation encoding="application/x-tex">10^{-10}\ \mathrm{A}/\sqrt{\mathrm{Hz}}</annotation></semantics></math>
+with the TES superconducting,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mo>−</mo><mn>11</mn></mrow></msup><annotation encoding="application/x-tex">10^{-11}</annotation></semantics></math>
+normal, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mo>−</mo><mn>10</mn></mrow></msup><annotation encoding="application/x-tex">10^{-10}</annotation></semantics></math>
+in the transition with a peak near 10 kHz <a href="#references">[1]</a>.
+<!-- numbers-ok --></li>
+</ul>
+<p><strong>dPdI</strong> is not a test but a result: the slope
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I</annotation></semantics></math>
+of the power in the TES against its current, in volts, computed from the
+IbIs curve (and as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>I</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>P</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}I/\mathrm{d}P</annotation></semantics></math>
+from dIdV). It turns a measured current pulse into absorbed energy,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>∫</mo><mi>Δ</mi><mi>I</mi><mspace width="0.167em"></mspace><mi mathvariant="normal">d</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">E = (\mathrm{d}P/\mathrm{d}I)\int \Delta I\,\mathrm{d}t</annotation></semantics></math>
+(linear approximation), and the QET biases of Run 75 and Run 76 were set
+where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo>=</mo><mn>1.0</mn><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">μ</mi><mi mathvariant="normal">V</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I = 1.0\ \mathrm{\mu V}</annotation></semantics></math>
+<a href="#references">[2, 7]</a>. <!-- numbers-ok --></p>
+<h2 id="the-question">The question</h2>
+<p>How can we normalize our pulses to QET current? The most basic
+parameter we read out with our phonon sensors is the current through the
+Quasi-particle Electro-thermal-feedback Transition Edge Sensors (QETs)
+that make up our phonon channels. If we want to model our noise
+environment properly we must know what current the “pulses” are reading;
+typically pulses are read out in arbitrary voltage units depending on
+the Analog-to-Digital (ADC) conversion.</p>
+<h2 id="pulses-in-qet-current-units">Pulses in QET current units</h2>
+<p>The ADC does not record the QET current directly. This section
+follows the chain from the recorded counts to the current in the QET
+branch of Figure 1, using what the UMN wiki says about each step <a
+href="#references">[4, 7]</a>. The numbers are the wiki’s, not ours:
+none of them has been measured or checked in this note, and the last
+subsection lists what is not settled.</p>
+<h3 id="from-counts-to-the-feedback-current">From counts to the feedback
+current</h3>
+<p>The ADC records the voltage at the output of the SQUID feedback
+electronics. The SQUID is run in a flux-locked loop: the feedback
+current
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><annotation encoding="application/x-tex">I_\mathrm{fb}</annotation></semantics></math>
+that flows through the feedback resistor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{fb}</annotation></semantics></math>
+into the feedback coil
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi mathvariant="normal">f</mi></msub><annotation encoding="application/x-tex">L_\mathrm{f}</annotation></semantics></math>
+makes a flux that cancels the flux of the QET-branch current
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mrow><mi mathvariant="normal">Q</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">T</mi></mrow></msub><annotation encoding="application/x-tex">I_\mathrm{QET}</annotation></semantics></math>
+in the input coil
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>L</mi><mi mathvariant="normal">i</mi></msub><annotation encoding="application/x-tex">L_\mathrm{i}</annotation></semantics></math>.
+So the SQUID is only a null detector, and the loop holds</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mspace width="0.167em"></mspace><msub><mi>I</mi><mrow><mi mathvariant="normal">Q</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">T</mi></mrow></msub><mo>=</mo><msub><mi>M</mi><mi mathvariant="normal">f</mi></msub><mspace width="0.167em"></mspace><msub><mi>I</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">M\, I_\mathrm{QET} = M_\mathrm{f}\, I_\mathrm{fb} ,</annotation></semantics></math></p>
+<p>with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi mathvariant="normal">f</mi></msub><annotation encoding="application/x-tex">M_\mathrm{f}</annotation></semantics></math>
+the couplings of the input coil and of the feedback coil to the SQUID.
+The magnetic coupling of the QET branch to the SQUID therefore does not
+need to be known by itself; only the ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>/</mi><msub><mi>M</mi><mi mathvariant="normal">f</mi></msub></mrow><annotation encoding="application/x-tex">M/M_\mathrm{f}</annotation></semantics></math>
+of the two couplings of the same SQUID matters.</p>
+<p>The output voltage is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>=</mo><msub><mi>I</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>R</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>G</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">C</mi><mi mathvariant="normal">R</mi><mi mathvariant="normal">C</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>G</mi><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow></msub></mrow><annotation encoding="application/x-tex">V = I_\mathrm{fb}\, R_\mathrm{fb}\, G_\mathrm{DCRC}\, G_\mathrm{driver}</annotation></semantics></math>,
+with the gains of the readout board (the DCRC) and of its driver stage,
+and the ADC converts it to counts. In the calibration code of the Run 76
+summary <a href="#references">[7]</a> these are 6553.6 counts per volt,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><mo>=</mo><mn>1233</mn><mspace width="0.222em"></mspace><mi>Ω</mi></mrow><annotation encoding="application/x-tex">R_\mathrm{fb} = 1233\ \Omega</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">C</mi><mi mathvariant="normal">R</mi><mi mathvariant="normal">C</mi></mrow></msub><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">G_\mathrm{DCRC} = 2</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">G_\mathrm{driver} = 1</annotation></semantics></math>.
+<!-- numbers-ok --></p>
+<h3 id="from-the-feedback-current-to-the-qet-current">From the feedback
+current to the QET current</h3>
+<p>The wiki divides by a “loop gain”
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></msub><mo>=</mo><mn>10.5</mn></mrow><annotation encoding="application/x-tex">G_\mathrm{loop} = 10.5</annotation></semantics></math>
+<a href="#references">[7, 4]</a>, so that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><mo>=</mo><mn>10.5</mn><mspace width="0.167em"></mspace><msub><mi>I</mi><mrow><mi mathvariant="normal">Q</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">T</mi></mrow></msub></mrow><annotation encoding="application/x-tex">I_\mathrm{fb} = 10.5\, I_\mathrm{QET}</annotation></semantics></math>.
+We read this as the coupling ratio
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>/</mi><msub><mi>M</mi><mi mathvariant="normal">f</mi></msub></mrow><annotation encoding="application/x-tex">M/M_\mathrm{f}</annotation></semantics></math>
+above (the input coil couples 10.5 times better to the SQUID than the
+feedback coil); the wiki does not define it. Altogether
+<!-- numbers-ok --></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mrow><mi mathvariant="normal">Q</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">T</mi></mrow></msub><mo>=</mo><mfrac><mrow><msub><mi>N</mi><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">D</mi><mi mathvariant="normal">C</mi></mrow></msub><mi>/</mi><mn>6553.6</mn><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">/</mi><mi mathvariant="normal">V</mi></mrow></mrow><mrow><msub><mi>R</mi><mrow><mi mathvariant="normal">f</mi><mi mathvariant="normal">b</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>G</mi><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">p</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>G</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">C</mi><mi mathvariant="normal">R</mi><mi mathvariant="normal">C</mi></mrow></msub><mspace width="0.167em"></mspace><msub><mi>G</mi><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow></msub></mrow></mfrac><mo>=</mo><mfrac><msub><mi>N</mi><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">D</mi><mi mathvariant="normal">C</mi></mrow></msub><mrow><mn>1.70</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">c</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">t</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">/</mi><mi mathvariant="normal">A</mi></mrow></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">I_\mathrm{QET} = \frac{N_\mathrm{ADC} / 6553.6\ \mathrm{counts/V}}{R_\mathrm{fb}\, G_\mathrm{loop}\, G_\mathrm{DCRC}\, G_\mathrm{driver}} = \frac{N_\mathrm{ADC}}{1.70\times 10^{8}\ \mathrm{counts/A}} ,</annotation></semantics></math></p>
+<p>that is, one count is 5.9 nA of QET current, or about 170 counts per
+µA. A pulse of 29 counts, the largest height in event 11300, is then
+0.17 µA, and one of 1000 counts is 5.9 µA. The 2016 wiki page on complex
+impedance <a href="#references">[4]</a> gives the same formula, with the
+gains named “fixed” and “variable”. <!-- numbers-ok --></p>
+<p>A direct calibration of the whole chain exists in principle: the DCRC
+signal generator can inject a known triangle-wave current into the QET
+branch through a known bias resistor (the dIdV measurement above) <a
+href="#references">[4]</a>. We found no record of it for these channels.
+The normal-state IbIs curves give a consistency check of the conversion,
+described in the next section.</p>
+<h3 id="a-check-against-typical-noise">A check against typical
+noise</h3>
+<p>The Confluence page on noise settings <a href="#references">[1]</a>
+quotes typical noise levels of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mn>10</mn><mrow><mo>−</mo><mn>11</mn></mrow></msup><mspace width="0.222em"></mspace><mi mathvariant="normal">A</mi><mi>/</mi><msqrt><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">z</mi></mrow></msqrt></mrow><annotation encoding="application/x-tex">10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}</annotation></semantics></math>
+(normal),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mo>−</mo><mn>10</mn></mrow></msup><annotation encoding="application/x-tex">10^{-10}</annotation></semantics></math>
+(transition) and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mn>10</mn><mrow><mo>−</mo><mn>10</mn></mrow></msup><annotation encoding="application/x-tex">10^{-10}</annotation></semantics></math>
+(superconducting). Our amplitude spectral density of the clean randoms
+(Note 9) is flat above 200 kHz at 1.7 to 1.75
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>3</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\times 10^{-3}</annotation></semantics></math>
+counts/<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">z</mi></mrow></msqrt><annotation encoding="application/x-tex">\sqrt{\mathrm{Hz}}</annotation></semantics></math>
+in four of the six sensors (narrow lines raise the means of the other
+two, <code>Side2pB</code> and <code>Side2pD</code>, to 2.0 and 2.1
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>3</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\times 10^{-3}</annotation></semantics></math>),
+and 4.6
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>3</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\times 10^{-3}</annotation></semantics></math>
+to 8.4
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>3</mn></mrow></msup></mrow><annotation encoding="application/x-tex">\times 10^{-3}</annotation></semantics></math>
+counts/<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">z</mi></mrow></msqrt><annotation encoding="application/x-tex">\sqrt{\mathrm{Hz}}</annotation></semantics></math>
+between 2 and 20 kHz (for the sample period of 0.8 µs; the NaI input is
+not a sensor and is left out). With 170 counts per µA these are about
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1.0</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>11</mn></mrow></msup><mspace width="0.222em"></mspace><mi mathvariant="normal">A</mi><mi>/</mi><msqrt><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">z</mi></mrow></msqrt></mrow><annotation encoding="application/x-tex">1.0 \times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>3</mn><annotation encoding="application/x-tex">3</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>11</mn></mrow></msup><mspace width="0.222em"></mspace><mi mathvariant="normal">A</mi><mi>/</mi><msqrt><mrow><mi mathvariant="normal">H</mi><mi mathvariant="normal">z</mi></mrow></msqrt></mrow><annotation encoding="application/x-tex">5 \times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}</annotation></semantics></math>.
+That is the same order as the typical values, which supports the
+conversion to within a factor of a few at most; the Confluence values
+are for other detectors and electronics, so this cannot test the gain
+more closely. <!-- numbers-ok --></p>
+<h3 id="what-is-not-settled">What is not settled</h3>
+<ul>
+<li><strong>The 10.5.</strong> We found no derivation or independent
+measurement of the loop gain on the wiki, and our reading of it as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>/</mi><msub><mi>M</mi><mi mathvariant="normal">f</mi></msub></mrow><annotation encoding="application/x-tex">M/M_\mathrm{f}</annotation></semantics></math>
+is an interpretation. <!-- numbers-ok --></li>
+<li><strong>Which gain settings apply.</strong> The ODB of series
+<code>07220916_2200</code> (16 September 2022) has <code>VGAGain</code>
+5 on two channels of DCRC3 (inputs pA and pD, which are
+<code>Side2pB</code> and <code>Side2pD</code>) and 2 on the others, and
+<code>PGAGain</code> 1 on all of them. We could not establish how these
+fields map onto
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>G</mi><mrow><mi mathvariant="normal">D</mi><mi mathvariant="normal">C</mi><mi mathvariant="normal">R</mi><mi mathvariant="normal">C</mi></mrow></msub><annotation encoding="application/x-tex">G_\mathrm{DCRC}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>G</mi><mrow><mi mathvariant="normal">d</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">v</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">r</mi></mrow></msub><annotation encoding="application/x-tex">G_\mathrm{driver}</annotation></semantics></math>
+of the calibration code, so the 170 counts per µA may be wrong by a
+factor 2.5 for those two channels. The settings of the series used here
+(<code>07221203_2025</code>, started at 20:25 on 3 December 2022 <a
+href="#references">[8]</a>) have to be read from its own ODB.
+<!-- numbers-ok --></li>
+<li><strong>The sample period is settled.</strong> The calibration code
+uses 0.8 µs per sample <a href="#references">[7]</a>, and so do the run
+diaries, the ODB and the NaI trigger pulse (see <em>The sample
+period</em> in <code>python/README.md</code>). The notebooks of this
+note used a wrong 1.6 µs until 22 October 2026; all times and energies
+here are for 0.8 µs, half of what the first version of this note gave.
+<!-- numbers-ok --></li>
+</ul>
+<h2 id="ib-is-curves">Ib-Is curves</h2>
+<p>An IbIs scan gives the QET-branch current
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><annotation encoding="application/x-tex">I_\mathrm{s}</annotation></semantics></math>
+for each bias current
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><annotation encoding="application/x-tex">I_\mathrm{b}</annotation></semantics></math>.
+In the circuit of Figure 1 the shunt carries
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><mo>−</mo><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub></mrow><annotation encoding="application/x-tex">I_\mathrm{b} - I_\mathrm{s}</annotation></semantics></math>
+and has the same voltage as the QET branch, so</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub><mo>=</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub></mfrac><mo>−</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><mo>,</mo></mrow><annotation encoding="application/x-tex">R_\mathrm{TES} = R_\mathrm{sh}\left(\frac{I_\mathrm{b}}{I_\mathrm{s}} - 1\right) - R_\mathrm{par} ,</annotation></semantics></math></p>
+<p>and the power in the TES is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><msubsup><mi>I</mi><mi mathvariant="normal">s</mi><mn>2</mn></msubsup><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub></mrow><annotation encoding="application/x-tex">P = I_\mathrm{s}^2 R_\mathrm{TES}</annotation></semantics></math>;
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I</annotation></semantics></math>
+follows from the curve. The only IbIs curves on the wiki are plots from
+Run 75 (February to April 2022, about 42 mK) <a href="#references">[2,
+3]</a>:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><annotation encoding="application/x-tex">I_\mathrm{s}</annotation></semantics></math>
+against
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><annotation encoding="application/x-tex">I_\mathrm{b}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{TES}</annotation></semantics></math>
+against
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><annotation encoding="application/x-tex">I_\mathrm{b}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+against
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><annotation encoding="application/x-tex">I_\mathrm{b}</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{TES}</annotation></semantics></math>
+against
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I</annotation></semantics></math>,
+for all measured channels except <code>Side1pF</code> (all six sensors
+of our series, <code>Side2pA</code> to <code>Side2pF</code>, are in the
+plots). The data behind the plots are not in the archive, and there are
+no IbIs curves for Run 76 or for the December 2022 series.
+<!-- numbers-ok --></p>
+<h3 id="a-check-of-the-conversion-against-the-curves">A check of the
+conversion against the curves</h3>
+<p>In the normal state the bias current divides between the shunt and
+the QET branch,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><mo>=</mo><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><mspace width="0.167em"></mspace><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mo>+</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><mo>+</mo><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">I_\mathrm{s} = I_\mathrm{b}\, R_\mathrm{sh} / (R_\mathrm{sh} + R_\mathrm{par} + R_\mathrm{n})</annotation></semantics></math>.
+For <code>Side2pC</code> the Run 75 summary <a
+href="#references">[2]</a> gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mo>=</mo><mn>8.0</mn><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">Ω</mi></mrow></mrow><annotation encoding="application/x-tex">R_\mathrm{sh} = 8.0\ \mathrm{m\Omega}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><mo>=</mo><mn>11.0</mn><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">Ω</mi></mrow></mrow><annotation encoding="application/x-tex">R_\mathrm{par} = 11.0\ \mathrm{m\Omega}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><mo>=</mo><mn>60.8</mn><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">Ω</mi></mrow></mrow><annotation encoding="application/x-tex">R_\mathrm{n} = 60.8\ \mathrm{m\Omega}</annotation></semantics></math>
+(from IbIs curves taken at about 42 mK), so at
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi mathvariant="normal">b</mi></msub><mo>=</mo><mn>350</mn><mspace width="0.222em"></mspace><mrow><mi mathvariant="normal">μ</mi><mi mathvariant="normal">A</mi></mrow></mrow><annotation encoding="application/x-tex">I_\mathrm{b} = 350\ \mathrm{\mu A}</annotation></semantics></math>
+the current is 35 µA, and the plot of the IbIs curves there shows about
+33 to 35 µA for this channel. <!-- numbers-ok --></p>
+<p>This is a consistency check of the wiki’s numbers with each other,
+and not an independent measurement of the gain: the wiki derived
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><annotation encoding="application/x-tex">R_\mathrm{n}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{par}</annotation></semantics></math>
+from the same curves, using the same gain. The slope of the normal-state
+branch alone gives only
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mspace width="0.167em"></mspace><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mo>+</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><mo>+</mo><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G\, R_\mathrm{sh} / (R_\mathrm{sh} + R_\mathrm{par} + R_\mathrm{n})</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
+the counts per unit current, so one point in the normal state does not
+fix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
+unless
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><annotation encoding="application/x-tex">R_\mathrm{n}</annotation></semantics></math>
+is known independently. The ratio of the slopes in the normal and the
+superconducting state gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mo>+</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">R_\mathrm{n} / (R_\mathrm{sh} + R_\mathrm{par})</annotation></semantics></math>
+without
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
+then needs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{sh}</annotation></semantics></math>
+(assumed to be 8.0 mΩ). <!-- numbers-ok --></p>
+<h2 id="dpdi-from-the-qet-current-to-the-absorbed-energy">dP/dI: from
+the QET current to the absorbed energy</h2>
+<p><strong>What a pulse sample is.</strong> After the conversion above,
+the samples of a pulse are the change
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta I(t)</annotation></semantics></math>
+of the current in the QET branch. That current changes because the power
+in the TES changes. The TES is biased at (nearly) constant voltage, so
+when phonons heat it its resistance rises, the current drops, and with
+it the Joule power
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><msub><mi>V</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub><mi>I</mi></mrow><annotation encoding="application/x-tex">P = V_\mathrm{TES} I</annotation></semantics></math>
+(electrothermal feedback <a href="#references">[10, 11, 12]</a>). Energy
+conservation then makes the missing Joule power the power that was
+absorbed: in strong feedback
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">s</mi></mrow></msub><mo>=</mo><mo>−</mo><mo>∫</mo><mi>Δ</mi><msub><mi>P</mi><mi mathvariant="normal">J</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><mi mathvariant="normal">d</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">E_\mathrm{abs} = -\int \Delta P_\mathrm{J}(t)\,\mathrm{d}t</annotation></semantics></math>
+(the current falls; we draw its size). So the samples, scaled by one
+number, are a <strong>power as a function of time</strong>, and their
+sum times the sample period is an energy. <!-- numbers-ok --></p>
+<p><strong>The scale.</strong> The number is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I</annotation></semantics></math>,
+the slope of the TES power against its current along the IbIs curve, in
+volts. In the linear approximation, valid when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\Delta I</annotation></semantics></math>
+is small compared with the QET current
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><annotation encoding="application/x-tex">I_\mathrm{s}</annotation></semantics></math>,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mi mathvariant="normal">d</mi><mi>P</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>I</mi></mrow></mfrac><mspace width="0.167em"></mspace><mi>Δ</mi><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>E</mi><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">s</mi></mrow></msub><mo>=</mo><mo>∫</mo><mi>Δ</mi><mi>P</mi><mspace width="0.167em"></mspace><mi mathvariant="normal">d</mi><mi>t</mi><mo>=</mo><mfrac><mrow><mi mathvariant="normal">d</mi><mi>P</mi></mrow><mrow><mi mathvariant="normal">d</mi><mi>I</mi></mrow></mfrac><mo>∫</mo><mi>Δ</mi><mi>I</mi><mspace width="0.167em"></mspace><mi mathvariant="normal">d</mi><mi>t</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">\Delta P(t) = \frac{\mathrm{d}P}{\mathrm{d}I}\,\Delta I(t), \qquad E_\mathrm{abs} = \int \Delta P\,\mathrm{d}t = \frac{\mathrm{d}P}{\mathrm{d}I}\int \Delta I\,\mathrm{d}t .</annotation></semantics></math></p>
+<p>For a voltage-biased TES
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I</annotation></semantics></math>
+is the voltage across the TES <a href="#references">[10]</a>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>V</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub><mo>=</mo><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub></mrow><annotation encoding="application/x-tex">V_\mathrm{TES} = I_\mathrm{s} R_\mathrm{TES}</annotation></semantics></math>.
+The wiki sets all the QET biases of Run 75 and Run 76 to the same
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo>=</mo><mn>1.0</mn><mspace width="0.222em"></mspace><mi>μ</mi><mi mathvariant="normal">V</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I = 1.0\ \mu\mathrm{V}</annotation></semantics></math>,
+which makes the channels balanced and the energy of a channel just this
+number times the integral of its current <a href="#references">[2,
+7]</a>. That value is plausible: with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><mo>≈</mo><mn>20</mn><mspace width="0.222em"></mspace><mi>μ</mi><mi mathvariant="normal">A</mi></mrow><annotation encoding="application/x-tex">I_\mathrm{s} \approx 20\ \mu\mathrm{A}</annotation></semantics></math>
+near the transition (a reading of the Run 75 IbIs plot) and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{TES}</annotation></semantics></math>
+between 0.5 and 0.8 of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><annotation encoding="application/x-tex">R_\mathrm{n}</annotation></semantics></math>
+(the Run 75 table gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><annotation encoding="application/x-tex">R_\mathrm{n}</annotation></semantics></math>
+from 59 to 95 mΩ, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{TES}</annotation></semantics></math>
+of 30 to 70 mΩ),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><msub><mi>R</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">E</mi><mi mathvariant="normal">S</mi></mrow></msub></mrow><annotation encoding="application/x-tex">I_\mathrm{s} R_\mathrm{TES}</annotation></semantics></math>
+is 0.6 to 1.4
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>μ</mi><mi mathvariant="normal">V</mi></mrow><annotation encoding="application/x-tex">\mu\mathrm{V}</annotation></semantics></math>.
+<!-- numbers-ok --></p>
+<p><strong>A worked example.</strong> The notebook
+<code>pulse-in-qet-current-07221203_2025.ipynb</code> takes one real
+pulse of the small triggers: event 11486, channel <code>Side2pF</code>,
+a rise height of 43 counts. After the baseline subtraction the peak is
+45.6 counts, which is 0.27 µA, or 0.27 pW of power change at 59 µs after
+the trigger. The charge through the QET branch in the first 1.5 ms is
+48.3 pC, so with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo>=</mo><mn>1.0</mn><mspace width="0.222em"></mspace><mi>μ</mi><mi mathvariant="normal">V</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I = 1.0\ \mu\mathrm{V}</annotation></semantics></math>
+the absorbed energy is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>4.8</mn><mo>×</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>17</mn></mrow></msup></mrow><annotation encoding="application/x-tex">4.8\times 10^{-17}</annotation></semantics></math>
+J, 0.30 keV, in this channel; the six QET channels of the event together
+absorb 1.15 keV. (The first version of this note used a wrong sample
+period of 1.6 µs and gave 0.60 and 2.30 keV.) <!-- numbers-ok --></p>
+<p><img
+src="img/student-pulse-normalization/pulse-as-power-event11486-Side2pF.png" /></p>
+<p><strong>Figure 2: One pulse as a power.</strong> Event 11486 of
+series 07221203_2025, dump 1, channel <code>Side2pF</code>. Left: the
+QET-branch current of the pulse (after the baseline subtraction and the
+conversion of the note) multiplied by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo>=</mo><mn>1.0</mn><mspace width="0.222em"></mspace><mi>μ</mi><mi mathvariant="normal">V</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I = 1.0\ \mu\mathrm{V}</annotation></semantics></math>,
+in picowatts; the shaded area is the integration window, from the
+trigger to 1.5 ms. Right: the running area under the power, the energy
+absorbed so far, which levels off at 0.30 keV. <!-- numbers-ok --></p>
+<p><strong>From the absorbed to the deposited energy.</strong> The QETs
+collect only a fraction of the phonon energy, the phonon collection
+efficiency
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">C</mi><mi mathvariant="normal">E</mi></mrow><annotation encoding="application/x-tex">\mathrm{PCE}</annotation></semantics></math>,
+so the total phonon energy is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>E</mi><mrow><mi mathvariant="normal">a</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">s</mi></mrow></msub><mi>/</mi><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">C</mi><mi mathvariant="normal">E</mi></mrow></mrow><annotation encoding="application/x-tex">E_\mathrm{abs}/\mathrm{PCE}</annotation></semantics></math>.
+The wiki measured it for this detector with americium lines at 0 V in
+the first Run 76 series (March to April 2022): 0.313 at low energy and
+0.331 at 60 keV, about 0.32, “the highest PCE we’ve ever measured” <a
+href="#references">[7]</a>. It was not measured for December 2022. With
+0.32 the example event has a total phonon energy of 3.6 keV. The series
+was taken with the detector at -83.2 V <a href="#references">[8]</a>, so
+this phonon energy includes the Neganov-Luke phonons, a factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>+</mo><mi>e</mi><msub><mi>V</mi><mi mathvariant="normal">b</mi></msub><mi>/</mi><mi>ε</mi></mrow><annotation encoding="application/x-tex">1 + eV_\mathrm{b}/\varepsilon</annotation></semantics></math>
+of about 29 for an electron recoil (assuming
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ε</mi><mo>=</mo><mn>3.0</mn></mrow><annotation encoding="application/x-tex">\varepsilon = 3.0</annotation></semantics></math>
+eV in germanium; a nuclear recoil has a smaller factor). The recoil
+energy therefore cannot be stated until we know the event type: for an
+electron recoil it would be 0.13 keV. <!-- numbers-ok --></p>
+<p><strong>When the linear approximation fails.</strong> For strong
+pulses, when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>I</mi></mrow><annotation encoding="application/x-tex">\Delta I</annotation></semantics></math>
+is a significant fraction of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi mathvariant="normal">s</mi></msub><annotation encoding="application/x-tex">I_\mathrm{s}</annotation></semantics></math>,
+the wiki gives a second-order correction,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo>→</mo><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><mi>/</mi><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mo stretchy="true" form="postfix">)</mo></mrow><mspace width="0.167em"></mspace><msub><mi>R</mi><mrow><mi mathvariant="normal">s</mi><mi mathvariant="normal">h</mi></mrow></msub><mo>∫</mo><mi>Δ</mi><mi>I</mi><mspace width="0.167em"></mspace><mi mathvariant="normal">d</mi><mi>t</mi><mi>/</mi><mi>τ</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I \to \mathrm{d}P/\mathrm{d}I + (1 + R_\mathrm{par}/R_\mathrm{sh})\,R_\mathrm{sh} \int \Delta I\,\mathrm{d}t / \tau</annotation></semantics></math>,
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>
+a pulse width taken from the walk quantities <a
+href="#references">[7]</a>. The example is far from that regime (the
+largest peak is 1.3% of 20 µA); the largest pulses of the dump, about
+1000 counts or 5.9 µA, are at about 30%. <!-- numbers-ok --></p>
+<p><strong>What is not settled.</strong> Every number above rests on the
+constants of the previous sections (the 10.5 and the gain fields) and on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">d</mi><mi>P</mi><mi>/</mi><mi mathvariant="normal">d</mi><mi>I</mi><mo>=</mo><mn>1.0</mn><mspace width="0.222em"></mspace><mi>μ</mi><mi mathvariant="normal">V</mi></mrow><annotation encoding="application/x-tex">\mathrm{d}P/\mathrm{d}I = 1.0\ \mu\mathrm{V}</annotation></semantics></math>,
+which is the Run 75/76 set point and not a measurement of the December
+2022 series (the last IbIs entry in the diaries is of 1 September 2022).
+The PCE is from 0 V data of spring 2022. The result is the size of the
+effect, not a calibration. <!-- numbers-ok --></p>
+<h2 id="references">References</h2>
+<ol type="1">
+<li>SLAC Confluence, CDMS space (detector operations for the SuperCDMS
+SNOLAB towers; login required): “Characterization tests” and its
+sub-pages “Detector Operations - SQUID Tuning”, “- RpRn”, “- IbIs”, “-
+Measure Tc”, “- dIdV” and “- Noise settings”, from <a
+href="https://confluence.slac.stanford.edu/spaces/CDMS/pages/695782807/Characterization+tests">confluence.slac.stanford.edu/spaces/CDMS/pages/695782807/Characterization+tests</a>
+(page ids 695782807, 587610239, 587610713, 669429168, 691673063,
+628267519 and 628267758; read from a downloaded copy of the pages,
+October 2026).</li>
+<li>UMN CDMS wiki, Run 75 summary, sections “IbIs measurements” and “TES
+properties”: <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_75.html">https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_75.html</a>
+(static archive of the wiki, mirrored March 2026).</li>
+<li>UMN CDMS wiki, “Overview of IbIs automation technique”: <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_75/ibis_automation.html">https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_75/ibis_automation.html</a>;
+the conversion script is at <a
+href="https://github.com/bulug001/IbIs-Data">github.com/bulug001/IbIs-Data</a>
+(script only, no data).</li>
+<li>UMN CDMS wiki, “Complex impedance” procedure (2016), section
+“Calibration factors to calculate dIbias and dItes”: <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/procedure/complex_impedance.html">https://villano-lab.github.io/R76Analysis/cdms/k100/procedure/complex_impedance.html</a>.</li>
+<li>UMN CDMS wiki, run diary of 3 November 2016, the “SC dIdV” and
+“Transition dIdV” data sets: <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_diary/20161103.html">https://villano-lab.github.io/R76Analysis/cdms/k100/run_diary/20161103.html</a>.</li>
+<li>UMN CDMS wiki, group meeting of 4 December 2025: <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/group_meetings/20251204.html">https://villano-lab.github.io/R76Analysis/cdms/k100/group_meetings/20251204.html</a>.</li>
+<li>UMN CDMS wiki, “Phonon Collection Efficiency for S104” (Run 76
+summary), the “Absolute Calibration” code block (written for the first
+Run 76 series of March to April 2022): <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76/phonon_collection_efficiency.html">https://villano-lab.github.io/R76Analysis/cdms/k100/run_summary/run_76/phonon_collection_efficiency.html</a>.</li>
+<li>UMN CDMS wiki, run diary of 3 December 2022: <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_diary/20221203.html">https://villano-lab.github.io/R76Analysis/cdms/k100/run_diary/20221203.html</a>.</li>
+<li>UMN CDMS wiki, run diaries of 6 September to 22 October 2022 (setup
+line “NaI trigger signal → DCRCX(4)” and the series “trigger on
+DCRC4pA”), for example <a
+href="https://villano-lab.github.io/R76Analysis/cdms/k100/run_diary/20221022.html">https://villano-lab.github.io/R76Analysis/cdms/k100/run_diary/20221022.html</a>.</li>
+<li>K. D. Irwin and G. C. Hilton, “Transition-Edge Sensors,” in
+<em>Cryogenic Particle Detection</em>, ed. C. Enss, Topics in Applied
+Physics <strong>99</strong>, 63-150 (Springer, 2005), <a
+href="https://doi.org/10.1007/10933596_3">doi:10.1007/10933596_3</a>
+(listed as “Basic TES theory” on the wiki page of useful papers).</li>
+<li>K. D. Irwin, “An application of electrothermal feedback for high
+resolution cryogenic particle detection,” <em>Applied Physics
+Letters</em> <strong>66</strong>, 1998-2000 (1995), <a
+href="https://doi.org/10.1063/1.113674">doi:10.1063/1.113674</a>.</li>
+<li>K. D. Irwin, “A self-biasing cryogenic particle detector utilizing
+electrothermal feedback and a SQUID readout,” <em>IEEE Transactions on
+Applied Superconductivity</em> <strong>5</strong>, 2690-2693 (1995), <a
+href="https://doi.org/10.1109/77.403145">doi:10.1109/77.403145</a>.</li>
+</ol>
+<p>A longer working summary of what the wiki says about the QET channels
+(per-channel
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>T</mi><mi mathvariant="normal">c</mi></msub><annotation encoding="application/x-tex">T_\mathrm{c}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mi mathvariant="normal">n</mi></msub><annotation encoding="application/x-tex">R_\mathrm{n}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><mrow><mi mathvariant="normal">p</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi></mrow></msub><annotation encoding="application/x-tex">R_\mathrm{par}</annotation></semantics></math>
+and bias settings) is in
+<code>data_analysis/R76/notebooks/pulse-normalization/umn-wiki-qet-channel-notes.md</code>.</p>
+
+
+<footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

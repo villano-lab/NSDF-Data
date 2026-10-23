@@ -36,12 +36,12 @@ def parse_requirements(text: str) -> dict:
     """`{package name: pinned version or None}` from the text of a requirements file.
 
     A line `numpy==2.2.6` gives `{"numpy": "2.2.6"}`; a bare name such as `pytest` gives `{"pytest": None}`.
-    Blank lines and `#` comments are ignored.
+    Blank lines, `#` comments and option lines (such as `-e ./python`) are ignored.
     """
     pins = {}
     for line in text.splitlines():
         line = line.split("#")[0].strip()
-        if not line:
+        if not line or line.startswith("-"):    # blank, or an option such as `-e ./python`
             continue
         if "==" in line:
             name, version = line.split("==", 1)

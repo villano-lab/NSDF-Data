@@ -1,0 +1,33 @@
+# Phase 1 of NSDF-Data issue 71: the flat modules in this folder, installed under their existing names.
+# Nothing is renamed and no notebook has to change. Install with `python -m pip install -e ./python` from the
+# repository folder (requirements.txt already does: its line `-e ./python[archive]`), after which
+# `import pulse_quantities` works from any folder, without the sys.path snippet.
+#
+# The version below is the library's own, not the repository's VERSION, and the name is provisional: whether to
+# change either is one of the open decisions in issue 71. `check_environment.py` is a script, not part of the library.
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nsdf-data-library"
+version = "0.1.0"
+description = "Pulse operations, cuts and derived quantities for SuperCDMS-type traces (NSDF-Data)."
+requires-python = ">=3.12"
+dependencies = ["numpy"]
+
+[project.optional-dependencies]
+# pulse_archive writes and reads HDF5 files.
+archive = ["h5py"]
+
+[tool.setuptools]
+py-modules = [
+    "pulse_archive",
+    "pulse_channels",
+    "pulse_config",
+    "pulse_cuts",
+    "pulse_io",
+    "pulse_operations",
+    "pulse_quantities",
+    "pulse_status",
+]

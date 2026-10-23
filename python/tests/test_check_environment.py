@@ -82,3 +82,8 @@ def test_expected_python_matches_the_setup_guide():
     found = re.findall(r"conda create -n darkmatter_cli_env python=(\d+)\.(\d+)", gen.read_text(encoding="utf-8"))
     assert found, "gen.py has no conda create line"
     assert all((int(a), int(b)) == ce.EXPECTED_PYTHON for a, b in found)  # the setup guide and the updating guide
+
+
+def test_parse_requirements_ignores_option_lines():
+    text = "\n".join(["numpy==2.2.6", "-e ./python[archive]", "--index-url https://example.org/simple", "pytest"])
+    assert ce.parse_requirements(text) == {"numpy": "2.2.6", "pytest": None}

@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **`develop` and `master` now require a pull request, with merge commits only; the notes bot pushes with a deploy key.** The rulesets `protect-develop` and `protect-master` already blocked deletion and force-push; they now also require a pull request (0 approvals) and allow only merge commits. Before, a direct push was possible: a commit by a student on `master` on 19 October ("No real changes", 132 lines of notebooks) had no pull request. GitHub does not offer GitHub Actions as a bypass actor on this repository, so the *Student notes* workflow commits the generated pages with a deploy key (secret `NOTES_DEPLOY_KEY`, "Deploy keys" on the bypass list of both rulesets); setup and revocation are in `RELEASING.md`, *The notes bot and the pull-request rule*. Students and contributors are unaffected: they already worked on their own branches and opened pull requests.
+
 ## [0.9.0] - 2026-10-23
 
 **Students, please:** the library in `python/` is now installed by `requirements.txt`, and two results changed, so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python python/check_environment.py`, which should say `Environment OK`. Python is still 3.12, so you do not need a new environment. Until you reinstall, the check warns that `goldpan` is not installed. **If your notebook sets `sample_period_s=1.6e-6`, remove it:** the default is now 0.8 us (a warning appears when 1.6 us is passed), so times and energies from your earlier runs were twice too large.

@@ -37,15 +37,25 @@ The version is `MAJOR.MINOR.PATCH`. While the major version is 0, the library is
 
 If a release contains changes of several kinds, use the highest bump.
 
+## The library's own version
+
+The library in `python/` (the `goldpan` distribution, see issue 71) has a version of its own, in `python/pyproject.toml`. It is **independent of `VERSION`**: `VERSION` marks the project as a whole (guides, notes, tooling and library together), and most of its releases do not touch the library, so the two numbers differ and that is intended. The library's version also stays meaningful if it is ever split into its own repository.
+
+- **Semantic versioning,** starting at 0.1.0 and staying 0.x until the public functions and `PulseConfig` settle. While 0.x, raise the **minor** number (0.2.0) for anything that changes results, signatures or names, or adds a function; raise the **patch** number (0.1.1) for a fix that changes none of those. A change in a default that changes results counts as a minor change (the sample-period fix of October 2026 is the example).
+- **Bump it on the `release/*` or `hotfix/*` branch, not in a feature pull request.** Every bump makes each student's `python check_environment.py` warn ("goldpan is 0.1.0, but requirements.txt wants 0.2.0") until they re-run `python -m pip install -r requirements.txt`, so batching bumps into releases keeps that to once per release. In between, the version in the file may lag behind the code.
+- **Say it in the release notes.** In that release's `CHANGELOG.md` section, add the line `goldpan X.Y.Z` (state what changed in the library, as for any change) and start the section with **Students, please:** to re-run *Updating your setup* (student guide 7), Step 3, as for any environment change.
+- **What counts as the library:** the modules listed in `python/pyproject.toml`. Tools, tests, `check_environment.py` and the guides are not versioned by it.
+- `python/tests/test_library_install.py` checks that the version is well formed and that the list of modules matches the files.
+
 ## Making a release
 
 1. Make sure `develop` is green (CI passing) and every finished feature is merged.
 2. `git switch develop && git pull`, then `git switch -c release/X.Y.Z`.
 3. On that branch:
-   - set the number in `VERSION`;
+   - set the number in `VERSION`, and, if the library changed since the last release, its own version in `python/pyproject.toml` (see "The library's own version");
    - in `CHANGELOG.md`, rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and start a new empty `[Unreleased]` section;
    - rebuild any student guide PDFs whose source changed (see `AGENTS.md`) and commit sources and PDFs together;
-   - **if the release changes the environment** (the Python version, or a package pin in `requirements.txt`), start that release's `CHANGELOG.md` section with a line beginning **Students, please:** that says what to do and points to *Updating your setup* (student guide 7), and tell the students when the release is out. Students learn about it from `python check_environment.py` (it warns when the environment differs from `requirements.txt` and the guides) and from that line;
+   - **if the release changes the environment** (the Python version, a package pin in `requirements.txt`, or the library's own version in `python/pyproject.toml`), start that release's `CHANGELOG.md` section with a line beginning **Students, please:** that says what to do and points to *Updating your setup* (student guide 7), and tell the students when the release is out. Students learn about it from `python check_environment.py` (it warns when the environment differs from `requirements.txt` and the guides) and from that line;
    - only small fixes. No new features.
 4. Open a pull request from `release/X.Y.Z` into `master`. The maintainer merges it (a merge commit).
 5. Tag the merge commit: `git tag -a vX.Y.Z -m "Release X.Y.Z"` and `git push origin vX.Y.Z`.
@@ -57,7 +67,7 @@ If a release contains changes of several kinds, use the highest bump.
 A hotfix repairs **released code** (for example a broken library function in a tagged release). A broken guide or site page is *not* a hotfix: fix it with a feature PR into `develop`, and it is live on merge.
 
 1. `git switch master && git pull`, then `git switch -c hotfix/X.Y.Z` (X.Y.Z is the next patch number).
-2. Fix it, set `VERSION`, and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
+2. Fix it, set `VERSION` (and the library's own version in `python/pyproject.toml` if the fix changes the library), and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
 3. Open a pull request into `master`. The maintainer merges it, then tags `vX.Y.Z` as above.
 4. Merge `master` back into `develop`.
 

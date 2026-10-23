@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Note 4: python/ library development and validation</title>
 <link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
 </head>
 <body>
 <div class="wrap note">
@@ -12,7 +13,13 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>python/ pulse library: development history and validation</h1>
-<p class="meta"><strong>Note 4</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+<p class="meta"><strong>Note 4</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 (revised 22 Oct 2026) &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<div class="revised-box"><strong>Caution (2026-10-22): the sample time has changed.</strong> The phonon sample period is 0.8 &micro;s (1.25&nbsp;MHz), not the 1.6 &micro;s (625&nbsp;kHz) this note was written with (see <a href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/README.md"><em>The sample period</em> in <code>python/README.md</code></a>). What changes in this note:
+<ul>
+  <li>One line of the timeline below: the entry for <code>61c374f</code> (<code>half_max_time_us</code>) said 1.6 &micro;s per sample; it is 0.8 &micro;s, and the library default has been 0.8 &micro;s since 2026-10-22.</li>
+  <li>Unchanged: the commits, the counts of functions and tests, and the other entries. The timeline describes the library at the commits it names, so its links stay pinned to the commit of 22 Sept.</li>
+</ul></div>
 
 <p>How the library came about, what changed when, and how it was checked. What the library <em>is</em> &mdash; the modules, the function tables with their status, and the done / under-development convention &mdash; is in <a href="note-01a-pulse-library-structure.html">Note 1a</a>.</p>
 
@@ -35,7 +42,7 @@
     <tr><td>2026-09-23</td><td><code>8b0ab40</code></td><td>Branch 2 cuts renamed <strong>Loose</strong> (<code>excursion_band_loose</code>, [0.5, 1.0)) and <strong>Tight</strong> (<code>excursion_band</code>, [0.5, 0.7)) in the notebook, plots and docstrings, replacing &ldquo;Best&rdquo; and &ldquo;Tightened&rdquo;. No behavior change.</td><td class="num">29</td><td class="num">40</td></tr>
     <tr><td>2026-09-25</td><td><code>f0196bd</code></td><td>Fixed-window baseline quantities added: <code>bstd</code> (std of the first 500 samples by default, glitch samples skipped) and <code>bstd_1000</code> (first 1000). <code>pretrigger_std</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bstd</code> arrays exactly.</td><td class="num">31</td><td class="num">43</td></tr>
     <tr><td>2026-09-25</td><td><code>3e4efc6</code></td><td>Baseline-level companions added: <code>bline</code> (mean of the first 500 samples by default, glitch samples skipped) and <code>bline_1000</code>, built on <code>pretrigger_mean</code>. <code>pretrigger_mean</code> and the <code>PulseConfig</code> default are unchanged; both reproduce the notebook&rsquo;s <code>bmean</code> arrays exactly.</td><td class="num">33</td><td class="num">46</td></tr>
-    <tr><td>2026-09-25</td><td><code>61c374f</code></td><td>Time-of-rise quantity added: <code>half_max_time_us</code>, the time in microseconds (1.6 &micro;s per sample) at which a pulse first reaches 50% of its maximum deviation, built on <code>rise_sample</code> and tagged under development. It needs a window that ends before the pulse (500 samples for the dump 1 triggers). Used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td><td class="num">34</td><td class="num">49</td></tr>
+    <tr><td>2026-09-25</td><td><code>61c374f</code></td><td>Time-of-rise quantity added: <code>half_max_time_us</code>, the time in microseconds (0.8 &micro;s per sample; the library then used 1.6 &micro;s, which was wrong) at which a pulse first reaches 50% of its maximum deviation, built on <code>rise_sample</code> and tagged under development. It needs a window that ends before the pulse (500 samples for the dump 1 triggers). Used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td><td class="num">34</td><td class="num">49</td></tr>
     <tr><td>2026-09-25</td><td><code>e6033f0</code></td><td>Trigger-type cuts added: <code>randoms</code> (recorded <code>Physics</code>) and <code>real_triggers</code> (recorded <code>Unknown</code>) in <code>pulse_cuts</code>, plus <code>pulse_io.trigger_types</code> to read the label from the dump&rsquo;s <code>.csv</code>. The two cuts take the trigger-type array rather than pulses, and are tagged under development because the label mapping (assumed swapped) is unconfirmed. Used in <a href="note-02a-bstd-vs-time.html">Note 2a</a>.</td><td class="num">37</td><td class="num">52</td></tr>
   </tbody>
 </table></div>

@@ -1,7 +1,7 @@
 ---
 title: "Publishing a note"
 subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 9 · 13 October 2026"
+date: "Version 11 · 20 October 2026"
 ---
 
 ::: tip
@@ -77,9 +77,27 @@ The program printed `Wrote notes/src/your-note-name.md` and the number of pictur
 
 Your lead will replace `id: "TBD"` with a number.
 
-## Step 2. Commit to your branch
+## Step 2. Check your note, then commit to your branch
 
-In the terminal, from the `NSDF-Data` folder:
+In the terminal, from the `NSDF-Data` folder, with your environment active, run the checks on your note (change the file name to yours):
+
+```
+python tools/check_note.py notes/src/your-note-name.md
+```
+
+This runs, in one go, the same checks that GitHub runs on your pull request, and shows only what concerns your note:
+
+- **Structure:** the header, the status, the pictures. A problem fails the check.
+- **Pinned links:** every link to your code is pinned to a commit that exists. A problem fails the check. Push your notebook commit before you open the pull request: GitHub only sees pushed commits.
+- **Numbers:** the numbers in your text that are not in your notebook's saved output. This is advice only (guide 3 explains what to do with each line), and it does not fail the check.
+
+Read the last line. *ready for review* means the structure and the links are fine. If it says to fix the problems, fix them (Step 4 has a table of the common messages) and run it again.
+
+::: tip
+**Behind the project?** If you have not updated your branch for a while, do the *Updating your setup* guide first, so you have the newest checks. A few commits behind is fine.
+:::
+
+Then commit and push, from the `NSDF-Data` folder:
 
 ```
 git checkout student-yourname
@@ -109,12 +127,16 @@ On [github.com](https://github.com), open the repository. GitHub shows a yellow 
 Click **Create pull request**.
 
 ::: careful
+**The description box is already filled in**, with a checklist written for the project's developers. Do not be put off by it, and do not delete it. For a note, the *Appendix* at the end of this guide gives you the exact text to paste into the box and says where to change it. The same form appears if you start the pull request from VS Code.
+:::
+
+::: careful
 **If your note replaces an earlier note**, that note's status must change and it must link to yours, and this has to travel in the same pull request. Guide 3 (*If your note replaces an earlier note*) says what goes in your note. For a hand-written note, your lead adds the change as a commit on your branch, so you do not edit `docs/`. For another student note, include its changed file in your pull request.
 :::
 
 ## Step 4. Read the check
 
-The check starts automatically and takes less than a minute. When it finishes, click **Details** on the check, and read its messages. Each message names the file and the problem. Here are the common ones and what to do:
+The check starts automatically and takes less than a minute. It is the structure check of Step 2, and for the notes your pull request changes it also lists, as warnings, the numbers that are not in the notebook output. When it finishes, click **Details** on the check, and read its messages. Each message names the file and the problem. Here are the common ones and what to do:
 
 | Message says | What to do |
 |---|---|
@@ -174,9 +196,68 @@ git diff notes/src/your-note-name.md
 
 Then commit, push, and open a new pull request (or add to the open one). Let the check run again. If a result was wrong, say so in the note, with the date, as guide 3 explains. Do not delete a published note to hide a mistake.
 
+## Appendix. The pull request form, step by step
+
+When you start a pull request, on github.com or from VS Code, the form has four parts. This is what to do with each one, for a student note.
+
+**1. The two branches.** At the top, the **base** must be `develop` and the branch you are comparing (the *compare* or *merge* branch) must be `student-yourname`.
+
+- On **github.com** these are two drop-down buttons at the top of the form, labelled *base* and *compare*. Change *base* to `develop` if it says something else.
+- In the **VS Code** panel they are the two lines **BASE** and **MERGE**. The branch name next to BASE is a button even though it looks like plain text: click it and choose `develop`. If both lines show the same branch, the panel says there are no commits to compare and the **Create** button stays grey. Changing BASE to `develop` fixes it.
+
+**2. The title.** One line that says what the note is about, for example the title of your note.
+
+**3. The description.** GitHub fills this box with a checklist. Click inside the box, select everything in it (`Ctrl+A`, or `Cmd+A` on a Mac) and replace it with the text below. Copy it from here, then change the two parts that are in angle brackets, `<like this>`, and nothing else.
+
+```
+> **Target branch:** open feature PRs against **`develop`**.
+> Only `release/*` and `hotfix/*` branches target `master`. See `RELEASING.md`.
+
+## What and why
+
+<One or two sentences: the question your note answers and what you did.
+If it replaces an earlier note, say so, for example "Supersedes Note 3".>
+
+## What changed
+
+- [ ] Library code (`python/`) n/a
+- [x] Notebooks (`data_analysis/`)
+- [ ] Notes site or hand-written notes (`docs/`) n/a
+- [ ] Student guides (`docs/students/src/`) n/a
+- [x] Student note (`notes/src/`)
+- [ ] CI or build files (`.github/`, `tools/`) n/a
+
+## Checklist
+
+Tick what applies, and say "n/a" for the rest.
+
+- [ ] Tests pass (`python -m pytest -q` in `python/`) n/a
+- [ ] New or changed library functions have tests and a `@status` tag n/a
+- [ ] A new or renamed note has its row in `docs/index.html` n/a
+- [ ] Guides: edited the sources, rebuilt, committed sources and PDFs n/a
+- [ ] Guides: bumped the version and date n/a
+- [ ] Changed package pins? Updated `requirements.txt` and the guide n/a
+- [x] Student note: left `id: "TBD"` and ran `check_note.py` on it
+- [ ] Added a line under `[Unreleased]` in `CHANGELOG.md` n/a
+- [x] No raw data, credentials or tokens committed
+- [x] If an AI assistant helped: a `Co-Authored-By:` trailer is in the commits
+
+## How I tested it
+
+<Say what you ran and what you saw. For a note: that you ran
+`python tools/check_note.py notes/src/your-note-name.md`, which of the three
+checks said OK, and anything it listed that you checked by hand.>
+```
+
+**4. Ticks and "n/a".** The square brackets are the box itself: `[ ]` is empty and `[x]` is ticked. To tick a box, put an `x` between the brackets. To say that a line does not apply, leave the box empty and type `n/a` at the end of the line, outside the brackets. Do not type inside the brackets: the line would stop being a box. Nothing reads the boxes by machine, so a missed one costs nothing; they tell your lead what you checked.
+
+::: checkpoint
+Before you click **Create**: the base is `develop`, the title says what the note is about, and the two parts in angle brackets have been replaced by your own sentences (no `<like this>` text is left). Then click **Create pull request** (or **Create**) and go on to Step 4.
+:::
+
 ## Session Info
 
-Guide version 9, 13 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 11, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

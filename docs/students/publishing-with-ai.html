@@ -16,7 +16,7 @@
 
 <h1>Publishing a note with an AI assistant</h1>
 <p class="meta">NSDF-Data student guide 5 — with Claude Code or a
-similar assistant &middot; Version 4 · 12 October 2026</p>
+similar assistant &middot; Version 5 · 20 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -109,9 +109,11 @@ Keep the header block and set <code>id: "TBD"</code>.</li>
 <li>Check every number in the text against the notebook output, and list
 any number that does not match or that I have not shown.</li>
 <li>Pin every notebook link to the commit above.</li>
-<li>Run <code>python tools/build_notes.py check</code> and fix each
-message it reports, without changing my sentences except where a fix
-needs it.</li>
+<li>Run
+<code>python tools/check_note.py notes/src/[note-name].md</code>. Fix
+each problem it reports (the structure and the pinned links), without
+changing my sentences except where a fix needs it, and list the numbers
+it says are not in the notebook output, without changing them.</li>
 <li>Show me the diff and stop. Do not commit or push until I say
 so.</li>
 </ol>
@@ -130,8 +132,9 @@ way your caption says.</label></li>
 to any file outside <code>notes/src/</code>? If so, ask why, and revert
 them unless you understand them.</label></li>
 <li><label><input type="checkbox" />Run
-<code>python tools/build_notes.py check</code> yourself and confirm it
-reports <em>N note(s) valid</em>.</label></li>
+<code>python tools/check_note.py notes/src/your-note-name.md</code>
+yourself and confirm that its last line says <em>ready for review</em>.
+Then look at each number it lists as not found.</label></li>
 </ul>
 <h2 id="committing-and-opening-the-pull-request">Committing and opening
 the pull request</h2>
@@ -154,7 +157,7 @@ generated.</li>
 the check’s message, not a summary of it.</li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 4, 12 October 2026. Written for every computer. The AI
+<p>Guide version 5, 20 October 2026. Written for every computer. The AI
 tools change quickly, so if a step here no longer matches what you see,
 follow the assistant’s own instructions and tell your lead.</p>
 <h2 id="where-to-get-help">Where to get help</h2>

@@ -28,7 +28,7 @@
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Windows
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 22 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -251,7 +251,7 @@ go.</strong> Type this one time, and every later download goes to your
 <code>idx</code> folder, whichever folder you are in:</p>
 <pre><code>nsdf-cli config --output-global %USERPROFILE%\idx</code></pre>
 <p>Type <code>nsdf-cli config</code> to see the setting. It is saved in
-a small file in your home folder (<code>.nexus-dm/config.json</code>),
+a small file in your home folder (<code>.nexus-dm\config.json</code>),
 so you do not repeat it. Two more <code>nsdf-cli</code> options you may
 see: <code>nsdf-cli download SERIES --all</code> downloads
 <strong>every</strong> dump of a series (the series in this guide has 30
@@ -275,7 +275,7 @@ folder yet. Ask the project lead before you delete anything.</p>
 <h2 id="windows-step-3.-open-jupyter-in-the-right-folder">Step 3. Open
 Jupyter in the right folder</h2>
 <p>Every student works in a folder of their own, inside
-<code>data_analysis/R76/student</code> in the project. Use the same name
+<code>data_analysis\R76\student</code> in the project. Use the same name
 as in your branch name (<code>student-yourname</code>), without spaces,
 in place of <code>yourname</code>. In the terminal, type these
 lines:</p>
@@ -356,10 +356,13 @@ plt.plot(pulses[0])
 plt.xlabel(&quot;sample (1.6 microseconds each)&quot;)
 plt.ylabel(&quot;ADC counts&quot;)
 plt.show()</code></pre>
-<p>Now change the <code>0</code> to <code>1</code>, <code>2</code>,
-<code>3</code> and run again. Most traces look like flat noise, with a
-little jitter. Row 1 is a quiet trace like the top one in <strong>Figure
-1</strong>. To see a pulse, try row <code>1095</code>. Then see the <a
+<p>Now change the <code>0</code> to <code>1</code> and run again, then
+try <code>2</code> and <code>3</code>, one number at a time.
+(<code>pulses[1,2,3]</code> does not pick three traces: it is an error,
+because the first number counts rows and the others count samples.) Most
+traces look like flat noise, with a little jitter. Row 1 is a quiet
+trace like the top one in <strong>Figure 1</strong>. To see a pulse, try
+row <code>1095</code>. Then see the <a
 href="#windows-appendix-what-an-event-looks-like">appendix</a> if you
 want to know more about what you are looking at.</p>
 <h2 id="windows-step-6.-reproduce-a-number-from-note-2">Step 6.
@@ -477,8 +480,27 @@ Kernel</strong>).</td>
 <tr>
 <td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
 <td>Jupyter was started from the wrong folder. Close it and start it
-again from your own folder in <code>data_analysis/R76/student</code>
+again from your own folder in <code>data_analysis\R76\student</code>
 (Step 3).</td>
+</tr>
+<tr>
+<td><code>fatal: pathspec '...' did not match any files</code> when you
+run <code>git add</code></td>
+<td>You are not in the project folder, or the file name is not the one
+you saved. Open a <strong>Miniforge Prompt</strong> (click
+<strong>Start</strong>, type <code>Miniforge Prompt</code>, press
+<strong>Enter</strong>), run <code
+class="cmd">cd %USERPROFILE%\Research\NSDF-Data</code>, then <code
+class="cmd">git status</code>, and copy the notebook’s path exactly as
+Git prints it into <code>git add</code>. Use the Miniforge Prompt, not
+PowerShell: PowerShell does not understand
+<code>%USERPROFILE%</code>.</td>
+</tr>
+<tr>
+<td><code>IndexError: too many indices for array</code></td>
+<td>You wrote something like <code>pulses[1,2,3]</code>. Put one number
+in the brackets, for example <code>pulses[1]</code>, and run the cell
+again.</td>
 </tr>
 <tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
@@ -560,7 +582,7 @@ kind of computer.</p>
              if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)</code></pre>
 <p>Look at <code>here</code> and then at each folder above it, one after
 another, and take the first one that contains the file
-<code>python/pulse_io.py</code>. That folder is the whole NSDF-Data
+<code>python\pulse_io.py</code>. That folder is the whole NSDF-Data
 project. If there is none, <code>REPO</code> is <code>None</code>.</p>
 </div>
 <div class="explain">
@@ -678,7 +700,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, Windows edition. Written for
+<p>Guide version 22, 19 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="windows-key-links">Key links</h2>
 <ul>
@@ -699,7 +721,7 @@ class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 22 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1023,10 +1045,13 @@ plt.plot(pulses[0])
 plt.xlabel(&quot;sample (1.6 microseconds each)&quot;)
 plt.ylabel(&quot;ADC counts&quot;)
 plt.show()</code></pre>
-<p>Now change the <code>0</code> to <code>1</code>, <code>2</code>,
-<code>3</code> and run again. Most traces look like flat noise, with a
-little jitter. Row 1 is a quiet trace like the top one in <strong>Figure
-1</strong>. To see a pulse, try row <code>1095</code>. Then see the <a
+<p>Now change the <code>0</code> to <code>1</code> and run again, then
+try <code>2</code> and <code>3</code>, one number at a time.
+(<code>pulses[1,2,3]</code> does not pick three traces: it is an error,
+because the first number counts rows and the others count samples.) Most
+traces look like flat noise, with a little jitter. Row 1 is a quiet
+trace like the top one in <strong>Figure 1</strong>. To see a pulse, try
+row <code>1095</code>. Then see the <a
 href="#macos-appendix-what-an-event-looks-like">appendix</a> if you want
 to know more about what you are looking at.</p>
 <h2 id="macos-step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce
@@ -1132,6 +1157,21 @@ Kernel</strong>).</td>
 <td>Jupyter was started from the wrong folder. Close it and start it
 again from your own folder in <code>data_analysis/R76/student</code>
 (Step 3).</td>
+</tr>
+<tr>
+<td><code>fatal: pathspec '...' did not match any files</code> when you
+run <code>git add</code></td>
+<td>You are not in the project folder, or the file name is not the one
+you saved. Open a terminal (Step 1 of the setup guide), run <code
+class="cmd">cd ~/Research/NSDF-Data</code>, then <code
+class="cmd">git status</code>, and copy the notebook’s path exactly as
+Git prints it into <code>git add</code>.</td>
+</tr>
+<tr>
+<td><code>IndexError: too many indices for array</code></td>
+<td>You wrote something like <code>pulses[1,2,3]</code>. Put one number
+in the brackets, for example <code>pulses[1]</code>, and run the cell
+again.</td>
 </tr>
 <tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
@@ -1331,7 +1371,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, macOS edition. Written for
+<p>Guide version 22, 19 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="macos-key-links">Key links</h2>
 <ul>
@@ -1352,7 +1392,7 @@ class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Linux
-edition &middot; Version 20 · 14 October 2026</p>
+edition &middot; Version 22 · 19 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1676,10 +1716,13 @@ plt.plot(pulses[0])
 plt.xlabel(&quot;sample (1.6 microseconds each)&quot;)
 plt.ylabel(&quot;ADC counts&quot;)
 plt.show()</code></pre>
-<p>Now change the <code>0</code> to <code>1</code>, <code>2</code>,
-<code>3</code> and run again. Most traces look like flat noise, with a
-little jitter. Row 1 is a quiet trace like the top one in <strong>Figure
-1</strong>. To see a pulse, try row <code>1095</code>. Then see the <a
+<p>Now change the <code>0</code> to <code>1</code> and run again, then
+try <code>2</code> and <code>3</code>, one number at a time.
+(<code>pulses[1,2,3]</code> does not pick three traces: it is an error,
+because the first number counts rows and the others count samples.) Most
+traces look like flat noise, with a little jitter. Row 1 is a quiet
+trace like the top one in <strong>Figure 1</strong>. To see a pulse, try
+row <code>1095</code>. Then see the <a
 href="#linux-appendix-what-an-event-looks-like">appendix</a> if you want
 to know more about what you are looking at.</p>
 <h2 id="linux-step-6.-reproduce-a-number-from-note-2">Step 6. Reproduce
@@ -1785,6 +1828,21 @@ Kernel</strong>).</td>
 <td>Jupyter was started from the wrong folder. Close it and start it
 again from your own folder in <code>data_analysis/R76/student</code>
 (Step 3).</td>
+</tr>
+<tr>
+<td><code>fatal: pathspec '...' did not match any files</code> when you
+run <code>git add</code></td>
+<td>You are not in the project folder, or the file name is not the one
+you saved. Open a terminal (Step 1 of the setup guide), run <code
+class="cmd">cd ~/Research/NSDF-Data</code>, then <code
+class="cmd">git status</code>, and copy the notebook’s path exactly as
+Git prints it into <code>git add</code>.</td>
+</tr>
+<tr>
+<td><code>IndexError: too many indices for array</code></td>
+<td>You wrote something like <code>pulses[1,2,3]</code>. Put one number
+in the brackets, for example <code>pulses[1]</code>, and run the cell
+again.</td>
 </tr>
 <tr>
 <td><code>FileNotFoundError</code> on the dump folder</td>
@@ -1984,7 +2042,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 20, 14 October 2026, Linux edition. Written for
+<p>Guide version 22, 19 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="linux-key-links">Key links</h2>
 <ul>

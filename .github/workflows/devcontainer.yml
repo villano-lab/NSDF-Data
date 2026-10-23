@@ -1,0 +1,57 @@
+name: Dev container
+
+# Builds the dev container that GitHub Codespaces uses (.devcontainer/devcontainer.json: Python 3.12 image and its
+# postCreateCommand, which runs `pip install -r requirements.txt`) and checks, inside it, what a student needs from a
+# Codespace: the pulse library imports from any folder, the library tests pass, the environment check says OK, the
+# NSDF command-line tool runs and the Jupyter kernel is registered. Issue 50. It also runs every Monday, because the
+# base image moves (a new image or Python patch can break the install without any change here).
+
+on:
+  pull_request:
+    paths:
+      - ".devcontainer/**"
+      - "requirements.txt"
+      - "python/**"
+      - ".github/workflows/devcontainer.yml"
+  push:
+    branches: [develop, master]
+    paths:
+      - ".devcontainer/**"
+      - "requirements.txt"
+      - "python/**"
+      - ".github/workflows/devcontainer.yml"
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: devcontainer-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  devcontainer:
+    name: Codespaces dev container
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the dev container, run its postCreateCommand, and check it
+        uses: devcontainers/ci@v0.3
+        with:
+          push: never
+          runCmd: |
+            set -e
+            python --version
+            echo "--- the library imports from any folder (no sys.path edit)"
+            (cd / && python -c "import pulse_quantities, pulse_cuts, pulse_config, pulse_io, pulse_archive, pulse_channels, pulse_operations, pulse_status; print('imports OK')")
+            echo "--- environment check"
+            python python/check_environment.py --strict
+            echo "--- NSDF command-line tool and Jupyter kernel"
+            nsdf-cli version
+            jupyter kernelspec list | grep darkmatter_cli_env
+            echo "--- library tests"
+            (cd python && python -m pytest -q)

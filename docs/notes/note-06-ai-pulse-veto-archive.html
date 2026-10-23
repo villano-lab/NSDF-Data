@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Note 6: excursion_band_AI and the good_noise archive</title>
 <link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
 </head>
 <body>
 <div class="wrap note">
@@ -12,14 +13,24 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>excursion_band_AI: removing pulse-like traces from the noise selection, and the good_noise archive</h1>
-<p class="meta"><strong>Note 6</strong> &middot; Author(s): Anthony Villano &middot; 23 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+<p class="meta"><strong>Note 6</strong> &middot; Author(s): Anthony Villano &middot; 23 Sept 2026 (revised 22 Oct 2026) &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<div class="revised-box">
+<strong>Caution (2026-10-22): the sample time has changed.</strong> The phonon sample period is <strong>0.8&nbsp;&micro;s (1.25&nbsp;MHz)</strong>, not the 1.6&nbsp;&micro;s (625&nbsp;kHz) this note was written with (see <em>The sample period</em> in <code>python/README.md</code> for the evidence). What changed in this note:
+<ul>
+  <li>The frequency axis of the PSD figure is <strong>twice</strong> what the first version showed (bins of 305.2&nbsp;Hz up to 625&nbsp;kHz); the figure of the three average PSDs was replaced.</li>
+  <li>The table of ratios at fixed frequencies was recomputed: the same bins now sit at twice the frequency (the first bin is 305&nbsp;Hz, not 150&nbsp;Hz, and so on), so the rows are at 305&nbsp;Hz, 2.1, 4.0, 10, 20 and 60&nbsp;kHz instead of 150&nbsp;Hz, 1, 2, 5, 10 and 30&nbsp;kHz, and the sentence &ldquo;below ~2&nbsp;kHz&rdquo; now reads ~4&nbsp;kHz. Reading the table at the old frequencies would give different numbers (at 1&nbsp;kHz the ratios are now 122 and 136, at 5&nbsp;kHz 16 and 16, at 30&nbsp;kHz 1.3 and 0.9).</li>
+  <li><code>archives/good_noise.h5</code> was regenerated; it now records <code>sample_period_s</code> = 0.8&times;10<sup>&minus;6</sup>. The selection in it (179 events) is the same.</li>
+  <li>Unchanged: every count (192, 744, 179, 13 rejected), the run lengths in samples, <code>min_duration</code> = 50 samples, the traces in the two trace figures (axes in samples) and all <code>|FFT|<sup>2</sup></code> values.</li>
+</ul>
+</div>
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/8b0ab40/R76/analysis_notes/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the &ldquo;Tight, AI-filtered&rdquo;, &ldquo;What the AI filter removes&rdquo; and &ldquo;Archive&rdquo; sections at the end. Pinned to <code>8b0ab40</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/850500f/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the three-cut PSD comparison. Pinned to <code>850500f</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/c3d6754/python/pulse_cuts.py"><code>python/pulse_cuts.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/blob/c3d6754/python/pulse_quantities.py"><code>pulse_quantities.py</code></a> &mdash; <code>excursion_band_AI</code>, <code>looks_like_pulse</code>, <code>excursion_duration</code>. Pinned to <code>c3d6754</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/894ef9d/python/pulse_archive.py"><code>python/pulse_archive.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/archives"><code>archives/</code></a> &mdash; the HDF5 archive. Pinned to <code>894ef9d</code> and <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/eda12dc/data_analysis/R76/notebooks/07221203_2025_dump1_noise.ipynb"><code>07221203_2025_dump1_noise.ipynb</code></a> &mdash; the &ldquo;Tight, AI-filtered&rdquo;, &ldquo;What the AI filter removes&rdquo; and &ldquo;Archive&rdquo; sections at the end. Pinned to <code>eda12dc</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/eda12dc/data_analysis/R76/notebooks/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the three-cut PSD comparison. Pinned to <code>eda12dc</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/pulse_cuts.py"><code>python/pulse_cuts.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/pulse_quantities.py"><code>pulse_quantities.py</code></a> &mdash; <code>excursion_band_AI</code>, <code>looks_like_pulse</code>, <code>excursion_duration</code>. Pinned to <code>ac55c3c</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/eda12dc/python/pulse_archive.py"><code>python/pulse_archive.py</code></a> and <a href="https://github.com/villano-lab/NSDF-Data/tree/eda12dc/data_analysis/archives"><code>archives/</code></a> &mdash; the HDF5 archive. Pinned to <code>eda12dc</code>.</li>
 </ul>
 
 <h2>Motivation</h2>
@@ -58,22 +69,22 @@
 <p>Because slow drifts also stay near their peak for a long time, the same criterion rejects drifting baselines, not only pulses. That is desirable for a noise selection, and relevant to <a href="note-05-triggered-pulses.html">Note 5</a>, where drift is the problem.</p>
 
 <h2>Effect on the noise PSD</h2>
-<p>The clearest practical check is the average PSD of each selection (Detector 0 / Channel 0, dump 1). Below ~2 kHz, <code>excursion_band</code> and <code>excursion_band_loose</code> lie well above <code>excursion_band_AI</code>, because a pulse&rsquo;s rise and decay is low-frequency dominated and a few of them are enough to raise a <em>mean</em> spectrum:</p>
+<p>The clearest practical check is the average PSD of each selection (Detector 0 / Channel 0, dump 1). Below ~4&nbsp;kHz, <code>excursion_band</code> and <code>excursion_band_loose</code> lie well above <code>excursion_band_AI</code>, because a pulse&rsquo;s rise and decay is low-frequency dominated and a few of them are enough to raise a <em>mean</em> spectrum:</p>
 
 <div class="table-scroll" style="max-width: 520px;">
 <table class="compact">
   <thead><tr><th>Frequency</th><th class="num">tight / AI</th><th class="num">loose / AI</th></tr></thead>
   <tbody>
-    <tr><td>150 Hz</td><td class="num">164</td><td class="num">165</td></tr>
-    <tr><td>1 kHz</td><td class="num">64</td><td class="num">61</td></tr>
-    <tr><td>2 kHz</td><td class="num">23</td><td class="num">20</td></tr>
-    <tr><td>5 kHz</td><td class="num">4.3</td><td class="num">4.0</td></tr>
-    <tr><td>10 kHz</td><td class="num">1.8</td><td class="num">1.4</td></tr>
-    <tr><td>30 kHz</td><td class="num">1.1</td><td class="num">0.7</td></tr>
+    <tr><td>305 Hz (first bin)</td><td class="num">164</td><td class="num">165</td></tr>
+    <tr><td>2.1 kHz</td><td class="num">64</td><td class="num">61</td></tr>
+    <tr><td>4.0 kHz</td><td class="num">23</td><td class="num">20</td></tr>
+    <tr><td>10 kHz</td><td class="num">4.3</td><td class="num">4.0</td></tr>
+    <tr><td>20 kHz</td><td class="num">1.8</td><td class="num">1.4</td></tr>
+    <tr><td>60 kHz</td><td class="num">1.1</td><td class="num">0.7</td></tr>
   </tbody>
 </table>
 </div>
-<p>Ratio of the mean <code>|FFT|<sup>2</sup></code> of each selection to that of <code>excursion_band_AI</code> at that frequency (nearest bin).</p>
+<p>Ratio of the mean <code>|FFT|<sup>2</sup></code> of each selection to that of <code>excursion_band_AI</code> at that frequency (nearest bin; bins are 305&nbsp;Hz apart).</p>
 
 <figure>
   <img src="img/psd_three_cuts.png" alt="Average PSD for excursion_band, excursion_band_loose and excursion_band_AI on the same vertical scale as the 14-trace PSD">

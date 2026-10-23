@@ -29,6 +29,10 @@ OS = {
   NEWLINE_NOTE="",
   CRLF_NOTE="::: tip\n**You may see a warning about LF and CRLF.** On Windows, `git add` can print a line like this one:\n\n`warning: in the working copy of 'data_analysis/R76/student/yourname/`\\\n`first-analysis-yourname.ipynb', LF will be replaced by CRLF the next time Git touches it`\n\nThis is harmless, and your file was still added, so carry on with `git commit`. Every line of a text file ends with an invisible marker. Windows uses two characters for it (CRLF), macOS and Linux use one (LF). Git for Windows keeps LF in the repository and gives you CRLF in your own copy, so it is telling you that it will convert this file the next time it writes it.\n:::\n\n",
   CAREFUL_EXTRA="Windows may show a blue warning box when you run an installer (\"Windows protected your PC\"). Click **More info**, then **Run anyway**, only if you downloaded the file from the link in this guide.",
+  P_CONFIG=".nexus-dm\\config.json",
+  P_STUDENT="data_analysis\\R76\\student",
+  P_PULSEIO="python\\pulse_io.py",
+  PS_NOTE=" Use the Miniforge Prompt, not PowerShell: PowerShell does not understand `%USERPROFILE%`.",
 ),
 "macos": dict(
   NAME="macOS", FILE="macos", SHORT="macOS",
@@ -59,11 +63,15 @@ OS = {
   HOMEEX="`/Users/YourName`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="macOS may say an app is from an unidentified developer when you open it. You do not need to open any app in this guide, so you can ignore this.",
   CRLF_NOTE="",
+  P_CONFIG=".nexus-dm/config.json",
+  P_STUDENT="data_analysis/R76/student",
+  P_PULSEIO="python/pulse_io.py",
+  PS_NOTE="",
 ),
 "linux": dict(
   NAME="Linux", FILE="linux", SHORT="Linux",
   MOD="Ctrl",
-  VSC_INSTALL="This guide uses Ubuntu or Debian commands. If you use another distribution, follow [Microsoft's instructions for Linux](https://code.visualstudio.com/docs/setup/linux) instead. Go to [code.visualstudio.com](https://code.visualstudio.com/) and download the `.deb` file. In a terminal, go to the folder with the file (usually `cd ~/Downloads`) and run:\n\n```\nsudo apt install ./code_*.deb\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. If you have downloaded more than one such file, use the exact file name instead of the `*`. When it finishes, start **Visual Studio Code** from your applications menu.",
+  VSC_INSTALL="This guide uses Ubuntu or Debian commands. If you use another distribution, follow [Microsoft's instructions for Linux](https://code.visualstudio.com/docs/setup/linux) instead. On Ubuntu the simplest way needs no download. In a terminal, run:\n\n```\nsudo snap install --classic code\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. (The `--classic` is needed: without it the command fails.) When it finishes, start **Visual Studio Code** from your applications menu.\n\nIf you cannot use `snap`, use the `.deb` file instead. Go to [code.visualstudio.com](https://code.visualstudio.com/) and download it. In a terminal, go to the folder with the file (usually `cd ~/Downloads`) and run:\n\n```\nsudo apt install ./code_*.deb\n```\n\nIf you have downloaded more than one such file, use the exact file name instead of the `*`.",
   TERMINAL="Press **Ctrl + Alt + T** (on Ubuntu), or search your applications for **Terminal**. A window with a text prompt opens. This is the terminal for everything in this guide.",
   PASTE="Paste with **Ctrl + Shift + V** (plain Ctrl+V does not work in most terminals).",
   GIT="This guide uses Ubuntu or Debian commands. If you use another distribution, use its package manager instead. Type:\n\n```\nsudo apt install git\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. Press **Return**, then type `y` and press **Return** if it asks to continue.",
@@ -89,6 +97,10 @@ OS = {
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
   CAREFUL_EXTRA="Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.",
   CRLF_NOTE="",
+  P_CONFIG=".nexus-dm/config.json",
+  P_STUDENT="data_analysis/R76/student",
+  P_PULSEIO="python/pulse_io.py",
+  PS_NOTE="",
 ),
 }
 
@@ -112,7 +124,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 20 · 14 October 2026"
+date: "Version 21 · 22 October 2026"
 ---
 
 ::: tip
@@ -323,6 +335,28 @@ git checkout -b student-yourname
 The terminal shows `Switched to a new branch 'student-yourname'`.
 :::
 
+## Using a second or a new computer
+
+Your work lives on GitHub, on your own branch, not on one computer. To work on another computer, or on a replacement, you do **not** make another folder under your name. Set the computer up like this:
+
+1. Do Steps 1 to 7 as written.
+2. In Step 8, do items 3 and 4 only (tell Git your name and email, and sign in with `gh auth login`). You already have access, so skip items 1 and 2.
+3. **Skip item 5.** `git checkout -b` makes a *new* branch, and yours already exists on GitHub. Bring it down instead, with your own name in place of `yourname`:
+
+```
+@CD_REPO@
+git fetch origin
+git switch student-yourname
+```
+
+::: checkpoint
+Git says `branch 'student-yourname' set up to track 'origin/student-yourname'`, and `git branch --show-current`{.cmd} prints `student-yourname`. Your notebooks and your folder under `data_analysis/R76/student/` are there, because they came with the branch.
+:::
+
+4. The data is **not** stored on GitHub, so download it again on the new computer (first analysis guide, Step 2).
+
+On the computer you are leaving, **commit and push your work first** (Sync Changes, or the steps in the first analysis guide, Step 7). Anything you did not push is only on that computer. If an old computer starts again later, open it and push before you do anything else.
+
 ## Rules for keeping your work safe
 
 - **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
@@ -362,7 +396,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 21, 22 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -375,7 +409,7 @@ Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please
 FIRST = """---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 20 · 14 October 2026"
+date: "Version 22 · 19 October 2026"
 ---
 
 ::: tip
@@ -456,7 +490,7 @@ Never download from inside the `NSDF-Data` folder. Its `idx` folder would sit in
 nsdf-cli config --output-global @IDXPATH@
 ```
 
-Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`.nexus-dm/config.json`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
+Type `nsdf-cli config` to see the setting. It is saved in a small file in your home folder (`@P_CONFIG@`), so you do not repeat it. Two more `nsdf-cli` options you may see: `nsdf-cli download SERIES --all` downloads **every** dump of a series (the series in this guide has 30 dumps, about 1.9 GB), so do not use `--all` unless your lead says to; and `nsdf-cli prune` removes the downloaded series from your download folder to free disk space (it shows the folder and asks before it deletes anything).
 :::
 
 ::: careful
@@ -469,7 +503,7 @@ If the message says the folder already exists, the data may already be there. To
 
 ## Step 3. Open Jupyter in the right folder
 
-Every student works in a folder of their own, inside `data_analysis/R76/student` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
+Every student works in a folder of their own, inside `@P_STUDENT@` in the project. Use the same name as in your branch name (`student-yourname`), without spaces, in place of `yourname`. In the terminal, type these lines:
 
 ```
 conda activate darkmatter_cli_env
@@ -541,7 +575,7 @@ plt.ylabel("ADC counts")
 plt.show()
 ```
 
-Now change the `0` to `1`, `2`, `3` and run again. Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in **Figure 1**. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
+Now change the `0` to `1` and run again, then try `2` and `3`, one number at a time. (`pulses[1,2,3]` does not pick three traces: it is an error, because the first number counts rows and the others count samples.) Most traces look like flat noise, with a little jitter. Row 1 is a quiet trace like the top one in **Figure 1**. To see a pulse, try row `1095`. Then see the [appendix](#appendix-what-an-event-looks-like) if you want to know more about what you are looking at.
 
 ## Step 6. Reproduce a number from Note 2
 
@@ -604,7 +638,9 @@ Commit only your notebook. Check the list from `git status` before committing. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis/R76/student` (Step 3). |
+| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `@P_STUDENT@` (Step 3). |
+| `fatal: pathspec '...' did not match any files` when you run `git add` | You are not in the project folder, or the file name is not the one you saved. Open @OPEN_TERM@, run `@CD_REPO@`{.cmd}, then `git status`{.cmd}, and copy the notebook's path exactly as Git prints it into `git add`.@PS_NOTE@ |
+| `IndexError: too many indices for array` | You wrote something like `pulses[1,2,3]`. Put one number in the brackets, for example `pulses[1]`, and run the cell again. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
 | A huge spike at the very start of traces | This is a real electronics glitch in the first few samples, not a bug. It is explained in Note 2a. |
 | The kernel is not `darkmatter_cli_env` | Click the kernel name at the top right and choose **darkmatter_cli_env**. |
@@ -658,7 +694,7 @@ REPO = next((p for p in [here, *here.parents]
              if (p / "python" / "pulse_io.py").exists()), None)
 ```
 
-Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python/pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
+Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `@P_PULSEIO@`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
 :::
 
 ::: explain
@@ -802,7 +838,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 20, 14 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 22, 19 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -1016,7 +1052,7 @@ Guide version 6, 13 October 2026, @NAME@ edition. Written for beginners; please 
 GITVSCODE = """---
 title: "Git in VS Code"
 subtitle: "NSDF-Data student guide 9 — @NAME@ edition, optional"
-date: "Version 3 · 14 October 2026"
+date: "Version 5 · 20 October 2026"
 ---
 
 ::: tip
@@ -1049,6 +1085,8 @@ VS Code starts and shows a **Welcome** page.
 
 ::: careful
 Until you trust the folder, the **Source Control** tab (Step 4) stays empty and says that Git does not work in Restricted Mode. Nothing is broken: trust the folder and it fills in.
+
+If you closed the question without answering it, click **Restricted Mode** in the bottom-left status bar (it is easy to miss on a large screen), or press `@MOD@+Shift+P`, type `Workspaces: Manage Workspace Trust`{.cmd}, and press Enter. Then choose **Trust**. [VS Code's page on workspace trust](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust) explains it.
 :::
 
 ## Step 3. Check your branch
@@ -1059,11 +1097,11 @@ Look at the bottom-left corner of the VS Code window. It shows the name of your 
 The corner shows `student-yourname` (your own branch). This is the same check as `git branch --show-current` in the terminal guides.
 :::
 
-::: careful
-If it shows `develop` or `master`, **stop and ask your lead**. Do not commit, and do not press any button in the Source Control tab. Your own work belongs on your own branch.
-:::
+If it shows `develop` or `master`, or a branch that is not yours, switch to yours first: click the name in the corner and pick `student-yourname` from the list. Changes you have not committed yet come with you to your branch.
 
-To change branch, click the name in the corner and pick yours from the list.
+::: careful
+If VS Code or Git shows a **warning** when you switch (for example that your changes would be overwritten), **stop and ask your lead**, and do not force it. Do not commit, and do not press **Sync Changes**, while the corner shows `develop` or `master`: your own work belongs on your own branch.
+:::
 
 ## Step 4. Save your work as a commit
 
@@ -1075,6 +1113,8 @@ The list contains only your own files (your notebook, your note, its pictures). 
 :::
 
 3. Move the mouse over one of your files and click the **+** (Stage Changes). The file moves to **Staged Changes**. Do this for each of your files. This is `git add`.
+
+   *To stage several files at once:* click the first, then **Shift**-click the last to select everything in between (or **@MOD@**-click to pick single files), and click the **+** on any selected file: it stages all of them.
 4. Click the box that says **Message** and write what you changed, in a few words. This is the `-m "..."` of `git commit`.
 5. Click **Commit**.
 
@@ -1084,10 +1124,15 @@ If VS Code says that there are no staged changes and asks whether to stage every
 
 ## Step 5. Send your commits to GitHub
 
-After a commit, the big blue button under the message box shows what is left to send.
+After a commit, the big button under the message box shows what is left to send.
 
 - The first time on your branch, it reads **Publish Branch**. Click it. If VS Code asks which remote, choose `origin`.
-- After that, it reads **Sync Changes** with a number and an arrow. The up-arrow number is how many of your commits are waiting to go to GitHub. Click it to send them.
+- After that, it reads **Sync Changes** with a number and an arrow. The up-arrow number is how many of your commits are waiting to go to GitHub. Click it to send them. A down-arrow number is how many commits on GitHub you do not have yet. **Figure 1** shows what each case looks like.
+- When your branch and GitHub already agree and you have nothing to commit, there is **no Sync Changes button**: the big button is a greyed-out **Commit**.
+
+![](img/vscode-sync-button.png){width=100%}
+
+**Figure 1.** The big button in the Source Control tab. **A:** the branch and GitHub agree and nothing is waiting to be committed, so the button is a greyed-out **Commit**. **B:** one commit of yours is waiting to go to GitHub (up-arrow). **C:** GitHub has one commit you do not have yet (down-arrow). **D:** both. The colors change with your VS Code theme, but the number and the arrow do not.
 
 ::: careful
 Read the branch name in the bottom-left corner before you click either button. They send your commits to GitHub, so they must say your own branch. If the corner shows anything other than `student-yourname`, stop and ask your lead.
@@ -1100,7 +1145,7 @@ If VS Code then says there are **merge conflicts**, or lists files under **Merge
 :::
 
 ::: checkpoint
-The big blue button no longer shows an up-arrow number, and your branch appears on <https://github.com/villano-lab/NSDF-Data/branches>.
+The big button no longer shows an up-arrow number, and your branch appears on <https://github.com/villano-lab/NSDF-Data/branches>.
 :::
 
 This step is `git push` (the first time, `git push -u origin student-yourname`). **Sync Changes** runs `git pull` first, to bring in anything newer on GitHub, and then `git push`.
@@ -1109,19 +1154,19 @@ This step is `git push` (the first time, `git push -u origin student-yourname`).
 
 The project keeps changing. When *Updating your setup* (guide 7) tells you to bring in the newest changes (its Step 2), you can do that step here instead of typing the two lines. Do all the other steps of guide 7 as written, because they update your environment.
 
-1. **Sync first.** Look at the big blue button in the Source Control tab. If it shows an up-arrow or a down-arrow number, click **Sync Changes** (Step 5) so that your branch and GitHub agree before you start. If it shows no number, go on.
+1. **Sync first.** Look at the big button in the Source Control tab. If it reads **Sync Changes** with an up-arrow or a down-arrow number (B, C or D in Figure 1), click it (Step 5) so that your branch and GitHub agree before you start. If it is the greyed-out **Commit** (A), or has no number, go on.
 2. Press `@MOD@+Shift+P`. A box opens at the top of the window.
 3. Type `Git: Fetch`{.cmd} and press Enter. This downloads the newest changes without touching your files (`git fetch origin`).
 4. Press `@MOD@+Shift+P` again, type `Git: Merge...`{.cmd}, and press Enter.
 5. A list of branches opens. Choose **origin/develop**, under *remote branches*. This combines it with your branch (`git merge --no-edit origin/develop`).
-6. Look at the big blue button again. If it now shows an up-arrow number, click **Sync Changes** (Step 5) to send the result to GitHub.
+6. Look at the big button again. If it now shows an up-arrow number, click **Sync Changes** (Step 5) to send the result to GitHub.
 
 ::: checkpoint
-VS Code finishes without an error message, and the Source Control tab shows no conflict. Then look at the big blue button. If it shows an up-arrow number, the newest project changes are now on your branch and waiting to go to GitHub (point 6). If it shows no number, you already had the newest changes. VS Code says nothing when there is nothing to merge, whereas the terminal prints `Already up to date.`, so it can look as if the command did nothing. Nothing went wrong.
+VS Code finishes without an error message, and the Source Control tab shows no conflict. Then look at the big button. If it shows an up-arrow number, the newest project changes are now on your branch and waiting to go to GitHub (point 6). If it shows no number, you already had the newest changes. VS Code says nothing when there is nothing to merge, whereas the terminal prints `Already up to date.`, so it can look as if the command did nothing. Nothing went wrong.
 :::
 
 ::: careful
-If VS Code reports a **conflict**, lists files under **Merge Changes**, or opens a window with two versions of a file side by side, **stop. Do not click anything in that window and do not edit anything.** To put everything back as it was, press `@MOD@+Shift+P`, type `Git: Abort Merge`{.cmd}, and press Enter. Then send your lead a screenshot or the message. This is the same rule as the terminal guides: stop, and send it to your lead.
+If VS Code reports a **conflict**, or lists files under **Merge Changes** in the Source Control tab, **stop. Do not edit anything.** (Two versions of a file side by side is not a sign of a conflict: VS Code shows that comparison whenever you click a changed file.) To put everything back as it was, press `@MOD@+Shift+P`, type `Git: Abort Merge`{.cmd}, and press Enter. Then send your lead a screenshot or the message. This is the same rule as the terminal guides: stop, and send it to your lead.
 :::
 
 ## Step 7. Open a pull request
@@ -1137,25 +1182,27 @@ This part was written from the extension's own documentation and its list of com
 :::
 
 1. Press `@MOD@+Shift+X` to open **Extensions**.
-2. Search for `GitHub Pull Requests`{.cmd}. Install the one whose publisher is **GitHub**, with the blue check mark next to the name.
+2. Search for `GitHub Pull Requests`{.cmd}. Install the one whose publisher is **GitHub**, with the check mark (verified publisher) next to the name.
 3. A GitHub icon appears in the bar on the left. Click it and choose **Sign in**. A web page opens in your browser: sign in to GitHub there. **Never type your GitHub password into VS Code or into the terminal.**
 4. Your branch will **not** be listed in the extension's view: that view lists pull requests, not branches, so a branch that has no pull request yet does not appear in it. To start one, click the **Create Pull Request** button. It is a **very small icon**, the pull-request symbol with a plus sign on it, at the right end of the title bar of the **Pull Requests** view (the view you open with the GitHub icon in the bar on the left). Move the mouse over it and a label says *Create Pull Request*. Or press `@MOD@+Shift+P`, type `GitHub Pull Requests: Create Pull Request`{.cmd}, and press Enter. The button and the command only appear after you have signed in (point 3) and pushed your branch (Step 5).
 5. A form opens. Check that the **base** is `develop` (it may offer `master`: change it) and that the branch being compared is `student-yourname`. Write the title and the description as guide 4 says, then click **Create**. Your pull request is then listed in the view.
 
 ![](img/vscode-pull-requests-view.png){width=75%}
 
-**Figure 1.** The **Pull Requests** view of the GitHub extension. The button that starts a pull request is the first icon in the title bar, the pull-request symbol with a plus sign (outlined in red). It is small. The other icons are *Refresh*, *Collapse All* and a menu. Your own branch is not in the list below until its pull request exists.
+**Figure 2.** The **Pull Requests** view of the GitHub extension. The button that starts a pull request is the first icon in the title bar, the pull-request symbol with a plus sign (outlined in red). It is small. The other icons are *Refresh*, *Collapse All* and a menu. Your own branch is not in the list below until its pull request exists.
 
 ## The same steps in the terminal
 
 | In VS Code | In the terminal |
 |---|---|
-| The corner of the window | `git branch --show-current` |
+| The branch name in the corner of the window | `git branch --show-current` |
 | The list of changes in Source Control | `git status` |
 | The **+** button | `git add your-file` |
 | Message box and **Commit** | `git commit -m "..."` |
-| **Publish Branch** (first time), then **Sync Changes** | `git push -u origin student-yourname`, then `git pull` and `git push` |
-| `Git: Fetch`{.cmd} and `Git: Merge...`{.cmd} with `origin/develop` | `git fetch origin` and `git merge --no-edit origin/develop` |
+| **Publish Branch** (first time) | `git push -u origin student-yourname` |
+| **Sync Changes** | `git pull`, then `git push` |
+| `Git: Fetch`{.cmd} | `git fetch origin` |
+| `Git: Merge...`{.cmd} with `origin/develop` | `git merge --no-edit origin/develop` |
 | The **Create Pull Request** button of the GitHub extension (Step 7) | `gh pr create --base develop --title "Add note: your title" --body "One sentence on what the note answers."` |
 
 The last row uses the `gh` command, which guide 1 installed and signed in to GitHub in its Step 8. Run it from the `NSDF-Data` folder, on your own branch, after your commits are pushed (Step 5); it prints the address of your pull request. This way has **not yet been tried on a student's computer**: guide 4 (Step 3), on github.com, is the route that has been tested step by step. Whichever way you use, the base must be `develop`.
@@ -1164,20 +1211,19 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 
 | You see | What it means | What to do |
 |---|---|---|
-| The Source Control tab is empty and mentions Restricted Mode | VS Code has not been told to trust this folder. | Step 2, point 3. |
-| The corner shows `develop` or `master` | You are not on your own branch. | Stop. Do not commit or push. Ask your lead. |
+| The Source Control tab is empty and mentions Restricted Mode | VS Code has not been told to trust this folder. | Click **Restricted Mode** in the bottom-left status bar and choose **Trust** (Step 2). |
+| The corner shows `develop` or `master` | You are not on your own branch. | Switch to your own branch (Step 3). Stop and ask your lead only if Git warns when you switch. |
 | No **Source Control** icon, or "no repository found" | The folder you opened is not the `NSDF-Data` folder. | **File**, **Open Folder**, and pick the `NSDF-Data` folder itself. |
 | A question about staging everything and committing | Nothing is staged yet. | **Cancel**, then stage your files with **+** (Step 4). |
 | **Sync Changes** shows a down-arrow number as well as an up-arrow number | There are newer commits on your branch on GitHub: your lead merged the project's newest changes into it. | Check the branch name, click **Sync Changes**, and click **OK** on the question (Step 5). |
 | VS Code says there are merge conflicts, or lists files under **Merge Changes** | Git cannot combine two changes by itself. Nothing has been sent to GitHub. | Stop. Do not edit anything. Press `@MOD@+Shift+P`, run `Git: Abort Merge`{.cmd}, and send your lead a screenshot. |
-| A window with two versions of a file side by side | A conflict. | Stop. Click nothing. Run `Git: Abort Merge`{.cmd} as in the row above, and send it to your lead. |
-| Your branch is not in the **Pull Requests** view of the GitHub extension | That view lists pull requests, not branches. | Use the **Create Pull Request** button or command (Step 7), and check that the base is `develop`. |
-| `Git: Merge...`{.cmd} finishes and nothing seems to have happened | You already had the newest changes. VS Code says nothing when there is nothing to merge. | Look at the big blue button (Step 6). No number means you were up to date. |
+| Two versions of a file side by side | A comparison (a "diff"). VS Code shows it whenever you click a changed file. It is not a conflict. | Nothing: close it, or go on. A real conflict is announced as in the row above. |
+| `Git: Merge...`{.cmd} finishes and nothing seems to have happened | You already had the newest changes. VS Code says nothing when there is nothing to merge. | Look at the big button (Step 6). No number means you were up to date. |
 | "Make sure you configure your user.name and user.email", or a permission error | Git does not know your name, or you are not signed in to GitHub. | Setup guide, Step 8. Never type your GitHub password into VS Code. |
 
 ## Session Info
 
-Guide version 3, 14 October 2026, @NAME@ edition. The Git steps were checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install step for your system, the sign-in, and the pull-request part have not been tried on a student's computer yet. Please tell the project lead where a step was unclear.
+Guide version 5, 20 October 2026, @NAME@ edition. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 
@@ -1198,7 +1244,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST), ("update", UPDATE), ("git-in-vscode", GITVSCODE)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","IDXPATH","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE","MOD","VSC_INSTALL"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","IDXPATH","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE","MOD","VSC_INSTALL","P_CONFIG","P_STUDENT","P_PULSEIO","PS_NOTE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

@@ -5,6 +5,15 @@ factored out of the exploratory work in `data_analysis/R76/notebooks/`. Flat mod
 (no package/`__init__.py`), imported by adding this directory to `sys.path` --
 same convention as `nrFanoII_paper2022`'s `python/ba_bknd_lines.py`.
 
+**Installed in place.** `requirements.txt` installs this folder: `pip install -r requirements.txt`, run from the
+`NSDF-Data` folder as the setup and updating guides do (or only the library: `python -m pip install -e ./python`).
+After that `import pulse_quantities` works from any folder, with no `sys.path` snippet, and an edit to a module takes
+effect at once. Nothing is renamed: the modules keep their flat names. The library has its own version, in
+`python/pyproject.toml` (`0.1.0`). This is phase 1 of issue 71. When the library is installed (the normal case), a plain
+`import pulse_quantities` is all a notebook needs, and `check_environment.py` warns if it is not installed. The snippet
+below is the fallback for a checkout where it is not installed; the notebooks and the first-analysis guide still use it
+for now.
+
 From a notebook anywhere inside the project, find the library by looking upward,
 so the code does not depend on how deep the notebook is:
 
@@ -68,13 +77,20 @@ objects -- `load_channel_batch` turns a list of `detector_id`s into a plain
 `(n_pulses, n_samples)` array for everything else to consume.
 
 `pulse_channels.py` says which physical channel a dump's `(detector, channel)`
-pair is, from the Run 76 Setup table: `channel_name(0, 2)` is `'Side1pC'`,
-`channel_label(0, 2)` is `'Side1pC (DCRC1, Face3pC)'`, `find_channel('Side1pC')`
-is `(0, 2)`, and `all_channels()` lists the 12. It needs no data and no extra
-package. It is tagged `under_development`: the dump's detectors 0, 1, 2 are
-inferred to be the boards DCRC1, DCRC3, DCRC4, and the channel order within a
-board is assumed (evidence and caveats: section 7 of
-`noise-psd-randoms-buddy.ipynb` on the `student-buddy` branch).
+pair is, from the Run 76 Setup table, for **Side-2 readout** (the December 2022 series;
+`readout=1` gives the Side-1 map): `channel_name(0, 0)` is `'Side2pC'`,
+`channel_label(0, 0)` is `'Side2pC (DCRC1 pA, HV2 pA)'`, `find_channel('Side2pC')`
+is `(0, 0)`, `all_channels()` lists the 12 inputs and `sensor_channels()` the 6 that
+are QET channels (the other six: DCRC4 pA is the NaI trigger input, five inputs are
+not connected). It needs no data and no extra package. It is tagged
+`under_development`: the dump's detectors 0, 1, 2 are inferred to be the boards DCRC1,
+DCRC3, DCRC4, and the channels 0 to 3 are assumed to be the board inputs pA to pD.
+The module docstring explains which columns of the table are used. **Until 2026-10-22
+it used the wrong column** (*DCRC (2-sided)*) and named twelve sensors on two sides;
+for Side-2 readout there are six, all on Side 2. What changed, by dump channel `(detector, channel)`:
+(0, 3) was `Side1pF` and is `Side2pE`; (1, 0) was `Side1pE`, now `Side2pB`; (1, 1) was `Side1pB`, now
+`Side2pA`; (1, 3) was `Side2pE`, now `Side2pD`; (2, 0) was `Side2pB`, now the NaI trigger input;
+(0, 0) `Side2pC` and (0, 1) `Side2pF` are as before; the other inputs are not sensors.
 
 `pulse_archive.py` is a fifth, separate module: it persists a cut's *result*
 (which `detector_id`s it selected, for a given series/detector/channel) to an
@@ -86,8 +102,30 @@ that needs `h5py`.
 
 A frozen dataclass (`pretrigger_samples`, `glitch_samples`, `sample_period_s`)
 passed explicitly to every function, instead of each notebook hardcoding its
-own copy of these constants. Current defaults (`1000`, `10`, `1.6e-6`) match
-`07221203_2025_dump1_noise.ipynb` / `07221203_2025_dump2_pulse.ipynb`.
+own copy of these constants. Current defaults: `1000`, `10`, `0.8e-6` (see below for
+the sample period; the first two match `07221203_2025_dump1_noise.ipynb` /
+`07221203_2025_dump2_pulse.ipynb`).
+
+### The sample period (changed on 2026-10-22)
+
+**The phonon channels of the DCRC readout sample every 0.8 us (1.25 MHz), so a trace of 4096
+samples is 3.2768 ms.** The library, the notebooks and the notes used 1.6 us (625 kHz) until
+2026-10-22; that value was wrong and has no known source. The evidence for 0.8 us:
+
+- The UMN run diaries of April and May 2022 (Run 76) count pulses "in 125 3.2768-ms traces" (4096 x 0.8 us),
+  and the diary of 2022-04-01 says "the DCRC sampling rate of 800 ns".
+- The ODB of series 07220916_2200 has `PhononWaveFormLength` = 8192 (bytes, 2 per sample, so 4096 samples)
+  and `PhononPrepulseSamples` = 500, our trace length and trigger sample.
+- The wiki's analysis settings: `P_SAMPLERATE` = 1.25e6 (Run 68 bats file) and `secPERsample = 8e-7` (Run 76).
+- The NaI trigger pulse in DCRC4 pA, in the pyRawIO plot of the paper notebook (N-MISC-23-001, page 24) on a
+  sample axis and in the BatViewer and wiki plots on a microsecond axis: 99 samples are 75 to 78 us,
+  the pulse rises at sample 500 = 402 us, and the traces end at 3270 to 3277 us.
+
+**What this means for older results.** Anything made with 1.6 us has times and energies twice too large,
+frequencies twice too small, PSDs twice too large and ASDs 1.41 times too large. Everything counted in
+samples or counts (cuts, selections, pulse heights) is unaffected. `PulseConfig(sample_period_s=1.6e-6)`
+now emits a `UserWarning` saying so, and `pulse_archive.load_good_events` warns for an archive written with
+1.6 us; remove the explicit value from your notebook so the default is used, and re-run it.
 
 ## Function status: `done` vs. `under_development`
 

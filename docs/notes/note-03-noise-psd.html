@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Note 3: Noise PSD from selected traces</title>
 <link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
 </head>
 <body>
 <div class="wrap note">
@@ -12,11 +13,22 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>Noise PSD from selected traces (Channel 0, Detectors 0 and 1)</h1>
-<p class="meta"><strong>Note 3</strong> &middot; Author(s): Anthony Villano &middot; 21 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+<p class="meta"><strong>Note 3</strong> &middot; Author(s): Anthony Villano &middot; 21 Sept 2026 (revised 22 Oct 2026) &middot; Status: <span class="status superseded">Superseded (reference/link)</span></p>
+<div class="revised-box">
+<strong>Caution (2026-10-22): the sample time has changed.</strong> The phonon sample period is <strong>0.8&nbsp;&micro;s (1.25&nbsp;MHz)</strong>, not the 1.6&nbsp;&micro;s (625&nbsp;kHz) this note was written with (see <em>The sample period</em> in <code>python/README.md</code> for the evidence). What changed in this note:
+<ul>
+  <li>Every frequency is <strong>twice</strong> what the first version said: the bins are 305.2&nbsp;Hz wide (not 152.6&nbsp;Hz) and the spectrum runs up to a Nyquist frequency of 625&nbsp;kHz (not 312.5&nbsp;kHz).</li>
+  <li>The frequencies quoted in the text move with it: the steep fall now starts at 305&nbsp;Hz, the plateau is at 4&ndash;6&nbsp;kHz and the floor starts near 200&nbsp;kHz, and the sharp peaks are near 53, 85, 155, 211 and 408&nbsp;kHz (not 26, 42, 78, 105 and 204&nbsp;kHz).</li>
+  <li>The figure of the average spectrum was replaced (same curve, frequency axis doubled); the time-domain overlay is in samples and is unchanged.</li>
+  <li>Unchanged: the values of <code>|FFT|<sup>2</sup></code> (they do not depend on the sample period), the selection (21 traces, 14 on Channel 0), and every count and event number.</li>
+</ul>
+</div>
+
+<p><strong>Superseded by:</strong> <a href="note-06-ai-pulse-veto-archive.html">Note 6</a>, which compares the noise PSD from larger, better-motivated selections. This note stays up for reference.</p>
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/850500f/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; time-domain overlay, FFT, and average power spectrum (this note); the later sections belong to <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> and <a href="note-07-psd-peaks-204khz.html">Note 7</a>. Pinned to <code>850500f</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/eda12dc/data_analysis/R76/notebooks/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; time-domain overlay, FFT, and average power spectrum (this note); the later sections belong to <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> and <a href="note-07-psd-peaks-204khz.html">Note 7</a>. Pinned to <code>eda12dc</code>.</li>
   <li><a href="https://github.com/villano-lab/NSDF-Data/blob/f03ce14/R76/analysis_notes/good_noise_traces.csv"><code>good_noise_traces.csv</code></a> &mdash; the 21-trace selection this note starts from (from the original <code>dump1_noise_pulses.ipynb</code>: <code>bstd</code> cap 5, ratio threshold 2.45). Pinned to <code>f03ce14</code>.</li>
 </ul>
 
@@ -51,14 +63,14 @@
 </figure>
 
 <h2>Frequency domain</h2>
-<p>The real FFT (<code>np.fft.rfft</code>) is taken of every trace. The sample period is 1.6&nbsp;&micro;s (625&nbsp;kHz sample rate, supplied by the user; it is not recorded elsewhere in the repository), so with 4096 samples per trace the bins are 152.6&nbsp;Hz wide and run up to the 312.5&nbsp;kHz Nyquist frequency. The power spectrum is <code>spectrum &times; conj(spectrum)</code> (its imaginary part is zero by construction), plotted log&ndash;log with the DC bin dropped. Averaging the 14 spectra bin by bin gives a first noise PSD estimate:</p>
+<p>The real FFT (<code>np.fft.rfft</code>) is taken of every trace. The sample period is 0.8&nbsp;&micro;s (1.25&nbsp;MHz sample rate; the first version of this note used 1.6&nbsp;&micro;s, which was wrong), so with 4096 samples per trace the bins are 305.2&nbsp;Hz wide and run up to the 625&nbsp;kHz Nyquist frequency. The power spectrum is <code>spectrum &times; conj(spectrum)</code> (its imaginary part is zero by construction), plotted log&ndash;log with the DC bin dropped. Averaging the 14 spectra bin by bin gives a first noise PSD estimate:</p>
 
 <figure>
   <img src="img/psd_14trace_average.png" alt="Average power spectrum of the 14 traces on log-log axes">
   <figcaption>Average <code>|FFT|<sup>2</sup></code> over the 14 traces, log&ndash;log, real Hz.</figcaption>
 </figure>
 
-<p>The average falls steeply from about 8&times;10<sup>6</sup> at 150&nbsp;Hz to ~2&times;10<sup>5</sup> near 2&ndash;3&nbsp;kHz, stays roughly flat out to ~20&nbsp;kHz, then rolls off to a floor near 10<sup>4</sup> above ~100&nbsp;kHz. Several sharp peaks (near 26, 42, 78, 105 and 204&nbsp;kHz, among others) sit on top of it. Where those peaks come from is the subject of <a href="note-07-psd-peaks-204khz.html">Note 7</a>.</p>
+<p>The average falls steeply from about 8&times;10<sup>6</sup> at 305&nbsp;Hz (the first bin) to ~2&times;10<sup>5</sup> near 4&ndash;6&nbsp;kHz, declines slowly out to ~40&nbsp;kHz, then rolls off to a floor near 10<sup>4</sup> above ~200&nbsp;kHz. Several sharp peaks (near 53, 85, 155, 211 and 408&nbsp;kHz, among others) sit on top of it. Where those peaks come from is the subject of <a href="note-07-psd-peaks-204khz.html">Note 7</a>.</p>
 
 <h2>Conventions and caveats</h2>
 <ul>

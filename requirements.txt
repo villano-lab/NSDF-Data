@@ -6,3 +6,6 @@ h5py
 pytest
 ipykernel
 jupyterlab
+# The library in python/, installed in place (phase 1 of issue 71). pip reads this path from the folder you run it in,
+# so run `pip install -r requirements.txt` from the NSDF-Data folder, as the guides do.
+-e ./python[archive]

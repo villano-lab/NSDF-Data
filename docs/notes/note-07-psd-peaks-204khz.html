@@ -3,25 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Note 7: Origin of the sharp PSD peaks; the 204 kHz line</title>
+<title>Note 7: Origin of the sharp PSD peaks; the 408 kHz line</title>
 <link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
 </head>
 <body>
 <div class="wrap note">
 
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
-<h1>Origin of the sharp peaks in the average noise PSD; the 204 kHz line</h1>
-<p class="meta"><strong>Note 7</strong> &middot; Author(s): Anthony Villano &middot; 23 Sept 2026 &middot; Status: <span class="status in-progress">In progress</span></p>
+<h1>Origin of the sharp peaks in the average noise PSD; the 408 kHz line</h1>
+<p class="meta"><strong>Note 7</strong> &middot; Author(s): Anthony Villano &middot; 23 Sept 2026 (revised 22 Oct 2026) &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<div class="revised-box">
+<strong>Caution (2026-10-22): the sample time has changed.</strong> The phonon sample period is <strong>0.8&nbsp;&micro;s (1.25&nbsp;MHz)</strong>, not the 1.6&nbsp;&micro;s (625&nbsp;kHz) this note was written with (see <em>The sample period</em> in <code>python/README.md</code> for the evidence). What changed in this note:
+<ul>
+  <li><strong>Every frequency in this note is twice the value the first version gave</strong>: the line called &ldquo;the 204&nbsp;kHz line&rdquo; is at <strong>408&nbsp;kHz</strong> (408,020&nbsp;Hz), and the seven flagged lines are at 52.8, 84.5, 155.3, 211.2, 366.5, 372.9 and 408.0&nbsp;kHz (not 26.4, 42.3, 77.7, 105.6, 183.3, 186.5 and 204.0&nbsp;kHz). The lowest bin is 305&nbsp;Hz (not 153&nbsp;Hz). The title, the tables, the text and the next steps were changed accordingly (the file name still says 204khz so that links keep working).</li>
+  <li>The line is now about <strong>two bins, ~610&nbsp;Hz wide</strong> (bins are 305&nbsp;Hz apart), and its two bins stand at 5.4&ndash;5.6&times;10<sup>4</sup> against 6&ndash;10&times;10<sup>3</sup> around them.</li>
+  <li>Three figures were replaced (the two traces against the other twelve, the median spectra of the two detectors, and the average PSD of the three cuts): same curves, frequency axes doubled.</li>
+  <li>Unchanged: which two events dominate (10708 and 10959) and every share of summed power, the excess factors in the two tables (they are ratios of <code>|FFT|<sup>2</sup></code> at the same bins), the per-trace check of the line in the three selections, and all counts. They were recomputed with the corrected bins and agree with the first version.</li>
+</ul>
+</div>
 
 <h2>Code Repository</h2>
 <ul class="repo">
-  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/850500f/R76/analysis_notes/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the &ldquo;Origin of the sharp peaks in the average PSD&rdquo; section, the detector comparison, and the three-cut comparison. Pinned to <code>850500f</code>.</li>
-  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/085aa3d/python"><code>python/</code></a> &mdash; the library it uses (<a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>085aa3d</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/blob/eda12dc/data_analysis/R76/notebooks/good_pulses_overlay.ipynb"><code>good_pulses_overlay.ipynb</code></a> &mdash; the &ldquo;Origin of the sharp peaks in the average PSD&rdquo; section, the detector comparison, and the three-cut comparison. Pinned to <code>eda12dc</code>.</li>
+  <li><a href="https://github.com/villano-lab/NSDF-Data/tree/ac55c3c/python"><code>python/</code></a> &mdash; the library it uses (<a href="note-01a-pulse-library-structure.html">Note 1a</a>). Pinned to <code>ac55c3c</code>.</li>
 </ul>
 
 <h2>Question</h2>
-<p>The average PSD of the 14 selected Channel 0 traces in <a href="note-03-noise-psd.html">Note 3</a> has several sharp peaks. In the larger selections of <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> (192, 744 and 179 traces) most of them are gone, except one near 200&nbsp;kHz. Where do the peaks come from, and why does that one survive?</p>
+<p>The average PSD of the 14 selected Channel 0 traces in <a href="note-03-noise-psd.html">Note 3</a> has several sharp peaks. In the larger selections of <a href="note-06-ai-pulse-veto-archive.html">Note 6</a> (192, 744 and 179 traces) most of them are gone, except one near 400&nbsp;kHz. Where do the peaks come from, and why does that one survive?</p>
 
 <p>Throughout, the leading glitch samples are <strong>kept</strong> in the traces that go into the FFT (a deliberate choice; baseline subtraction skips them only when computing the mean it subtracts).</p>
 
@@ -37,14 +48,14 @@
 <table class="compact">
   <thead><tr><th class="num">Frequency (Hz)</th><th>Top contributor</th><th class="num">Its share of summed power</th><th class="num">Top two together</th></tr></thead>
   <tbody>
-    <tr><td class="num">26,398</td><td>evt 10708</td><td class="num">0.49</td><td class="num">0.87</td></tr>
-    <tr><td class="num">42,267</td><td>evt 10708</td><td class="num">0.62</td><td class="num">0.95</td></tr>
-    <tr><td class="num">77,667</td><td>evt 10708</td><td class="num">0.53</td><td class="num">0.96</td></tr>
-    <tr><td class="num">105,591</td><td>evt 10708</td><td class="num">0.51</td><td class="num">0.80</td></tr>
-    <tr><td class="num">183,258</td><td>evt 10959</td><td class="num">0.60</td><td class="num">0.95</td></tr>
-    <tr><td class="num">186,462</td><td>evt 10959</td><td class="num">0.73</td><td class="num">0.93</td></tr>
-    <tr><td class="num">204,010</td><td>evt 10959</td><td class="num">0.68</td><td class="num">0.87</td></tr>
-    <tr><td class="num">153 (lowest bin)</td><td>evt 10037</td><td class="num">0.16</td><td class="num">0.31</td></tr>
+    <tr><td class="num">52,795</td><td>evt 10708</td><td class="num">0.49</td><td class="num">0.87</td></tr>
+    <tr><td class="num">84,534</td><td>evt 10708</td><td class="num">0.62</td><td class="num">0.95</td></tr>
+    <tr><td class="num">155,334</td><td>evt 10708</td><td class="num">0.53</td><td class="num">0.96</td></tr>
+    <tr><td class="num">211,182</td><td>evt 10708</td><td class="num">0.51</td><td class="num">0.80</td></tr>
+    <tr><td class="num">366,516</td><td>evt 10959</td><td class="num">0.60</td><td class="num">0.95</td></tr>
+    <tr><td class="num">372,925</td><td>evt 10959</td><td class="num">0.73</td><td class="num">0.93</td></tr>
+    <tr><td class="num">408,020</td><td>evt 10959</td><td class="num">0.68</td><td class="num">0.87</td></tr>
+    <tr><td class="num">305 (lowest bin)</td><td>evt 10037</td><td class="num">0.16</td><td class="num">0.31</td></tr>
   </tbody>
 </table>
 </div>
@@ -67,13 +78,13 @@
 <table class="compact">
   <thead><tr><th class="num">Line (Hz)</th><th class="num">Detector 0</th><th class="num">Detector 1</th></tr></thead>
   <tbody>
-    <tr><td class="num">26,398</td><td class="num">1.0&times;</td><td class="num">50&times;</td></tr>
-    <tr><td class="num">42,267</td><td class="num">1.1&times;</td><td class="num">181&times;</td></tr>
-    <tr><td class="num">77,667</td><td class="num">1.5&times;</td><td class="num">58&times;</td></tr>
-    <tr><td class="num">105,591</td><td class="num">1.7&times;</td><td class="num">27&times;</td></tr>
-    <tr><td class="num">183,258</td><td class="num">1.0&times;</td><td class="num">16&times;</td></tr>
-    <tr><td class="num">186,462</td><td class="num">1.3&times;</td><td class="num">20&times;</td></tr>
-    <tr><td class="num">204,010</td><td class="num">6.0&times;</td><td class="num">28&times;</td></tr>
+    <tr><td class="num">52,795</td><td class="num">1.0&times;</td><td class="num">50&times;</td></tr>
+    <tr><td class="num">84,534</td><td class="num">1.1&times;</td><td class="num">181&times;</td></tr>
+    <tr><td class="num">155,334</td><td class="num">1.5&times;</td><td class="num">58&times;</td></tr>
+    <tr><td class="num">211,182</td><td class="num">1.7&times;</td><td class="num">27&times;</td></tr>
+    <tr><td class="num">366,516</td><td class="num">1.0&times;</td><td class="num">16&times;</td></tr>
+    <tr><td class="num">372,925</td><td class="num">1.3&times;</td><td class="num">20&times;</td></tr>
+    <tr><td class="num">408,020</td><td class="num">6.0&times;</td><td class="num">28&times;</td></tr>
   </tbody>
 </table>
 </div>
@@ -83,10 +94,10 @@
   <figcaption>Median power spectrum of quiet Channel 0 traces, Detector 0 (blue, 908 traces) and Detector 1 (red, 695 traces). Dotted lines mark the seven flagged frequencies.</figcaption>
 </figure>
 
-<p>Detector 1 has all seven lines in its median spectrum (16&ndash;181&times;), so they are present in at least half of its quiet traces, and it has many more lines than the seven flagged; its continuum is also visibly higher. Detector 0 shows only the 204&nbsp;kHz line, and more weakly (6&times;). So the sharp peaks in the 14-trace average come from its two Detector 1 traces because <em>Detector 1 has these lines</em>, not because those two events are unusual. It also means that averaging the two detectors together gives a spectrum that describes neither.</p>
+<p>Detector 1 has all seven lines in its median spectrum (16&ndash;181&times;), so they are present in at least half of its quiet traces, and it has many more lines than the seven flagged; its continuum is also visibly higher. Detector 0 shows only the 408&nbsp;kHz line, and more weakly (6&times;). So the sharp peaks in the 14-trace average come from its two Detector 1 traces because <em>Detector 1 has these lines</em>, not because those two events are unusual. It also means that averaging the two detectors together gives a spectrum that describes neither.</p>
 
-<h2>The 204 kHz line</h2>
-<p>The larger selections of Note 6 (192, 744 and 179 traces) are Detector 0 only, which is why the Detector 1 lines are absent there: there are no Detector 1 traces in them, so it is not a matter of dilution. The 204&nbsp;kHz line is the one flagged line present in <em>both</em> detectors (6&times; in Detector 0, 28&times; in Detector 1). Within Detector 0, a per-trace check at the 204,010&nbsp;Hz bin for the three selections gives:</p>
+<h2>The 408 kHz line</h2>
+<p>The larger selections of Note 6 (192, 744 and 179 traces) are Detector 0 only, which is why the Detector 1 lines are absent there: there are no Detector 1 traces in them, so it is not a matter of dilution. The 408&nbsp;kHz line is the one flagged line present in <em>both</em> detectors (6&times; in Detector 0, 28&times; in Detector 1). Within Detector 0, a per-trace check at the 408,020&nbsp;Hz bin for the three selections gives:</p>
 
 <div class="table-scroll" style="max-width: 720px;">
 <table class="compact">
@@ -98,20 +109,20 @@
   </tbody>
 </table>
 </div>
-<p>&ldquo;Local neighbors&rdquo; means the median of the five bins on each side of 204,010&nbsp;Hz, taken per trace.</p>
+<p>&ldquo;Local neighbors&rdquo; means the median of the five bins on each side of 408,020&nbsp;Hz, taken per trace.</p>
 
-<p>No trace dominates (the largest supplies 1&ndash;3%), yet about 72% of individual traces show a real excess at that exact bin, by a median factor of about 5. In the <em>median</em> spectrum of the 179 <code>excursion_band_AI</code> traces, two adjacent bins (204,010 and 204,163&nbsp;Hz) stand at about 5.4&times;10<sup>4</sup>, against roughly 5&ndash;10&times;10<sup>3</sup> in the bins around them &mdash; a line about two bins (~300&nbsp;Hz) wide.</p>
+<p>No trace dominates (the largest supplies 1&ndash;3%), yet about 72% of individual traces show a real excess at that exact bin, by a median factor of about 5. In the <em>median</em> spectrum of the 179 <code>excursion_band_AI</code> traces, two adjacent bins (408,020 and 408,325&nbsp;Hz) stand at about 5.4&ndash;5.6&times;10<sup>4</sup>, against roughly 6&ndash;10&times;10<sup>3</sup> in the bins around them &mdash; a line about two bins (~610&nbsp;Hz) wide.</p>
 
 <figure>
-  <img src="img/psd_three_cuts.png" alt="Average PSD for the three Detector 0 selections; the 204 kHz line is visible in all three">
-  <figcaption>Average PSD for the three Detector 0 selections; the line near 204&nbsp;kHz is visible in all of them.</figcaption>
+  <img src="img/psd_three_cuts.png" alt="Average PSD for the three Detector 0 selections; the 408 kHz line is visible in all three">
+  <figcaption>Average PSD for the three Detector 0 selections; the line near 408&nbsp;kHz is visible in all of them.</figcaption>
 </figure>
 
 <p>Common to most traces but never dominated by one or two is what a population-wide narrowband pickup tone looks like, as opposed to per-event contamination. That it appears in both detectors, more strongly in Detector 1, suggests a source common to both readouts. The data alone cannot say what produces it (a clock, a switching supply, something in the readout); that needs the DAQ and electronics documentation.</p>
 
 <h2>Status / Next Steps</h2>
 <ul>
-  <li>Identify the source of the Detector 1 line comb and of the ~204&nbsp;kHz line from the electronics documentation. The comb is larger than the seven lines flagged here.</li>
+  <li>Identify the source of the Detector 1 line comb and of the ~408&nbsp;kHz line from the electronics documentation. The comb is larger than the seven lines flagged here.</li>
   <li>Check the other detectors and channels, the other dumps (<code>F0002</code>&ndash;<code>F0005</code>) and other series for the same lines, and whether their frequency and amplitude are stable over time.</li>
   <li>Compute noise PSDs per detector (and per channel), not from mixed selections.</li>
   <li>Decide how to treat the lines when a noise PSD is used for optimal filtering (mask, notch, or keep).</li>

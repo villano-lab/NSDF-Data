@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Note 1a: python/ library structure</title>
 <link rel="stylesheet" href="../style.css">
+<script src="../notes-pins.js" defer></script>
 </head>
 <body>
 <div class="wrap note">
@@ -12,7 +13,14 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>python/ library structure: modules, function tables, and status markers</h1>
-<p class="meta"><strong>Note 1a</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 (inventory as of 25 Sept 2026) &middot; Status: <span class="status in-progress">In progress</span></p>
+<p class="meta"><strong>Note 1a</strong> &middot; Author(s): Anthony Villano &middot; 22 Sept 2026 (inventory as of 25 Sept 2026, revised 22 Oct 2026) &middot; Status: <span class="status in-progress">In progress</span></p>
+
+<div class="revised-box"><strong>Caution (2026-10-22): the sample time has changed.</strong> The phonon sample period is 0.8 &micro;s (1.25&nbsp;MHz), not the 1.6 &micro;s (625&nbsp;kHz) this note was written with (see <a href="https://github.com/villano-lab/NSDF-Data/blob/ac55c3c/python/README.md"><em>The sample period</em> in <code>python/README.md</code></a>). What changes in this note:
+<ul>
+  <li><strong>The <code>PulseConfig</code> default is now <code>sample_period_s = 0.8e-6</code></strong> (1.25&nbsp;MHz). The module table and the example below were written with <code>1.6e-6</code>; both are corrected. <code>PulseConfig(sample_period_s=1.6e-6)</code> now emits a <code>UserWarning</code>, and <code>pulse_archive.load_good_events</code> warns for an archive written with 1.6 &micro;s.</li>
+  <li><code>half_max_time_us</code> and <code>frequencies_hz</code> follow the sample period: times in &micro;s are half, and frequencies twice, what the old default gave for the same samples.</li>
+  <li>Unchanged: the inventory of modules and functions, the done / under-development status of each function, and everything counted in samples or counts. The links in this note stay pinned to the commits of 25 Sept, which show the library as this inventory describes it (the later <code>pulse_channels</code> and <code>pulse_archive</code> changes are not in the tables).</li>
+</ul></div>
 
 <p>This is the reference for how the shared pulse library is organized, placed early because every later note uses it. The history of how it came about and how it was validated is in <a href="note-04-pulse-library.html">Note 4</a>.</p>
 
@@ -42,7 +50,7 @@
     <tr><td><code>pulse_operations.py</code></td><td><code>(pulses, config, **params)</code></td><td>new pulses, same pulse-shaped family as the input</td></tr>
     <tr><td><code>pulse_io.py</code></td><td><code>(cdms, detector_ids, channel)</code> and id helpers</td><td>plain arrays and id strings; the only module that touches <code>cdms</code> objects</td></tr>
     <tr><td><code>pulse_archive.py</code></td><td><code>(path, series, detector, channel, ...)</code></td><td>saves or reads a cut&rsquo;s selected ids in an HDF5 file; the only module that needs <code>h5py</code></td></tr>
-    <tr><td><code>pulse_config.py</code></td><td>&mdash;</td><td>the <code>PulseConfig</code> dataclass: <code>pretrigger_samples = 1000</code>, <code>glitch_samples = 10</code>, <code>sample_period_s = 1.6e-6</code> (625&nbsp;kHz)</td></tr>
+    <tr><td><code>pulse_config.py</code></td><td>&mdash;</td><td>the <code>PulseConfig</code> dataclass: <code>pretrigger_samples = 1000</code>, <code>glitch_samples = 10</code>, <code>sample_period_s = 0.8e-6</code> (1.25&nbsp;MHz; this note first said 1.6e-6 (625&nbsp;kHz), which was wrong)</td></tr>
     <tr><td><code>pulse_status.py</code></td><td>&mdash;</td><td>the <code>status</code> decorator and <code>list_statuses(module)</code>, described next</td></tr>
   </tbody>
 </table></div>
@@ -54,7 +62,7 @@ import pulse_io as pio, pulse_cuts as pc
 import pulse_operations as op, pulse_quantities as pq
 from pulse_config import PulseConfig
 
-config = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=1.6e-6)
+config = PulseConfig(pretrigger_samples=500, glitch_samples=10)     # sample_period_s defaults to 0.8e-6
 ids, pulses = pio.load_channel_batch(cdms, pio.filter_by_detector(cdms.get_detector_ids(), 0), 0)
 
 mask = pc.excursion_band_AI(pulses, config)     # under development: emits a UserWarning

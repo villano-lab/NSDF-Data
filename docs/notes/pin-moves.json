@@ -1,12 +1,8 @@
 {
-  "085aa3d/archives": "data_analysis/archives",
   "1958479/R76/analysis_notes/07221203_2025_dump1_noise.ipynb": "data_analysis/R76/notebooks/07221203_2025_dump1_noise.ipynb",
   "322b1b8/R76/analysis_notes/nsdf_r76_availability.py": "data_analysis/R76/notebooks/nsdf_r76_availability.py",
   "322b1b8/R76/nsdf_r76_series.csv": "data_analysis/R76/series_lists/nsdf_r76_series.csv",
-  "74639f5/R76/analysis_notes/07221203_2025_dump1_bstd_time.ipynb": "data_analysis/R76/notebooks/07221203_2025_dump1_bstd_time.ipynb",
-  "850500f/R76/analysis_notes/good_pulses_overlay.ipynb": "data_analysis/R76/notebooks/good_pulses_overlay.ipynb",
   "8917088/R76/DataSeriesList.xlsx": "data_analysis/R76/series_lists/DataSeriesList.xlsx",
-  "8b0ab40/R76/analysis_notes/07221203_2025_dump1_noise.ipynb": "data_analysis/R76/notebooks/07221203_2025_dump1_noise.ipynb",
   "c3d6754/R76/analysis_notes/07221203_2025_dump2_pulse.ipynb": "data_analysis/R76/notebooks/07221203_2025_dump2_pulse.ipynb",
   "c892af4/R76/am_lead_series.csv": "data_analysis/R76/series_lists/am_lead_series.csv",
   "c892af4/R76/analysis_notes/dump1_noise_pulses.ipynb": "data_analysis/R76/notebooks/dump1_noise_pulses.ipynb",

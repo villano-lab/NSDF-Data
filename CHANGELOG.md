@@ -4,6 +4,14 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-23
+
+**Students, please:** the library in `python/` is now installed by `requirements.txt`, and two results changed, so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python python/check_environment.py`, which should say `Environment OK`. Python is still 3.12, so you do not need a new environment. Until you reinstall, the check warns that `goldpan` is not installed. **If your notebook sets `sample_period_s=1.6e-6`, remove it:** the default is now 0.8 us (a warning appears when 1.6 us is passed), so times and energies from your earlier runs were twice too large.
+
+The pulse library in `python/` is installable (`goldpan` 0.1.0, with its own version, independent of this one), and the guide steps are checked again in CI. The phonon channels sample every 0.8 us, not 1.6 us, and the channel map is now the Side-2 readout's six sensors; the exploratory notebooks, Note 9 and Notes 1a, 2a, 3, 4, 6 and 7 are corrected and carry a red box saying so. Student notes get a one-command check (`tools/check_note.py`), a number checker, "latest" links beside pinned links and a suggested note number on pull requests; the guides gained a plot-and-caption section, a second-computer section, a picture of the Sync Changes button and copy buttons on the developer quick-sheets. CI now also builds the Codespaces dev container.
+
+`goldpan` 0.1.0: the first version of the library as an installable package (the flat `pulse_*` modules, unchanged names); the sample-period default and the channel map changed as above.
+
 ### Added
 
 - **A CI check builds the Codespaces dev container (issue 50).** New workflow `.github/workflows/devcontainer.yml` builds `.devcontainer/devcontainer.json` (the Python 3.12 image and its `pip install -r requirements.txt`) and checks inside it that the pulse library imports from any folder, `check_environment.py --strict` says OK, `nsdf-cli` runs, the `darkmatter_cli_env` Jupyter kernel is registered and the library tests pass. It runs on pull requests and pushes that touch the dev container, `requirements.txt` or `python/`, and every Monday. First run: Python 3.12.11, 9 packages match, `nsdf-cli` 0.6.0, 188 tests passed.
@@ -209,7 +217,8 @@ First release. It gathers the state of the repository when semantic versioning a
 
 - The pinned `nsdf-dark-matter-cli` version: 0.3.1 does not exist on PyPI; 0.5.0 is the working version.
 
-[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.8.0...develop
+[Unreleased]: https://github.com/villano-lab/NSDF-Data/compare/v0.9.0...develop
+[0.9.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/villano-lab/NSDF-Data/compare/v0.5.0...v0.6.0

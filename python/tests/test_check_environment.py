@@ -87,3 +87,29 @@ def test_expected_python_matches_the_setup_guide():
 def test_parse_requirements_ignores_option_lines():
     text = "\n".join(["numpy==2.2.6", "-e ./python[archive]", "--index-url https://example.org/simple", "pytest"])
     assert ce.parse_requirements(text) == {"numpy": "2.2.6", "pytest": None}
+
+
+def _library_requirements(tmp_path, version="0.1.0"):
+    (tmp_path / "python").mkdir()
+    toml = "\n".join(["[project]", 'name = "demo-pulse-library"', 'version = "%s"' % version])
+    (tmp_path / "python" / "pyproject.toml").write_text(toml, encoding="utf-8")
+    req = tmp_path / "requirements.txt"
+    req.write_text("\n".join(["pytest", "# the library", "-e ./python[archive]"]), encoding="utf-8")
+    return req
+
+
+def test_library_pins_reads_name_and_version_from_the_editable_folder(tmp_path):
+    assert ce.library_pins(_library_requirements(tmp_path, "0.3.2")) == {"demo-pulse-library": "0.3.2"}
+
+
+def test_library_pins_is_empty_without_an_editable_line_or_file(tmp_path):
+    (tmp_path / "requirements.txt").write_text("numpy==2.2.6", encoding="utf-8")
+    assert ce.library_pins(tmp_path / "requirements.txt") == {}
+    assert ce.library_pins(tmp_path / "missing.txt") == {}
+
+
+def test_check_warns_when_the_pulse_library_is_not_installed(tmp_path):
+    out = io.StringIO()
+    problems = ce.check(requirements=_library_requirements(tmp_path), stream=out)
+    assert any("demo-pulse-library is not installed (requirements.txt wants 0.1.0)" in p for p in problems)
+    assert out.getvalue().startswith("WARNING")

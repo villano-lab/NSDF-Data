@@ -19,6 +19,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Changed
 
+- **The environment check also checks that the pulse library is installed.** `python/check_environment.py` (and `Environment OK` in *Updating your setup*) now reads the library's name and version from `python/pyproject.toml`, through the `-e ./python[archive]` line of `requirements.txt`, and warns "nsdf-data-library is not installed (requirements.txt wants 0.1.0)" when `pip install -r requirements.txt` has not been run since the library became installable. The README and `AGENTS.md` now say that an installed library needs only a plain `import`, and keep the `sys.path` snippet as the fallback; the notebooks and guide 2 still use the snippet, to be changed after students have updated.
 - `tools/check_note.py` no longer crashes on Windows when a note contains characters a cp1252 console cannot print (arrows, Greek letters, minus signs): it prints UTF-8, so `PYTHONUTF8=1` is not needed any more. AGENTS.md says that the channel names depend on the readout (Side-2 readout: six sensors, all on Side 2). Student guide 3 (version 24) says that a box labelled Revised, Correction, Update or Warning is red.
 - Front page: *Complete (date), revised (date)* wraps onto two lines in the status column instead of running off the table.
 - Note 9: Figure 1 is a generic detector layout (the numbers of randoms that pass each sensor's cut moved into the channel table above it), and a new Appendix C draws both faces of the detector (Side 1 not read out).

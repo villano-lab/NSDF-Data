@@ -216,7 +216,7 @@ def index_rows(notes):
       <td>{html.escape(h['title'])}</td>
       <td class="desc">{html.escape(h['description'])}</td>
       <td class="kw">{html.escape(h['keywords'])}</td>
-      <td><span class="status {STATUSES[h['status']]}">{html.escape(status_text(h))}</span></td>
+      <td><span class="status {STATUSES[h['status']]}">{html.escape(status_text(h)).replace(', revised', ',<br>revised')}</span></td>
     </tr>"""))
     return rows
 

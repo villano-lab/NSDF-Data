@@ -33,6 +33,8 @@ Densities</a></li>
 the strictest cut (every working channel)</a></li>
   <li><a href="#appendix-b-the-cut-on-pcs2-and-the-cut-on-pas2">Appendix B: the
 cut on PCS2 and the cut on PAS2</a></li>
+  <li><a href="#appendix-c-both-faces-of-the-detector">Appendix C: both faces of
+the detector</a></li>
 </ol>
 </nav>
 
@@ -75,7 +77,7 @@ counts (the cuts, the 101 and 141 events (the strictest cut’s 31 is now
 other than 4 and 6 (they are identical pixel for pixel), the sample
 numbers quoted for the events). <!-- numbers-ok --></li>
 <li>The Code repository section is pinned to the commit of the latest
-re-run (<code>21b4669</code> for the notebooks, figures and file,
+re-run (<code>18c4bab</code> for the notebooks, figures and file,
 <code>ade25df</code> for the library). <!-- numbers-ok --></li>
 </ul>
 </div>
@@ -100,11 +102,12 @@ What changed in this note: <!-- numbers-ok --></p>
 1) are as before. Everything keyed by (detector, channel), the cuts, the
 event numbers and counts, is unchanged. <!-- numbers-ok --></li>
 <li><strong>No Side 1.</strong> Figure 1 shows one face with six regions
-instead of two faces with seven working channels; the colours of the
-other figures are by board (blue DCRC3, orange DCRC1), and the by-side
-figures (4, 6) are by board; Figures 3 and 8, and the text about the cut
-“on one channel of each side”, are now about one channel on each board.
-<!-- numbers-ok --></li>
+instead of two faces with seven working channels (it is now a generic
+layout, the counts of randoms are in the table above it; Appendix C,
+new, draws both faces); the colours of the other figures are by board
+(blue DCRC3, orange DCRC1), and the by-side figures (4, 6) are by board;
+Figures 3 and 8, and the text about the cut “on one channel of each
+side”, are now about one channel on each board. <!-- numbers-ok --></li>
 <li><strong>The cut we use is made on PAS2</strong> (the old PBS1), a
 channel of DCRC3. Its 101 events are the same. <!-- numbers-ok --></li>
 <li><strong>PBS2 is gone as a phonon channel.</strong> The caveat about
@@ -131,7 +134,7 @@ board order and the Side-2 readout of the December series are inferred
 </div>
 <h2 id="code-repository">Code repository</h2>
 <p>All code is pinned to two commits: buddy’s notebooks, the saved HDF5
-file and the figures to <code>21b4669</code>, the commit of the re-run
+file and the figures to <code>18c4bab</code>, the commit of the re-run
 with the corrected sample period (0.8 µs) and the channel map of the
 Side-2 readout, and the library in <code>python/</code> to
 <code>ade25df</code>. Each link shows the file as it was when the
@@ -142,25 +145,28 @@ the file may have moved since (see
 today.</p>
 <ul>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>:
 the spectra of every channel from the <code>clean_randoms</code> cut,
 and the saved HDF5 file <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
 (Noise Power Spectral Densities).</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>:
 how good the PCS2 cut (the channel names are explained under Data and
 setup) is on the other channels, and the definition of the cut we use
 (<code>clean_randoms</code>) (Selection of Randoms in All Channels, Data
 and setup for the timing of the randoms, Appendices A and B).</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/detector-faces-buddy.ipynb"><code>detector-faces-buddy.ipynb</code></a>:
+the drawing of both faces of the detector (Appendix C).</li>
+<li><a
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>:
 the channel map and the noise spectra of the 34 events of the strictest
 cut (Data and setup, Appendix A).</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/extract_odb_facts.py"><code>extract_odb_facts.py</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/extract_odb_facts.py"><code>extract_odb_facts.py</code></a>
 and <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/odb-facts-07220916_2200.json"><code>odb-facts-07220916_2200.json</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/odb-facts-07220916_2200.json"><code>odb-facts-07220916_2200.json</code></a>:
 the run configuration of series <code>07220916_2200</code> (board order,
 QET biases, random rates) read from its raw file, which is not in the
 repository, and the numbers it gave; section 12 of
@@ -182,7 +188,7 @@ and the PSD.</li>
 49 seconds); random triggers are snapshots of our detector traces taken
 at any time (rather than when a pulse occurs) to sample the noise
 environment. The line in the third code block of the <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>
 notebook shows the randoms cut defined as
 <code>quiet_noise = pc.excursion_band(pulses, config_500) &amp; (np.log10(bstd_500) &lt; 0.5)</code>
 in addition to selecting the trigger specification for random events.
@@ -266,7 +272,7 @@ input.</li>
 <p>The mapping is kept in <a
 href="https://github.com/villano-lab/NSDF-Data/blob/ade25df/python/pulse_channels.py"><code>python/pulse_channels.py</code></a>,
 marked as under development, and section 7 of <em>that</em> notebook, <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>,
 gives the evidence.</p>
 <p><strong>Channel names.</strong> In the text a channel is written as
 P, the letter of its sensor, and its side: PCS2 is the phonon channel C
@@ -276,10 +282,11 @@ the dump numbers it as detector 0, channel 0. The six sensors, all on
 Side 2:</p>
 <table>
 <colgroup>
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -287,6 +294,8 @@ Side 2:</p>
 <th style="text-align: center;">Library and figures</th>
 <th style="text-align: center;">Dump (detector / channel)</th>
 <th style="text-align: center;">Board and input</th>
+<th style="text-align: center;">Randoms that pass its own quiet-noise
+cut</th>
 </tr>
 </thead>
 <tbody>
@@ -295,36 +304,42 @@ Side 2:</p>
 <td style="text-align: center;"><code>Side2pC</code></td>
 <td style="text-align: center;">0 / 0</td>
 <td style="text-align: center;">DCRC1 pA</td>
+<td style="text-align: center;">141</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">PFS2</td>
 <td style="text-align: center;"><code>Side2pF</code></td>
 <td style="text-align: center;">0 / 1</td>
 <td style="text-align: center;">DCRC1 pB</td>
+<td style="text-align: center;">107</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">PES2</td>
 <td style="text-align: center;"><code>Side2pE</code></td>
 <td style="text-align: center;">0 / 3</td>
 <td style="text-align: center;">DCRC1 pD</td>
+<td style="text-align: center;">109</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">PBS2</td>
 <td style="text-align: center;"><code>Side2pB</code></td>
 <td style="text-align: center;">1 / 0</td>
 <td style="text-align: center;">DCRC3 pA</td>
+<td style="text-align: center;">161</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">PAS2</td>
 <td style="text-align: center;"><code>Side2pA</code></td>
 <td style="text-align: center;">1 / 1</td>
 <td style="text-align: center;">DCRC3 pB</td>
+<td style="text-align: center;">101</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">PDS2</td>
 <td style="text-align: center;"><code>Side2pD</code></td>
 <td style="text-align: center;">1 / 3</td>
 <td style="text-align: center;">DCRC3 pD</td>
+<td style="text-align: center;">180</td>
 </tr>
 </tbody>
 </table>
@@ -337,8 +352,10 @@ src="img/student-psd-clean-randoms-07221203-2025/channel-status-07221203_2025_F0
 2</strong>, the face that is read out in this series (as seen after
 flipping the detector over). Each region is coloured by its readout
 board, DCRC1 (orange) or DCRC3 (blue), and labelled with its letter, its
-board and input, and the number of randoms that pass its own quiet-noise
-cut. The other six inputs are not on the detector.</p>
+board and input (the number of randoms that pass each sensor’s own
+quiet-noise cut is in the table above). The other six inputs are not on
+the detector. Appendix C draws the whole detector, with the face that is
+not read out.</p>
 <h2 id="the-question">The question</h2>
 <p>Based on this series’ Beginning of Run Randoms (BORR), what is our
 best estimate for the noise environment of the experimental setup? The
@@ -405,7 +422,7 @@ a free vertical scale. Blue is DCRC3, orange is DCRC1, and red would
 mark a trace that contains a pulse. The 6 tiles with grey text are the
 inputs that are not sensors.</p>
 <p>While setting this up in the Jupyter notebook <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>,
 I checked if there were similar traces left in the DCRC1 channels after
 selecting on PAS2 (DCRC3), just like we saw in the DCRC3 channels after
 selecting on PCS2 (DCRC1). <a
@@ -505,7 +522,7 @@ variance, if the trace has zero mean). Here
 dropped, so there are 2044 bins, from 306 Hz (the first non-zero bin) to
 625 kHz; the zero-frequency bin is not plotted. This is the convention
 used in the notebook (<a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>);
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>);
 Note 3 plotted the raw
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">|</mo><mi>X</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi>k</mi><mo stretchy="true" form="postfix">]</mo></mrow><mo stretchy="true" form="postfix">|</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">|X[k]|^2</annotation></semantics></math>
 instead, which differs from
@@ -643,7 +660,7 @@ pretrigger window (<code>pc.excursion_band</code>) and has
 dump F0001 it keeps <strong>101 of the 1008 randoms</strong>, none with
 a pulse or a big tail in any channel (Appendix B). It is defined by the
 function <code>clean_randoms_cut</code> in <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>
 (section 13), and the code below is that function.
 <code>clean_randoms</code> is a True/False value for every event of the
 dump; because the three boards share their events in the same order, the
@@ -688,8 +705,8 @@ development, because it assumes the trigger labels are swapped (Note
 <p>I’ve made the current best estimate of the noise spectrum
 specifically focusing on the series <code>07221203_2025</code>. The
 spectra are accessible via <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
-file (pinned to <code>21b4669</code>, 435 kB), and can be accessed
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/psd-clean-randoms-07221203_2025_F0001.h5"><code>psd-clean-randoms-07221203_2025_F0001.h5</code></a>
+file (pinned to <code>18c4bab</code>, 435 kB), and can be accessed
 by:</p>
 <pre class="python"><code>import h5py
 import numpy as np
@@ -717,7 +734,7 @@ counts/√Hz) and its standard error (<code>asd_sem</code>), and the PSD
 it is the square root of (<code>psd_mean</code> and
 <code>psd_sem</code>, in counts²/Hz); the layout of the file is
 described in section 7 of <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>,
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/psd-clean-randoms-buddy.ipynb"><code>psd-clean-randoms-buddy.ipynb</code></a>,
 which also makes them. The caveats above apply.</p>
 <h2 id="next-steps">Next steps</h2>
 <p><strong>Next steps.</strong> There are two possibilities:</p>
@@ -757,11 +774,11 @@ fall in the band on each of the six channels, while the
 <code>log10(bstd) &lt; 0.5</code> condition keeps 770 to 895.</p>
 <p>Figure 5 shows the 34 traces themselves in every channel (section 12
 of <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>):
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/chan0-cut-on-all-channels-buddy.ipynb"><code>chan0-cut-on-all-channels-buddy.ipynb</code></a>):
 none of them has a pulse or a ramp, and they all look like noise, but
 there are only 34 of them. Figure 6 shows their noise amplitude spectral
 density, the mean of the 34 traces in each channel (section 11 of <a
-href="https://github.com/villano-lab/NSDF-Data/blob/21b4669/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>).
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/noise-psd-randoms-buddy.ipynb"><code>noise-psd-randoms-buddy.ipynb</code></a>).
 With so few traces the spectra are jagged from bin to bin, and no spread
 between the traces is drawn. This is why a cut that is not required to
 hold on all channels, and so keeps more traces, is worth looking
@@ -832,6 +849,30 @@ tile per channel, with the traces drawn over each other with
 transparency, baseline-subtracted. Blue is DCRC3 and orange is DCRC1; no
 trace contains a pulse. The 6 tiles with grey text are the inputs that
 are not sensors.</p>
+<h2 id="appendix-c-both-faces-of-the-detector">Appendix C: both faces of
+the detector</h2>
+<p>The detector has two faces with the same six phonon sensors each (A
+the outer ring, B the second ring, C, D and E the three sectors of the
+middle region, F the centre disc). In the Side-2 readout of this series
+only the sensors of Side 2 are connected to a readout board, so Figure 1
+shows one face. Figure 9 draws both: Side 2 as in Figure 1, and Side 1,
+which is not read out, greyed out and labelled with the board input each
+of its sensors would use in the Side-1 readout of the same Setup table.
+The drawing is made by <a
+href="https://github.com/villano-lab/NSDF-Data/blob/18c4bab/data_analysis/R76/student/buddy/detector-faces-buddy.ipynb"><code>detector-faces-buddy.ipynb</code></a>
+from <code>python/pulse_channels.py</code>
+(<code>sensor_channels(readout=2)</code> and
+<code>sensor_channels(readout=1)</code>).</p>
+<p><img
+src="img/student-psd-clean-randoms-07221203-2025/detector-faces-07221203_2025_F0001.png" /></p>
+<p><strong>Figure 9: Both faces of the detector S104 and the six sensors
+read in the Side-2 readout.</strong> Left: Side 1 (face 1), not read out
+in this series (hatched; the board inputs in grey are those of the
+Side-1 readout, which this series does not use). Right: Side 2 (face 2,
+seen after flipping the detector over, as in the wiki figure), with each
+sensor coloured by its readout board, DCRC1 (orange, HV2) or DCRC3
+(blue, HV1), and labelled with its letter, board and input, as in Figure
+1.</p>
 
 
 <footer><a href="../index.html">&larr; All notes</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>

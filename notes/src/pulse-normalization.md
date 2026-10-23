@@ -9,13 +9,23 @@ description: "Want a refresher on how to analyze the SQUID readout chain for Sup
 ---
 
 ::: callout
+**WARNING (22 October 2026): the sample time has changed.** The phonon sample period is **0.8 µs (1.25 MHz), not 1.6 µs (625 kHz)**; a 4096-sample trace is 3.28 ms (see *The sample period* in `python/README.md` for the evidence). The first version of this note and its notebooks used 1.6 µs. What changed in this note: <!-- numbers-ok -->
+
+- Every time and every integral halved. The worked example (event 11486, channel `Side2pF`) now peaks at 59 µs after the trigger (it was 118 µs), the charge in the integration window is 48.3 pC (it was 96.6 pC, over a window that is now 1.5 ms instead of 3 ms of the same samples), and the energies are **0.30 keV** in the channel (was 0.60), **1.15 keV** over the six sensors (was 2.30), **3.6 keV** of phonon energy (was 7.2) and 0.13 keV if it were an electron recoil (was 0.25). Figure 2 is replaced. <!-- numbers-ok -->
+- The time windows of the notebooks were halved so that they cover the same samples: the pretrigger fit ends 75 µs before the trigger (94 samples; it was written as 150 µs), the baseline tail starts 1.5 ms after the trigger, the plot windows are from -200 to 750 µs. <!-- numbers-ok -->
+- The noise check: frequencies double and the amplitude spectral density is divided by 1.41, so the flat part starts at 200 kHz (it was 100 kHz), the low band is 2 to 20 kHz (it was 1 to 10 kHz), and the values are about 1.0 $\times 10^{-11}$ and 3 to 5 $\times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}$. <!-- numbers-ok -->
+- The *sample period* bullet of the unsettled list is settled and says so. <!-- numbers-ok -->
+- Unchanged: the selection (the same 48 events), every number in samples or counts, the counts-to-current conversion (170 counts per µA) and the Ib-Is check. <!-- numbers-ok -->
+:::
+
+::: callout
 **WARNING (22 October 2026): the channel map has changed.** The readout of this series is the Side-2 readout, so the detector has **six sensors, all on Side 2** (`Side2pA` to `Side2pF`), and DCRC4 pA is the trigger input of the NaI array, not a sensor; the first version of this note used the wrong column of the Setup table and named seven working channels on both sides. What changed in this note:
 
 - The new paragraph *The channels* (in Data and setup) gives the map; the bullet *Which channels are QET channels* of the unsettled list is gone, because it is settled.
 - `VGAGain` 5 of the September 2022 ODB is on `Side2pB` and `Side2pD` (DCRC3 pA and pD), not on `Side1pE` and `Side2pE`.
 - The noise comparison uses the six sensors (four flat above 200 kHz, not five of seven).
 - The worked example is the same event and channel (`Side2pF`, event 11486), and its numbers (0.30 keV in the channel, 1.15 keV over the six sensors, 3.6 keV of phonon energy) are unchanged, because the NaI input was already left out of the sum; the table of the six channels in the notebook has the new names (`Side1pF` is now `Side2pE`, `Side1pE` is `Side2pB`, `Side1pB` is `Side2pA`, `Side2pE` is `Side2pD`) and no row for the NaI input.
-- Unchanged: the selection (the same 48 events, the NaI input never carried the largest rise height of a selected event), the counts-to-current conversion, the Ib-Is check of `Side2pC` (its name and its Run 75 numbers are unchanged), the sample period. <!-- numbers-ok -->
+- Unchanged: the selection (the same 48 events, the NaI input never carried the largest rise height of a selected event), the counts-to-current conversion, the Ib-Is check of `Side2pC` (its name and its Run 75 numbers are unchanged). The sample time is the subject of the other box. <!-- numbers-ok -->
 :::
 
 ## Code repository

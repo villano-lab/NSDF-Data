@@ -8,6 +8,16 @@ keywords: "pulse, normalization, current, squid"
 description: "Want a refresher on how to analyze the SQUID readout chain for SuperCDMS detectors and include tests (e.g. IbIs) that allow us to get the absolutely normalized TES output current. Scan the UMN Wiki for records of such tests for R76 data."
 ---
 
+::: callout
+**WARNING (22 October 2026): the channel map has changed.** The readout of this series is the Side-2 readout, so the detector has **six sensors, all on Side 2** (`Side2pA` to `Side2pF`), and DCRC4 pA is the trigger input of the NaI array, not a sensor; the first version of this note used the wrong column of the Setup table and named seven working channels on both sides. What changed in this note:
+
+- The new paragraph *The channels* (in Data and setup) gives the map; the bullet *Which channels are QET channels* of the unsettled list is gone, because it is settled.
+- `VGAGain` 5 of the September 2022 ODB is on `Side2pB` and `Side2pD` (DCRC3 pA and pD), not on `Side1pE` and `Side2pE`.
+- The noise comparison uses the six sensors (four flat above 200 kHz, not five of seven).
+- The worked example is the same event and channel (`Side2pF`, event 11486), and its numbers (0.30 keV in the channel, 1.15 keV over the six sensors, 3.6 keV of phonon energy) are unchanged, because the NaI input was already left out of the sum; the table of the six channels in the notebook has the new names (`Side1pF` is now `Side2pE`, `Side1pE` is `Side2pB`, `Side1pB` is `Side2pA`, `Side2pE` is `Side2pD`) and no row for the NaI input.
+- Unchanged: the selection (the same 48 events, the NaI input never carried the largest rise height of a selected event), the counts-to-current conversion, the Ib-Is check of `Side2pC` (its name and its Run 75 numbers are unchanged), the sample period. <!-- numbers-ok -->
+:::
+
 ## Code repository
 
 All the code of this note is in the repository `villano-lab/NSDF-Data`, in `data_analysis/R76/notebooks/pulse-normalization/` and in `python/`. Every link below is pinned to the commit `bab8e4d`: it shows the file as it was when the results of this note were made, which may be older than the latest version, and the file may have moved since (see `data_analysis/README.md`). The notebooks read dump 1 of series `07221203_2025` from `~/idx` (see Data and setup).
@@ -27,6 +37,8 @@ This study is partly a search through our historical records and partly an expos
 ![readout circuit of SuperCDMS](img/tes-squid-readout-circuit.png)
 
 **Figure 1: The TES bias and SQUID readout circuit.** The bias current $I_\mathrm{b}$ flows down from the top through two parallel branches to ground: the shunt resistor $R_\mathrm{sh}$, and the TES in series with the parasitic resistance $R_\mathrm{par}$ and the input inductor $L_\mathrm{i}$. $L_\mathrm{i}$ is coupled (mutual inductance $M$) to the SQUID, which is biased with a small current $I_\mathrm{sq}$. The amplifier reads the SQUID voltage, and its output $V_\mathrm{out}$ returns through the feedback resistor $R_\mathrm{fb}$ to the feedback coil $L_\mathrm{f}$ (mutual inductance $M_\mathrm{f}$) to hold the SQUID flux fixed, so $V_\mathrm{out}$ is proportional to the TES current.
+
+**The channels.** The readout of series `07221203_2025` is the Side-2 readout [[7, 9]](#references): the detector has **six sensors, all on Side 2** (`Side2pA` to `Side2pF`, one for every region of the face), read by two DCRC boards. DCRC1 inputs pA, pB, pD are `Side2pC`, `Side2pF`, `Side2pE`; DCRC3 inputs pA, pB, pD are `Side2pB`, `Side2pA`, `Side2pD`; the pC inputs are not connected; and DCRC4 pA, the channel with a baseline of 7952 counts and no pulses, is the **trigger input of the NaI array**, not a sensor. The map is in `python/pulse_channels.py`; it is taken from the Setup table of the Run 76 summary (the columns *Label* and *HV output, Side2-readout*), and the dump's detectors 0, 1, 2 are inferred to be DCRC1, DCRC3, DCRC4. <!-- numbers-ok -->
 
 **Tests we run on a channel** (the characterization tests of SuperCDMS [[1]](#references); this list will grow). The Confluence pages describe the SNOLAB towers, with a shunt of $R_\mathrm{sh} = 5\ \mathrm{m\Omega}$ and different settings from the UMN runs (8.0 mΩ in the Run 75 numbers used below); the definitions are the same. <!-- numbers-ok -->
 
@@ -69,14 +81,13 @@ A direct calibration of the whole chain exists in principle: the DCRC signal gen
 
 ### A check against typical noise
 
-The Confluence page on noise settings [[1]](#references) quotes typical noise levels of $10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}$ (normal), $10^{-10}$ (transition) and $10^{-10}$ (superconducting). Our amplitude spectral density of the clean randoms (Note 9) is flat above 200 kHz at 1.7 to 1.8 $\times 10^{-3}$ counts/$\sqrt{\mathrm{Hz}}$ in five of the seven channels, and 4.7 $\times 10^{-3}$ to 8.5 $\times 10^{-3}$ counts/$\sqrt{\mathrm{Hz}}$ between 2 and 20 kHz (for the sample period of 0.8 µs). With 170 counts per µA these are about $1.0$ to $1.1 \times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}$ and $3$ to $5 \times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}$. That is the same order as the typical values, which supports the conversion to within a factor of a few at most; the Confluence values are for other detectors and electronics, so this cannot test the gain more closely. <!-- numbers-ok -->
+The Confluence page on noise settings [[1]](#references) quotes typical noise levels of $10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}$ (normal), $10^{-10}$ (transition) and $10^{-10}$ (superconducting). Our amplitude spectral density of the clean randoms (Note 9) is flat above 200 kHz at 1.7 to 1.75 $\times 10^{-3}$ counts/$\sqrt{\mathrm{Hz}}$ in four of the six sensors (narrow lines raise the means of the other two, `Side2pB` and `Side2pD`, to 2.0 and 2.1 $\times 10^{-3}$), and 4.6 $\times 10^{-3}$ to 8.4 $\times 10^{-3}$ counts/$\sqrt{\mathrm{Hz}}$ between 2 and 20 kHz (for the sample period of 0.8 µs; the NaI input is not a sensor and is left out). With 170 counts per µA these are about $1.0 \times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}$ and $3$ to $5 \times 10^{-11}\ \mathrm{A}/\sqrt{\mathrm{Hz}}$. That is the same order as the typical values, which supports the conversion to within a factor of a few at most; the Confluence values are for other detectors and electronics, so this cannot test the gain more closely. <!-- numbers-ok -->
 
 ### What is not settled
 
 - **The 10.5.** We found no derivation or independent measurement of the loop gain on the wiki, and our reading of it as $M/M_\mathrm{f}$ is an interpretation. <!-- numbers-ok -->
-- **Which gain settings apply.** The ODB of series `07220916_2200` (16 September 2022) has `VGAGain` 5 on two channels of DCRC3 (`Side1pE` and `Side2pE`) and 2 on the others, and `PGAGain` 1 on all of them. We could not establish how these fields map onto $G_\mathrm{DCRC}$ and $G_\mathrm{driver}$ of the calibration code, so the 170 counts per µA may be wrong by a factor 2.5 for those two channels. The settings of the series used here (`07221203_2025`, started at 20:25 on 3 December 2022 [[8]](#references)) have to be read from its own ODB. <!-- numbers-ok -->
+- **Which gain settings apply.** The ODB of series `07220916_2200` (16 September 2022) has `VGAGain` 5 on two channels of DCRC3 (inputs pA and pD, which are `Side2pB` and `Side2pD`) and 2 on the others, and `PGAGain` 1 on all of them. We could not establish how these fields map onto $G_\mathrm{DCRC}$ and $G_\mathrm{driver}$ of the calibration code, so the 170 counts per µA may be wrong by a factor 2.5 for those two channels. The settings of the series used here (`07221203_2025`, started at 20:25 on 3 December 2022 [[8]](#references)) have to be read from its own ODB. <!-- numbers-ok -->
 - **The sample period is settled.** The calibration code uses 0.8 µs per sample [[7]](#references), and so do the run diaries, the ODB and the NaI trigger pulse (see *The sample period* in `python/README.md`). The notebooks of this note used a wrong 1.6 µs until 22 October 2026; all times and energies here are for 0.8 µs, half of what the first version of this note gave. <!-- numbers-ok -->
-- **Which channels are QET channels.** `Side2pB` (DCRC4, channel pA) is probably not a QET channel in this series: the wiki's diaries of September and October 2022 use DCRC4pA as the input of the NaI trigger [[9]](#references). No QET current exists for it.
 
 ## Ib-Is curves
 
@@ -84,7 +95,7 @@ An IbIs scan gives the QET-branch current $I_\mathrm{s}$ for each bias current $
 
 $$R_\mathrm{TES} = R_\mathrm{sh}\left(\frac{I_\mathrm{b}}{I_\mathrm{s}} - 1\right) - R_\mathrm{par} ,$$
 
-and the power in the TES is $P = I_\mathrm{s}^2 R_\mathrm{TES}$; $\mathrm{d}P/\mathrm{d}I$ follows from the curve. The only IbIs curves on the wiki are plots from Run 75 (February to April 2022, about 42 mK) [[2, 3]](#references): $I_\mathrm{s}$ against $I_\mathrm{b}$, $R_\mathrm{TES}$ against $I_\mathrm{b}$, $P$ against $I_\mathrm{b}$, and $R_\mathrm{TES}$ against $\mathrm{d}P/\mathrm{d}I$, for all measured channels except `Side1pF`. The data behind the plots are not in the archive, and there are no IbIs curves for Run 76 or for the December 2022 series. <!-- numbers-ok -->
+and the power in the TES is $P = I_\mathrm{s}^2 R_\mathrm{TES}$; $\mathrm{d}P/\mathrm{d}I$ follows from the curve. The only IbIs curves on the wiki are plots from Run 75 (February to April 2022, about 42 mK) [[2, 3]](#references): $I_\mathrm{s}$ against $I_\mathrm{b}$, $R_\mathrm{TES}$ against $I_\mathrm{b}$, $P$ against $I_\mathrm{b}$, and $R_\mathrm{TES}$ against $\mathrm{d}P/\mathrm{d}I$, for all measured channels except `Side1pF` (all six sensors of our series, `Side2pA` to `Side2pF`, are in the plots). The data behind the plots are not in the archive, and there are no IbIs curves for Run 76 or for the December 2022 series. <!-- numbers-ok -->
 
 ### A check of the conversion against the curves
 

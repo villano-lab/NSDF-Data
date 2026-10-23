@@ -68,13 +68,20 @@ objects -- `load_channel_batch` turns a list of `detector_id`s into a plain
 `(n_pulses, n_samples)` array for everything else to consume.
 
 `pulse_channels.py` says which physical channel a dump's `(detector, channel)`
-pair is, from the Run 76 Setup table: `channel_name(0, 2)` is `'Side1pC'`,
-`channel_label(0, 2)` is `'Side1pC (DCRC1, Face3pC)'`, `find_channel('Side1pC')`
-is `(0, 2)`, and `all_channels()` lists the 12. It needs no data and no extra
-package. It is tagged `under_development`: the dump's detectors 0, 1, 2 are
-inferred to be the boards DCRC1, DCRC3, DCRC4, and the channel order within a
-board is assumed (evidence and caveats: section 7 of
-`noise-psd-randoms-buddy.ipynb` on the `student-buddy` branch).
+pair is, from the Run 76 Setup table, for **Side-2 readout** (the December 2022 series;
+`readout=1` gives the Side-1 map): `channel_name(0, 0)` is `'Side2pC'`,
+`channel_label(0, 0)` is `'Side2pC (DCRC1 pA, HV2 pA)'`, `find_channel('Side2pC')`
+is `(0, 0)`, `all_channels()` lists the 12 inputs and `sensor_channels()` the 6 that
+are QET channels (the other six: DCRC4 pA is the NaI trigger input, five inputs are
+not connected). It needs no data and no extra package. It is tagged
+`under_development`: the dump's detectors 0, 1, 2 are inferred to be the boards DCRC1,
+DCRC3, DCRC4, and the channels 0 to 3 are assumed to be the board inputs pA to pD.
+The module docstring explains which columns of the table are used. **Until 2026-10-22
+it used the wrong column** (*DCRC (2-sided)*) and named twelve sensors on two sides;
+for Side-2 readout there are six, all on Side 2. What changed, by dump channel `(detector, channel)`:
+(0, 3) was `Side1pF` and is `Side2pE`; (1, 0) was `Side1pE`, now `Side2pB`; (1, 1) was `Side1pB`, now
+`Side2pA`; (1, 3) was `Side2pE`, now `Side2pD`; (2, 0) was `Side2pB`, now the NaI trigger input;
+(0, 0) `Side2pC` and (0, 1) `Side2pF` are as before; the other inputs are not sensors.
 
 `pulse_archive.py` is a fifth, separate module: it persists a cut's *result*
 (which `detector_id`s it selected, for a given series/detector/channel) to an

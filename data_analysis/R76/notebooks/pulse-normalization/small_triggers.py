@@ -4,8 +4,8 @@ Shared by `small-physics-triggers-07221203_2025.ipynb` (which holds its own copy
 functions, from the first version of the study) and `detector-layout-small-triggers-07221203_2025.ipynb`.
 Exploration code: not part of the library in `python/`.
 
-The drift-robust rise height: fit a straight line to the pretrigger samples (after the glitch, ending 150 us
-before the trigger because the pulses start to rise up to ~80 us before it), extend it over the first 200
+The drift-robust rise height: fit a straight line to the pretrigger samples (after the glitch, ending 75 us
+before the trigger because the pulses start to rise up to ~40 us before it), extend it over the first 200
 samples after the trigger, subtract it, smooth with an 8-sample moving average, and take the largest value.
 A drift continues along the line and gives no excess; a pulse rises at the trigger and does.
 """
@@ -13,8 +13,8 @@ import numpy as np
 
 WINDOW = 200          # samples after the trigger in which the rise height is measured
 SMOOTH = 8            # moving-average length (samples)
-FIT_GAP = 94          # the line is fitted up to this many samples before the trigger (94 samples = 150 us)
-TAIL_FROM_US = 3000.0 # the two-sided baseline is also fitted to the trace from this time after the trigger on
+FIT_GAP = 94          # the line is fitted up to this many samples before the trigger (94 samples = 75 us)
+TAIL_FROM_US = 1500.0 # the two-sided baseline is also fitted to the trace from this time after the trigger on
 BASELINE_ORDER = 2    # order of that polynomial (3 is no better than 2 on these events)
 QUIET_PRE_MAX = 1.75  # quiet pretrigger: the worst channel's pretrigger residual RMS is below this times the randoms' median
 

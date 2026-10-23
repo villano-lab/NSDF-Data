@@ -109,7 +109,7 @@ def test_the_status_text():
 def test_the_index_row_shows_the_status_text():
     rows = bn.index_rows([("demo", {"id": "9", "date": "2026-10-05", "author": "A", "title": "T", "description": "D",
                                     "keywords": "k", "status": "Complete", "_first": "2026-09-14", "_revised": "2026-10-01"})])
-    assert "Complete (2026-09-14), revised (2026-10-01)" in rows[0][1]
+    assert "Complete (2026-09-14),<br>revised (2026-10-01)" in rows[0][1]     # the revised date goes on its own line
 
 
 def test_the_red_box_appears_for_a_revision_the_author_did_not_announce():

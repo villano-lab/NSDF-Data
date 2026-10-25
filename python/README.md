@@ -11,8 +11,8 @@ After that `import pulse_quantities` works from any folder, with no `sys.path` s
 effect at once. Nothing is renamed: the modules keep their flat names. The library has its own version, in
 `python/pyproject.toml` (`0.1.0`). This is phase 1 of issue 71. When the library is installed (the normal case), a plain
 `import pulse_quantities` is all a notebook needs, and `check_environment.py` warns if it is not installed. The snippet
-below is the fallback for a checkout where it is not installed; the notebooks and the first-analysis guide still use it
-for now.
+below is only a fallback for a checkout where it is not installed; the first-analysis guide and the exploratory
+notebooks now use the plain `import`.
 
 From a notebook anywhere inside the project, find the library by looking upward,
 so the code does not depend on how deep the notebook is:

@@ -28,7 +28,7 @@
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Windows
-edition &middot; Version 22 · 19 October 2026</p>
+edition &middot; Version 23 · 23 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -310,19 +310,10 @@ end) and click <strong>Rename</strong>.</p>
 the data and count the traces</h2>
 <p>Copy this into the first cell and press <strong>Shift +
 Enter</strong>:</p>
-<pre class="python"><code>import sys
-from pathlib import Path
-
-# Tell Python where the pulse library (the python folder) is.
-# This looks upward from the notebook&#39;s folder until it finds the project,
-# so it works wherever in the project your notebook is.
-here = Path.cwd().resolve()
-REPO = next((p for p in [here, *here.parents] if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)
-assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;
-sys.path.insert(0, str(REPO / &quot;python&quot;))
+<pre class="python"><code>from pathlib import Path
 
 from nsdf_dark_matter.idx import load_all_data
-import pulse_io as pio
+import pulse_io as pio    # the project&#39;s library: installed with the setup (requirements.txt)
 
 # Check that your setup is up to date (it only warns; it never stops the notebook).
 import check_environment
@@ -478,10 +469,18 @@ notebook kernel (<strong>Kernel</strong>, then <strong>Restart
 Kernel</strong>).</td>
 </tr>
 <tr>
-<td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
-<td>Jupyter was started from the wrong folder. Close it and start it
-again from your own folder in <code>data_analysis\R76\student</code>
-(Step 3).</td>
+<td><code>ModuleNotFoundError: No module named 'pulse_io'</code> (or
+<code>'check_environment'</code>)</td>
+<td>The project’s library is not installed in this environment, which
+happens if you have not updated since release 0.9.0. Open a
+<strong>Miniforge Prompt</strong> (click <strong>Start</strong>, type
+<code>Miniforge Prompt</code>, press <strong>Enter</strong>), run <code
+class="cmd">conda activate darkmatter_cli_env</code>, then <code
+class="cmd">cd %USERPROFILE%\Research\NSDF-Data</code> and <code
+class="cmd">python -m pip install -r requirements.txt</code>, and
+restart the notebook kernel (<strong>Kernel</strong>, then
+<strong>Restart Kernel</strong>). <em>Updating your setup</em> (guide 7,
+Step 3) explains it.</td>
 </tr>
 <tr>
 <td><code>fatal: pathspec '...' did not match any files</code> when you
@@ -567,34 +566,9 @@ are left out here.</p>
 <h3 id="windows-code-step4">Part A. Step 4: load the data and count the
 traces</h3>
 <div class="explain">
-<pre class="python"><code>import sys
-from pathlib import Path</code></pre>
-<p>Bring in two tools. <code>sys</code> controls where Python looks for
-code. <code>Path</code> works with folder names in the same way on every
+<pre class="python"><code>from pathlib import Path</code></pre>
+<p>Bring in a tool that works with folder names in the same way on every
 kind of computer.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>here = Path.cwd().resolve()</code></pre>
-<p>The folder Jupyter is working in, written out in full.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>REPO = next((p for p in [here, *here.parents]
-             if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)</code></pre>
-<p>Look at <code>here</code> and then at each folder above it, one after
-another, and take the first one that contains the file
-<code>python\pulse_io.py</code>. That folder is the whole NSDF-Data
-project. If there is none, <code>REPO</code> is <code>None</code>.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;</code></pre>
-<p>Stop with that message if the project was not found, which means
-Jupyter was started in the wrong place.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>sys.path.insert(0, str(REPO / &quot;python&quot;))</code></pre>
-<p>Tell Python to look in the project’s <code>python</code> folder
-first, so that the next <code>import</code> lines can find the project’s
-own code.</p>
 </div>
 <div class="explain">
 <pre class="python"><code>from nsdf_dark_matter.idx import load_all_data</code></pre>
@@ -604,7 +578,10 @@ downloaded dump.</p>
 <div class="explain">
 <pre class="python"><code>import pulse_io as pio</code></pre>
 <p>Bring in the project’s helpers for traces. <code>as pio</code> gives
-it a short name.</p>
+it a short name. This works anywhere because the setup installed the
+project’s library along with the other packages
+(<code>pip install -r requirements.txt</code>), so Python finds it
+without being told where it is.</p>
 </div>
 <div class="explain">
 <pre class="python"><code>import check_environment
@@ -700,7 +677,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 22, 19 October 2026, Windows edition. Written for
+<p>Guide version 23, 23 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="windows-key-links">Key links</h2>
 <ul>
@@ -721,7 +698,7 @@ class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — macOS
-edition &middot; Version 22 · 19 October 2026</p>
+edition &middot; Version 23 · 23 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -999,19 +976,10 @@ end) and click <strong>Rename</strong>.</p>
 the data and count the traces</h2>
 <p>Copy this into the first cell and press <strong>Shift +
 Enter</strong>:</p>
-<pre class="python"><code>import sys
-from pathlib import Path
-
-# Tell Python where the pulse library (the python folder) is.
-# This looks upward from the notebook&#39;s folder until it finds the project,
-# so it works wherever in the project your notebook is.
-here = Path.cwd().resolve()
-REPO = next((p for p in [here, *here.parents] if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)
-assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;
-sys.path.insert(0, str(REPO / &quot;python&quot;))
+<pre class="python"><code>from pathlib import Path
 
 from nsdf_dark_matter.idx import load_all_data
-import pulse_io as pio
+import pulse_io as pio    # the project&#39;s library: installed with the setup (requirements.txt)
 
 # Check that your setup is up to date (it only warns; it never stops the notebook).
 import check_environment
@@ -1153,10 +1121,17 @@ notebook kernel (<strong>Kernel</strong>, then <strong>Restart
 Kernel</strong>).</td>
 </tr>
 <tr>
-<td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
-<td>Jupyter was started from the wrong folder. Close it and start it
-again from your own folder in <code>data_analysis/R76/student</code>
-(Step 3).</td>
+<td><code>ModuleNotFoundError: No module named 'pulse_io'</code> (or
+<code>'check_environment'</code>)</td>
+<td>The project’s library is not installed in this environment, which
+happens if you have not updated since release 0.9.0. Open a terminal
+(Step 1 of the setup guide), run <code
+class="cmd">conda activate darkmatter_cli_env</code>, then <code
+class="cmd">cd ~/Research/NSDF-Data</code> and <code
+class="cmd">python -m pip install -r requirements.txt</code>, and
+restart the notebook kernel (<strong>Kernel</strong>, then
+<strong>Restart Kernel</strong>). <em>Updating your setup</em> (guide 7,
+Step 3) explains it.</td>
 </tr>
 <tr>
 <td><code>fatal: pathspec '...' did not match any files</code> when you
@@ -1238,34 +1213,9 @@ are left out here.</p>
 <h3 id="macos-code-step4">Part A. Step 4: load the data and count the
 traces</h3>
 <div class="explain">
-<pre class="python"><code>import sys
-from pathlib import Path</code></pre>
-<p>Bring in two tools. <code>sys</code> controls where Python looks for
-code. <code>Path</code> works with folder names in the same way on every
+<pre class="python"><code>from pathlib import Path</code></pre>
+<p>Bring in a tool that works with folder names in the same way on every
 kind of computer.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>here = Path.cwd().resolve()</code></pre>
-<p>The folder Jupyter is working in, written out in full.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>REPO = next((p for p in [here, *here.parents]
-             if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)</code></pre>
-<p>Look at <code>here</code> and then at each folder above it, one after
-another, and take the first one that contains the file
-<code>python/pulse_io.py</code>. That folder is the whole NSDF-Data
-project. If there is none, <code>REPO</code> is <code>None</code>.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;</code></pre>
-<p>Stop with that message if the project was not found, which means
-Jupyter was started in the wrong place.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>sys.path.insert(0, str(REPO / &quot;python&quot;))</code></pre>
-<p>Tell Python to look in the project’s <code>python</code> folder
-first, so that the next <code>import</code> lines can find the project’s
-own code.</p>
 </div>
 <div class="explain">
 <pre class="python"><code>from nsdf_dark_matter.idx import load_all_data</code></pre>
@@ -1275,7 +1225,10 @@ downloaded dump.</p>
 <div class="explain">
 <pre class="python"><code>import pulse_io as pio</code></pre>
 <p>Bring in the project’s helpers for traces. <code>as pio</code> gives
-it a short name.</p>
+it a short name. This works anywhere because the setup installed the
+project’s library along with the other packages
+(<code>pip install -r requirements.txt</code>), so Python finds it
+without being told where it is.</p>
 </div>
 <div class="explain">
 <pre class="python"><code>import check_environment
@@ -1371,7 +1324,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 22, 19 October 2026, macOS edition. Written for
+<p>Guide version 23, 23 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="macos-key-links">Key links</h2>
 <ul>
@@ -1392,7 +1345,7 @@ class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 
 <h1>Your first analysis</h1>
 <p class="meta">NSDF-Data student guide 2 — Linux
-edition &middot; Version 22 · 19 October 2026</p>
+edition &middot; Version 23 · 23 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1670,19 +1623,10 @@ end) and click <strong>Rename</strong>.</p>
 the data and count the traces</h2>
 <p>Copy this into the first cell and press <strong>Shift +
 Enter</strong>:</p>
-<pre class="python"><code>import sys
-from pathlib import Path
-
-# Tell Python where the pulse library (the python folder) is.
-# This looks upward from the notebook&#39;s folder until it finds the project,
-# so it works wherever in the project your notebook is.
-here = Path.cwd().resolve()
-REPO = next((p for p in [here, *here.parents] if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)
-assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;
-sys.path.insert(0, str(REPO / &quot;python&quot;))
+<pre class="python"><code>from pathlib import Path
 
 from nsdf_dark_matter.idx import load_all_data
-import pulse_io as pio
+import pulse_io as pio    # the project&#39;s library: installed with the setup (requirements.txt)
 
 # Check that your setup is up to date (it only warns; it never stops the notebook).
 import check_environment
@@ -1824,10 +1768,17 @@ notebook kernel (<strong>Kernel</strong>, then <strong>Restart
 Kernel</strong>).</td>
 </tr>
 <tr>
-<td><code>ModuleNotFoundError: No module named 'pulse_io'</code></td>
-<td>Jupyter was started from the wrong folder. Close it and start it
-again from your own folder in <code>data_analysis/R76/student</code>
-(Step 3).</td>
+<td><code>ModuleNotFoundError: No module named 'pulse_io'</code> (or
+<code>'check_environment'</code>)</td>
+<td>The project’s library is not installed in this environment, which
+happens if you have not updated since release 0.9.0. Open a terminal
+(Step 1 of the setup guide), run <code
+class="cmd">conda activate darkmatter_cli_env</code>, then <code
+class="cmd">cd ~/Research/NSDF-Data</code> and <code
+class="cmd">python -m pip install -r requirements.txt</code>, and
+restart the notebook kernel (<strong>Kernel</strong>, then
+<strong>Restart Kernel</strong>). <em>Updating your setup</em> (guide 7,
+Step 3) explains it.</td>
 </tr>
 <tr>
 <td><code>fatal: pathspec '...' did not match any files</code> when you
@@ -1909,34 +1860,9 @@ are left out here.</p>
 <h3 id="linux-code-step4">Part A. Step 4: load the data and count the
 traces</h3>
 <div class="explain">
-<pre class="python"><code>import sys
-from pathlib import Path</code></pre>
-<p>Bring in two tools. <code>sys</code> controls where Python looks for
-code. <code>Path</code> works with folder names in the same way on every
+<pre class="python"><code>from pathlib import Path</code></pre>
+<p>Bring in a tool that works with folder names in the same way on every
 kind of computer.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>here = Path.cwd().resolve()</code></pre>
-<p>The folder Jupyter is working in, written out in full.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>REPO = next((p for p in [here, *here.parents]
-             if (p / &quot;python&quot; / &quot;pulse_io.py&quot;).exists()), None)</code></pre>
-<p>Look at <code>here</code> and then at each folder above it, one after
-another, and take the first one that contains the file
-<code>python/pulse_io.py</code>. That folder is the whole NSDF-Data
-project. If there is none, <code>REPO</code> is <code>None</code>.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>assert REPO, &quot;Start Jupyter from inside the NSDF-Data folder.&quot;</code></pre>
-<p>Stop with that message if the project was not found, which means
-Jupyter was started in the wrong place.</p>
-</div>
-<div class="explain">
-<pre class="python"><code>sys.path.insert(0, str(REPO / &quot;python&quot;))</code></pre>
-<p>Tell Python to look in the project’s <code>python</code> folder
-first, so that the next <code>import</code> lines can find the project’s
-own code.</p>
 </div>
 <div class="explain">
 <pre class="python"><code>from nsdf_dark_matter.idx import load_all_data</code></pre>
@@ -1946,7 +1872,10 @@ downloaded dump.</p>
 <div class="explain">
 <pre class="python"><code>import pulse_io as pio</code></pre>
 <p>Bring in the project’s helpers for traces. <code>as pio</code> gives
-it a short name.</p>
+it a short name. This works anywhere because the setup installed the
+project’s library along with the other packages
+(<code>pip install -r requirements.txt</code>), so Python finds it
+without being told where it is.</p>
 </div>
 <div class="explain">
 <pre class="python"><code>import check_environment
@@ -2042,7 +1971,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 22, 19 October 2026, Linux edition. Written for
+<p>Guide version 23, 23 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear.</p>
 <h2 id="linux-key-links">Key links</h2>
 <ul>

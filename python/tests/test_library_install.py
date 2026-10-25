@@ -19,6 +19,14 @@ def test_pyproject_lists_every_library_module_and_nothing_else():
     assert listed == on_disk, f"missing from pyproject: {sorted(on_disk - listed)}; not on disk: {sorted(listed - on_disk)}"
 
 
+def test_pyproject_installs_the_goldpan_package_with_every_module_of_it():
+    """The code is the package `goldpan`; the flat `pulse_*.py` files are one-line aliases, listed as py-modules."""
+    assert project()["tool"]["setuptools"]["packages"] == ["goldpan"]
+    assert (PY / "goldpan" / "__init__.py").exists()
+    flat = {m for m in project()["tool"]["setuptools"]["py-modules"] if m.startswith("pulse_")}
+    assert {m[len("pulse_"):] for m in flat} == {p.stem for p in (PY / "goldpan").glob("*.py")} - {"__init__", "legacy"}
+
+
 def test_library_has_a_semantic_version_and_numpy_dependency():
     meta = project()["project"]
     assert re.fullmatch(r"\d+\.\d+\.\d+", meta["version"])

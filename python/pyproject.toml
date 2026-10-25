@@ -1,7 +1,7 @@
-# Phase 1 of NSDF-Data issue 71: the flat modules in this folder, installed under their existing names.
-# Nothing is renamed and no notebook has to change. Install with `python -m pip install -e ./python` from the
-# repository folder (requirements.txt already does: its line `-e ./python[archive]`), after which
-# `import pulse_quantities` works from any folder, without the sys.path snippet.
+# The library of NSDF-Data issue 71. Phase 1 made it installable; phase 2 (this layout) puts the code in the package
+# `goldpan` and keeps the old flat module names as thin aliases for the existing notebooks (`goldpan.legacy`). Install with
+# `python -m pip install -e ./python` from the repository folder (requirements.txt already does: its line
+# `-e ./python[archive]`), after which `import goldpan.cuts` (or the old `import pulse_cuts`) works from any folder.
 #
 # The name `goldpan` is for the analysis half of a planned pair (a future reduction package, `goldsluice`, would produce the
 # reduced quantities; this one reads pulses and quantities together and analyses them): see issue 71. It is not tied to this
@@ -19,10 +19,13 @@ requires-python = ">=3.12"
 dependencies = ["numpy"]
 
 [project.optional-dependencies]
-# pulse_archive writes and reads HDF5 files.
+# goldpan.archive writes and reads HDF5 files.
 archive = ["h5py"]
 
 [tool.setuptools]
+packages = ["goldpan"]
+# The flat names of the first versions, as aliases of the package modules (to be removed in a later release), and the
+# environment check, which the first-analysis guide imports.
 py-modules = [
     "check_environment",
     "pulse_archive",

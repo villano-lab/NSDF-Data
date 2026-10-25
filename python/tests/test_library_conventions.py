@@ -1,4 +1,4 @@
-"""Rules from AGENTS.md that apply to every module in `python/`, checked automatically.
+"""Rules from AGENTS.md that apply to every module of the `goldpan` package, checked automatically.
 
 * every public function is tagged `@status(DONE)` or `@status(UNDER_DEVELOPMENT, ...)`;
 * every public function has a docstring (the library reference page is built from them);
@@ -14,8 +14,11 @@ import pytest
 
 PYTHON_DIR = Path(__file__).resolve().parent.parent
 TESTS_DIR = Path(__file__).resolve().parent
-# Library modules (flat files `pulse_*.py`); helpers such as check_environment.py are not part of it.
-MODULES = sorted(p.stem for p in PYTHON_DIR.glob("pulse_*.py") if p.stem != "pulse_status")
+# Library modules: the files of the package `goldpan`. `status` is the decorator itself, `legacy` builds the old flat
+# names (the flat `pulse_*.py` files are one-line aliases of the package), and helpers such as check_environment.py
+# are not part of the library proper.
+MODULES = sorted("goldpan." + p.stem for p in (PYTHON_DIR / "goldpan").glob("*.py")
+                 if p.stem not in {"__init__", "status", "legacy"})
 
 
 def _public_functions(module):

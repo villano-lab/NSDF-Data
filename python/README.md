@@ -1,21 +1,38 @@
 # python/
 
-A small library of reusable pulse operations, cuts, and derived quantities,
-factored out of the exploratory work in `data_analysis/R76/notebooks/`. Flat modules
-(no package/`__init__.py`), imported by adding this directory to `sys.path` --
-same convention as `nrFanoII_paper2022`'s `python/ba_bknd_lines.py`.
+**goldpan**: a library of reusable pulse operations, cuts and derived quantities, factored out of the exploratory work
+in `data_analysis/R76/notebooks/`. It is a Python package, `goldpan`, in the folder `python/goldpan/`.
 
-**Installed in place.** `requirements.txt` installs this folder: `pip install -r requirements.txt`, run from the
-`NSDF-Data` folder as the setup and updating guides do (or only the library: `python -m pip install -e ./python`).
-After that `import pulse_quantities` works from any folder, with no `sys.path` snippet, and an edit to a module takes
-effect at once. Nothing is renamed: the modules keep their flat names. The library has its own version, in
-`python/pyproject.toml` (`0.1.0`). This is phase 1 of issue 71. When the library is installed (the normal case), a plain
-`import pulse_quantities` is all a notebook needs, and `check_environment.py` warns if it is not installed. The snippet
-below is only a fallback for a checkout where it is not installed; the first-analysis guide and the exploratory
-notebooks now use the plain `import`.
+**Install it** (it is part of the setup): `requirements.txt` installs this folder in place, so `pip install -r
+requirements.txt`, run from the `NSDF-Data` folder as the setup and updating guides do (or only the library:
+`python -m pip install -e ./python`), makes it importable from any folder, with no `sys.path` snippet. An edit to a
+module takes effect at once. `check_environment.py` warns if it is not installed. The library has its own version, in
+`python/pyproject.toml`.
 
-From a notebook anywhere inside the project, find the library by looking upward,
-so the code does not depend on how deep the notebook is:
+```python
+from goldpan import quantities as q
+from goldpan import cuts, operations as op, io
+from goldpan.config import DCRC_RUN76, Z7, PulseConfig
+
+config = DCRC_RUN76                      # name the readout of your data (see below)
+bstd = q.pretrigger_std(pulses, config)
+quiet = cuts.quiet_baseline(pulses, config)
+```
+
+**The readout is never assumed.** In the package, every function that needs the pretrigger window, the glitch samples
+or the sample period takes a `config` and has **no default** for it: the numbers belong to a *readout*, not to the library,
+and a silent wrong default (the library once assumed 1.6 us for a readout that samples every 0.8 us) changes every time,
+frequency and energy without any error. Use a preset (`goldpan.config.DCRC_RUN76`: the Run 76 phonon channels, 0.8 us;
+`goldpan.config.Z7`: the Z7 readout, 1.6 us) or give the numbers.
+
+**The old flat names still work.** The first versions were eight flat modules (`pulse_quantities`, `pulse_cuts`,
+`pulse_operations`, `pulse_io`, `pulse_config`, `pulse_archive`, `pulse_channels`, `pulse_status`), and the existing
+notebooks, notes and guides import them. They are now thin aliases of the package modules (`goldpan.legacy`) with one
+difference: the functions that take a `config` default to the Run 76 readout, and `pulse_config.PulseConfig` has the
+Run 76 values as defaults. So `import pulse_cuts as pc; pc.quiet_baseline(pulses)` is the same as `goldpan.cuts.quiet_baseline(pulses,
+DCRC_RUN76)`. New code uses `goldpan.*`; the flat names will be removed in a later release.
+
+If the library is not installed (a checkout used without `pip install`), the fallback is to put the folder on `sys.path`:
 
 ```python
 import sys
@@ -25,19 +42,6 @@ _here = Path.cwd().resolve()
 REPO = next((p for p in [_here, *_here.parents] if (p / "python" / "pulse_io.py").exists()), None)
 assert REPO, "Start Jupyter from inside the NSDF-Data folder."
 sys.path.insert(0, str(REPO / "python"))
-```
-
-From anywhere else, add the folder by hand:
-
-```python
-import sys
-sys.path.insert(0, "/path/to/NSDF-Data/python")
-
-import pulse_quantities as q
-import pulse_cuts as cuts
-import pulse_operations as op
-import pulse_io as io
-from pulse_config import PulseConfig
 ```
 
 ## Convention: samples on the last axis
@@ -51,9 +55,9 @@ class; a plain NumPy array *is* the pulse (or batch of pulses).
 
 | Module | Signature | Returns |
 |---|---|---|
-| `pulse_quantities.py` | `(pulses, config, **params)` | one number (or spectrum) per pulse, shape `(...,)` or `(..., n_freq)` |
-| `pulse_cuts.py` | `(pulses, config, **params)` | one bool per pulse, shape `(...,)` (`True` = keep) |
-| `pulse_operations.py` | `(pulses, config, **params)` | new pulses, same pulse-shaped family as the input |
+| `goldpan.quantities` | `(pulses, config, **params)` | one number (or spectrum) per pulse, shape `(...,)` or `(..., n_freq)` |
+| `goldpan.cuts` | `(pulses, config, **params)` | one bool per pulse, shape `(...,)` (`True` = keep) |
+| `goldpan.operations` | `(pulses, config, **params)` | new pulses, same pulse-shaped family as the input |
 
 Quantities are the primitives; cuts are built by thresholding a quantity
 (e.g. `ratio_band` thresholds `excursion_ratio`, `excursion_band` thresholds
@@ -61,22 +65,22 @@ Quantities are the primitives; cuts are built by thresholding a quantity
 independent transforms (baseline subtraction, glitch trimming) and never
 mutate their input in place.
 
-`pulse_cuts.excursion_band` (default `[0.5, 0.7)`) and `excursion_band_loose`
+`goldpan.cuts.excursion_band` (default `[0.5, 0.7)`) and `excursion_band_loose`
 (`[0.5, 1.0)`) are the two named log10(ratio) cuts from the Branch 2
 exploration in `07221203_2025_dump1_noise.ipynb` -- pass a `config` with the
 pretrigger window you want (Branch 2 used 500 samples). `excursion_band_AI`
-additionally removes traces `pulse_cuts.looks_like_pulse` flags as containing
+additionally removes traces `goldpan.cuts.looks_like_pulse` flags as containing
 a real pulse (a sustained, consecutive-sample excursion rather than a brief
 noise fluctuation) -- an exploratory heuristic, not a validated cut; see its
 docstring/status note before trusting it on a new dataset. `ratio_band` is the
 older, fully generic linear-ratio band-threshold utility (any `low`/`high`,
 no default), used e.g. by `07221203_2025_dump2_pulse.ipynb`'s `ratio > 9` cut.
 
-`pulse_io.py` is the only module that knows about `nsdf_dark_matter`'s `cdms`
+`goldpan.io` is the only module that knows about `nsdf_dark_matter`'s `cdms`
 objects -- `load_channel_batch` turns a list of `detector_id`s into a plain
 `(n_pulses, n_samples)` array for everything else to consume.
 
-`pulse_channels.py` says which physical channel a dump's `(detector, channel)`
+`goldpan.channels` says which physical channel a dump's `(detector, channel)`
 pair is, from the Run 76 Setup table, for **Side-2 readout** (the December 2022 series;
 `readout=1` gives the Side-1 map): `channel_name(0, 0)` is `'Side2pC'`,
 `channel_label(0, 0)` is `'Side2pC (DCRC1 pA, HV2 pA)'`, `find_channel('Side2pC')`
@@ -92,24 +96,24 @@ for Side-2 readout there are six, all on Side 2. What changed, by dump channel `
 `Side2pA`; (1, 3) was `Side2pE`, now `Side2pD`; (2, 0) was `Side2pB`, now the NaI trigger input;
 (0, 0) `Side2pC` and (0, 1) `Side2pF` are as before; the other inputs are not sensors.
 
-`pulse_archive.py` is a fifth, separate module: it persists a cut's *result*
+`goldpan.archive` is a fifth, separate module: it persists a cut's *result*
 (which `detector_id`s it selected, for a given series/detector/channel) to an
 HDF5 file, rather than computing something from pulse data -- see its own
 docstring and `data_analysis/archives/README.md`. It's the only module
 that needs `h5py`.
 
-## `PulseConfig`
+## `PulseConfig` and the readout
 
-A frozen dataclass (`pretrigger_samples`, `glitch_samples`, `sample_period_s`)
-passed explicitly to every function, instead of each notebook hardcoding its
-own copy of these constants. Current defaults: `1000`, `10`, `0.8e-6` (see below for
-the sample period; the first two match `07221203_2025_dump1_noise.ipynb` /
-`07221203_2025_dump2_pulse.ipynb`).
+A frozen dataclass (`pretrigger_samples`, `glitch_samples`, `sample_period_s`) passed explicitly to every function, instead
+of each notebook hardcoding its own copy of these constants. **In `goldpan.config` it has no defaults** (pass
+`sample_period_s=None` if the period is unknown: functions that need it then raise). The presets are
+`DCRC_RUN76 = PulseConfig(1000, 10, 0.8e-6)` and `Z7 = PulseConfig(6250, 10, 1.6e-6)`. In the flat alias
+`pulse_config`, `PulseConfig()` has the Run 76 values as defaults (see above).
 
 ### The sample period (changed on 2026-10-22)
 
-**The phonon channels of the DCRC readout sample every 0.8 us (1.25 MHz), so a trace of 4096
-samples is 3.2768 ms.** The library, the notebooks and the notes used 1.6 us (625 kHz) until
+**The phonon channels of the DCRC readout of Run 76 sample every 0.8 us (1.25 MHz), so a trace of 4096
+samples is 3.2768 ms.** (The Z7 readout samples every 1.6 us, 625 kHz: the value is a property of the readout.) The library, the notebooks and the notes used 1.6 us (625 kHz) until
 2026-10-22; that value was wrong and has no known source. The evidence for 0.8 us:
 
 - The UMN run diaries of April and May 2022 (Run 76) count pulses "in 125 3.2768-ms traces" (4096 x 0.8 us),
@@ -123,31 +127,30 @@ samples is 3.2768 ms.** The library, the notebooks and the notes used 1.6 us (62
 
 **What this means for older results.** Anything made with 1.6 us has times and energies twice too large,
 frequencies twice too small, PSDs twice too large and ASDs 1.41 times too large. Everything counted in
-samples or counts (cuts, selections, pulse heights) is unaffected. `PulseConfig(sample_period_s=1.6e-6)`
-now emits a `UserWarning` saying so, and `pulse_archive.load_good_events` warns for an archive written with
+samples or counts (cuts, selections, pulse heights) is unaffected. The flat alias `pulse_config.PulseConfig(sample_period_s=1.6e-6)`
+emits a `UserWarning` saying so (it is the Run 76 readout), and `pulse_archive.load_good_events` warns for an archive written with
 1.6 us; remove the explicit value from your notebook so the default is used, and re-run it.
 
 ## Function status: `done` vs. `under_development`
 
-Every function in `pulse_quantities.py`/`pulse_cuts.py`/`pulse_operations.py`/
-`pulse_io.py` is tagged with `@status(DONE)` or `@status(UNDER_DEVELOPMENT, note=...)`
-from `pulse_status.py`. `under_development` functions still run, but emit a
+Every function in `goldpan.quantities`/`goldpan.cuts`/`goldpan.operations`/`goldpan.io` is tagged with
+`@status(DONE)` or `@status(UNDER_DEVELOPMENT, note=...)` from `goldpan.status`. `under_development` functions still run, but emit a
 `UserWarning` (with the note) on every call, so a notebook that depends on one
 says so in its own output instead of silently looking as settled as everything
 else.
 
 ```python
-from pulse_status import status, DONE, UNDER_DEVELOPMENT, list_statuses
+from goldpan.status import status, DONE, UNDER_DEVELOPMENT, list_statuses
 
 @status(DONE)
-def pretrigger_mean(pulses, config=DEFAULT_CONFIG):
+def pretrigger_mean(pulses, config):
     ...
 
 @status(UNDER_DEVELOPMENT, note="only checked against single-peak traces so far")
-def rise_sample(pulses, config=DEFAULT_CONFIG, fraction=0.5):
+def rise_sample(pulses, config, fraction=0.5):
     ...
 
-list_statuses(pulse_quantities)  # {"pretrigger_mean": ("done", None), "rise_sample": ("under_development", "..."), ...}
+list_statuses(quantities)  # {"pretrigger_mean": ("done", None), "rise_sample": ("under_development", "..."), ...}
 ```
 
 As of today, `rise_sample` and `excursion_below_percentile` (known to be
@@ -167,8 +170,8 @@ cd python && python -m pytest tests/ -v
 
 They need `numpy` + `pytest` (present in the base conda env; `pytest` is
 *not* currently in `darkmatter_cli_env`). The library modules themselves only
-need `numpy`, so they work fine under either environment -- `pulse_io.py` is
+need `numpy`, so they work fine under either environment -- `goldpan.io` is
 the only file that additionally needs `nsdf_dark_matter` at import time (only
-because it calls into a `cdms` object you already have), and `pulse_archive.py`
+because it calls into a `cdms` object you already have), and `goldpan.archive`
 the only one that needs `h5py` (installed in both `darkmatter_cli_env` and the
 base conda env as of 2026-09-23).

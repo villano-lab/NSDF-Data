@@ -62,6 +62,24 @@ The library in `python/` (the `goldpan` distribution, see issue 71) has a versio
 6. Merge `master` back into `develop` (a pull request or a merge commit) so `develop` has the release commit and the tag's history.
 7. Delete the `release/X.Y.Z` branch. The live site is unaffected, because it is served from `develop`.
 
+## Publishing the library to PyPI
+
+The library is published as **`goldpan`** (https://pypi.org/project/goldpan/) by the workflow `.github/workflows/publish-goldpan.yml`. It runs when a tag `goldpan-vX.Y.Z` is pushed, builds the package, installs the wheel in a clean environment and imports every module, and then uploads it. **No token is stored anywhere**: PyPI trusts the workflow (a "trusted publisher"), and the upload waits for the maintainer to approve the `pypi` environment. Run by hand (Actions, *Publish goldpan*, *Run workflow*) it is a dry run: it builds and tests and never uploads.
+
+**One-time setup (maintainer, on the two websites):**
+
+1. GitHub, *Settings*, *Environments*, *New environment*: name it `pypi`; under *Required reviewers* add yourself, so that every upload needs your click; under *Deployment branches and tags* allow only tags matching `goldpan-v*`.
+2. PyPI, project `goldpan`, *Manage*, *Publishing*, *Add a new publisher*, GitHub: owner `villano-lab`, repository `NSDF-Data`, workflow `publish-goldpan.yml`, environment `pypi`.
+3. Run the dry run once and read its log.
+
+**Each library release.** Make the release as above, with the library's version in `python/pyproject.toml` and the line `goldpan X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `master`:
+
+1. Tag the merge commit with the *library* tag, which is not the project's tag `vX.Y.Z` (the two may point at the same commit): `git tag -a goldpan-vX.Y.Z -m "goldpan X.Y.Z"` and `git push origin goldpan-vX.Y.Z`.
+2. The workflow's first job checks that the tag, `python/pyproject.toml` and the changelog agree (`python tools/check_goldpan_release.py goldpan-vX.Y.Z` does the same on your computer) and that the tag is on `master`.
+3. Approve the *Upload to PyPI* job when GitHub asks. Check https://pypi.org/project/goldpan/ and, in a throwaway environment, `python -m pip install goldpan==X.Y.Z`.
+
+A version on PyPI can never be replaced or reused: a bad upload can only be yanked, and fixed by a new patch version, so run the dry run first. **An AI agent never pushes a `goldpan-v*` tag.** If the library moves to its own repository, register the trusted publisher again for the new repository.
+
 ## Making a hotfix
 
 A hotfix repairs **released code** (for example a broken library function in a tagged release). A broken guide or site page is *not* a hotfix: fix it with a feature PR into `develop`, and it is live on merge.
@@ -87,13 +105,23 @@ A hotfix repairs **released code** (for example a broken library function in a t
 Student notes (`notes/src/*.md`) are feature work: a student branches from `develop`, writes the note with `id: "TBD"`, and opens a pull request into `develop`.
 
 1. The pull request runs `tools/build_notes.py check`. Nothing is published yet, and nothing is visible on the site.
-2. The maintainer reviews it, gives it a note number (replacing `TBD`), and merges. **Nothing is published without this approval**: the build refuses a note whose id is still `TBD`.
+2. The maintainer reviews it, gives it a note number (replacing `TBD`), and merges. **Nothing is published without a note number**: the build refuses a note whose id is still `TBD`. For a note that needs a quick release, the maintainer may allow a student to do step 2 themselves: they press **Commit suggestion** on the number the bot posted, merge their own pull request, and tell the maintainer or Kitty, who read the note afterwards. Only notes: a guide, the library or CI always waits for review.
 3. The merge pushes to `develop`, which starts the student-notes workflow. It builds `docs/notes/student-<name>.html`, the images and the index row, and the bot commits them to `develop`.
 4. GitHub Pages rebuilds from `develop`. The note is live about one to two minutes after the merge.
 
 To **take a note off the site**, delete `notes/src/<name>.md` (and any picture only it used) in a pull request into `develop`. The next build removes the generated page and figures itself (`prune()` in `tools/build_notes.py`), and the front-page table is regenerated. It only ever removes files named `student-*`, and only when every remaining note validates.
 
-The bot commits directly to `develop`, so a ruleset on `develop` must not require pull requests (deletion and force-push blocks are fine).
+### The notes bot and the pull-request rule
+
+The rulesets `protect-develop` and `protect-master` block deletion and force-push and **require a pull request** (0 approvals, merge commits only). The bot of the *Student notes* workflow commits the generated pages straight to `develop` (or `master`), so it needs a way past that rule. GitHub does not offer GitHub Actions as a bypass actor on this repository, so the bot pushes with a **deploy key**:
+
+1. On a computer with `ssh-keygen`, in an empty folder outside the repository: `ssh-keygen -t ed25519 -N "" -C "notes-bot" -f notes-bot`. It writes `notes-bot` (private) and `notes-bot.pub` (public).
+2. Add the public key as a deploy key **with write access**: `gh repo deploy-key add notes-bot.pub --allow-write --title notes-bot` (or Settings, Deploy keys).
+3. Store the private key as the Actions secret `NOTES_DEPLOY_KEY`: `gh secret set NOTES_DEPLOY_KEY < notes-bot`.
+4. **Delete both files** (`notes-bot` and `notes-bot.pub`). The key lives only in GitHub.
+5. In both rulesets, Bypass list, Add bypass, tick **Deploy keys** (mode Always).
+
+To check it, merge a student note (or a change to `tools/build_notes.py`) and see that the *Student notes* run on `develop` ends with "Publish student notes". If the run fails with "The push was rejected", the secret or the bypass is missing. To revoke the bot's access, delete the deploy key in Settings. A lost private key cannot be recovered: repeat the steps with a new pair.
 
 ## One-time repository settings (maintainer)
 

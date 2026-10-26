@@ -286,7 +286,9 @@ jobs:
           # Step 4's git clone fetched the default branch. Use this commit's requirements.txt, so a
           # pull request tests its own version of the file (the same file once it is merged).
           cp "$GITHUB_WORKSPACE/requirements.txt" requirements.txt
-          cp "$GITHUB_WORKSPACE/python/pyproject.toml" python/pyproject.toml
+          # requirements.txt installs ./python in place (the package goldpan and its aliases), so a pull request that
+          # changes the library must bring its own python/ folder too, not only its pyproject.toml.
+          rm -rf python && cp -r "$GITHUB_WORKSPACE/python" python
           python -m pip install -r requirements.txt
 
       - name: Setup Step 6 - tests and tool versions

@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 2 — Windows edition"
-date: "Version 22 · 19 October 2026"
+date: "Version 23 · 23 October 2026"
 ---
 
 ::: tip
@@ -128,19 +128,10 @@ Give your notebook a name: right-click its tab at the top (it says `Untitled.ipy
 Copy this into the first cell and press **Shift + Enter**:
 
 ```python
-import sys
 from pathlib import Path
 
-# Tell Python where the pulse library (the python folder) is.
-# This looks upward from the notebook's folder until it finds the project,
-# so it works wherever in the project your notebook is.
-here = Path.cwd().resolve()
-REPO = next((p for p in [here, *here.parents] if (p / "python" / "pulse_io.py").exists()), None)
-assert REPO, "Start Jupyter from inside the NSDF-Data folder."
-sys.path.insert(0, str(REPO / "python"))
-
 from nsdf_dark_matter.idx import load_all_data
-import pulse_io as pio
+import pulse_io as pio    # the project's library: installed with the setup (requirements.txt)
 
 # Check that your setup is up to date (it only warns; it never stops the notebook).
 import check_environment
@@ -247,7 +238,7 @@ Commit only your notebook. Check the list from `git status` before committing. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` | Jupyter was started from the wrong folder. Close it and start it again from your own folder in `data_analysis\R76\student` (Step 3). |
+| `ModuleNotFoundError: No module named 'pulse_io'` (or `'check_environment'`) | The project's library is not installed in this environment, which happens if you have not updated since release 0.9.0. Open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**), run `conda activate darkmatter_cli_env`{.cmd}, then `cd %USERPROFILE%\Research\NSDF-Data`{.cmd} and `python -m pip install -r requirements.txt`{.cmd}, and restart the notebook kernel (**Kernel**, then **Restart Kernel**). *Updating your setup* (guide 7, Step 3) explains it. |
 | `fatal: pathspec '...' did not match any files` when you run `git add` | You are not in the project folder, or the file name is not the one you saved. Open a **Miniforge Prompt** (click **Start**, type `Miniforge Prompt`, press **Enter**), run `cd %USERPROFILE%\Research\NSDF-Data`{.cmd}, then `git status`{.cmd}, and copy the notebook's path exactly as Git prints it into `git add`. Use the Miniforge Prompt, not PowerShell: PowerShell does not understand `%USERPROFILE%`. |
 | `IndexError: too many indices for array` | You wrote something like `pulses[1,2,3]`. Put one number in the brackets, for example `pulses[1]`, and run the cell again. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
@@ -282,44 +273,10 @@ You do not need this to finish the guide. It goes through the code you pasted, o
 
 ::: explain
 ```python
-import sys
 from pathlib import Path
 ```
 
-Bring in two tools. `sys` controls where Python looks for code. `Path` works with folder names in the same way on every kind of computer.
-:::
-
-::: explain
-```python
-here = Path.cwd().resolve()
-```
-
-The folder Jupyter is working in, written out in full.
-:::
-
-::: explain
-```python
-REPO = next((p for p in [here, *here.parents]
-             if (p / "python" / "pulse_io.py").exists()), None)
-```
-
-Look at `here` and then at each folder above it, one after another, and take the first one that contains the file `python\pulse_io.py`. That folder is the whole NSDF-Data project. If there is none, `REPO` is `None`.
-:::
-
-::: explain
-```python
-assert REPO, "Start Jupyter from inside the NSDF-Data folder."
-```
-
-Stop with that message if the project was not found, which means Jupyter was started in the wrong place.
-:::
-
-::: explain
-```python
-sys.path.insert(0, str(REPO / "python"))
-```
-
-Tell Python to look in the project's `python` folder first, so that the next `import` lines can find the project's own code.
+Bring in a tool that works with folder names in the same way on every kind of computer.
 :::
 
 ::: explain
@@ -335,7 +292,7 @@ Bring in the function, from the NSDF software, that reads a downloaded dump.
 import pulse_io as pio
 ```
 
-Bring in the project's helpers for traces. `as pio` gives it a short name.
+Bring in the project's helpers for traces. `as pio` gives it a short name. This works anywhere because the setup installed the project's library along with the other packages (`pip install -r requirements.txt`), so Python finds it without being told where it is.
 :::
 
 ::: explain
@@ -447,7 +404,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 22, 19 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 23, 23 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

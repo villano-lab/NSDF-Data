@@ -6,7 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PY = ROOT / "python"
-NOT_LIBRARY = {"check_environment"}
+NOT_LIBRARY = set()   # every *.py in python/ is a module of the library
+ORIGINAL_MODULES = {"archive", "channels", "config", "cuts", "io", "operations", "quantities", "status"}
 
 
 def project():
@@ -17,6 +18,16 @@ def test_pyproject_lists_every_library_module_and_nothing_else():
     on_disk = {p.stem for p in PY.glob("*.py")} - NOT_LIBRARY
     listed = set(project()["tool"]["setuptools"]["py-modules"])
     assert listed == on_disk, f"missing from pyproject: {sorted(on_disk - listed)}; not on disk: {sorted(listed - on_disk)}"
+
+
+def test_pyproject_installs_the_goldpan_package_with_every_module_of_it():
+    """The code is the package `goldpan`; the flat `pulse_*.py` files are one-line aliases, listed as py-modules."""
+    assert project()["tool"]["setuptools"]["packages"] == ["goldpan", "goldpan.adapters"]
+    assert (PY / "goldpan" / "__init__.py").exists() and (PY / "goldpan" / "adapters" / "__init__.py").exists()
+    flat = {m for m in project()["tool"]["setuptools"]["py-modules"] if m.startswith("pulse_")}
+    # the flat aliases exist only for the eight modules of the first versions; new modules of the package (data, ...) have none
+    assert {m[len("pulse_"):] for m in flat} == ORIGINAL_MODULES
+    assert ORIGINAL_MODULES <= {p.stem for p in (PY / "goldpan").glob("*.py")}
 
 
 def test_library_has_a_semantic_version_and_numpy_dependency():

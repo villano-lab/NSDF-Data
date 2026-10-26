@@ -22,8 +22,8 @@ def test_pyproject_lists_every_library_module_and_nothing_else():
 
 def test_pyproject_installs_the_goldpan_package_with_every_module_of_it():
     """The code is the package `goldpan`; the flat `pulse_*.py` files are one-line aliases, listed as py-modules."""
-    assert project()["tool"]["setuptools"]["packages"] == ["goldpan"]
-    assert (PY / "goldpan" / "__init__.py").exists()
+    assert project()["tool"]["setuptools"]["packages"] == ["goldpan", "goldpan.adapters"]
+    assert (PY / "goldpan" / "__init__.py").exists() and (PY / "goldpan" / "adapters" / "__init__.py").exists()
     flat = {m for m in project()["tool"]["setuptools"]["py-modules"] if m.startswith("pulse_")}
     # the flat aliases exist only for the eight modules of the first versions; new modules of the package (data, ...) have none
     assert {m[len("pulse_"):] for m in flat} == ORIGINAL_MODULES

@@ -22,8 +22,7 @@ quiet = cuts.quiet_baseline(pulses, config)
 **The container.** `goldpan.data.Events` holds one detector's events and is **immutable**: its `detector` (name, channels
 with roles, and the readout with its segments), its `traces` (read-only arrays, one per channel and segment, `ev.trace("A")`), its
 `quantities` (an Awkward Array, one record per event; the first fields `series`, `dump`, `event` identify the event) and its `meta`
-(provenance). `select`, `with_quantities` and `concatenate` return new objects. Nothing in it opens a file: adapters (to come) turn idx,
-Parquet and other formats into an `Events`. See the design notes of 2026-10-25 and 2026-10-26 (`GoldpanGoldsluice/` in the log repository).
+(provenance). `select`, `with_quantities` and `concatenate` return new objects. Nothing in it opens a file: adapters do (next paragraph). See the design notes of 2026-10-25 and 2026-10-26 (`GoldpanGoldsluice/` in the log repository).
 
 ```python
 from goldpan.data import ChannelInfo, Detector, Events, Readout
@@ -31,6 +30,21 @@ detector = Detector("S104", (ChannelInfo("A", role="phonon"), ChannelInfo("B", r
 ev = Events.from_arrays(detector, {"A": traces_a, "B": traces_b}, series="07221203_2025", dump="F0001")
 std = q.pretrigger_std(ev.trace("A"), ev.detector.readout.config())      # the readout comes from the detector
 quiet = ev.select(cuts.quiet_baseline(ev.trace("A"), ev.detector.readout.config()))
+```
+
+**Adapters.** The only code that knows a file format. `goldpan.adapters.parquet` is the native format (reads and writes; its docstring is the
+specification, format version 1: one Parquet file per series and dump, plain Arrow types, a `_goldpan.json` manifest), and `goldpan.adapters.idx` reads
+a dump of the NSDF archive. `read` returns an `Events`; `iter_chunks` reads a big dataset a chunk at a time. Someone with another format (MIDAS, ROOT) writes
+a small module with `read(path, **kw) -> Events` and checks it with `goldpan.testing.check_adapter`; `goldpan.adapters.register` makes it available
+to `goldpan.adapters.read(path, format=...)`. A small synthetic dataset to test against is in `python/tests/data/sample_dataset/`.
+
+```python
+from goldpan.adapters import idx, parquet
+from goldpan.channels import sensor_channels
+channels = {c.name: (c.detector, c.channel) for c in sensor_channels()}
+ev = idx.read('~/idx/07221203_2025_F0001', detector_name='NSDF', channels=channels, config=DCRC_RUN76)   # the readout is given, never assumed
+parquet.write(ev, 'my_dataset')                      # needs the extra: pip install pyarrow (in requirements.txt)
+for chunk in parquet.iter_chunks('my_dataset', chunk=256): ...   # or parquet.read('my_dataset', channels=['Side2pC'])
 ```
 
 **The readout is never assumed.** In the package, every function that needs the pretrigger window, the glitch samples

@@ -28,6 +28,9 @@
 <tr><td><a href="#goldpan.channels"><code>goldpan.channels</code></a></td><td>Which physical detector channel is a dump's (detector, channel) pair?</td><td>6</td><td>0</td><td>6</td></tr>
 <tr><td><a href="#goldpan.status"><code>goldpan.status</code></a></td><td>Development-status tagging for functions in this library</td><td>2</td><td>0</td><td>0</td></tr>
 <tr><td><a href="#goldpan.data"><code>goldpan.data</code></a></td><td>The in-memory container of one detector's events: traces, quantities, readout, provenance</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td><a href="#goldpan.testing"><code>goldpan.testing</code></a></td><td>The conformance test of an adapter, for the people who write one (see the guide "Writing an adapter" when it exists)</td><td>1</td><td>1</td><td>0</td></tr>
+<tr><td><a href="#goldpan.adapters.idx"><code>goldpan.adapters.idx</code></a></td><td>The idx adapter: a dump of the NSDF archive (NEXUS-DM <code>idx</code>) into an <code>Events</code></td><td>1</td><td>1</td><td>0</td></tr>
+<tr><td><a href="#goldpan.adapters.parquet"><code>goldpan.adapters.parquet</code></a></td><td>The native format of goldpan and goldsluice: Parquet (specification, format version 1)</td><td>3</td><td>3</td><td>0</td></tr>
 </tbody></table></div>
 
 <h2 id="goldpan.io">goldpan.io</h2>
@@ -198,6 +201,45 @@ def rise_sample(pulses, config, fraction=0.5):
 <tr><td><code>n_samples</code></td><td>Samples per trace in this segment.</td></tr>
 <tr><td><code>config</code></td><td>The readout of this segment: its pretrigger window, glitch samples and sample period.</td></tr>
 <tr><td><code>start_s</code></td><td>Time of the first sample relative to the trigger, in seconds (negative before it); <code>None</code> if unknown.</td></tr>
+</tbody></table></div>
+
+<h2 id="goldpan.testing">goldpan.testing</h2>
+<p>The conformance test of an adapter, for the people who write one (see the guide "Writing an adapter" when it exists).</p>
+<pre>from goldpan.testing import check_adapter
+passed = check_adapter(my_adapter_module, "sample/file", **read_kwargs)</pre>
+<p>It reads the sample with the adapter and checks the contract of <code>goldpan.data.Events</code>; that <code>iter_chunks</code> (if the adapter has it) gives, joined, the same events as <code>read</code>; and, if the adapter can <code>write</code>, that a written and read-back copy loses nothing. It raises <code>AssertionError</code> saying which check failed, and returns the list of the checks that passed.</p>
+<div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
+<tr id="goldpan.testing.check_adapter"><td><code>check_adapter</code><br><small><code>(module, sample_path, **read_kwargs) -&gt; list</code></small></td><td>Check <code>module</code> (an adapter) against the contract on <code>sample_path</code>; returns the checks passed, raises <code>AssertionError</code>.</td><td><span class="status done">done</span></td></tr>
+</tbody></table></div>
+
+<h2 id="goldpan.adapters.idx">goldpan.adapters.idx</h2>
+<p>The idx adapter: a dump of the NSDF archive (NEXUS-DM <code>idx</code>) into an <code>Events</code>. Read only.</p>
+<p>An idx dump numbers its traces by <em>readout board</em> and <em>input</em>, not by channel name: a trace is addressed by an id like <code>&lt;event&gt;_&lt;board&gt;_Phonon_&lt;n&gt;</code> and a channel of it by a small integer. In Run 76 the three "detectors" of a dump are three boards of one physical detector. This adapter hides that: you say which board and input each <em>named</em> channel comes from, and you name the readout, because neither belongs to the library:</p>
+<pre>from goldpan.adapters import idx
+from goldpan.config import DCRC_RUN76
+ev = idx.read("~/idx/07221203_2025_F0001", detector_name="S104", config=DCRC_RUN76,
+              channels={"Side2pC": (0, 0), "Side2pF": (0, 1)})          # channel name -&gt; (board, input)</pre>
+<p>For Run 76 the map of every sensor is in <code>goldpan.channels</code> (<code>sensor_channels()</code>). Only this module and <code>goldpan.io</code> know <code>nsdf_dark_matter</code>'s <code>cdms</code> object; it is imported when a path is given, so tests can pass any object with <code>get_detector_ids()</code>, <code>get_detector_channels(id)</code> and <code>get_event_metadata(event)</code>.</p>
+<div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
+<tr id="goldpan.adapters.idx.read"><td><code>read</code><br><small><code>(source, *, detector_name: str, channels: Mapping[str, tuple], config: PulseConfig, roles: Optional[Mapping[str, str]] = None, series: Optional[str] = None, dump: Optional[str] = None) -&gt; Events</code></small></td><td>Read one idx dump into an <code>Events</code> of one detector.<details><summary>details</summary><p><code>source</code> is the dump folder (for example <code>~/idx/07221203_2025_F0001</code>) or an already loaded <code>cdms</code> object (then give <code>series</code> and <code>dump</code>). <code>channels</code> maps each channel name to its <code>(board, input)</code> in the dump; <code>config</code> is the readout of the data (there is no default); <code>roles</code> optionally gives a role per channel name. Events that lack any requested board are dropped, and how many is recorded in <code>meta["dropped_events"]</code>. The quantity <code>trigger_type</code> is the label of the dump's <code>.csv</code>, if the dump has one.</p></details></td><td><span class="status done">done</span></td></tr>
+</tbody></table></div>
+
+<h2 id="goldpan.adapters.parquet">goldpan.adapters.parquet</h2>
+<p>The native format of goldpan and goldsluice: Parquet (specification, format version 1).</p>
+<p>goldsluice writes it, goldpan reads it, and anything else can read it: the files use <strong>plain Arrow types</strong>, not extension types, so Polars, DuckDB, pandas and pyarrow open them without goldpan. The design is in <code>GoldpanGoldsluice/2026-10-25</code> and <code>2026-10-26</code> (log repository); this docstring is the specification.</p>
+<p><strong>A dataset is a directory</strong>:</p>
+<pre>&lt;dataset&gt;/
+_goldpan.json                      the manifest
+&lt;detector&gt;/&lt;series&gt;_&lt;dump&gt;.parquet one file per series dump of a detector</pre>
+<p>The manifest is JSON: <code>{"format": "goldpan-dataset", "format_version": 1, "streams": {&lt;detector&gt;: {"kind": "events", "main_array": true, "detector": {...}, "files": [relative paths]}}}</code>. A stream is the table of one detector; only streams of kind <code>events</code> exist so far (time series and ancillary streams are added later without changing this). A single <code>.parquet</code> file is also a valid dataset for the reader.</p>
+<p><strong>A file is the table of one detector's events</strong>, one row per event, with these columns:</p>
+<ul><li><code>series</code> (string), <code>dump</code> (string), <code>event</code> (int64): the key that identifies an event (event numbers restart in every dump).</li><li><code>t_trigger</code> (float64, optional): the trigger time in seconds, on the clock named in the metadata key <code>clock</code>.</li><li><code>traces.&lt;channel&gt;.&lt;segment&gt;</code>: a fixed-size list column per channel and segment (the samples of one trace), any numeric dtype; <code>segment</code> is <code>main</code> for an ordinary trace. Channel and segment names contain no dot.</li><li>every other column is a quantity (an RQ): a number, a string, a list of numbers (variable length is fine), or a struct of these (for example a struct per channel with <code>std</code> and <code>max</code>).</li></ul>
+<p><strong>File metadata</strong> (Parquet key-value, all strings): <code>goldpan.format_version</code> (an integer; a reader refuses a newer one), <code>goldpan.detector</code> (JSON: <code>name</code>, <code>channels</code> with <code>name</code>, <code>role</code>, <code>unit</code>, <code>input</code>, and <code>segments</code> with <code>name</code>, <code>n_samples</code>, <code>pretrigger_samples</code>, <code>glitch_samples</code>, <code>sample_period_s</code>, <code>start_s</code>) and <code>goldpan.meta</code> (JSON: provenance, units of the quantities, the clock). Compression is <code>zstd</code>; row groups hold a few hundred events, so that a reader can skip groups and read only some columns.</p>
+<p><strong>Versioning.</strong> An addition that old readers can ignore (a new quantity, a new metadata key) keeps the version; a change they cannot read raises <code>goldpan.format_version</code>. The sample dataset in <code>python/tests/data/sample_dataset/</code> is read by the tests of goldpan and is the file that goldsluice's tests read too.</p>
+<div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
+<tr id="goldpan.adapters.parquet.write"><td><code>write</code><br><small><code>(events: Events, path, *, row_group_size: int = 256) -&gt; None</code></small></td><td>Write <code>events</code> into the dataset directory <code>path</code> (created if needed), one file per (series, dump).<details><summary>details</summary><p>A file of the same series dump is replaced; the manifest gets the stream of this detector. Events added to an existing stream must have the same detector (channels and readout). <code>events.meta</code> must be JSON-serializable.</p></details></td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.adapters.parquet.read"><td><code>read</code><br><small><code>(path, *, detector: Optional[str] = None, channels=None, events=None) -&gt; Events</code></small></td><td>Read the stream of one detector of a dataset (or a single file) into one <code>Events</code>.<details><summary>details</summary><p><code>detector</code> names the stream when the dataset has several; <code>channels</code> limits the trace columns that are read; <code>events</code> is a slice or a list of positions to keep (applied after reading: for a dataset larger than memory use <code>iter_chunks</code>).</p></details></td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.adapters.parquet.iter_chunks"><td><code>iter_chunks</code><br><small><code>(path, *, chunk: int = 256, detector: Optional[str] = None, channels=None) -&gt; Iterator[Events]</code></small></td><td>Yield the events of the stream as <code>Events</code> of at most <code>chunk</code> events, file by file, without reading a file at once.<details><summary>details</summary><p>This is how a dataset larger than memory is processed; the functions of goldpan work on any chunk.</p></details></td><td><span class="status done">done</span></td></tr>
 </tbody></table></div>
 
 </div>

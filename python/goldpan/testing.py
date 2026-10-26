@@ -4,7 +4,8 @@
     passed = check_adapter(my_adapter_module, "sample/file", **read_kwargs)
 
 It reads the sample with the adapter and checks the contract of `goldpan.data.Events`; that `iter_chunks` (if the adapter has
-it) gives, joined, the same events as `read`; and, if the adapter can `write`, that a written and read-back copy loses nothing.
+it) gives, joined, the same events as `read`; and, if the adapter can `write`, that a written and read-back copy loses nothing (read back with the same `read_kwargs`, so an
+adapter that needs the detector name or the readout from the user can pass too).
 It raises `AssertionError` saying which check failed, and returns the list of the checks that passed.
 """
 import tempfile
@@ -52,7 +53,7 @@ def check_adapter(module, sample_path, **read_kwargs) -> list:
     if hasattr(module, "write"):
         with tempfile.TemporaryDirectory() as tmp:
             module.write(ev, Path(tmp) / "roundtrip")
-            back = module.read(Path(tmp) / "roundtrip")
+            back = module.read(Path(tmp) / "roundtrip", **read_kwargs)
         _same(ev, back, "write then read against the original")
         passed.append("a round trip loses nothing")
     return passed

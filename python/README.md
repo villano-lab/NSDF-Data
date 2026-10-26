@@ -36,7 +36,8 @@ quiet = ev.select(cuts.quiet_baseline(ev.trace("A"), ev.detector.readout.config(
 specification, format version 1: one Parquet file per series and dump, plain Arrow types, a `_goldpan.json` manifest), and `goldpan.adapters.idx` reads
 a dump of the NSDF archive. `read` returns an `Events`; `iter_chunks` reads a big dataset a chunk at a time. Someone with another format (MIDAS, ROOT) writes
 a small module with `read(path, **kw) -> Events` and checks it with `goldpan.testing.check_adapter`; `goldpan.adapters.register` makes it available
-to `goldpan.adapters.read(path, format=...)`. A small synthetic dataset to test against is in `python/tests/data/sample_dataset/`.
+to `goldpan.adapters.read(path, format=...)`. How to write one, step by step, with a tested example (`python/tests/example_adapter.py`): the developer quick-sheet
+`docs/developers/writing-an-adapter.pdf`. A small synthetic dataset to test against is in `python/tests/data/sample_dataset/`.
 
 ```python
 from goldpan.adapters import idx, parquet

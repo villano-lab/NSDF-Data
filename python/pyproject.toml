@@ -16,7 +16,7 @@ name = "goldpan"
 version = "0.1.0"
 description = "Pulse operations, cuts and derived quantities for SuperCDMS-type traces (NSDF-Data)."
 requires-python = ">=3.12"
-dependencies = ["numpy"]
+dependencies = ["numpy", "awkward"]
 
 [project.optional-dependencies]
 # goldpan.archive writes and reads HDF5 files.

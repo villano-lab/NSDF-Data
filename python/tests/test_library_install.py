@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 PY = ROOT / "python"
 NOT_LIBRARY = set()   # every *.py in python/ is a module of the library
+ORIGINAL_MODULES = {"archive", "channels", "config", "cuts", "io", "operations", "quantities", "status"}
 
 
 def project():
@@ -24,7 +25,9 @@ def test_pyproject_installs_the_goldpan_package_with_every_module_of_it():
     assert project()["tool"]["setuptools"]["packages"] == ["goldpan"]
     assert (PY / "goldpan" / "__init__.py").exists()
     flat = {m for m in project()["tool"]["setuptools"]["py-modules"] if m.startswith("pulse_")}
-    assert {m[len("pulse_"):] for m in flat} == {p.stem for p in (PY / "goldpan").glob("*.py")} - {"__init__", "legacy"}
+    # the flat aliases exist only for the eight modules of the first versions; new modules of the package (data, ...) have none
+    assert {m[len("pulse_"):] for m in flat} == ORIGINAL_MODULES
+    assert ORIGINAL_MODULES <= {p.stem for p in (PY / "goldpan").glob("*.py")}
 
 
 def test_library_has_a_semantic_version_and_numpy_dependency():

@@ -27,6 +27,7 @@
 <tr><td><a href="#goldpan.archive"><code>goldpan.archive</code></a></td><td>Persistent archive of "good event" selections, keyed by series/detector/channel</td><td>3</td><td>3</td><td>0</td></tr>
 <tr><td><a href="#goldpan.channels"><code>goldpan.channels</code></a></td><td>Which physical detector channel is a dump's (detector, channel) pair?</td><td>6</td><td>0</td><td>6</td></tr>
 <tr><td><a href="#goldpan.status"><code>goldpan.status</code></a></td><td>Development-status tagging for functions in this library</td><td>2</td><td>0</td><td>0</td></tr>
+<tr><td><a href="#goldpan.data"><code>goldpan.data</code></a></td><td>The in-memory container of one detector's events: traces, quantities, readout, provenance</td><td>0</td><td>0</td><td>0</td></tr>
 </tbody></table></div>
 
 <h2 id="goldpan.io">goldpan.io</h2>
@@ -159,6 +160,44 @@ def rise_sample(pulses, config, fraction=0.5):
 <div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
 <tr id="goldpan.status.status"><td><code>status</code><br><small><code>(level, note=None)</code></small></td><td>Decorator: tag a function with a development status.<details><summary>details</summary><p>Attaches <code>.status</code> and <code>.status_note</code> to the function either way. For <code>UNDER_DEVELOPMENT</code>, also wraps the function to emit a <code>UserWarning</code> on every call.</p></details></td><td>&mdash;</td></tr>
 <tr id="goldpan.status.list_statuses"><td><code>list_statuses</code><br><small><code>(module)</code></small></td><td>Return <code>{function_name: (status, note)}</code> for every status-tagged function defined in <code>module</code> (skips imports from other modules).</td><td>&mdash;</td></tr>
+</tbody></table></div>
+
+<h2 id="goldpan.data">goldpan.data</h2>
+<p>The in-memory container of one detector's events: traces, quantities, readout, provenance.</p>
+<p>This is the middle of the design in <code>GoldpanGoldsluice/2026-10-25</code> (log repository): file formats live in adapters, the functions of goldpan are pure, and what passes between them is an <code>Events</code>, <strong>immutable</strong>. The simplest version is built first: one detector, and the traces of a channel are held in named <em>segments</em> (here only the default, <code>"main"</code>), so that hybrid sampling later (a coarse and a fine segment) changes no signature and no file.</p>
+<p>An <code>Events</code> has</p>
+<ul><li>a <code>Detector</code>: its name, its channels (name, role, the readout unit and input they come through) and its <code>Readout</code> (the segments of a trace, each with a <code>PulseConfig</code>);</li><li><code>traces</code>: <code>{(channel, segment): array of shape (n_events, n_samples_of_the_segment)}</code>, read-only (use <code>ev.trace(channel)</code>);</li><li><code>quantities</code>: an Awkward Array, one record per event. Its first fields identify the event, <code>series</code>, <code>dump</code> and <code>event</code> (event numbers restart in every dump), and <code>t_trigger</code> (seconds on the clock named in <code>meta["clock"]</code>) may follow; the rest are the quantities (RQs). Flat numbers and variable-length lists are both fields.</li><li><code>meta</code>: provenance (source files, program versions, units of the quantities, the clock).</li></ul>
+<p>Nothing here opens a file. Build one by hand with <code>Events.from_arrays</code> (for a notebook or a test) or get one from an adapter.</p>
+<h3><code>ChannelInfo(name: str, role: Optional[str] = None, unit: Optional[str] = None, input: Optional[str] = None) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>name</code></td><td>The channel's name, unique inside its detector (for example <code>Side2pC</code>).</td></tr>
+<tr><td><code>role</code></td><td>What the channel measures (<code>phonon</code>, <code>charge</code>, ...), so that a cut can be applied to every channel of a role.</td></tr>
+<tr><td><code>unit</code></td><td>The readout unit (a board) the channel comes through, if that matters.</td></tr>
+<tr><td><code>input</code></td><td>The input on that unit.</td></tr>
+</tbody></table></div>
+<h3><code>Detector(name: str, channels: tuple, readout: Readout) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>name</code></td><td>The detector's name, unique inside a dataset.</td></tr>
+<tr><td><code>channels</code></td><td>The <code>ChannelInfo</code>s of the detector, with unique names.</td></tr>
+<tr><td><code>readout</code></td><td>How its traces are sampled.</td></tr>
+</tbody></table></div>
+<h3><code>Events(detector: Detector, traces: Mapping[tuple, numpy.ndarray], quantities: awkward.highlevel.Array, meta: Mapping[str, Any] = &lt;factory&gt;) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>detector</code></td><td>The detector these events were recorded by.</td></tr>
+<tr><td><code>traces</code></td><td><code>{(channel, segment): (n_events, n_samples)}</code>, read-only views.</td></tr>
+<tr><td><code>quantities</code></td><td>One record per event: the key fields, the optional <code>t_trigger</code>, then the quantities.</td></tr>
+<tr><td><code>meta</code></td><td>Provenance and units; a read-only copy.</td></tr>
+</tbody></table></div>
+<h3><code>Readout(segments: tuple) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>segments</code></td><td>The <code>Segment</code>s of a trace, with unique names.</td></tr>
+</tbody></table></div>
+<h3><code>Segment(name: str, n_samples: int, config: PulseConfig, start_s: Optional[float]) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>name</code></td><td>The segment's name: <code>main</code> for an ordinary trace, <code>coarse</code> and <code>fine</code> for hybrid sampling.</td></tr>
+<tr><td><code>n_samples</code></td><td>Samples per trace in this segment.</td></tr>
+<tr><td><code>config</code></td><td>The readout of this segment: its pretrigger window, glitch samples and sample period.</td></tr>
+<tr><td><code>start_s</code></td><td>Time of the first sample relative to the trigger, in seconds (negative before it); <code>None</code> if unknown.</td></tr>
 </tbody></table></div>
 
 </div>

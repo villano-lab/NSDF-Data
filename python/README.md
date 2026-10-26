@@ -19,6 +19,20 @@ bstd = q.pretrigger_std(pulses, config)
 quiet = cuts.quiet_baseline(pulses, config)
 ```
 
+**The container.** `goldpan.data.Events` holds one detector's events and is **immutable**: its `detector` (name, channels
+with roles, and the readout with its segments), its `traces` (read-only arrays, one per channel and segment, `ev.trace("A")`), its
+`quantities` (an Awkward Array, one record per event; the first fields `series`, `dump`, `event` identify the event) and its `meta`
+(provenance). `select`, `with_quantities` and `concatenate` return new objects. Nothing in it opens a file: adapters (to come) turn idx,
+Parquet and other formats into an `Events`. See the design notes of 2026-10-25 and 2026-10-26 (`GoldpanGoldsluice/` in the log repository).
+
+```python
+from goldpan.data import ChannelInfo, Detector, Events, Readout
+detector = Detector("S104", (ChannelInfo("A", role="phonon"), ChannelInfo("B", role="phonon")), Readout.single(4096, DCRC_RUN76))
+ev = Events.from_arrays(detector, {"A": traces_a, "B": traces_b}, series="07221203_2025", dump="F0001")
+std = q.pretrigger_std(ev.trace("A"), ev.detector.readout.config())      # the readout comes from the detector
+quiet = ev.select(cuts.quiet_baseline(ev.trace("A"), ev.detector.readout.config()))
+```
+
 **The readout is never assumed.** In the package, every function that needs the pretrigger window, the glitch samples
 or the sample period takes a `config` and has **no default** for it: the numbers belong to a *readout*, not to the library,
 and a silent wrong default (the library once assumed 1.6 us for a readout that samples every 0.8 us) changes every time,

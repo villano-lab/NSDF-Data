@@ -8,15 +8,23 @@
 # repository or to one experiment. The version below is the library's own, not the repository's VERSION; how the two relate
 # is still open in issue 71. `check_environment` is included because the first-analysis guide imports it.
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "goldpan"
 version = "0.1.0"
 description = "Pulse operations, cuts and derived quantities for SuperCDMS-type traces (NSDF-Data)."
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.12"
 dependencies = ["numpy", "awkward"]
+
+[project.urls]
+Homepage = "https://villano-lab.github.io/NSDF-Data/"
+Documentation = "https://villano-lab.github.io/NSDF-Data/library/"
+Repository = "https://github.com/villano-lab/NSDF-Data"
+Changelog = "https://github.com/villano-lab/NSDF-Data/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
 # goldpan.archive writes and reads HDF5 files.

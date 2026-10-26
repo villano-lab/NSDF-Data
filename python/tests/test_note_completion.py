@@ -128,3 +128,15 @@ def test_the_red_box_is_left_out_when_the_author_put_a_box_of_their_own(label):
 def test_no_red_box_for_a_note_that_was_not_revised():
     assert bn.revised_box({"_first": "2026-09-14"}, "text") == ""
     assert bn.revised_box({}, "text") == ""
+
+
+def test_backticks_in_the_title_and_description_render_as_code():
+    h = {"id": "9", "date": "2026-10-05", "author": "A", "title": "What are `goldpan` and `goldsluice`?",
+         "description": "Moving `python/` into the package `goldpan` & more.", "keywords": "k", "status": "In progress"}
+    row = bn.index_rows([("demo", h)])[0][1]
+    assert "<td>What are <code>goldpan</code> and <code>goldsluice</code>?</td>" in row
+    assert "Moving <code>python/</code> into the package <code>goldpan</code> &amp; more." in row
+    assert "`" not in row
+    assert bn.header_html("no <b>markup</b> here & `x<y`") == "no &lt;b&gt;markup&lt;/b&gt; here &amp; <code>x&lt;y</code>"
+    assert bn.header_plain("the `goldpan` tab") == "the goldpan tab"
+    assert bn.header_html("a lone ` backtick") == "a lone ` backtick"

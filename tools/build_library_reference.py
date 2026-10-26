@@ -106,6 +106,8 @@ def class_attribute_docs(module, cls):
 def module_names():
     found = sorted("goldpan." + p.stem for p in (PYTHON_DIR / "goldpan").glob("*.py")
                    if p.stem not in {"__init__", "legacy"})
+    found += sorted("goldpan.adapters." + p.stem for p in (PYTHON_DIR / "goldpan" / "adapters").glob("*.py")
+                    if p.stem != "__init__")
     return [m for m in ORDER if m in found] + [m for m in found if m not in ORDER]
 
 

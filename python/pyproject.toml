@@ -21,9 +21,11 @@ dependencies = ["numpy", "awkward"]
 [project.optional-dependencies]
 # goldpan.archive writes and reads HDF5 files.
 archive = ["h5py"]
+# goldpan.adapters.parquet reads and writes the native format.
+parquet = ["pyarrow"]
 
 [tool.setuptools]
-packages = ["goldpan"]
+packages = ["goldpan", "goldpan.adapters"]
 # The flat names of the first versions, as aliases of the package modules (to be removed in a later release), and the
 # environment check, which the first-analysis guide imports.
 py-modules = [

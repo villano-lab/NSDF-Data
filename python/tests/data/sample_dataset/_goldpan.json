@@ -1,0 +1,41 @@
+{
+ "format": "goldpan-dataset",
+ "format_version": 1,
+ "streams": {
+  "SAMPLE": {
+   "kind": "events",
+   "main_array": true,
+   "detector": {
+    "name": "SAMPLE",
+    "channels": [
+     {
+      "name": "A",
+      "role": "phonon",
+      "unit": "board0",
+      "input": "0"
+     },
+     {
+      "name": "B",
+      "role": "phonon",
+      "unit": "board0",
+      "input": "1"
+     }
+    ],
+    "segments": [
+     {
+      "name": "main",
+      "n_samples": 256,
+      "pretrigger_samples": 64,
+      "glitch_samples": 4,
+      "sample_period_s": 1e-06,
+      "start_s": -6.4e-05
+     }
+    ]
+   },
+   "files": [
+    "SAMPLE/SERIES1_F0001.parquet",
+    "SAMPLE/SERIES1_F0002.parquet"
+   ]
+  }
+ }
+}

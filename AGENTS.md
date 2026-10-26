@@ -34,6 +34,7 @@ The repository uses **Git Flow** and **semantic versioning**. The full procedure
 - Student notes (`notes/src/**`), `tools/build_notes.py`, `tools/word_to_note.py` and the student-notes workflow always go through a PR into `develop`. A note goes live about two minutes after the maintainer gives it a note number and merges it; nothing is published before that.
 - Write commit messages that say what changed and why. If an AI assistant helped, add a `Co-Authored-By:` trailer naming it.
 - Never commit raw data, credentials or tokens.
+- **An agent never pushes a tag `goldpan-v*`**: it publishes the library to PyPI, which cannot be undone (`RELEASING.md`, "Publishing the library to PyPI"). Only the maintainer does.
 
 ## If you change X, also update Y
 
@@ -87,6 +88,7 @@ Rebuilt PDFs are never byte-identical (pandoc stamps a date), so restore the PDF
 
 ## Checks that run automatically
 
+- **Publish goldpan** (`.github/workflows/publish-goldpan.yml`): on a tag `goldpan-vX.Y.Z` it builds the library, tests the wheel and, after the maintainer approves the `pypi` environment, uploads it to PyPI with a trusted publisher (no token). Run by hand it is a dry run.
 - **Student notes** (`.github/workflows/student-notes.yml`): validates `notes/src/**` on pull requests (`build_notes.py check`), writes the number check (`tools/check_note.py --only numbers`) for the notes the pull request changed to the job summary and as warnings (advice only: it never fails the pull request), and builds the pages on push to `develop` and `master`, committing them with a deploy key that bypasses the pull-request rule (`RELEASING.md`, "The notes bot and the pull-request rule").
 - **Library tests** (`.github/workflows/library-tests.yml`): runs `python -m pytest` in `python/` on Windows, macOS and Linux for pull requests and pushes that touch `python/` or `requirements.txt`. It includes `test_library_conventions.py`, which fails when a public library function has no `@status` tag or is not mentioned in any test.
 - **Note pins** (`.github/workflows/note-pins.yml`): on every pull request and push, and every Monday. Fails if a pinned link in a note does not resolve (the commit or the file is missing, or the link is not pinned to a commit hash); also writes a report of which pinned files have changed, moved or been removed since (in the run's summary), and warns when `docs/notes/pin-moves.json` is out of date. Every Monday it also posts the report as a comment on the standing issue "Pinned links in the notes: report" (assigned to the maintainer), but only when the list of files that need a look has changed (judged by `check_note_pins.py signature`, which ignores the notes' own status labels). The tool is a standalone script: `python tools/check_note_pins.py check` and `report` can be run at any time (the issue explains how).

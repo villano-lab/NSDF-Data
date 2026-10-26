@@ -62,6 +62,24 @@ The library in `python/` (the `goldpan` distribution, see issue 71) has a versio
 6. Merge `master` back into `develop` (a pull request or a merge commit) so `develop` has the release commit and the tag's history.
 7. Delete the `release/X.Y.Z` branch. The live site is unaffected, because it is served from `develop`.
 
+## Publishing the library to PyPI
+
+The library is published as **`goldpan`** (https://pypi.org/project/goldpan/) by the workflow `.github/workflows/publish-goldpan.yml`. It runs when a tag `goldpan-vX.Y.Z` is pushed, builds the package, installs the wheel in a clean environment and imports every module, and then uploads it. **No token is stored anywhere**: PyPI trusts the workflow (a "trusted publisher"), and the upload waits for the maintainer to approve the `pypi` environment. Run by hand (Actions, *Publish goldpan*, *Run workflow*) it is a dry run: it builds and tests and never uploads.
+
+**One-time setup (maintainer, on the two websites):**
+
+1. GitHub, *Settings*, *Environments*, *New environment*: name it `pypi`; under *Required reviewers* add yourself, so that every upload needs your click; under *Deployment branches and tags* allow only tags matching `goldpan-v*`.
+2. PyPI, project `goldpan`, *Manage*, *Publishing*, *Add a new publisher*, GitHub: owner `villano-lab`, repository `NSDF-Data`, workflow `publish-goldpan.yml`, environment `pypi`.
+3. Run the dry run once and read its log.
+
+**Each library release.** Make the release as above, with the library's version in `python/pyproject.toml` and the line `goldpan X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `master`:
+
+1. Tag the merge commit with the *library* tag, which is not the project's tag `vX.Y.Z` (the two may point at the same commit): `git tag -a goldpan-vX.Y.Z -m "goldpan X.Y.Z"` and `git push origin goldpan-vX.Y.Z`.
+2. The workflow's first job checks that the tag, `python/pyproject.toml` and the changelog agree (`python tools/check_goldpan_release.py goldpan-vX.Y.Z` does the same on your computer) and that the tag is on `master`.
+3. Approve the *Upload to PyPI* job when GitHub asks. Check https://pypi.org/project/goldpan/ and, in a throwaway environment, `python -m pip install goldpan==X.Y.Z`.
+
+A version on PyPI can never be replaced or reused: a bad upload can only be yanked, and fixed by a new patch version, so run the dry run first. **An AI agent never pushes a `goldpan-v*` tag.** If the library moves to its own repository, register the trusted publisher again for the new repository.
+
 ## Making a hotfix
 
 A hotfix repairs **released code** (for example a broken library function in a tagged release). A broken guide or site page is *not* a hotfix: fix it with a feature PR into `develop`, and it is live on merge.

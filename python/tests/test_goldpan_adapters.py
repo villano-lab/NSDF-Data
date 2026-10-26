@@ -207,7 +207,7 @@ def test_registry_reads_a_dataset_by_guessing_and_by_name():
     with pytest.raises(ValueError, match="cannot tell"):
         adapters.read(SAMPLE.parent)
     with pytest.raises(KeyError, match="no adapter"):
-        adapters.read(SAMPLE, format="midas")
+        adapters.read(SAMPLE, format="nosuchformat")
 
 
 def test_a_third_party_adapter_can_register_and_is_checked_by_the_same_test():

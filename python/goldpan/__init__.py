@@ -4,6 +4,7 @@ The modules (import what you need; none is imported automatically, so that optio
 needed by the modules that use them):
 
 * `goldpan.config`     the readout of your data (`PulseConfig`, with the presets `DCRC_RUN76` and `Z7`); it has no defaults
+* `goldpan.data`       the immutable container of one detector's events (`Events`, `Detector`, `Readout`; needs `awkward`)
 * `goldpan.quantities` per-pulse numbers (baseline, excursion, spectrum, ...)
 * `goldpan.cuts`       selections built from the quantities
 * `goldpan.operations` pulse in, pulse out (baseline subtraction, glitch trimming)

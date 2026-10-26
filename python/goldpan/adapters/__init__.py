@@ -2,6 +2,7 @@
 
 * `goldpan.adapters.parquet`: the native format (reads and writes); its docstring is the specification.
 * `goldpan.adapters.idx`: a dump of the NSDF archive (reads).
+* `goldpan.adapters.midas`: raw SuperCDMS SNOLAB DAQ files, `.mid`, `.mid.gz` or `.mid.lz4` (reads).
 * `goldpan.adapters.rq_root`: the RQs of the collaboration's reconstruction, ROOT files read with uproot (reads a *table of quantities*, not
   traces; `goldpan.adapters.rq.attach` adds it to an `Events`).
 
@@ -11,7 +12,7 @@ Anyone can add one: a module with `read(path, **kw) -> Events`, optionally `iter
 import importlib
 
 _BUILTIN = {"parquet": "goldpan.adapters.parquet", "idx": "goldpan.adapters.idx",
-            "rq_root": "goldpan.adapters.rq_root"}
+            "rq_root": "goldpan.adapters.rq_root", "midas": "goldpan.adapters.midas"}
 _registered = {}
 
 
@@ -36,12 +37,14 @@ def _adapter(name: str):
 
 
 def read(path, format=None, **kwargs):
-    """Read `path` with the adapter `format`; `None` guesses: a directory with `_goldpan.json` or a `.parquet` file is `parquet`; a `.root` file or a folder of them is `rq_root`."""
+    """Read `path` with the adapter `format`; `None` guesses: a directory with `_goldpan.json` or a `.parquet` file is `parquet`; a `.root` file or a folder of them is `rq_root`; a `.mid`, `.mid.gz` or `.mid.lz4` file is `midas`."""
     if format is None:
         from pathlib import Path
         p = Path(path)
         if (p / "_goldpan.json").exists() or p.suffix == ".parquet":
             format = "parquet"
+        elif p.name.endswith((".mid", ".mid.gz", ".mid.lz4")):
+            format = "midas"
         elif p.suffix == ".root" or (p.is_dir() and any(p.glob("*.root"))):
             format = "rq_root"
         else:

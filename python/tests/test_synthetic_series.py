@@ -50,22 +50,28 @@ def test_midas_file_structure(out):
     raw = gzip.open(out["midas"] / "07221203_2025_F0001.mid.gz").read()
     import struct
     event_id, mask, serial, ts, size = struct.unpack_from("<HHIII", raw, 0)
-    assert (event_id, mask) == (0x8000, 0x4D49)                                      # begin of run: the ODB
-    pos, ids = 16 + size, []
+    assert (event_id, mask) == (0x8000, ss.BOR_MASK)                                      # begin of run: the ODB
+    assert (mask, serial) == (ss.BOR_MASK, ss.RUN_NUMBER)
+    pos, ids, banks = 16 + size, [], []
     while pos < len(raw):
         event_id, mask, serial, ts, size = struct.unpack_from("<HHIII", raw, pos)
         ids.append((event_id, serial))
-        assert (size - 20) % 8 == 0 and struct.unpack_from("<4s", raw, pos + 16 + 8)[0] == b"SCD0"
-        assert struct.unpack_from("<I", raw, pos + 16 + 12)[0] == 6                    # TID_DWORD
+        if event_id == 1:
+            banks.append(struct.unpack_from("<4s", raw, pos + 16 + 8)[0])
+            assert (size - 20) % 8 == 0 and struct.unpack_from("<I", raw, pos + 16 + 12)[0] == 6      # TID_DWORD
         pos += 16 + size
-    assert pos == len(raw) and ids == [(1, e) for e in range(14)]
+    assert pos == len(raw)
+    assert ids[:-1] == [(1, s) for s in range(16)] and ids[-1] == (0x8001, ss.RUN_NUMBER)      # veto, 14 triggers, 1 polling, end of run
+    assert banks[0] == b"LDV0" and banks.count(b"SCD0") == 15
 
 
 def test_midas_round_trips_every_trace_and_header(out, dumps):
     for dump in dumps:
         got = ss.read_midas(out["midas"] / f"{dump.series}_{dump.dump}.mid.gz")
-        assert len(got["events"]) == dump.n_events
-        for e, ev in enumerate(got["events"]):
+        assert got["vetoes"] == 1 and got["odb_end"] is not None
+        events = [ev for ev in got["events"] if ev["trigger_type"] != ss.POLLING]
+        assert len(events) == dump.n_events and len(got["events"]) == dump.n_events + 1
+        for e, ev in enumerate(events):
             assert ev["event_number"] == dump.event[e] and ev["trigger_type"] == dump.trigger_type[e]
             assert ev["trigger_id"] == e + 1 and ev["timestamp"] == dump.timestamp[e]
             assert [d["detector_id"] for d in ev["detectors"]] == [1, 2, 3]
@@ -80,8 +86,8 @@ def test_midas_round_trips_every_trace_and_header(out, dumps):
 def test_midas_odb_carries_the_readout(out):
     odb = ss.read_midas(out["midas"] / "07221203_2025_F0001.mid.gz")["odb"].decode("latin-1")
     assert odb.startswith("<?xml") and odb.count('<dir name="Det0') == 3
-    assert re.search(r'Phonon on-pulse length \(samp\)" type="INT">4096<', odb)
-    assert re.search(r'Phonon sampling rate \(Hz\)" type="FLOAT">1250000', odb)
+    assert re.search(r'Phonon on-pulse length \(samp\)" type="INT" handle="1">4096<', odb)
+    assert re.search(r'Phonon sampling rate \(Hz\)" type="FLOAT" handle="1">1250000', odb)
 
 
 def test_midas_files_are_reproducible(dumps, tmp_path):

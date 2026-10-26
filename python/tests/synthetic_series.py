@@ -132,6 +132,9 @@ HEAD = dict(channel=0x0, channelBlock=0x1, detectorBlock=0x2, detectorHead=0x3, 
 DETECTOR_TYPE, DCRC_VERSION, PHONON = 700, 40, 1
 SAMPLE_RATE_KHZ = 1250
 FIRST_EVENT = {d: first for d, _, first in DUMPS}
+RUN_NUMBER = 2626                           # also the serial number of the begin- and end-of-run events, as in the real files
+BOR_MASK = 0x494D                           # the mask of the begin/end-of-run events of the real DAQ
+POLLING = 8                                 # trigger type of a polling-cycle event: no detectors, no traces
 
 
 def _hdr(kind, value):
@@ -167,17 +170,28 @@ def pack_event(dump: Dump, e: int) -> np.ndarray:
     return np.array(w, dtype="<u4")
 
 
+def pack_polling_event(timestamp: int) -> np.ndarray:
+    """A polling-cycle metadata event (trigger type 8): its SCD0 bank in the real files has no primitives and no detectors."""
+    w = [_hdr("overall", (FORMAT_VERSION << 12) | 1), _hdr("trigger", 0), 2, 0, POLLING, timestamp, 0, 2234, 7000000,
+         _hdr("primHead", 0), 0, _hdr("detectorHead", 0), _hdr("sduPrimHead", 0), 0, _hdr("sduHead", 0), _hdr("trailer", 0)]
+    return np.array(w, dtype="<u4")
+
+
 def _midas_event(event_id, mask, serial, timestamp, data: bytes) -> bytes:
     return struct.pack("<HHIII", event_id, mask, serial, timestamp, len(data)) + data
 
 
-def odb_xml(dump: Dump) -> bytes:
-    """A small begin-of-run ODB in the XML of the DAQ's MidasFileWriter: the detectors' readout control settings."""
+def odb_xml(dump: Dump, final: bool = False) -> bytes:
+    """A small ODB (begin of run, or end of run with `final=True`) in the XML of the DAQ: `Runinfo` and the readout control settings
+    of the detectors. Keys carry a `handle` attribute and directories too, as in the real files."""
     def key(name, typ, value):
-        return f'<key name="{name}" type="{typ}">{value}</key>'
+        return f'<key name="{name}" type="{typ}" handle="1">{value}</key>'
+    stop = START_TIME + 7200 if final else 0
     parts = ['<?xml version="1.0" encoding="ISO-8859-1"?>', '<odb root="/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
              'xsi:noNamespaceSchemaLocation="http://midas.psi.ch/odb.xsd">', '<dir name="Experiment"><dir name="Edit on start">',
              key("Data type", "INT", 1), key("Start comment", "STRING", "synthetic series for tests"), '</dir></dir>',
+             '<dir name="Runinfo" handle="1">', key("State", "INT", 3 if final else 1), key("Run number", "INT", RUN_NUMBER),
+             key("Start time binary", "UINT32", START_TIME), key("Stop time binary", "UINT32", stop), '</dir>',
              '<dir name="Detectors">']
     for b in range(N_BOARDS):
         parts += [f'<dir name="Det{b + 1:02d}"><dir name="DCRCInfo">', key("Tower", "INT", 1), key("DetectorType", "INT", DETECTOR_TYPE),
@@ -192,32 +206,43 @@ def odb_xml(dump: Dump) -> bytes:
 
 
 def write_midas(dump: Dump, outdir) -> Path:
-    """`<outdir>/<series>_<dump>.mid.gz`: a begin-of-run event with the ODB, then one event per trigger with the bank `SCD0`."""
+    """`<outdir>/<series>_<dump>.mid.gz`: a begin-of-run event with the ODB, a veto-only event (bank `LDV0`), one event per trigger
+    with the bank `SCD0` and a polling-cycle event after the third, then the end-of-run event with the final ODB."""
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     path = outdir / f"{dump.series}_{dump.dump}.mid.gz"
     with gzip.GzipFile(path, "wb", mtime=0) as f:
-        f.write(_midas_event(0x8000, 0x4D49, 0, START_TIME, odb_xml(dump)))
-        for e in range(dump.n_events):
-            payload = pack_event(dump, e)
+        f.write(_midas_event(0x8000, BOR_MASK, RUN_NUMBER, START_TIME, odb_xml(dump)))
+        serial = 0
+
+        def write_bank(name, payload, timestamp):
+            nonlocal serial
             if len(payload) % 2:                                                  # banks are aligned to 8 bytes
                 payload = np.append(payload, np.uint32(0))
-            bank = b"SCD0" + struct.pack("<II", 6, len(payload) * 4)              # name, TID_DWORD, size in bytes
+            bank = name + struct.pack("<II", 6, len(payload) * 4)                 # name, TID_DWORD, size in bytes
             body = bank + payload.tobytes()
             data = struct.pack("<II", len(body), (1 | (1 << 4))) + body           # bank header: size, flags (version | 32-bit)
-            f.write(_midas_event(1, 0, e, int(dump.timestamp[e]), data))
+            f.write(_midas_event(1, 0, serial, timestamp, data))
+            serial += 1
+
+        write_bank(b"LDV0", np.arange(31, dtype="<u4") + 0xF0000000, START_TIME)
+        for e in range(dump.n_events):
+            write_bank(b"SCD0", pack_event(dump, e), int(dump.timestamp[e]))
+            if e == 2:
+                write_bank(b"SCD0", pack_polling_event(int(dump.timestamp[e]) + 1), int(dump.timestamp[e]) + 1)
+        f.write(_midas_event(0x8001, BOR_MASK, RUN_NUMBER, START_TIME + 7200, odb_xml(dump, final=True)))
     return path
 
 
 def read_midas(path) -> dict:
     """Read a file made by `write_midas`, following `CDMSIOLIB::unpack_event` (format version 8).
 
-    Returns `dict(odb=<xml bytes>, events=[dict(trigger_id, event_number, trigger_type, readout_type, timestamp,
+    Returns `dict(odb=<xml bytes>, odb_end=<xml bytes or None>, vetoes=<number of veto-only events>, events=[dict(trigger_id, event_number, trigger_type, readout_type, timestamp,
     detectors=[dict(detector_type, detector_id, channels=[dict(channel_num, channel_type, pretrigger, sample_rate_khz,
     downsampling, data)])])])`.
     """
     raw = gzip.open(path, "rb").read() if str(path).endswith(".gz") else Path(path).read_bytes()
-    pos, odb, events = 0, b"", []
+    pos, odb, odb_end, vetoes, events = 0, b"", None, 0, []
     while pos < len(raw):
         event_id, mask, serial, ts, size = struct.unpack_from("<HHIII", raw, pos)
         pos += 16
@@ -225,9 +250,13 @@ def read_midas(path) -> dict:
         pos += size
         if event_id == 0x8000:
             odb = data
-        else:
+        elif event_id == 0x8001:
+            odb_end = data
+        elif struct.unpack_from("<4s", data, 8)[0] == b"SCD0":
             events.append(_unpack_bank_event(data))
-    return {"odb": odb, "events": events}
+        else:
+            vetoes += 1
+    return {"odb": odb, "odb_end": odb_end, "vetoes": vetoes, "events": events}
 
 
 def _unpack_bank_event(data: bytes) -> dict:

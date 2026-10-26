@@ -47,6 +47,12 @@ parquet.write(ev, 'my_dataset')                      # needs the extra: pip inst
 for chunk in parquet.iter_chunks('my_dataset', chunk=256): ...   # or parquet.read('my_dataset', channels=['Side2pC'])
 ```
 
+**Raw DAQ files.** `goldpan.adapters.midas` reads the SuperCDMS SNOLAB MIDAS files (`.mid`, `.mid.gz`, `.mid.lz4`) into an `Events`: you give the detector
+number, the channel numbers behind your channel names and the readout (its sample period is checked against the file), and only those channels are
+copied. `meta` has the run number, start and stop time from the ODB and whether the end-of-run event was reached; polling-cycle and veto-only events are
+skipped and counted; `max_events=` and `iter_chunks` keep a 15 GB file manageable. Checked against a real Z7 file (format version 8). Hybrid sampling is
+not read yet.
+
 **The RQs of the reconstruction.** `goldpan.adapters.rq_root` reads the processed quantities of the collaboration's ROOT files (`rqDir/eventTree` and
 `rqDir/zip<N>`, with uproot) as a table of quantities, one record per event with the key `series`, `dump`, `event` first; `branches=` takes names and wildcards
 (`"P*max"`), a missing branch is NaN, and the detector number is always given. `goldpan.adapters.rq.attach(events, table)` adds such a table to an `Events` of

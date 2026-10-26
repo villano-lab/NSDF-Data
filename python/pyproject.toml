@@ -25,6 +25,8 @@ archive = ["h5py"]
 parquet = ["pyarrow"]
 # goldpan.adapters.rq_root reads the RQs in ROOT files.
 root = ["uproot"]
+# goldpan.adapters.midas reads .mid.lz4 files.
+midas = ["lz4"]
 
 [tool.setuptools]
 packages = ["goldpan", "goldpan.adapters"]

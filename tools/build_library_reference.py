@@ -75,7 +75,10 @@ def summary(doc):
 
 def signature(obj):
     """Signature as text, with module prefixes dropped."""
-    return re.sub(r"\bgoldpan\.[a-z]+\.", "", str(inspect.signature(obj)))
+    try:
+        return re.sub(r"\bgoldpan\.[a-z]+\.", "", str(inspect.signature(obj)))
+    except (ValueError, TypeError):      # e.g. an exception class
+        return "(...)"
 
 
 def status_cell(func):

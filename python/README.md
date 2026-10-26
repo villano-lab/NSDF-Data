@@ -47,6 +47,11 @@ parquet.write(ev, 'my_dataset')                      # needs the extra: pip inst
 for chunk in parquet.iter_chunks('my_dataset', chunk=256): ...   # or parquet.read('my_dataset', channels=['Side2pC'])
 ```
 
+**The RQs of the reconstruction.** `goldpan.adapters.rq_root` reads the processed quantities of the collaboration's ROOT files (`rqDir/eventTree` and
+`rqDir/zip<N>`, with uproot) as a table of quantities, one record per event with the key `series`, `dump`, `event` first; `branches=` takes names and wildcards
+(`"P*max"`), a missing branch is NaN, and the detector number is always given. `goldpan.adapters.rq.attach(events, table)` adds such a table to an `Events` of
+the same events, matched on the key (refusing missing events, duplicate rows and name clashes).
+
 **Synthetic data in every format.** `python python/tests/synthetic_series.py OUTDIR` writes one small made-up series (two dumps, six Side-2
 sensors plus the other DCRC inputs, 4096 samples at 0.8 us) as an idx dump, as SuperCDMS SNOLAB MIDAS files (`.mid.gz`, CDMS I/O library format version 8),
 as RQs in Parquet and in ROOT (`rqDir/eventTree` and `rqDir/zip1`), and as a native goldpan dataset, all from the same events, so that every adapter and

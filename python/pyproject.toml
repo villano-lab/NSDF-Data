@@ -23,6 +23,8 @@ dependencies = ["numpy", "awkward"]
 archive = ["h5py"]
 # goldpan.adapters.parquet reads and writes the native format.
 parquet = ["pyarrow"]
+# goldpan.adapters.rq_root reads the RQs in ROOT files.
+root = ["uproot"]
 
 [tool.setuptools]
 packages = ["goldpan", "goldpan.adapters"]

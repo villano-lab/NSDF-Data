@@ -47,6 +47,11 @@ parquet.write(ev, 'my_dataset')                      # needs the extra: pip inst
 for chunk in parquet.iter_chunks('my_dataset', chunk=256): ...   # or parquet.read('my_dataset', channels=['Side2pC'])
 ```
 
+**Synthetic data in every format.** `python python/tests/synthetic_series.py OUTDIR` writes one small made-up series (two dumps, six Side-2
+sensors plus the other DCRC inputs, 4096 samples at 0.8 us) as an idx dump, as SuperCDMS SNOLAB MIDAS files (`.mid.gz`, CDMS I/O library format version 8),
+as RQs in Parquet and in ROOT (`rqDir/eventTree` and `rqDir/zip1`), and as a native goldpan dataset, all from the same events, so that every adapter and
+every cross-format check has data to read. Nothing in it is detector data. `python/tests/test_synthetic_series.py` uses it.
+
 **Algorithms from the collaboration library.** `goldpan.rq_cuts` selects clean random triggers and calibration lines from already-processed RQs
 (`phonon_log_ratios`, `pileup_randoms`, `loose_randoms`, `tight_randoms`, `calibration_line`): the thresholds and windows are analysis results and are
 always passed in, never defaults. `goldpan.algorithms` has the trace filters (`lowpass`, zero-phase Butterworth, numpy only; `downsample`) and per-trace

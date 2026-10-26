@@ -47,6 +47,12 @@ parquet.write(ev, 'my_dataset')                      # needs the extra: pip inst
 for chunk in parquet.iter_chunks('my_dataset', chunk=256): ...   # or parquet.read('my_dataset', channels=['Side2pC'])
 ```
 
+**Algorithms from the collaboration library.** `goldpan.rq_cuts` selects clean random triggers and calibration lines from already-processed RQs
+(`phonon_log_ratios`, `pileup_randoms`, `loose_randoms`, `tight_randoms`, `calibration_line`): the thresholds and windows are analysis results and are
+always passed in, never defaults. `goldpan.algorithms` has the trace filters (`lowpass`, zero-phase Butterworth, numpy only; `downsample`) and per-trace
+quantities (`pulse_max`, `max_time`, `integral`, `rise_time`), and `compute` adds them to an `Events` as one record per channel. Both are ports of
+`scdms-analysis-tools`, with the readout taken from a `config` instead of being fixed to Z7.
+
 **The readout is never assumed.** In the package, every function that needs the pretrigger window, the glitch samples
 or the sample period takes a `config` and has **no default** for it: the numbers belong to a *readout*, not to the library,
 and a silent wrong default (the library once assumed 1.6 us for a readout that samples every 0.8 us) changes every time,

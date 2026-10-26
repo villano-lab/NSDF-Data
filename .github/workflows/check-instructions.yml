@@ -262,7 +262,9 @@ jobs:
 
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-version: latest
+          # Pinned: on 23 Oct 2026 the newest Miniforge (26.9.4-0, published 22 Oct) made `conda init --all` fail on the Windows
+          # runner ("needs sudo ... conda.exe", exit code 1) inside this action. Move the pin forward when a newer release works.
+          miniforge-version: 26.7.2-0
           auto-activate-base: false
 
       - name: Setup Step 3 - conda is installed
@@ -284,6 +286,9 @@ jobs:
           # Step 4's git clone fetched the default branch. Use this commit's requirements.txt, so a
           # pull request tests its own version of the file (the same file once it is merged).
           cp "$GITHUB_WORKSPACE/requirements.txt" requirements.txt
+          # requirements.txt installs ./python in place (the package goldpan and its aliases), so a pull request that
+          # changes the library must bring its own python/ folder too, not only its pyproject.toml.
+          rm -rf python && cp -r "$GITHUB_WORKSPACE/python" python
           python -m pip install -r requirements.txt
 
       - name: Setup Step 6 - tests and tool versions

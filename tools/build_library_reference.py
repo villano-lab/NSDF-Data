@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Build the library reference page, docs/library/index.html, from the code in python/.
 
-The page is generated, never hand-edited: it lists every `pulse_*.py` module with its
+The page is generated, never hand-edited: it lists every module of the `goldpan` package with its
 docstring, its classes and its public functions (signature, summary, `@status` tag and note),
 read from the code itself. Only the standard library is used, besides the library's own
 dependencies (numpy, h5py), so it runs wherever the tests run.
@@ -24,9 +24,10 @@ REPO = Path(__file__).resolve().parent.parent
 PYTHON_DIR = REPO / "python"
 OUT = REPO / "docs" / "library" / "index.html"
 
-# Documented in this order; any other pulse_*.py module is appended alphabetically.
-ORDER = ["pulse_io", "pulse_config", "pulse_operations", "pulse_quantities", "pulse_cuts",
-         "pulse_archive", "pulse_channels", "pulse_status"]
+# Documented in this order; any other module of the package is appended alphabetically. `goldpan.legacy` (the old flat
+# names) and the package's `__init__` are not documented here.
+ORDER = ["goldpan.io", "goldpan.config", "goldpan.operations", "goldpan.quantities", "goldpan.cuts",
+         "goldpan.archive", "goldpan.channels", "goldpan.status"]
 
 
 def esc(text):
@@ -73,12 +74,11 @@ def summary(doc):
 
 
 def signature(obj):
-    """Signature as text, with the default config shown by name and module prefixes dropped."""
-    text = str(inspect.signature(obj))
-    default = getattr(importlib.import_module("pulse_config"), "DEFAULT_CONFIG", None)
-    if default is not None:
-        text = text.replace(repr(default), "DEFAULT_CONFIG")
-    return re.sub(r"\bpulse_[a-z]+\.", "", text)
+    """Signature as text, with module prefixes dropped."""
+    try:
+        return re.sub(r"\bgoldpan\.[a-z]+\.", "", str(inspect.signature(obj)))
+    except (ValueError, TypeError):      # e.g. an exception class
+        return "(...)"
 
 
 def status_cell(func):
@@ -107,7 +107,10 @@ def class_attribute_docs(module, cls):
 
 
 def module_names():
-    found = sorted(p.stem for p in PYTHON_DIR.glob("pulse_*.py"))
+    found = sorted("goldpan." + p.stem for p in (PYTHON_DIR / "goldpan").glob("*.py")
+                   if p.stem not in {"__init__", "legacy"})
+    found += sorted("goldpan.adapters." + p.stem for p in (PYTHON_DIR / "goldpan" / "adapters").glob("*.py")
+                    if p.stem != "__init__")
     return [m for m in ORDER if m in found] + [m for m in found if m not in ORDER]
 
 
@@ -118,7 +121,7 @@ def render_module(modname):
     funcs.sort(key=lambda nf: nf[1].__code__.co_firstlineno)      # in source order
     classes = [(n, c) for n, c in inspect.getmembers(module, inspect.isclass)
                if not n.startswith("_") and c.__module__ == module.__name__]
-    out = [f'<h2 id="{modname}">{modname}.py</h2>', blocks(module.__doc__)]
+    out = [f'<h2 id="{modname}">{modname}</h2>', blocks(module.__doc__)]
     for name, cls in classes:
         out.append(f"<h3><code>{name}{esc(signature(cls))}</code></h3>")
         if cls.__doc__ and not cls.__doc__.startswith(name + "("):    # skip the auto-made dataclass doc
@@ -151,7 +154,7 @@ def render():
         done = sum(getattr(f, "status", None) == "done" for _, f in funcs)
         dev = sum(getattr(f, "status", None) == "under_development" for _, f in funcs)
         first = summary(importlib.import_module(modname).__doc__).split(". ")[0].rstrip(".")
-        overview.append(f'<tr><td><a href="#{modname}"><code>{modname}.py</code></a></td><td>{inline(first)}</td>'
+        overview.append(f'<tr><td><a href="#{modname}"><code>{modname}</code></a></td><td>{inline(first)}</td>'
                         f"<td>{len(funcs)}</td><td>{done}</td><td>{dev}</td></tr>")
     return PAGE.format(overview="\n".join(overview), sections="\n\n".join(sections))
 
@@ -172,7 +175,7 @@ PAGE = """<!DOCTYPE html>
 <h1>Library reference: <code>python/</code></h1>
 <p class="meta">Generated from the code by <code>tools/build_library_reference.py</code>; do not edit by hand. Rebuild it after changing a function.</p>
 
-<p>The shared pulse-analysis library. Background and history: <a href="../notes/note-01a-pulse-library-structure.html">Note 1a</a> and <a href="../notes/note-04-pulse-library.html">Note 4</a>. The modules are flat files, imported by putting <code>python/</code> on <code>sys.path</code> (see <code>python/README.md</code>). Samples are on the last axis, so every function takes one pulse or a whole batch. A function marked <span class="status under-dev">under development</span> still runs but emits a <code>UserWarning</code> on every call.</p>
+<p>The pulse-analysis library, the Python package <code>goldpan</code> (in <code>python/</code>). Background and history: <a href="../notes/note-01a-pulse-library-structure.html">Note 1a</a> and <a href="../notes/note-04-pulse-library.html">Note 4</a>. Import a module as <code>from goldpan import cuts</code>; the library is installed by <code>requirements.txt</code> (see <code>python/README.md</code>). The old flat names (<code>pulse_cuts</code> and the others) are aliases of these modules with the Run 76 readout as the default <code>config</code>, kept for the existing notebooks. In this package <strong>every function takes a readout (<code>config</code>) and has no default for it</strong>: name your data's readout with <code>goldpan.config.DCRC_RUN76</code>, <code>goldpan.config.Z7</code> or your own <code>PulseConfig</code>. Samples are on the last axis, so every function takes one pulse or a whole batch. A function marked <span class="status under-dev">under development</span> still runs but emits a <code>UserWarning</code> on every call.</p>
 
 <div class="table-scroll"><table>
 <thead><tr><th>Module</th><th>What it is</th><th>Functions</th><th>Done</th><th>Under development</th></tr></thead>

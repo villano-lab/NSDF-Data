@@ -2,13 +2,16 @@
 
 * `goldpan.adapters.parquet`: the native format (reads and writes); its docstring is the specification.
 * `goldpan.adapters.idx`: a dump of the NSDF archive (reads).
+* `goldpan.adapters.rq_root`: the RQs of the collaboration's reconstruction, ROOT files read with uproot (reads a *table of quantities*, not
+  traces; `goldpan.adapters.rq.attach` adds it to an `Events`).
 
 Anyone can add one: a module with `read(path, **kw) -> Events`, optionally `iter_chunks(path, *, chunk, **kw)` and `write(events, path)`;
 `goldpan.testing.check_adapter` checks it against the contract. `register` makes it available to `read(path, format=...)`.
 """
 import importlib
 
-_BUILTIN = {"parquet": "goldpan.adapters.parquet", "idx": "goldpan.adapters.idx"}
+_BUILTIN = {"parquet": "goldpan.adapters.parquet", "idx": "goldpan.adapters.idx",
+            "rq_root": "goldpan.adapters.rq_root"}
 _registered = {}
 
 
@@ -33,12 +36,14 @@ def _adapter(name: str):
 
 
 def read(path, format=None, **kwargs):
-    """Read `path` with the adapter `format`; `None` guesses: a directory with `_goldpan.json` or a `.parquet` file is `parquet`."""
+    """Read `path` with the adapter `format`; `None` guesses: a directory with `_goldpan.json` or a `.parquet` file is `parquet`; a `.root` file or a folder of them is `rq_root`."""
     if format is None:
         from pathlib import Path
         p = Path(path)
         if (p / "_goldpan.json").exists() or p.suffix == ".parquet":
             format = "parquet"
+        elif p.suffix == ".root" or (p.is_dir() and any(p.glob("*.root"))):
+            format = "rq_root"
         else:
             raise ValueError(f"cannot tell the format of {path}; pass format= one of {available()}")
     return _adapter(format).read(path, **kwargs)

@@ -4,10 +4,11 @@ numpy==2.2.6
 matplotlib==3.10.7
 awkward==2.14.0
 pyarrow==26.0.0
+uproot==5.7.7
 h5py
 pytest
 ipykernel
 jupyterlab
 # The library in python/, installed in place (phase 1 of issue 71). pip reads this path from the folder you run it in,
 # so run `pip install -r requirements.txt` from the NSDF-Data folder, as the guides do.
--e ./python[archive,parquet]
+-e ./python[archive,parquet,root]

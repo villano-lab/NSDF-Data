@@ -177,3 +177,25 @@ def test_command_line_reports_a_missing_parameter_as_an_error_not_a_traceback(se
     spec = write_spec(tmp / "nop.dataset.toml", files, params="glitch_samples = 1\npretrigger_samples = 100\n")
     assert main(["run", str(spec)]) == 1
     assert "amps_per_adc" in capsys.readouterr().err
+
+
+def test_a_batch_run_can_write_rq_style_root_files_with_our_names(tmp_path):
+    uproot = pytest.importorskip("uproot")
+    from goldpan.adapters import rq_root
+    tmp = tmp_path                                                          # a series name is a number in an RQ file: not the toy S1
+    files = make_raw(tmp / "raw", dumps=(("24260424_145101", "F0001", 7), ("24260424_145101", "F0002", 5)))
+    spec = write_spec(tmp / "toy.dataset.toml", files)
+    spec.write_text(spec.read_text(encoding="utf-8").replace('output = "out"', 'output = "out"\noutput_format = "root"\nroot_detector = 3'),
+                    encoding="utf-8")
+    report = batch.run(spec, progress=None)
+    assert report.n_events == 12
+    assert sorted(p.name for p in (tmp / "out").glob("*.root")) == ["24260424_145101_F0001.root", "24260424_145101_F0002.root"]
+    t = rq_root.read(tmp / "out", detector=3)
+    assert len(t) == 12 and "A_adc_max" in t.fields and "B_current_max" in t.fields and "Q_adc_max" not in t.fields
+    raw = Events.concatenate(*[parquet.read(f) for f in files])
+    np.testing.assert_allclose(ak.to_numpy(t["A_adc_max"]), raw.trace("A").max(axis=1))
+    with uproot.open(tmp / "out" / "24260424_145101_F0001.root") as f:
+        assert json.loads(str(f["infoDir/goldsluice"]))["steps"][0]["algorithm"] == "peak"          # the provenance travels
+    assert [f.skipped for f in batch.run(spec, progress=None).files] == [True, True]                 # the ledger works for ROOT too
+    with pytest.raises(ValueError, match="rq_root.read"):
+        Dataset.open(spec).processed()

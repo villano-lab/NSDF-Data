@@ -181,3 +181,34 @@ def test_read_names_the_file_the_batch_run_has_not_covered(tmp_path, raw):
     parquet.write(processed_events(2), tmp_path / "out")                         # only 2 of the 4 events were processed
     with pytest.raises(ValueError, match="has the batch run covered this file"):
         Dataset.open(spec).read()
+
+
+def test_the_output_is_parquet_unless_the_file_says_root_and_names_the_detector(tmp_path, raw):
+    plain = dataset.load(write(tmp_path, spec_text(raw)))
+    assert (plain.output_format, plain.root_detector) == ("parquet", None)
+    root = dataset.load(write(tmp_path, spec_text(raw, top='name = "t"\noutput = "o"\noutput_format = "root"\nroot_detector = 7'), "r.toml"))
+    assert (root.output_format, root.root_detector) == ("root", 7)
+    for top, message in [('output_format = "root"', "needs root_detector"),
+                         ('output_format = "root"\nroot_detector = "7"', "needs root_detector"),
+                         ('output_format = "root"\nroot_detector = true', "needs root_detector"),
+                         ('output_format = "root"\nroot_detector = -1', "needs root_detector"),
+                         ('root_detector = 7', "only applies"),
+                         ('output_format = "hdf5"', "must be one of")]:
+        with pytest.raises(ValueError, match=message):
+            dataset.load(write(tmp_path, spec_text(raw, top='name = "t"\noutput = "o"\n' + top), "x.toml"))
+
+
+def test_the_root_output_changes_the_fingerprint_but_a_parquet_definition_keeps_the_one_it_had(tmp_path, raw):
+    fp = lambda s: dataset.fingerprint(s, s.sources[0])
+    top = 'name = "t"\noutput = "o"\n'
+    plain = dataset.load(write(tmp_path, spec_text(raw)))
+    explicit = dataset.load(write(tmp_path, spec_text(raw, top=top + 'output_format = "parquet"'), "e.toml"))
+    root7 = dataset.load(write(tmp_path, spec_text(raw, top=top + 'output_format = "root"\nroot_detector = 7'), "r7.toml"))
+    root8 = dataset.load(write(tmp_path, spec_text(raw, top=top + 'output_format = "root"\nroot_detector = 8'), "r8.toml"))
+    assert fp(plain) == fp(explicit) != fp(root7) != fp(root8)
+
+
+def test_processed_says_where_root_output_is_read_instead_of_failing_obscurely(tmp_path, raw):
+    spec = write(tmp_path, spec_text(raw, top='name = "t"\noutput = "o"\noutput_format = "root"\nroot_detector = 7'))
+    with pytest.raises(ValueError, match="rq_root.read"):
+        Dataset.open(spec).processed()

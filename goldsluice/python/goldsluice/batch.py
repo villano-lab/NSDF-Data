@@ -6,7 +6,8 @@
 or from Python, `goldsluice.batch.run("r76.dataset.toml")`. For every raw file the pulses are read in pieces by the source's
 adapter (`goldpan.adapters`), every step is applied to the channels it names with the Rust kernels, and the quantities (one record
 per channel, keyed by series, dump and event, **without** the pulses) are written into the output dataset of the definition, a
-goldpan Parquet dataset that `goldpan.dataset.Dataset.processed()` reads. A ledger, `_goldsluice.json` in the output folder, records
+goldpan Parquet dataset that `goldpan.dataset.Dataset.processed()` reads (or, with `output_format = "root"`, RQ-style ROOT files
+under our names, written by `goldpan.adapters.rq_root.write` and read with `rq_root.read`; needs `goldsluice[root]`). A ledger, `_goldsluice.json` in the output folder, records
 for each raw file what was done, with what, and how long it took, so that a second run only does what changed (`force=True`
 redoes everything). Every output file also carries its provenance in its metadata (`goldsluice` key).
 
@@ -157,7 +158,11 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
         events = Events(events.detector, {}, events.quantities, {"goldsluice": provenance})
         t2 = time.perf_counter()
-        parquet.write(events, out)
+        if spec.output_format == "root":
+            from goldpan.adapters import rq_root          # needs uproot (goldpan[root])
+            rq_root.write(events, out, detector=spec.root_detector)
+        else:
+            parquet.write(events, out)
         fr.write_s = time.perf_counter() - t2
         series_dumps = sorted({f"{s}_{d}" for s, d in zip(events.quantities["series"].to_list(),
                                                           events.quantities["dump"].to_list())})

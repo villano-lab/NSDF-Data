@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Added
+
+- **`goldsluice/`: the first step of the Rust reduction package, with one algorithm, `peak`.** `goldsluice.run("peak", traces, glitch_samples=..., pretrigger_samples=..., amps_per_adc=...)` returns the largest raw ADC value and the largest baseline-subtracted current (amps) of every trace, from a Rust kernel (parallel over traces with rayon) or, with `backend="python"`, from its Python mirror. Every algorithm has both, and `tests/test_parity.py` checks that they exist, agree on the standard inputs and refuse bad parameters alike; `goldsluice.compare` and `cargo bench` time them (on 20000 Run 76 traces of 4096 samples: about 29 ms in Rust against 15.7 s in Python on this PC). `goldsluice/PORTING.md` explains how to write a mirror in the *kernel subset* and port it to Rust. A workflow (`.github/workflows/goldsluice.yml`) builds and tests it on Windows, macOS and Linux. Not published to PyPI yet; no change to `goldpan`.
+
 ## [0.10.0] - 2026-10-26
 
 **Students, please:** the library gained new parts and four new packages, so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python python/check_environment.py`, which should say `Environment OK`. Python is still 3.12, so you do not need a new environment. The new packages are `awkward`, `pyarrow`, `uproot` and `lz4`, and `goldpan` itself is now 0.2.0; until you reinstall, the check warns about them. Nothing you already run changes: the old names (`pulse_cuts` and the others) and your notebooks work as before, and no result changes.

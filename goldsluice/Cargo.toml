@@ -1,0 +1,27 @@
+[package]
+name = "goldsluice"
+version = "0.1.0"
+edition = "2024"
+description = "Fast pulse-reduction kernels in Rust, with a Python mirror of every algorithm"
+license = "MIT"
+publish = false
+
+[lib]
+name = "_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+numpy = "0.30.0"
+pyo3 = { version = "0.30.1", features = ["abi3-py39"] }
+rayon = "1.12.0"
+
+[dev-dependencies]
+criterion = "0.8.2"
+
+[features]
+# maturin turns this on for the wheel; `cargo test` and `cargo bench` build without it so they can link against Python.
+extension-module = ["pyo3/extension-module"]
+
+[[bench]]
+name = "kernels"
+harness = false

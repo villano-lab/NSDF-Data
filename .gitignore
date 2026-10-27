@@ -215,3 +215,7 @@ idx/
 
 # Left behind by the Updating your setup guide if run inside the repo
 /old-environment.txt
+
+# goldsluice (Rust build output)
+goldsluice/target/
+goldsluice/python/goldsluice/_core*

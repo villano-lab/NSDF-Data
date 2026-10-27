@@ -1,0 +1,71 @@
+name: goldsluice
+
+# Builds and tests the Rust pulse-reduction kernels in goldsluice/ on Windows, macOS and Linux: the Rust unit tests, rustfmt and
+# clippy, then the Python package built with maturin and the parity test (every algorithm has a Rust kernel and a Python mirror
+# that agree). Rust is already on the runners.
+
+on:
+  pull_request:
+    paths:
+      - "goldsluice/**"
+      - ".github/workflows/goldsluice.yml"
+  push:
+    branches: [develop, master]
+    paths:
+      - "goldsluice/**"
+      - ".github/workflows/goldsluice.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: goldsluice-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: goldsluice (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: goldsluice
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache Rust build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            goldsluice/target
+          key: goldsluice-${{ runner.os }}-${{ hashFiles('goldsluice/Cargo.toml') }}
+
+      - name: rustfmt and clippy
+        run: |
+          cargo fmt --check
+          cargo clippy --all-targets -- -D warnings
+
+      - name: Rust tests
+        run: cargo test
+
+      - name: Build the wheel and install it
+        run: |
+          python -m pip install maturin pytest numpy
+          maturin build --release --out dist
+          python -m pip install --no-index --find-links dist goldsluice
+
+      - name: Parity tests
+        run: python -m pytest tests -q
+
+      - name: Timing (informational)
+        run: python -c "import numpy as np, goldsluice; print(goldsluice.compare('peak', np.random.default_rng(0).normal(2000, 5, (5000, 4096)), glitch_samples=10, pretrigger_samples=1000, amps_per_adc=1e-9))"

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "goldsluice"
+version = "0.1.0"
+description = "Fast pulse-reduction kernels in Rust, with a Python mirror of every algorithm"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+dependencies = ["numpy>=1.26"]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.maturin]
+python-source = "python"
+module-name = "goldsluice._core"
+features = ["extension-module"]

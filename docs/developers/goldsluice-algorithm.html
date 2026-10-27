@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Running goldsluice and developing an algorithm</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="goldsluice-algorithm.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Running goldsluice and developing an algorithm</h1>
+<p class="meta">Developer quick-sheet · from a Python idea to a fast
+Rust kernel · version 1, 27 October 2026</p>
+
+
+<p><code>goldsluice</code> is the fast half of the project:
+pulse-reduction kernels in <strong>Rust</strong>, each with a
+<strong>Python mirror</strong> that is the readable definition. You
+develop in Python on ordinary arrays, then port the same computation to
+Rust; a test makes sure the two never disagree. It lives in
+<code>goldsluice/</code> (start with its <code>README.md</code>;
+<code>PORTING.md</code> is the reference for the port). One algorithm
+exists, <code>peak</code>: the largest ADC value and the largest current
+above the baseline of each trace.</p>
+<h2 id="one-time-setup">1. One-time setup</h2>
+<p>You need <strong>Rust</strong>, <strong>Python 3.9 or newer</strong>
+and a Python environment (the <code>darkmatter_cli_env</code> of the
+student guides is fine).</p>
+<ul>
+<li><strong>Rust:</strong> install from <a href="https://rustup.rs"
+class="uri">https://rustup.rs</a>. On <strong>Windows</strong> also
+install the Visual Studio <em>Build Tools</em> with the workload
+“Desktop development with C++” (it supplies the linker); then run
+<code>rustup-init.exe</code> with the defaults. On macOS the Xcode
+command line tools are enough (<code>xcode-select --install</code>); on
+Linux a C compiler (<code>gcc</code>). Check in a <strong>new</strong>
+terminal:</li>
+</ul>
+<pre><code>rustc --version
+cargo --version</code></pre>
+<ul>
+<li><strong>Build and install <code>goldsluice</code> in your
+environment</strong> (from the repository, with the environment
+active):</li>
+</ul>
+<pre><code>cd goldsluice
+python -m pip install maturin pytest numpy
+maturin develop --release
+python -m pytest tests
+cargo test</code></pre>
+<p><code>maturin develop --release</code> compiles the Rust and installs
+the package in place (editable: Python files you change take effect at
+once; <strong>after a change in <code>src/</code> run it
+again</strong>). Always <code>--release</code> when you time anything: a
+debug build is ten times slower or more.</p>
+<h2 id="run-it">2. Run it</h2>
+<pre class="python"><code>from goldsluice import run, compare
+
+out = run(&quot;peak&quot;, traces, glitch_samples=10, pretrigger_samples=1000, amps_per_adc=1.5e-9)
+out[&quot;adc_max&quot;]          # largest raw ADC value, one number per trace
+out[&quot;current_max&quot;]      # largest current above the pretrigger mean, in amps</code></pre>
+<p><code>traces</code> is an array of shape
+<code>(n_events, n_samples)</code> for <strong>one channel</strong>.
+From a <code>goldpan</code> <code>Events</code> that is a loop over its
+channels:</p>
+<pre class="python"><code>for name in ev.detector.channel_names():
+    out = run(&quot;peak&quot;, ev.trace(name), glitch_samples=10,
+              pretrigger_samples=1000, amps_per_adc=AMPS_PER_ADC)</code></pre>
+<p>Nothing about the readout is assumed: <strong>no parameter has a
+default</strong> (<code>amps_per_adc</code>, the glitch and pretrigger
+lengths are the readout’s, and a wrong silent value would change every
+result). The input is converted to C-contiguous <code>float64</code> (a
+copy for <code>uint16</code> traces: keep a converted array if you call
+<code>run</code> many times). <code>run(..., backend="python")</code>
+runs the mirror instead of the Rust kernel. Bad parameters raise
+<code>ValueError</code>, with the same message from either backend.</p>
+<h2 id="time-it">3. Time it</h2>
+<p>Two numbers, on purpose:</p>
+<pre class="python"><code>print(compare(&quot;peak&quot;, traces, glitch_samples=10,
+              pretrigger_samples=1000, amps_per_adc=1.5e-9))</code></pre>
+<pre><code>cargo bench</code></pre>
+<p><code>compare</code> is what a user sees: the Python call, the
+conversion, the output arrays, against the mirror (timed on its first
+200 traces and scaled, because it is slow). <code>cargo bench</code>
+times the Rust kernel alone, with no Python: that is the number to
+optimise. <code>RAYON_NUM_THREADS=1</code> gives the single-thread time.
+Reference (20000 traces of 4096 samples, one PC, release build): Rust 29
+ms with all cores, 149 ms on one thread, Python 15.7 s.</p>
+<h2 id="develop-an-algorithm-the-worked-example-max_time">4. Develop an
+algorithm: the worked example <code>max_time</code></h2>
+<p>The time of the largest sample (as
+<code>goldpan.algorithms.max_time</code>). The steps are the same for
+every algorithm. Replace <code>max_time</code> by your name.</p>
+<p><strong>Step 1. Write the mirror</strong>,
+<code>python/goldsluice/reference/max_time.py</code>, in the <em>kernel
+subset</em>: one trace in, plain loops, no numpy inside
+<code>kernel</code>.</p>
+<pre class="python"><code>NAME = &quot;max_time&quot;
+OUTPUTS = (&quot;max_time_s&quot;,)
+
+def problem(n_samples, sample_period_s):
+    if not sample_period_s &gt; 0:
+        return &quot;sample_period_s must be positive&quot;
+    return None
+
+def kernel(trace, sample_period_s):
+    best = 0
+    for i in range(1, len(trace)):
+        if trace[i] &gt; trace[best]:
+            best = i
+    return (best * sample_period_s,)</code></pre>
+<p>Also in the module: <code>cases()</code>, the standard inputs
+<code>[(traces, params), ...]</code> (an ordinary case, an edge case
+such as two equal maxima, a trap) and <code>bad_cases()</code>, inputs
+that must be refused. Register it:
+<code>from . import max_time, peak</code> and
+<code>ALL = [peak, max_time]</code> in
+<code>reference/__init__.py</code>.</p>
+<p><strong>Step 2. Develop and check it in Python alone.</strong> It
+works at once, with no Rust:</p>
+<pre class="python"><code>run(&quot;max_time&quot;, traces, backend=&quot;python&quot;, sample_period_s=0.8e-6)</code></pre>
+<p>Compare it with an existing function (here
+<code>goldpan.algorithms.max_time</code>) and fix the idea in Python,
+where a mistake is cheap. Do not write Rust before this is right.</p>
+<p><strong>Step 3. Port it</strong>, <code>src/max_time.rs</code>: the
+same lines in Rust (the table in <code>PORTING.md</code> has the
+equivalents).</p>
+<pre class="rust"><code>pub struct MaxTimeParams { pub sample_period_s: f64 }
+
+pub fn problem(_n_samples: usize, p: &amp;MaxTimeParams) -&gt; Option&lt;String&gt; {
+    if p.sample_period_s.is_nan() || p.sample_period_s &lt;= 0.0 {
+        return Some(&quot;sample_period_s must be positive&quot;.to_string());
+    }
+    None
+}
+
+pub fn max_time_one(trace: &amp;[f64], p: &amp;MaxTimeParams) -&gt; f64 {
+    let mut best = 0;
+    for i in 1..trace.len() {
+        if trace[i] &gt; trace[best] { best = i; }
+    }
+    best as f64 * p.sample_period_s
+}</code></pre>
+<p>Add <code>max_time_many</code> (the loop over traces with
+<code>traces.par_chunks(n_samples)</code>) and a unit test, copying
+<code>src/peak.rs</code>. In <code>src/lib.rs</code> add
+<code>pub mod max_time;</code>, a <code>max_time_py</code> function that
+copies <code>peak_py</code> (it checks <code>problem</code>, then calls
+the kernel with the GIL released) and one
+<code>m.add_function(wrap_pyfunction!(max_time_py, m)?)?;</code> line.
+Add the kernel to <code>benches/kernels.rs</code>.</p>
+<p><strong>Step 4. Build and test.</strong></p>
+<pre><code>maturin develop --release
+python -m pytest tests
+cargo test
+cargo clippy --all-targets -- -D warnings
+cargo fmt</code></pre>
+<p><code>tests/test_parity.py</code> needs nothing from you: it finds
+the new algorithm and checks that it has both versions, that they agree
+on <code>cases()</code> to a relative <code>1e-12</code>, and that both
+refuse <code>bad_cases()</code> with the <strong>same message</strong>.
+A failure names the algorithm and the output.</p>
+<p><strong>Step 5. Time it and open the pull request.</strong>
+<code>compare("max_time", ...)</code> and <code>cargo bench</code>; put
+both numbers, and the checklist of <code>PORTING.md</code>, in the pull
+request, with a line under <code>[Unreleased]</code> in
+<code>CHANGELOG.md</code>. The pull request goes into
+<code>develop</code> like any other (<code>AGENTS.md</code>); a workflow
+builds and tests it on Windows, macOS and Linux.</p>
+<h2 id="the-traps-the-example-met">5. The traps the example met</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Trap</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A float in an error message</strong></td>
+<td>Python writes <code>0.0</code> and <code>1e-06</code>, Rust writes
+<code>0</code> and <code>0.000001</code>: the two messages differ and
+the parity test fails. Name the parameter and the rule, with no
+number.</td>
+</tr>
+<tr>
+<td><strong><code>not x &gt; 0</code> against
+<code>x &lt;= 0.0</code></strong></td>
+<td>They differ for NaN, which the first refuses and the second lets
+through. In Rust test <code>x.is_nan()</code> as well (clippy refuses
+<code>!(x &gt; 0.0)</code>). Put a NaN in <code>bad_cases()</code>.</td>
+</tr>
+<tr>
+<td><strong>Order of a sum</strong></td>
+<td>Floating-point sums depend on the order. Sum front to back in both;
+the test allows <code>1e-12</code> relative, which is rounding and not a
+different formula.</td>
+</tr>
+<tr>
+<td><strong>Ties and NaN in <code>max</code></strong></td>
+<td>Keep the first of equal maxima in both (a strict <code>&gt;</code>).
+Rust’s <code>f64::max</code> ignores NaN, Python’s <code>max</code> does
+not: decide, and test it.</td>
+</tr>
+<tr>
+<td><strong>Forgetting to rebuild</strong></td>
+<td>A change in <code>src/</code> does nothing until
+<code>maturin develop --release</code> is run again; a change in the
+mirror takes effect at once.</td>
+</tr>
+<tr>
+<td><strong>Timing a debug build</strong></td>
+<td><code>maturin develop</code> without <code>--release</code> is ten
+times slower or more.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>When an algorithm is naturally array-shaped (an FFT, a fit),
+<code>PORTING.md</code> ends with what to do: ask before you choose that
+route.</p>
+
+<footer>This guide is also available as a <a href="goldsluice-algorithm.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

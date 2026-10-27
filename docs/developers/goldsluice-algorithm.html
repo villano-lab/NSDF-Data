@@ -116,8 +116,13 @@ def kernel(trace, sample_period_s):
     return (best * sample_period_s,)</code></pre>
 <p>Also in the module: <code>cases()</code>, the standard inputs
 <code>[(traces, params), ...]</code> (an ordinary case, an edge case
-such as two equal maxima, a trap) and <code>bad_cases()</code>, inputs
-that must be refused. Register it:
+such as two equal maxima, a trap); <code>bad_cases()</code>, inputs that
+must be refused; and <code>goldpan_expected(traces, params)</code>, the
+same numbers from goldpan’s own function
+(<code>goldpan.algorithms.max_time</code> here), or
+<code>NO_GOLDPAN = "why goldpan has none"</code>. The parity test
+requires one of the two, so a quantity is never defined twice with
+different numbers. Register it:
 <code>from . import max_time, peak</code> and
 <code>ALL = [peak, max_time]</code> in
 <code>reference/__init__.py</code>.</p>
@@ -162,9 +167,10 @@ cargo clippy --all-targets -- -D warnings
 cargo fmt</code></pre>
 <p><code>tests/test_parity.py</code> needs nothing from you: it finds
 the new algorithm and checks that it has both versions, that they agree
-on <code>cases()</code> to a relative <code>1e-12</code>, and that both
-refuse <code>bad_cases()</code> with the <strong>same message</strong>.
-A failure names the algorithm and the output.</p>
+on <code>cases()</code> to a relative <code>1e-12</code>, that both
+refuse <code>bad_cases()</code> with the <strong>same message</strong>,
+and that they agree with goldpan. A failure names the algorithm and the
+output.</p>
 <p><strong>Step 5. Time it and open the pull request.</strong>
 <code>compare("max_time", ...)</code> and <code>cargo bench</code>; put
 both numbers, and the checklist of <code>PORTING.md</code>, in the pull

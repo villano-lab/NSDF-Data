@@ -101,7 +101,7 @@ def kernel(trace, sample_period_s):
     return (best * sample_period_s,)
 ```
 
-Also in the module: `cases()`, the standard inputs `[(traces, params), ...]` (an ordinary case, an edge case such as two equal maxima, a trap) and `bad_cases()`, inputs that must be refused. Register it: `from . import max_time, peak` and `ALL = [peak, max_time]` in `reference/__init__.py`.
+Also in the module: `cases()`, the standard inputs `[(traces, params), ...]` (an ordinary case, an edge case such as two equal maxima, a trap); `bad_cases()`, inputs that must be refused; and `goldpan_expected(traces, params)`, the same numbers from goldpan's own function (`goldpan.algorithms.max_time` here), or `NO_GOLDPAN = "why goldpan has none"`. The parity test requires one of the two, so a quantity is never defined twice with different numbers. Register it: `from . import max_time, peak` and `ALL = [peak, max_time]` in `reference/__init__.py`.
 
 **Step 2. Develop and check it in Python alone.** It works at once, with no Rust:
 
@@ -144,7 +144,7 @@ cargo clippy --all-targets -- -D warnings
 cargo fmt
 ```
 
-`tests/test_parity.py` needs nothing from you: it finds the new algorithm and checks that it has both versions, that they agree on `cases()` to a relative `1e-12`, and that both refuse `bad_cases()` with the **same message**. A failure names the algorithm and the output.
+`tests/test_parity.py` needs nothing from you: it finds the new algorithm and checks that it has both versions, that they agree on `cases()` to a relative `1e-12`, that both refuse `bad_cases()` with the **same message**, and that they agree with goldpan. A failure names the algorithm and the output.
 
 **Step 5. Time it and open the pull request.** `compare("max_time", ...)` and `cargo bench`; put both numbers, and the checklist of `PORTING.md`, in the pull request, with a line under `[Unreleased]` in `CHANGELOG.md`. The pull request goes into `develop` like any other (`AGENTS.md`); a workflow builds and tests it on Windows, macOS and Linux.
 

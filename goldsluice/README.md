@@ -17,6 +17,35 @@ print(compare("peak", traces, ...))            # time both backends and the spee
 
 Nothing about the readout is assumed: `amps_per_adc`, `glitch_samples` and `pretrigger_samples` have no defaults.
 
+## Batch mode: a dataset definition, processed in one command
+
+The developer quick-sheet `docs/developers/goldsluice-batch.pdf` is the guide to this section.
+
+Datasets are defined once, in a TOML file that `goldpan` and `goldsluice` both read (`goldpan.dataset`; its docstring is the
+specification and `examples/r76.dataset.toml` an example): the raw files and how to read them (any `goldpan` adapter, the
+readout), and the processing steps with every parameter written down.
+
+```
+pip install -e ../python[parquet]                    # batch mode reads the data with goldpan
+python -m goldsluice check r76.dataset.toml          # read the definition, list the raw files
+python -m goldsluice run r76.dataset.toml            # process what is new or changed (--chunk, --force, --backend python)
+```
+
+```python
+from goldpan.dataset import Dataset
+
+ds = Dataset.open("r76.dataset.toml")
+ev = ds.read()                                  # the pulses with the processed quantities attached (one Events)
+q = ds.processed()                              # only the processed quantities: small, no pulses
+ev.quantities["Side2pA"]["current_max"]
+```
+
+`run` reads each raw file in chunks, applies every step to the channels it names with the Rust kernels and writes the quantities (one
+record per channel, keyed by series, dump and event; no pulses) into the `output` of the definition, a goldpan Parquet dataset. A
+ledger (`_goldsluice.json`) records what was done for each raw file, so a second run does only what changed, and every output file
+carries its provenance in its metadata. The report gives the time of every phase: reading is usually most of it, the Rust kernels
+the least (6000 events of 4096 samples, 3 channels: 1.2 s reading, 0.05 s in `peak`, 0.1 s writing).
+
 ## How it is laid out
 
 | Where | What |
@@ -26,6 +55,7 @@ Nothing about the readout is assumed: `amps_per_adc`, `glitch_samples` and `pret
 | `python/goldsluice/reference/<algorithm>.py` | the **Python mirror**: the readable definition, the place to develop and to define the standard inputs |
 | `python/goldsluice/algorithms.py` | `run(name, traces, backend=..., **params)` |
 | `python/goldsluice/profile.py` | `compare(...)`: the timing of both backends |
+| `python/goldsluice/batch.py`, `__main__.py` | batch mode: `python -m goldsluice run\|check\|algorithms` |
 | `benches/kernels.rs` | `cargo bench`: the Rust kernels alone, with no Python |
 | `tests/test_parity.py` | every algorithm has both versions, they agree on the standard inputs and refuse bad parameters alike |
 

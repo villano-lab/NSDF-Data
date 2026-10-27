@@ -8,11 +8,15 @@ on:
   pull_request:
     paths:
       - "goldsluice/**"
+      - "python/goldpan/dataset.py"
+      - "python/goldpan/adapters/**"
       - ".github/workflows/goldsluice.yml"
   push:
     branches: [develop, master]
     paths:
       - "goldsluice/**"
+      - "python/goldpan/dataset.py"
+      - "python/goldpan/adapters/**"
       - ".github/workflows/goldsluice.yml"
   workflow_dispatch:
 
@@ -61,6 +65,7 @@ jobs:
       - name: Build the wheel and install it
         run: |
           python -m pip install maturin pytest numpy
+          python -m pip install -e "../python[parquet]"          # batch mode reads datasets with goldpan
           maturin build --release --out dist
           python -m pip install --no-index --find-links dist goldsluice
 

@@ -84,13 +84,21 @@ def test_one_dimensional_input_is_refused():
         run("peak", np.zeros(8), glitch_samples=0, pretrigger_samples=4, amps_per_adc=1.0)
 
 
-def test_peak_agrees_with_goldpan_pulse_max():
-    algorithms = pytest.importorskip("goldpan.algorithms")
-    from goldpan.config import PulseConfig
-    config = PulseConfig(pretrigger_samples=1000, glitch_samples=10, sample_period_s=0.8e-6)
-    traces, params = ALGORITHMS["peak"].cases()[0]
-    ours = run("peak", traces, **params)
-    np.testing.assert_allclose(ours["current_max"], algorithms.pulse_max(traces, config) * params["amps_per_adc"], rtol=1e-12)
+@pytest.mark.parametrize("name", NAMES)
+def test_every_algorithm_agrees_with_goldpan_or_says_why_it_cannot(name):
+    """goldpan (analysis) and goldsluice (reduction) must not define the same quantity twice with different numbers."""
+    module = ALGORITHMS[name]
+    expected, reason = getattr(module, "goldpan_expected", None), getattr(module, "NO_GOLDPAN", None)
+    assert (expected is None) != (reason is None), f"{name}: define goldpan_expected(traces, params) or NO_GOLDPAN = '<why>', not both or neither"
+    if expected is None:
+        assert isinstance(reason, str) and len(reason) > 20, f"{name}: NO_GOLDPAN must say why goldpan has no counterpart"
+        return
+    pytest.importorskip("goldpan")
+    for traces, params in module.cases():
+        ours, theirs = run(name, traces, **params), expected(traces, params)
+        assert sorted(theirs) == sorted(module.OUTPUTS), f"{name}: goldpan_expected must give {list(module.OUTPUTS)}"
+        for out in module.OUTPUTS:
+            np.testing.assert_allclose(ours[out], theirs[out], rtol=1e-12, atol=0, err_msg=f"{name}.{out} against goldpan")
 
 
 def test_compare_times_both_backends():

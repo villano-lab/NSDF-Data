@@ -1,0 +1,28 @@
+# Example dataset definition for the Run 76 series 07221203_2025 (Side-2 readout), read from the idx dumps in ~/idx.
+# NOT run on the real data yet: check `python -m goldsluice check r76.dataset.toml` first. The channel map is the one of
+# goldpan.channels.sensor_channels(), which is still marked under development (the board order is inferred, not confirmed).
+# Read the file with goldpan:   from goldpan.dataset import Dataset; ev = Dataset.open("r76.dataset.toml").read()
+# Run the processing:           python -m goldsluice run r76.dataset.toml
+
+[dataset]
+name = "r76-07221203"
+output = "processed/r76-07221203"             # the processed quantities, a goldpan Parquet dataset; relative to this file
+
+[[sources]]
+name = "side2"
+format = "idx"                                 # goldpan.adapters.idx: one dump folder per file
+glob = "~/idx/07221203_2025_F*"                # every dump of the series, in order
+detector = "NAI-S2"
+readout = "DCRC_RUN76"                         # 0.8 us per sample, 1000-sample pretrigger window, 10 glitch samples
+
+[sources.read]                                 # keyword arguments of idx.read, verbatim: name = [board, input]
+channels = { Side2pC = [0, 0], Side2pF = [0, 1], Side2pE = [0, 3], Side2pB = [1, 0], Side2pA = [1, 1], Side2pD = [1, 3] }
+roles = { Side2pC = "phonon", Side2pF = "phonon", Side2pE = "phonon", Side2pB = "phonon", Side2pA = "phonon", Side2pD = "phonon" }
+
+[[processing]]
+algorithm = "peak"                             # the largest ADC value, and the largest current above the baseline
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"     # taken from the readout above, so the two cannot disagree
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known

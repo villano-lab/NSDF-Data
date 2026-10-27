@@ -20,6 +20,7 @@ A mirror module `python/goldsluice/reference/<name>.py` defines:
 | `kernel(trace, **params)` | **one trace** in, a tuple of numbers out |
 | `cases()` | the standard inputs: `[(traces, params), ...]`, an array of shape `(n_events, n_samples)` and the keyword arguments |
 | `bad_cases()` | inputs that both versions must refuse with the same message, in the same form |
+| `goldpan_expected(traces, params)` **or** `NO_GOLDPAN` | the same numbers from `goldpan`'s own functions (`{output: array}`), or a string saying why goldpan has no counterpart; the parity test requires one of the two, so a quantity is never defined twice with different numbers |
 
 Rules for `kernel`, so that it ports mechanically:
 
@@ -90,6 +91,7 @@ the arithmetic as `f64` or check the cases by hand.
 - [ ] `problem` messages are identical in Python and Rust
 - [ ] a hand-computed test in Rust and in Python
 - [ ] `cases()` has an ordinary, an edge and a trap case; `bad_cases()` has one input for each way `problem` refuses
+- [ ] `goldpan_expected` (or `NO_GOLDPAN` with the reason): if goldpan already has the quantity, the two agree on `cases()`
 - [ ] registered in `reference/__init__.py`, exposed in `lib.rs`, added to `benches/kernels.rs`
 - [ ] parity test, `cargo test` and `cargo clippy -- -D warnings` pass
 - [ ] timing in the pull request (`cargo bench` and `compare`), built with `--release`

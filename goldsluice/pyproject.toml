@@ -13,6 +13,8 @@ dependencies = ["numpy>=1.26"]
 
 [project.optional-dependencies]
 test = ["pytest"]
+# Batch mode (python -m goldsluice run) reads the dataset definition and the raw files with goldpan (goldpan.dataset, new in goldpan 0.3).
+batch = ["goldpan[parquet]>=0.3"]
 
 [tool.maturin]
 python-source = "python"

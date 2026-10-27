@@ -296,14 +296,20 @@ under our names, written by <code class="code docutils literal notranslate"><spa
 for each raw file what was done, with what, and how long it took, so that a second run only does what changed (<code class="code docutils literal notranslate"><span class="pre">force=True</span></code>
 redoes everything). Every output file also carries its provenance in its metadata (<code class="code docutils literal notranslate"><span class="pre">goldsluice</span></code> key).</p>
 <p><code class="code docutils literal notranslate"><span class="pre">goldpan</span></code> does the reading and the definition, so batch mode needs it (<code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">goldsluice[batch]</span></code>).</p>
+<p>Processed data must not end up in a Git repository: <code class="code docutils literal notranslate"><span class="pre">check</span></code> and <code class="code docutils literal notranslate"><span class="pre">run</span></code> refuse an output folder that lies inside a Git working tree
+and whose data files that tree does not ignore (<code class="code docutils literal notranslate"><span class="pre">check_output_location</span></code>; <code class="code docutils literal notranslate"><span class="pre">allow_output_in_repo=True</span></code>, or <code class="code docutils literal notranslate"><span class="pre">--allow-output-in-repo</span></code>
+on the command line, overrides it).</p>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldsluice.batch.check" title="goldsluice.batch.check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check</span></code></a>(spec_path)</p></td>
-<td><p>Read the definition and return what <code class="code docutils literal notranslate"><span class="pre">run</span></code> would look at, as <code class="code docutils literal notranslate"><span class="pre">[(source</span> <span class="pre">name,</span> <span class="pre">path),</span> <span class="pre">...]</span></code>; raises on any problem (an unknown algorithm, a pattern that matches nothing, a bad readout).</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldsluice.batch.check" title="goldsluice.batch.check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check</span></code></a>(spec_path, *[, allow_output_in_repo])</p></td>
+<td><p>Read the definition and return what <code class="code docutils literal notranslate"><span class="pre">run</span></code> would look at, as <code class="code docutils literal notranslate"><span class="pre">[(source</span> <span class="pre">name,</span> <span class="pre">path),</span> <span class="pre">...]</span></code>; raises on any problem (an unknown algorithm, a pattern that matches nothing, a bad readout, an output folder inside a Git working tree that does not ignore it).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#goldsluice.batch.run" title="goldsluice.batch.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(spec_path, *[, chunk, force, backend, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldsluice.batch.check_output_location" title="goldsluice.batch.check_output_location"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_location</span></code></a>(out[, output_format])</p></td>
+<td><p>Raise <code class="code docutils literal notranslate"><span class="pre">ValueError</span></code> if the output folder <code class="code docutils literal notranslate"><span class="pre">out</span></code> is inside a Git working tree that does not ignore the data files written there (<code class="code docutils literal notranslate"><span class="pre">_probe.parquet</span></code>, or <code class="code docutils literal notranslate"><span class="pre">_probe.root</span></code> for ROOT output): results must not be committed by accident.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldsluice.batch.run" title="goldsluice.batch.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(spec_path, *[, chunk, force, backend, ...])</p></td>
 <td><p>Process the dataset defined in <code class="code docutils literal notranslate"><span class="pre">spec_path</span></code>; returns the <code class="code docutils literal notranslate"><span class="pre">Report</span></code> (what was done and the timing).</p></td>
 </tr>
 </tbody>
@@ -406,20 +412,43 @@ redoes everything). Every output file also carries its provenance in its metadat
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="goldsluice.batch.check">
-<span class="sig-prename descclassname"><span class="pre">goldsluice.batch.</span></span><span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldsluice/batch.html#check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldsluice.batch.check" title="Link to this definition">¶</a></dt>
-<dd><p>Read the definition and return what <code class="code docutils literal notranslate"><span class="pre">run</span></code> would look at, as <code class="code docutils literal notranslate"><span class="pre">[(source</span> <span class="pre">name,</span> <span class="pre">path),</span> <span class="pre">...]</span></code>; raises on any problem (an unknown
-algorithm, a pattern that matches nothing, a bad readout).</p>
+<dt class="sig sig-object py" id="goldsluice.batch.check_output_location">
+<span class="sig-prename descclassname"><span class="pre">goldsluice.batch.</span></span><span class="sig-name descname"><span class="pre">check_output_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'parquet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldsluice/batch.html#check_output_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldsluice.batch.check_output_location" title="Link to this definition">¶</a></dt>
+<dd><p>Raise <code class="code docutils literal notranslate"><span class="pre">ValueError</span></code> if the output folder <code class="code docutils literal notranslate"><span class="pre">out</span></code> is inside a Git working tree that does not ignore the data files written there
+(<code class="code docutils literal notranslate"><span class="pre">_probe.parquet</span></code>, or <code class="code docutils literal notranslate"><span class="pre">_probe.root</span></code> for ROOT output): results must not be committed by accident. An output outside any
+repository, or inside one that ignores it (the <code class="code docutils literal notranslate"><span class="pre">processed/</span></code> rule of this repository’s <code class="code docutils literal notranslate"><span class="pre">.gitignore</span></code>), passes. When Git cannot
+answer (it is not installed, or it fails on that folder) nothing is refused.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><em>Path</em></a>)</p></li>
+<li><p><strong>output_format</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="goldsluice.batch.check">
+<span class="sig-prename descclassname"><span class="pre">goldsluice.batch.</span></span><span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_output_in_repo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldsluice/batch.html#check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldsluice.batch.check" title="Link to this definition">¶</a></dt>
+<dd><p>Read the definition and return what <code class="code docutils literal notranslate"><span class="pre">run</span></code> would look at, as <code class="code docutils literal notranslate"><span class="pre">[(source</span> <span class="pre">name,</span> <span class="pre">path),</span> <span class="pre">...]</span></code>; raises on any problem (an unknown
+algorithm, a pattern that matches nothing, a bad readout, an output folder inside a Git working tree that does not ignore it).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>allow_output_in_repo</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="goldsluice.batch.run">
-<span class="sig-prename descclassname"><span class="pre">goldsluice.batch.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rust'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;built-in</span> <span class="pre">function</span> <span class="pre">print&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldsluice/batch.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldsluice.batch.run" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">goldsluice.batch.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rust'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_output_in_repo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">progress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;built-in</span> <span class="pre">function</span> <span class="pre">print&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldsluice/batch.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldsluice.batch.run" title="Link to this definition">¶</a></dt>
 <dd><p>Process the dataset defined in <code class="code docutils literal notranslate"><span class="pre">spec_path</span></code>; returns the <code class="code docutils literal notranslate"><span class="pre">Report</span></code> (what was done and the timing). <code class="code docutils literal notranslate"><span class="pre">chunk</span></code> is the number of
 events read at once (it bounds the memory used by the pulses); <code class="code docutils literal notranslate"><span class="pre">backend=&quot;python&quot;</span></code> runs the mirrors, for comparison.</p>
 <dl class="field-list simple">
@@ -428,6 +457,7 @@ events read at once (it bounds the memory used by the pulses); <code class="code
 <li><p><strong>chunk</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>)</p></li>
 <li><p><strong>force</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>)</p></li>
 <li><p><strong>backend</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>allow_output_in_repo</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>)</p></li>
 <li><p><strong>progress</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.15)"><em>Callable</em></a><em>[</em><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>, </em><em>None</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
@@ -511,6 +541,7 @@ events read at once (it bounds the memory used by the pulses); <code class="code
 <li><a class="reference internal" href="#goldsluice.batch.Report.n_events"><code class="docutils literal notranslate"><span class="pre">Report.n_events</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#goldsluice.batch.check_output_location"><code class="docutils literal notranslate"><span class="pre">check_output_location()</span></code></a></li>
 <li><a class="reference internal" href="#goldsluice.batch.check"><code class="docutils literal notranslate"><span class="pre">check()</span></code></a></li>
 <li><a class="reference internal" href="#goldsluice.batch.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
 </ul>

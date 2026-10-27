@@ -28,7 +28,7 @@ def main(argv=None) -> int:
             print(f"{len(files)} raw file(s)")
         else:
             print(batch.run(args.dataset, chunk=args.chunk, force=args.force, backend=args.backend))
-    except (ValueError, KeyError, FileNotFoundError, ImportError) as e:
+    except (ValueError, KeyError, TypeError, FileNotFoundError, ImportError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 1
     return 0

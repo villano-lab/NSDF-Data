@@ -210,6 +210,11 @@ __marimo__/
 # No leading slash: `nsdf-cli download` writes an idx folder wherever it is run, so ignore it at any depth.
 idx/
 
+# Processed output of `python -m goldsluice run` (Parquet files and the ledger _goldsluice.json): results, not source. A dataset
+# definition should send its output outside the repository (see the example); these rules are the second line of defence.
+processed/
+_goldsluice.json
+
 # Claude Code: per-user local settings (permissions etc.) are not shared
 .claude/settings.local.json
 

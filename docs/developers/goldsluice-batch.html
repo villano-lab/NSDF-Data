@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Batch mode: define a dataset, process it, read it back</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="goldsluice-batch.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Batch mode: define a dataset, process it, read it back</h1>
+<p class="meta">Developer quick-sheet · goldsluice and goldpan share one
+dataset file · version 1, 27 October 2026</p>
+
+
+<p>A <strong>dataset definition</strong> is one small text file that
+says <em>which raw files</em>, <em>how to read them</em> and <em>which
+processing to run</em>. <code>goldsluice</code> runs it over every raw
+file in one command and writes the results next to it;
+<code>goldpan</code> opens the same file and gives you the pulses
+together with the processed quantities. Nothing is assumed: the readout,
+the channels and every parameter are written in the file. This sheet is
+the whole loop; the file format is specified in the docstring of
+<code>python/goldpan/dataset.py</code>, and a new algorithm is a
+different sheet (<em>Running goldsluice and developing an
+algorithm</em>).</p>
+<p>You need the setup of that sheet
+(<code>maturin develop --release</code> in <code>goldsluice/</code>) and
+<code>goldpan</code> installed with Parquet support
+(<code>pip install -e "./python[parquet]"</code> from the
+repository).</p>
+<h2 id="the-definition-file">1. The definition file</h2>
+<p>A TOML file, by convention <code>&lt;name&gt;.dataset.toml</code>.
+Annotated; the whole file is <code>examples/r76.dataset.toml</code>:</p>
+<pre class="toml"><code>[dataset]
+name = &quot;r76-07221203&quot;
+output = &quot;processed/r76&quot;           # the processed quantities (relative to this file)
+
+[[sources]]                        # where the pulses come from; several allowed
+name = &quot;side2&quot;
+format = &quot;idx&quot;                     # any goldpan adapter: idx, midas, parquet, ...
+glob = &quot;~/idx/07221203_2025_F*&quot;    # raw files or folders: paths = [..] and/or glob
+detector = &quot;NAI-S2&quot;
+readout = &quot;DCRC_RUN76&quot;             # a goldpan.config preset, or three numbers
+[sources.read]                     # the adapter&#39;s other read() arguments
+channels = { Side2pC = [0, 0], Side2pF = [0, 1] }
+roles = { Side2pC = &quot;phonon&quot;, Side2pF = &quot;phonon&quot; }
+
+[[processing]]                     # the steps, in order
+algorithm = &quot;peak&quot;
+channels = &quot;role:phonon&quot;           # &quot;all&quot;, &quot;role:&lt;role&gt;&quot;, or a list of names
+[processing.params]
+glitch_samples = &quot;@readout.glitch_samples&quot;       # from the readout above
+pretrigger_samples = &quot;@readout.pretrigger_samples&quot;
+amps_per_adc = 1.5e-9              # you must supply it: there is no default</code></pre>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Key</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>readout</code></td>
+<td>A preset name or
+<code>{ pretrigger_samples = ..., glitch_samples = ..., sample_period_s = ... }</code>,
+all three. Only needed by adapters that ask for it (<code>idx</code>,
+<code>midas</code>); a <code>parquet</code> source has its readout
+inside the file.</td>
+</tr>
+<tr>
+<td><code>[sources.read]</code></td>
+<td>Exactly the keyword arguments of that adapter’s <code>read</code>
+(<code>help(goldpan.adapters.idx.read)</code>); an argument it does not
+have is an error.</td>
+</tr>
+<tr>
+<td><code>"@readout.&lt;field&gt;"</code></td>
+<td>In a parameter: the value of <code>pretrigger_samples</code>,
+<code>glitch_samples</code> or <code>sample_period_s</code> of the
+data’s readout, so the file cannot disagree with itself.</td>
+</tr>
+<tr>
+<td>Unknown keys</td>
+<td><strong>Errors</strong>, not ignored: a typo (<code>readuot</code>)
+fails at once instead of silently doing nothing.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="check-then-run">2. Check, then run</h2>
+<pre><code>python -m goldsluice algorithms
+python -m goldsluice check r76.dataset.toml
+python -m goldsluice run r76.dataset.toml</code></pre>
+<p><code>algorithms</code> lists what can be named in
+<code>algorithm =</code> and the outputs of each. <code>check</code>
+reads the definition and lists the raw files it finds; it fails for an
+unknown algorithm, a pattern that matches nothing or a bad readout,
+before anything is processed. <code>run</code> processes the files and
+ends with a report that times each phase:</p>
+<pre><code>processed  .../raw/TOY/S1_F0001.parquet: 3000 events in 0.75 s
+processed  .../raw/TOY/S1_F0002.parquet: 3000 events in 0.65 s
+dataset big: 2 file(s) processed, 0 unchanged, 6000 events in 1.49 s
+  read        1.244 s   (the adapters)
+  compute     0.052 s   (peak)
+  write       0.101 s
+       4021 events/s overall</code></pre>
+<p>That is 6000 events of 3 channels and 4096 samples from a Parquet
+source. <strong>Reading is usually most of the time</strong>; the Rust
+kernels the least. Options: <code>--chunk N</code> (events read at once,
+default 1000: it bounds the memory used by the pulses),
+<code>--force</code> (redo files that are unchanged) and
+<code>--backend python</code> (the Python mirrors: slow, to compare
+numbers).</p>
+<h2 id="read-it-back-with-goldpan">3. Read it back with goldpan</h2>
+<pre class="python"><code>from goldpan.dataset import Dataset
+
+ds = Dataset.open(&quot;r76.dataset.toml&quot;)
+ev = ds.read()         # the pulses with the processed quantities: one Events
+q = ds.processed()     # only the processed quantities, no pulses: small, fast
+ev.quantities[&quot;Side2pC&quot;][&quot;current_max&quot;]    # a record per channel, a field per output</code></pre>
+<p><code>ds.iter_events()</code> gives one <code>Events</code> per raw
+file (for a dataset larger than memory);
+<code>ds.read(processed=False)</code> gives only the pulses. Both
+packages read the <em>same</em> file, so a notebook and a batch job
+cannot disagree about what the dataset is. Reading before the batch run
+raises an error that names the command to run.</p>
+<h2 id="what-is-written-and-what-makes-it-run-again">4. What is written,
+and what makes it run again</h2>
+<pre><code>processed/r76/
+    _goldpan.json        the goldpan Parquet manifest
+    _goldsluice.json     the ledger: per raw file, what was done, with what, how long
+    NAI-S2/07221203_2025_F0001.parquet    one file per series and dump:
+                         the key (series, dump, event) and the quantities</code></pre>
+<p>Any other tool that reads Parquet (pandas, Polars, DuckDB) opens
+these files. Each carries its provenance (the steps and parameters, the
+goldsluice version, the timing) in its metadata under
+<code>goldsluice</code>. A raw file is <strong>processed again</strong>
+when its size or date changes, or when anything that determines its
+results changes: the way it is read, the readout, a step or a parameter.
+Renaming the dataset or moving the output does not count. To start over,
+delete the output folder or run with <code>--force</code>.</p>
+<h2 id="adding-steps">5. Adding steps</h2>
+<p>Add another <code>[[processing]]</code> table. Each quantity must
+come from <strong>one</strong> step (two steps giving
+<code>Side2pC.adc_max</code> is an error that names it); different
+algorithms add different fields to the same channel’s record. Use
+<code>channels = ["Side2pC"]</code> to process only some channels. For
+an algorithm that does not exist yet, write its Python mirror and Rust
+kernel (the other sheet): <code>algorithms</code> lists it as soon as it
+is registered.</p>
+<h2 id="when-it-fails">6. When it fails</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Message</th>
+<th>Meaning and fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unknown key(s) [...]</code></td>
+<td>A typo or a key that does not exist; the message lists the allowed
+ones.</td>
+</tr>
+<tr>
+<td><code>...matches nothing</code></td>
+<td>A <code>paths</code> or <code>glob</code> entry found no file; the
+message says where it looked (relative paths start at the definition
+file).</td>
+</tr>
+<tr>
+<td><code>readout needs [...]</code></td>
+<td>An inline readout lacks numbers; there are no defaults.</td>
+</tr>
+<tr>
+<td><code>needs a readout</code></td>
+<td>The adapter (<code>idx</code>, <code>midas</code>) takes a readout
+and the source gives none.</td>
+</tr>
+<tr>
+<td><code>has no argument [...]</code></td>
+<td><code>[sources.read]</code> names something the adapter’s
+<code>read</code> does not take.</td>
+</tr>
+<tr>
+<td><code>unknown algorithm</code></td>
+<td>Not in <code>algorithms</code>; check the spelling or register the
+algorithm.</td>
+</tr>
+<tr>
+<td><code>missing ... keyword-only argument</code></td>
+<td>A step lacks a parameter: algorithms have no defaults.</td>
+</tr>
+<tr>
+<td><code>nothing processed yet</code></td>
+<td>You read the dataset before <code>run</code>.</td>
+</tr>
+<tr>
+<td><code>has the batch run covered this file</code></td>
+<td>New raw files were added after the last run; run again.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The numbers in <code>current_max</code> are in <strong>ADC counts
+times <code>amps_per_adc</code></strong>: a placeholder of
+<code>1.0</code>, as in the example file, gives counts.</p>
+
+<footer>This guide is also available as a <a href="goldsluice-batch.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

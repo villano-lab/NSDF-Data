@@ -48,6 +48,12 @@ channels = "role:phonon"           # "all", "role:<role>", or a list of names
 glitch_samples = "@readout.glitch_samples"       # from the readout above
 pretrigger_samples = "@readout.pretrigger_samples"
 amps_per_adc = 1.5e-9              # you must supply it: there is no default
+
+[[processing]]                     # the next step, run in order
+algorithm = "max_time"             # time of the largest sample, in s
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"   # from the readout
 ```
 
 | Key | Rule |

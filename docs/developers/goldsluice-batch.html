@@ -57,7 +57,13 @@ channels = &quot;role:phonon&quot;           # &quot;all&quot;, &quot;role:&lt;r
 [processing.params]
 glitch_samples = &quot;@readout.glitch_samples&quot;       # from the readout above
 pretrigger_samples = &quot;@readout.pretrigger_samples&quot;
-amps_per_adc = 1.5e-9              # you must supply it: there is no default</code></pre>
+amps_per_adc = 1.5e-9              # you must supply it: there is no default
+
+[[processing]]                     # the next step, run in order
+algorithm = &quot;max_time&quot;             # time of the largest sample, in s
+channels = &quot;role:phonon&quot;
+[processing.params]
+sample_period_s = &quot;@readout.sample_period_s&quot;   # from the readout</code></pre>
 <div class="table-scroll">
 <table>
 <colgroup>

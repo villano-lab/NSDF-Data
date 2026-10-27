@@ -6,7 +6,7 @@
 
 [dataset]
 name = "r76-07221203"
-output = "processed/r76-07221203"             # the processed quantities, a goldpan Parquet dataset; relative to this file
+output = "~/goldsluice-output/r76-07221203"   # the processed quantities, a goldpan Parquet dataset; outside the repository on purpose
 
 [[sources]]
 name = "side2"

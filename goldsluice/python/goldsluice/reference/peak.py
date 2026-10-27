@@ -51,3 +51,12 @@ def cases():
         (flat, dict(glitch_samples=1, pretrigger_samples=32, amps_per_adc=1.0)),
         (ints, dict(glitch_samples=0, pretrigger_samples=64, amps_per_adc=-2.0)),
     ]
+
+
+def bad_cases():
+    """Inputs both versions must refuse, with the same message: `[(traces, params), ...]`."""
+    traces = np.zeros((2, 64))
+    return [
+        (traces, dict(glitch_samples=32, pretrigger_samples=32, amps_per_adc=1.0)),     # no baseline window
+        (traces, dict(glitch_samples=0, pretrigger_samples=65, amps_per_adc=1.0)),      # window longer than the trace
+    ]

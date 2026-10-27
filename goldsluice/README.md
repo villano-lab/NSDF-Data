@@ -47,7 +47,7 @@ slower by a factor of ten or more.
 
 ## Writing an algorithm
 
-Write the Python mirror first, then port it to Rust, then register both: **`PORTING.md`** is the guide, with the rules the Python
+Write the Python mirror first, then port it to Rust, then register both. The developer quick-sheet `docs/developers/goldsluice-algorithm.pdf` walks through it with an example; **`PORTING.md`** is the reference, with the rules the Python
 must follow so that the port is mechanical, a table of the equivalent Python and Rust, and a checklist.
 
 ## Timing

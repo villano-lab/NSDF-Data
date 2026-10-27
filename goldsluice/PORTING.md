@@ -19,6 +19,7 @@ A mirror module `python/goldsluice/reference/<name>.py` defines:
 | `problem(n_samples, **params)` | why the parameters do not fit a trace of `n_samples` (a message), or `None` |
 | `kernel(trace, **params)` | **one trace** in, a tuple of numbers out |
 | `cases()` | the standard inputs: `[(traces, params), ...]`, an array of shape `(n_events, n_samples)` and the keyword arguments |
+| `bad_cases()` | inputs that both versions must refuse with the same message, in the same form |
 
 Rules for `kernel`, so that it ports mechanically:
 
@@ -33,6 +34,7 @@ Rules for `kernel`, so that it ports mechanically:
 5. **Every parameter is an explicit keyword with no default**, and `problem` rejects what does not fit. The readout is never assumed.
 6. **Indices are `int`, samples are `float`.** Do not rely on Python's negative indices or slicing past the end.
 7. **No state between traces** and no randomness.
+8. **No floats in error messages.** Python writes `0.0` and `1e-06`, Rust writes `0` and `0.000001`, so the two messages would differ and the parity test fails. Name the parameter and the rule (`sample_period_s must be positive`); integers are safe.
 
 `cases()` is part of the specification. Include an ordinary case, an edge case (a flat trace, the smallest legal window) and one
 with the glitch or other trap the algorithm has to survive. Keep them small enough to run in a second.
@@ -66,6 +68,7 @@ signature, `problem` first, `py.detach` around the loop), and one `wrap_pyfuncti
 | `math.sqrt(x)` / `abs(x)` | `x.sqrt()` / `x.abs()` |
 | `max(a, b)` of two floats | `a.max(b)` (a NaN is ignored by `f64::max`; Python's `max` is not: decide, and test it) |
 | `float("nan")`, `float("inf")` | `f64::NAN`, `f64::INFINITY` |
+| `if not x > 0:` (also true for NaN) | `if x.is_nan() \|\| x <= 0.0 {` (clippy refuses `!(x > 0.0)`) |
 | `return None` / message from `problem` | `Option<String>` |
 | `raise ValueError(msg)` | `Err(PyValueError::new_err(msg))` in the binding |
 
@@ -86,7 +89,7 @@ the arithmetic as `f64` or check the cases by hand.
 - [ ] the mirror follows the kernel subset (no numpy in `kernel`)
 - [ ] `problem` messages are identical in Python and Rust
 - [ ] a hand-computed test in Rust and in Python
-- [ ] `cases()` has an ordinary, an edge and a trap case
+- [ ] `cases()` has an ordinary, an edge and a trap case; `bad_cases()` has one input for each way `problem` refuses
 - [ ] registered in `reference/__init__.py`, exposed in `lib.rs`, added to `benches/kernels.rs`
 - [ ] parity test, `cargo test` and `cargo clippy -- -D warnings` pass
 - [ ] timing in the pull request (`cargo bench` and `compare`), built with `--release`

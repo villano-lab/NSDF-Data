@@ -40,13 +40,13 @@ def test_rust_and_python_agree_on_the_standard_inputs(name):
 
 @pytest.mark.parametrize("name", NAMES)
 def test_both_backends_refuse_bad_parameters_with_the_same_message(name):
-    traces, params = ALGORITHMS[name].cases()[0]
-    n = traces.shape[1]
-    for bad in ({"glitch_samples": params["pretrigger_samples"]}, {"pretrigger_samples": n + 1}):
+    bad = ALGORITHMS[name].bad_cases()
+    assert bad, "an algorithm needs at least one input that it refuses"
+    for traces, params in bad:
         messages = []
         for backend in ("rust", "python"):
             with pytest.raises(ValueError) as e:
-                run(name, traces, backend=backend, **{**params, **bad})
+                run(name, traces, backend=backend, **params)
             messages.append(str(e.value))
         assert messages[0] == messages[1]
 

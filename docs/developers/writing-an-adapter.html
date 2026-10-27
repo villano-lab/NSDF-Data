@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing an adapter</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="writing-an-adapter.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Writing an adapter</h1>
+<p class="meta">Developer quick-sheet · for anyone who wants goldpan to
+read another file format · version 1, 26 October 2026</p>
+
+
+<p>An <strong>adapter</strong> is the only code that knows a file
+format. It turns one storage (a MIDAS file, an idx dump, a ROOT file,
+your lab’s own format) into the objects the rest of <code>goldpan</code>
+works on; everything else in the library sees arrays and never a file.
+Four exist: <code>idx</code>, <code>parquet</code>, <code>midas</code>
+(they read traces into an <code>Events</code>) and <code>rq_root</code>
+(it reads processed quantities into a table). A new one is a small
+Python module. Start from the complete example in
+<code>python/tests/example_adapter.py</code> (about 50 lines, tested),
+then follow this sheet.</p>
+<h2 id="which-shape">1. Which shape</h2>
+<ul>
+<li><strong>Events adapter</strong>: file to
+<code>goldpan.data.Events</code>: the traces of one detector (read-only
+arrays, one per channel) and one record of quantities per event. Use it
+for anything with waveforms. Examples: <code>idx</code>,
+<code>midas</code>, <code>parquet</code>.</li>
+<li><strong>Table adapter</strong>: file to an Awkward Array with one
+record per event whose first fields are the key <code>series</code>,
+<code>dump</code>, <code>event</code>, then the quantities. Use it for
+processed values without traces.
+<code>goldpan.adapters.rq.attach(events, table)</code> joins it to an
+<code>Events</code>. Example: <code>rq_root</code>, the model for a new
+one: take the detector number from the user, fill a branch the file
+lacks with NaN instead of failing, and test it by joining it to an
+<code>Events</code> with <code>attach</code>.</li>
+</ul>
+<h2 id="the-rules-every-adapter-follows">2. The rules every adapter
+follows</h2>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>The user names the detector, the channels and the
+readout.</strong> <code>read(path, *, detector_name, config, ...)</code>
+with a <code>PulseConfig</code>; a channel map such as
+<code>{"PAS1": 0}</code> when the file numbers its channels. Never a
+default.</td>
+<td>A wrong silent default (1.6 us for 0.8 us samples) changes every
+time and energy without an error.</td>
+</tr>
+<tr>
+<td><strong>Check what the file knows</strong> against what the user
+said: the sample period, the number of samples. Raise
+<code>ValueError</code> that says both numbers.</td>
+<td><code>midas</code> refuses a Run 76 readout on a Z7 file.</td>
+</tr>
+<tr>
+<td><strong>The key is <code>series</code>, <code>dump</code>,
+<code>event</code>.</strong> Event numbers restart in every dump. Take
+series and dump from the file name unless the user gives them.</td>
+<td>Without the dump, two events share a number.</td>
+</tr>
+<tr>
+<td><strong>Build with <code>Events.from_arrays(...)</code></strong> (or
+<code>Events(...)</code>). The constructor checks the shapes and the
+key, and makes the traces read-only.</td>
+<td>You cannot return a malformed <code>Events</code>.</td>
+</tr>
+<tr>
+<td><strong>Keep the file’s dtype</strong> (<code>uint16</code> stays
+<code>uint16</code>); times in seconds; <code>meta</code> holds
+provenance (<code>adapter</code>, <code>source</code>, run information)
+and only JSON-friendly values.</td>
+<td>Parquet stores <code>meta</code> as JSON; no hidden
+conversions.</td>
+</tr>
+<tr>
+<td><strong>Skip and count, never invent.</strong> Events without the
+channels asked for are skipped and counted in <code>meta</code>. A file
+that stops in the middle ends without an error and says
+<code>complete: False</code>. Something you do not read yet (hybrid
+sampling) raises <code>NotImplementedError</code>.</td>
+<td>A silent wrong join corrupts a result.</td>
+</tr>
+<tr>
+<td><strong>Read only what is asked for.</strong> Take a
+<code>channels</code> argument and a way to stop early
+(<code>max_events</code>); a raw file can be 15 GB.</td>
+<td><code>midas</code> reads past channels it was not asked for.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="the-functions">3. The functions</h2>
+<pre class="python"><code>def read(path, *, detector_name, config, ...) -&gt; Events         # required
+def iter_chunks(path, *, chunk=256, **kw) -&gt; Iterator[Events]  # optional
+def write(events, path) -&gt; None                                # optional</code></pre>
+<p><code>iter_chunks</code> gives the same events in pieces (for a file
+larger than memory); <code>write</code> makes a file that
+<code>read</code> reads back.</p>
+<p>The core of <code>python/tests/example_adapter.py</code>: it checks
+the sample period of the file, then builds the <code>Events</code>.</p>
+<pre class="python"><code>with np.load(path) as f:
+    names = list(channels) if channels else [k for k in f.files if k not in NOT_CHANNELS]
+    if &quot;period_s&quot; in f.files and config.sample_period_s is not None:
+        in_file = float(f[&quot;period_s&quot;])
+        if abs(in_file - config.sample_period_s) &gt; 0.01 * config.sample_period_s:
+            raise ValueError(f&quot;the file samples every {in_file * 1e6:g} us but the readout &quot;
+                             f&quot;you gave says {config.sample_period_s * 1e6:g} us&quot;)
+    traces = {n: f[n] for n in names}
+    event = f[&quot;event&quot;] if &quot;event&quot; in f.files else None
+n_samples = next(iter(traces.values())).shape[1]
+detector = Detector(detector_name, tuple(ChannelInfo(n, role=&quot;phonon&quot;) for n in names),
+                    Readout.single(n_samples, config))
+return Events.from_arrays(detector, traces, series=series, dump=dump, event=event,
+                          meta={&quot;adapter&quot;: &quot;npz&quot;, &quot;source&quot;: str(path)})</code></pre>
+<h2 id="test-it">4. Test it</h2>
+<p>Pass your module and a small sample file to the conformance test. It
+checks that <code>read</code> returns an <code>Events</code> that
+satisfies its rules, that <code>iter_chunks</code> joined equals
+<code>read</code>, and that <code>write</code> then <code>read</code>
+loses nothing (the same keyword arguments are used for every call); it
+returns the list of checks passed:</p>
+<pre class="python"><code>from goldpan.testing import check_adapter
+check_adapter(my_module, &quot;sample.npz&quot;, detector_name=&quot;TOY&quot;, config=CONFIG)</code></pre>
+<p>Then add the tests only you can write: the error messages, a
+truncated file, a channel that is missing. For data to try the adapter
+on, <code>python/tests/synthetic_series.py</code> writes one made-up
+series in idx, MIDAS, RQ Parquet, RQ ROOT and native Parquet
+(<code>python python/tests/synthetic_series.py OUTDIR</code>); add a
+writer for your format there and compare it with the same events. A test
+on a real file belongs in the repository only as a
+skipped-unless-present test: put the path in an environment variable, as
+<code>GOLDPAN_MIDAS_SAMPLE</code> does; real data are never
+committed.</p>
+<h2 id="make-it-available">5. Make it available</h2>
+<ul>
+<li><strong>For yourself or your package:</strong>
+<code>goldpan.adapters.register("name", my_module)</code> makes
+<code>goldpan.adapters.read(path, format="name", ...)</code> work.
+Nothing in <code>goldpan</code> changes.</li>
+<li><strong>As a built-in</strong> (a pull request into
+<code>develop</code>, as in <code>AGENTS.md</code>): the module
+<code>&lt;name&gt;.py</code> goes in
+<code>python/goldpan/adapters/</code> with a docstring that says what
+the format is and gives one example call (it becomes the page of the
+library reference); its public functions carry
+<code>@status(DONE)</code>; add it to <code>_BUILTIN</code> in
+<code>python/goldpan/adapters/__init__.py</code> (and to the suffix
+guess, if it has one); tests in <code>python/tests/</code>
+(<code>test_goldpan_&lt;name&gt;.py</code>); rebuild the reference page
+(<code>python tools/build_library_reference.py</code>); a line in
+<code>CHANGELOG.md</code>.</li>
+<li><strong>A new dependency</strong> is imported inside the functions
+that need it, with a message that says what to install
+(<code>ImportError: ... pip install lz4</code>), pinned in
+<code>requirements.txt</code> and named as an extra in
+<code>python/pyproject.toml</code>. It also needs a <em>Students,
+please:</em> line at the next release (<code>RELEASING.md</code>).</li>
+</ul>
+<h2 id="what-the-four-adapters-learned">6. What the four adapters
+learned</h2>
+<ul>
+<li><strong>Look at a real file early.</strong> <code>midas</code> was
+first written from the library’s source, and a real file from S3DF then
+showed the sections the source did not make obvious: an extra block to
+read past, events of other kinds, and an end-of-run event that says
+whether the file is complete.</li>
+<li><strong>The file’s own numbers disagree with your memory.</strong>
+Event numbers, serial numbers and masks are not what the names suggest
+(the serial of the begin- and end-of-run events is the run number).
+Check and write it down in the docstring.</li>
+<li><strong>Do not guess a missing format feature.</strong> Raise a
+clear error naming the feature, and add it when a file needs it.</li>
+<li><strong>Truncated and compressed files are normal.</strong> Test a
+file cut in half; read <code>.gz</code> and <code>.lz4</code> as
+streams.</li>
+<li><strong>Keep <code>iter_chunks</code> a pass over the file</strong>,
+not one read per chunk; say in the docstring what is known only at the
+end (<code>complete</code>).</li>
+</ul>
+
+<footer>This guide is also available as a <a href="writing-an-adapter.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

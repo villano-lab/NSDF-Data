@@ -1,4 +1,6 @@
-"""The conformance test of an adapter, for the people who write one (see the guide "Writing an adapter" when it exists).
+"""The conformance test of an adapter, for the people who write one (see the developer quick-sheet "Writing an adapter").
+
+Use it like this::
 
     from goldpan.testing import check_adapter
     passed = check_adapter(my_adapter_module, "sample/file", **read_kwargs)

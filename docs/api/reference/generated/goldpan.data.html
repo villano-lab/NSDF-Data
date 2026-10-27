@@ -1,0 +1,876 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="goldpan.dataset" href="goldpan.dataset.html"><link rel="prev" title="goldpan.cuts" href="goldpan.cuts.html">
+
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>goldpan.data - goldpan and goldsluice</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">goldpan and goldsluice</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">goldpan and goldsluice</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">How the pieces fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides.html">Guides</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Reference</a><input aria-label="Toggle navigation of Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../goldpan.html">goldpan</a><input aria-label="Toggle navigation of goldpan" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3 current has-children"><a class="reference internal" href="goldpan.html">goldpan</a><input aria-label="Toggle navigation of goldpan" checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4 has-children"><a class="reference internal" href="goldpan.adapters.html">goldpan.adapters</a><input aria-label="Toggle navigation of goldpan.adapters" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="goldpan.adapters.idx.html">goldpan.adapters.idx</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldpan.adapters.midas.html">goldpan.adapters.midas</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldpan.adapters.parquet.html">goldpan.adapters.parquet</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldpan.adapters.rq.html">goldpan.adapters.rq</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldpan.adapters.rq_root.html">goldpan.adapters.rq_root</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.algorithms.html">goldpan.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.archive.html">goldpan.archive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.channels.html">goldpan.channels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.config.html">goldpan.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.cuts.html">goldpan.cuts</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">goldpan.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.dataset.html">goldpan.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.io.html">goldpan.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.legacy.html">goldpan.legacy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.operations.html">goldpan.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.quantities.html">goldpan.quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../goldsluice.html">goldsluice</a><input aria-label="Toggle navigation of goldsluice" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="goldsluice.html">goldsluice</a><input aria-label="Toggle navigation of goldsluice" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="goldsluice.algorithms.html">goldsluice.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldsluice.batch.html">goldsluice.batch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldsluice.profile.html">goldsluice.profile</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="goldsluice.reference.html">goldsluice.reference</a><input aria-label="Toggle navigation of goldsluice.reference" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/villano-lab/NSDF-Data/blob/develop/sphinx/reference/generated/goldpan.data.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/villano-lab/NSDF-Data/edit/develop/sphinx/reference/generated/goldpan.data.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-goldpan.data">
+<span id="goldpan-data"></span><h1>goldpan.data<a class="headerlink" href="#module-goldpan.data" title="Link to this heading">¶</a></h1>
+<p>The in-memory container of one detector’s events: traces, quantities, readout, provenance.</p>
+<p>This is the middle of the design in <code class="code docutils literal notranslate"><span class="pre">GoldpanGoldsluice/2026-10-25</span></code> (log repository): file formats live in adapters, the
+functions of goldpan are pure, and what passes between them is an <code class="code docutils literal notranslate"><span class="pre">Events</span></code>, <strong>immutable</strong>. The simplest version is
+built first: one detector, and the traces of a channel are held in named <em>segments</em> (here only the default,
+<code class="code docutils literal notranslate"><span class="pre">&quot;main&quot;</span></code>), so that hybrid sampling later (a coarse and a fine segment) changes no signature and no file.</p>
+<p>An <code class="code docutils literal notranslate"><span class="pre">Events</span></code> has</p>
+<ul class="simple">
+<li><p>a <code class="code docutils literal notranslate"><span class="pre">Detector</span></code>: its name, its channels (name, role, the readout unit and input they come through) and its <code class="code docutils literal notranslate"><span class="pre">Readout</span></code>
+(the segments of a trace, each with a <code class="code docutils literal notranslate"><span class="pre">PulseConfig</span></code>);</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">traces</span></code>: <code class="code docutils literal notranslate"><span class="pre">{(channel,</span> <span class="pre">segment):</span> <span class="pre">array</span> <span class="pre">of</span> <span class="pre">shape</span> <span class="pre">(n_events,</span> <span class="pre">n_samples_of_the_segment)}</span></code>, read-only (use <code class="code docutils literal notranslate"><span class="pre">ev.trace(channel)</span></code>);</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">quantities</span></code>: an Awkward Array, one record per event. Its first fields identify the event, <code class="code docutils literal notranslate"><span class="pre">series</span></code>, <code class="code docutils literal notranslate"><span class="pre">dump</span></code> and <code class="code docutils literal notranslate"><span class="pre">event</span></code>
+(event numbers restart in every dump), and <code class="code docutils literal notranslate"><span class="pre">t_trigger</span></code> (seconds on the clock named in <code class="code docutils literal notranslate"><span class="pre">meta[&quot;clock&quot;]</span></code>) may follow; the
+rest are the quantities (RQs). Flat numbers and variable-length lists are both fields.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">meta</span></code>: provenance (source files, program versions, units of the quantities, the clock).</p></li>
+</ul>
+<p>Nothing here opens a file. Build one by hand with <code class="code docutils literal notranslate"><span class="pre">Events.from_arrays</span></code> (for a notebook or a test) or get one from an
+adapter.</p>
+<p class="rubric">Module Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.data.MAIN" title="goldpan.data.MAIN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MAIN</span></code></a></p></td>
+<td><p>The name of the default segment of a trace.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.data.KEY_COLUMNS" title="goldpan.data.KEY_COLUMNS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KEY_COLUMNS</span></code></a></p></td>
+<td><p>The fields that identify an event in <code class="code docutils literal notranslate"><span class="pre">Events.quantities</span></code>; they cannot be replaced by <code class="code docutils literal notranslate"><span class="pre">with_quantities</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.data.TIME_COLUMN" title="goldpan.data.TIME_COLUMN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TIME_COLUMN</span></code></a></p></td>
+<td><p>The optional field with the trigger time in seconds, on the clock named in <code class="code docutils literal notranslate"><span class="pre">Events.meta[&quot;clock&quot;]</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="rubric">Classes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.data.ChannelInfo" title="goldpan.data.ChannelInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChannelInfo</span></code></a>(name[, role, unit, input])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.data.Detector" title="goldpan.data.Detector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Detector</span></code></a>(name, channels, readout)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.data.Events" title="goldpan.data.Events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Events</span></code></a>(detector, traces, numpy.ndarray], ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.data.Readout" title="goldpan.data.Readout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Readout</span></code></a>(segments)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.data.Segment" title="goldpan.data.Segment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Segment</span></code></a>(name, n_samples, config, start_s)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py data">
+<dt class="sig sig-object py" id="goldpan.data.MAIN">
+<span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">MAIN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'main'</span></span><a class="headerlink" href="#goldpan.data.MAIN" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the default segment of a trace.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="goldpan.data.KEY_COLUMNS">
+<span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">KEY_COLUMNS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('series',</span> <span class="pre">'dump',</span> <span class="pre">'event')</span></span><a class="headerlink" href="#goldpan.data.KEY_COLUMNS" title="Link to this definition">¶</a></dt>
+<dd><p>The fields that identify an event in <code class="code docutils literal notranslate"><span class="pre">Events.quantities</span></code>; they cannot be replaced by <code class="code docutils literal notranslate"><span class="pre">with_quantities</span></code>.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="goldpan.data.TIME_COLUMN">
+<span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">TIME_COLUMN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'t_trigger'</span></span><a class="headerlink" href="#goldpan.data.TIME_COLUMN" title="Link to this definition">¶</a></dt>
+<dd><p>The optional field with the trigger time in seconds, on the clock named in <code class="code docutils literal notranslate"><span class="pre">Events.meta[&quot;clock&quot;]</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="goldpan.data.ChannelInfo">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">ChannelInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#ChannelInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.ChannelInfo" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>role</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>unit</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>input</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.ChannelInfo.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#goldpan.data.ChannelInfo.name" title="Link to this definition">¶</a></dt>
+<dd><p>The channel’s name, unique inside its detector (for example <code class="code docutils literal notranslate"><span class="pre">Side2pC</span></code>).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.ChannelInfo.role">
+<span class="sig-name descname"><span class="pre">role</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#goldpan.data.ChannelInfo.role" title="Link to this definition">¶</a></dt>
+<dd><p>What the channel measures (<code class="code docutils literal notranslate"><span class="pre">phonon</span></code>, <code class="code docutils literal notranslate"><span class="pre">charge</span></code>, …), so that a cut can be applied to every channel of a role.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.ChannelInfo.unit">
+<span class="sig-name descname"><span class="pre">unit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#goldpan.data.ChannelInfo.unit" title="Link to this definition">¶</a></dt>
+<dd><p>The readout unit (a board) the channel comes through, if that matters.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.ChannelInfo.input">
+<span class="sig-name descname"><span class="pre">input</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#goldpan.data.ChannelInfo.input" title="Link to this definition">¶</a></dt>
+<dd><p>The input on that unit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="goldpan.data.Segment">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">Segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="goldpan.config.html#goldpan.config.PulseConfig" title="goldpan.config.PulseConfig"><span class="pre">goldpan.config.PulseConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Segment" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>)</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="goldpan.config.html#goldpan.config.PulseConfig" title="goldpan.config.PulseConfig"><em>PulseConfig</em></a>)</p></li>
+<li><p><strong>start_s</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Segment.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#goldpan.data.Segment.name" title="Link to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">main</span></code> for an ordinary trace, <code class="code docutils literal notranslate"><span class="pre">coarse</span></code> and <code class="code docutils literal notranslate"><span class="pre">fine</span></code> for hybrid sampling.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The segment’s name</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Segment.n_samples">
+<span class="sig-name descname"><span class="pre">n_samples</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#goldpan.data.Segment.n_samples" title="Link to this definition">¶</a></dt>
+<dd><p>Samples per trace in this segment.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Segment.config">
+<span class="sig-name descname"><span class="pre">config</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="goldpan.config.html#goldpan.config.PulseConfig" title="goldpan.config.PulseConfig"><span class="pre">PulseConfig</span></a></span><a class="headerlink" href="#goldpan.data.Segment.config" title="Link to this definition">¶</a></dt>
+<dd><p>its pretrigger window, glitch samples and sample period.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The readout of this segment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Segment.start_s">
+<span class="sig-name descname"><span class="pre">start_s</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#goldpan.data.Segment.start_s" title="Link to this definition">¶</a></dt>
+<dd><p>Time of the first sample relative to the trigger, in seconds (negative before it); <code class="code docutils literal notranslate"><span class="pre">None</span></code> if unknown.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Segment.main">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Segment.main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Segment.main" title="Link to this definition">¶</a></dt>
+<dd><p>The ordinary single segment: the trigger is sample <code class="code docutils literal notranslate"><span class="pre">config.pretrigger_samples</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>)</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="goldpan.config.html#goldpan.config.PulseConfig" title="goldpan.config.PulseConfig"><em>PulseConfig</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#goldpan.data.Segment" title="goldpan.data.Segment"><em>Segment</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="goldpan.data.Readout">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">Readout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Readout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Readout" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segments</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a>)</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Readout.segments">
+<span class="sig-name descname"><span class="pre">segments</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span><a class="headerlink" href="#goldpan.data.Readout.segments" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="code docutils literal notranslate"><span class="pre">Segment</span></code> objects of a trace, with unique names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Readout.single">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">single</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Readout.single"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Readout.single" title="Link to this definition">¶</a></dt>
+<dd><p>A readout with the one segment <code class="code docutils literal notranslate"><span class="pre">main</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_samples</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>)</p></li>
+<li><p><strong>config</strong> (<a class="reference internal" href="goldpan.config.html#goldpan.config.PulseConfig" title="goldpan.config.PulseConfig"><em>PulseConfig</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#goldpan.data.Readout" title="goldpan.data.Readout"><em>Readout</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Readout.segment">
+<span class="sig-name descname"><span class="pre">segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Readout.segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Readout.segment" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#goldpan.data.Segment" title="goldpan.data.Segment"><em>Segment</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Readout.config">
+<span class="sig-name descname"><span class="pre">config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Readout.config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Readout.config" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="code docutils literal notranslate"><span class="pre">PulseConfig</span></code> to pass to the functions of goldpan for this segment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="goldpan.config.html#goldpan.config.PulseConfig" title="goldpan.config.PulseConfig"><em>PulseConfig</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Readout.time_axis">
+<span class="sig-name descname"><span class="pre">time_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Readout.time_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Readout.time_axis" title="Link to this definition">¶</a></dt>
+<dd><p>Time of each sample of the segment in seconds relative to the trigger (needs the sample period and start).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="goldpan.data.Detector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">Detector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#goldpan.data.Readout" title="goldpan.data.Readout"><span class="pre">goldpan.data.Readout</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Detector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Detector" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>channels</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a>)</p></li>
+<li><p><strong>readout</strong> (<a class="reference internal" href="#goldpan.data.Readout" title="goldpan.data.Readout"><em>Readout</em></a>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Detector.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#goldpan.data.Detector.name" title="Link to this definition">¶</a></dt>
+<dd><p>The detector’s name, unique inside a dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Detector.channels">
+<span class="sig-name descname"><span class="pre">channels</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a></span><a class="headerlink" href="#goldpan.data.Detector.channels" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="code docutils literal notranslate"><span class="pre">ChannelInfo</span></code> objects of the detector, with unique names.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Detector.readout">
+<span class="sig-name descname"><span class="pre">readout</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#goldpan.data.Readout" title="goldpan.data.Readout"><span class="pre">Readout</span></a></span><a class="headerlink" href="#goldpan.data.Detector.readout" title="Link to this definition">¶</a></dt>
+<dd><p>How its traces are sampled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Detector.channel_names">
+<span class="sig-name descname"><span class="pre">channel_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Detector.channel_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Detector.channel_names" title="Link to this definition">¶</a></dt>
+<dd><p>The names of the channels, in order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Detector.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Detector.channel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Detector.channel" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="code docutils literal notranslate"><span class="pre">ChannelInfo</span></code> called <code class="code docutils literal notranslate"><span class="pre">name</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#goldpan.data.ChannelInfo" title="goldpan.data.ChannelInfo"><em>ChannelInfo</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Detector.channels_with_role">
+<span class="sig-name descname"><span class="pre">channels_with_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Detector.channels_with_role"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Detector.channels_with_role" title="Link to this definition">¶</a></dt>
+<dd><p>The names of the channels whose role is <code class="code docutils literal notranslate"><span class="pre">role</span></code>, in order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>role</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="goldpan.data.Events">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.data.</span></span><span class="sig-name descname"><span class="pre">Events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">detector:</span> <span class="pre">goldpan.data.Detector,</span> <span class="pre">traces:</span> <span class="pre">Mapping[tuple,</span> <span class="pre">numpy.ndarray],</span> <span class="pre">quantities:</span> <span class="pre">awkward.highlevel.Array,</span> <span class="pre">meta:</span> <span class="pre">Mapping[str,</span> <span class="pre">Any]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Events" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detector</strong> (<a class="reference internal" href="#goldpan.data.Detector" title="goldpan.data.Detector"><em>Detector</em></a>)</p></li>
+<li><p><strong>traces</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><em>tuple</em></a><em>, </em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a><em>]</em>)</p></li>
+<li><p><strong>quantities</strong> (<em>Array</em>)</p></li>
+<li><p><strong>meta</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Events.detector">
+<span class="sig-name descname"><span class="pre">detector</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#goldpan.data.Detector" title="goldpan.data.Detector"><span class="pre">Detector</span></a></span><a class="headerlink" href="#goldpan.data.Events.detector" title="Link to this definition">¶</a></dt>
+<dd><p>The detector these events were recorded by.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Events.traces">
+<span class="sig-name descname"><span class="pre">traces</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#goldpan.data.Events.traces" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">{(channel,</span> <span class="pre">segment):</span> <span class="pre">(n_events,</span> <span class="pre">n_samples)}</span></code>, read-only views.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Events.quantities">
+<span class="sig-name descname"><span class="pre">quantities</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Array</span></span><a class="headerlink" href="#goldpan.data.Events.quantities" title="Link to this definition">¶</a></dt>
+<dd><p>the key fields, the optional <code class="code docutils literal notranslate"><span class="pre">t_trigger</span></code>, then the quantities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One record per event</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.data.Events.meta">
+<span class="sig-name descname"><span class="pre">meta</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#goldpan.data.Events.meta" title="Link to this definition">¶</a></dt>
+<dd><p>Provenance and units; a read-only copy.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Events.from_arrays">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traces</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Events.from_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Events.from_arrays" title="Link to this definition">¶</a></dt>
+<dd><p>Build <code class="code docutils literal notranslate"><span class="pre">Events</span></code> by hand: <code class="code docutils literal notranslate"><span class="pre">traces</span></code> is <code class="code docutils literal notranslate"><span class="pre">{channel:</span> <span class="pre">(n_events,</span> <span class="pre">n_samples)}</span></code> (segment <code class="code docutils literal notranslate"><span class="pre">main</span></code>).</p>
+<p><code class="code docutils literal notranslate"><span class="pre">series</span></code> and <code class="code docutils literal notranslate"><span class="pre">dump</span></code> are one value for every event or one per event; <code class="code docutils literal notranslate"><span class="pre">event</span></code> defaults to 0, 1, 2, …
+<code class="code docutils literal notranslate"><span class="pre">quantities</span></code> adds more columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detector</strong> (<a class="reference internal" href="#goldpan.data.Detector" title="goldpan.data.Detector"><em>Detector</em></a>)</p></li>
+<li><p><strong>traces</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a><em>]</em>)</p></li>
+<li><p><strong>quantities</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>meta</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a><em>] </em><em>| </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#goldpan.data.Events" title="goldpan.data.Events"><em>Events</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="goldpan.data.Events.n_events">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_events</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#goldpan.data.Events.n_events" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Events.trace">
+<span class="sig-name descname"><span class="pre">trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Events.trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Events.trace" title="Link to this definition">¶</a></dt>
+<dd><p>The read-only array <code class="code docutils literal notranslate"><span class="pre">(n_events,</span> <span class="pre">n_samples)</span></code> of a channel’s segment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>segment</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Events.time_axis">
+<span class="sig-name descname"><span class="pre">time_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Events.time_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Events.time_axis" title="Link to this definition">¶</a></dt>
+<dd><p>Time of each sample of <code class="code docutils literal notranslate"><span class="pre">segment</span></code>, seconds relative to the trigger, from this detector’s own readout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>segment</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><em>ndarray</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Events.select">
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Events.select"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Events.select" title="Link to this definition">¶</a></dt>
+<dd><p>The events where <code class="code docutils literal notranslate"><span class="pre">where</span></code> is True (a boolean array of length <code class="code docutils literal notranslate"><span class="pre">n_events</span></code>) or at the given integer positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#goldpan.data.Events" title="goldpan.data.Events"><em>Events</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Events.with_quantities">
+<span class="sig-name descname"><span class="pre">with_quantities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Events.with_quantities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Events.with_quantities" title="Link to this definition">¶</a></dt>
+<dd><p>A new <code class="code docutils literal notranslate"><span class="pre">Events</span></code> with columns added or replaced; each value has one entry per event. Key fields cannot be replaced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#goldpan.data.Events" title="goldpan.data.Events"><em>Events</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="goldpan.data.Events.concatenate">
+<span class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/data.html#Events.concatenate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.data.Events.concatenate" title="Link to this definition">¶</a></dt>
+<dd><p>The events of several <code class="code docutils literal notranslate"><span class="pre">Events</span></code> of the same detector, one after another (meta of the first is kept).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>events</strong> (<a class="reference internal" href="#goldpan.data.Events" title="goldpan.data.Events"><em>Events</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#goldpan.data.Events" title="goldpan.data.Events"><em>Events</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="goldpan.dataset.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">goldpan.dataset</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="goldpan.cuts.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">goldpan.cuts</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; the NSDF-Data authors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">goldpan.data</a><ul>
+<li><a class="reference internal" href="#goldpan.data.MAIN"><code class="docutils literal notranslate"><span class="pre">MAIN</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.KEY_COLUMNS"><code class="docutils literal notranslate"><span class="pre">KEY_COLUMNS</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.TIME_COLUMN"><code class="docutils literal notranslate"><span class="pre">TIME_COLUMN</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.ChannelInfo"><code class="docutils literal notranslate"><span class="pre">ChannelInfo</span></code></a><ul>
+<li><a class="reference internal" href="#goldpan.data.ChannelInfo.name"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.name</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.ChannelInfo.role"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.role</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.ChannelInfo.unit"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.unit</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.ChannelInfo.input"><code class="docutils literal notranslate"><span class="pre">ChannelInfo.input</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#goldpan.data.Segment"><code class="docutils literal notranslate"><span class="pre">Segment</span></code></a><ul>
+<li><a class="reference internal" href="#goldpan.data.Segment.name"><code class="docutils literal notranslate"><span class="pre">Segment.name</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Segment.n_samples"><code class="docutils literal notranslate"><span class="pre">Segment.n_samples</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Segment.config"><code class="docutils literal notranslate"><span class="pre">Segment.config</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Segment.start_s"><code class="docutils literal notranslate"><span class="pre">Segment.start_s</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Segment.main"><code class="docutils literal notranslate"><span class="pre">Segment.main()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#goldpan.data.Readout"><code class="docutils literal notranslate"><span class="pre">Readout</span></code></a><ul>
+<li><a class="reference internal" href="#goldpan.data.Readout.segments"><code class="docutils literal notranslate"><span class="pre">Readout.segments</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Readout.single"><code class="docutils literal notranslate"><span class="pre">Readout.single()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Readout.segment"><code class="docutils literal notranslate"><span class="pre">Readout.segment()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Readout.config"><code class="docutils literal notranslate"><span class="pre">Readout.config()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Readout.time_axis"><code class="docutils literal notranslate"><span class="pre">Readout.time_axis()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#goldpan.data.Detector"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a><ul>
+<li><a class="reference internal" href="#goldpan.data.Detector.name"><code class="docutils literal notranslate"><span class="pre">Detector.name</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Detector.channels"><code class="docutils literal notranslate"><span class="pre">Detector.channels</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Detector.readout"><code class="docutils literal notranslate"><span class="pre">Detector.readout</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Detector.channel_names"><code class="docutils literal notranslate"><span class="pre">Detector.channel_names()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Detector.channel"><code class="docutils literal notranslate"><span class="pre">Detector.channel()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Detector.channels_with_role"><code class="docutils literal notranslate"><span class="pre">Detector.channels_with_role()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#goldpan.data.Events"><code class="docutils literal notranslate"><span class="pre">Events</span></code></a><ul>
+<li><a class="reference internal" href="#goldpan.data.Events.detector"><code class="docutils literal notranslate"><span class="pre">Events.detector</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.traces"><code class="docutils literal notranslate"><span class="pre">Events.traces</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.quantities"><code class="docutils literal notranslate"><span class="pre">Events.quantities</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.meta"><code class="docutils literal notranslate"><span class="pre">Events.meta</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.from_arrays"><code class="docutils literal notranslate"><span class="pre">Events.from_arrays()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.n_events"><code class="docutils literal notranslate"><span class="pre">Events.n_events</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.trace"><code class="docutils literal notranslate"><span class="pre">Events.trace()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.time_axis"><code class="docutils literal notranslate"><span class="pre">Events.time_axis()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.select"><code class="docutils literal notranslate"><span class="pre">Events.select()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.with_quantities"><code class="docutils literal notranslate"><span class="pre">Events.with_quantities()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.data.Events.concatenate"><code class="docutils literal notranslate"><span class="pre">Events.concatenate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

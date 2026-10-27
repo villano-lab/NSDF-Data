@@ -16,6 +16,16 @@ NAME = "peak"
 OUTPUTS = ("adc_max", "current_max")
 
 
+def goldpan_expected(traces, params):
+    """The same numbers from `goldpan`'s own functions (the analysis side): `{output: array}`. The parity test requires every
+    algorithm either to define this or to say, in `NO_GOLDPAN`, why `goldpan` has no counterpart."""
+    from goldpan.algorithms import pulse_max
+    from goldpan.config import PulseConfig
+    config = PulseConfig(pretrigger_samples=params["pretrigger_samples"], glitch_samples=params["glitch_samples"],
+                         sample_period_s=None)
+    return {"adc_max": np.asarray(traces).max(axis=-1), "current_max": pulse_max(traces, config) * params["amps_per_adc"]}
+
+
 def problem(n_samples, glitch_samples, pretrigger_samples, amps_per_adc):
     """Why the parameters do not fit a trace of `n_samples`, or `None` if they do."""
     if glitch_samples >= pretrigger_samples:

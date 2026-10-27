@@ -19,6 +19,8 @@ Nothing about the readout is assumed: `amps_per_adc`, `glitch_samples` and `pret
 
 ## Batch mode: a dataset definition, processed in one command
 
+The developer quick-sheet `docs/developers/goldsluice-batch.pdf` is the guide to this section.
+
 Datasets are defined once, in a TOML file that `goldpan` and `goldsluice` both read (`goldpan.dataset`; its docstring is the
 specification and `examples/r76.dataset.toml` an example): the raw files and how to read them (any `goldpan` adapter, the
 readout), and the processing steps with every parameter written down.

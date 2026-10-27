@@ -12,7 +12,7 @@ cd "$(dirname "$0")"
 OUT=..
 "${PYTHON:-python3}" make_figures.py
 "${PYTHON:-python3}" make_note_figures.py
-for f in developer-workflow note-creation note-creation-ai reviewing-a-pr writing-an-adapter goldsluice-algorithm; do
+for f in developer-workflow note-creation note-creation-ai reviewing-a-pr writing-an-adapter goldsluice-algorithm goldsluice-batch; do
   SIZE=11pt
   pandoc "$f.md" -o "$OUT/$f.pdf" --pdf-engine=xelatex --lua-filter=../../students/src/boxes.lua -H ../../students/src/style.tex \
     -V geometry:margin=0.6in -V fontsize=$SIZE -V mainfont="${MAINFONT:-Helvetica}" -V monofont="${MONOFONT:-Menlo}" \
@@ -23,7 +23,7 @@ done
 # The same sources, as web pages with copy buttons (the PDF is linked from inside each page).
 # The template, filters and styles are shared with the student guides.
 S=../../students/src
-for f in developer-workflow note-creation note-creation-ai reviewing-a-pr writing-an-adapter goldsluice-algorithm; do
+for f in developer-workflow note-creation note-creation-ai reviewing-a-pr writing-an-adapter goldsluice-algorithm goldsluice-batch; do
   pandoc "$f.md" -o "$OUT/$f.html" -s -f markdown -t html5 --template=$S/guide-template.html \
     --lua-filter=$S/boxes.lua --lua-filter=$S/htmlfix.lua --no-highlight -V root=.. -V pdf="$f.pdf"
   echo "built $f.html"

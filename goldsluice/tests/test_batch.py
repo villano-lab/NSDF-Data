@@ -170,3 +170,10 @@ def test_command_line(setup, capsys):
     assert "processed" in out and "events/s" in out
     assert main(["run", str(spec)]) == 0 and "2 unchanged" in capsys.readouterr().out
     assert main(["check", str(tmp / "missing.toml")]) == 1 and "error:" in capsys.readouterr().err
+
+
+def test_command_line_reports_a_missing_parameter_as_an_error_not_a_traceback(setup, capsys):
+    tmp, files, _ = setup
+    spec = write_spec(tmp / "nop.dataset.toml", files, params="glitch_samples = 1\npretrigger_samples = 100\n")
+    assert main(["run", str(spec)]) == 1
+    assert "amps_per_adc" in capsys.readouterr().err

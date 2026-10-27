@@ -12,7 +12,10 @@ description: "In doing some early data analysis--for example Notes 2, 7, and 9--
 
 ## Code repository
 
-- [`your-notebook.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/COMMIT/data_analysis/R76/student/yourname/your-notebook.ipynb) — the notebook for everything below. Pinned to `COMMIT`: the link shows the notebook as it was at that commit, which may be older than the latest version, and the file may have moved since (see `data_analysis/README.md`).
+- [`rq-histogram-goldpan.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/22f308d7590971578a25c9051da242d9a7b8057d/data_analysis/R76/notebooks/goldpan-goldsluice/rq-histogram-goldpan.ipynb) — reads the RQs of a series from ROOT files with `goldpan`, histograms one of them, then loads the traces of the same events and plots the RQs over the pulses. It runs on the small synthetic files saved next to it (`synthetic-rq/`, `synthetic-goldpan/`), so it works on a fresh clone with no raw data.
+- [`goldsluice-processed-plots.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/22f308d7590971578a25c9051da242d9a7b8057d/data_analysis/R76/notebooks/goldpan-goldsluice/goldsluice-processed-plots.ipynb) — reads back the Parquet dataset that `goldsluice` wrote for Run 76 series `07221203_2025` (30 dumps, 81,992 events, six phonon channels, the quantities `adc_max` and `current_max`) and plots the distributions, the correlations between channels and the trend from dump to dump. The processed files are the output of `python -m goldsluice run r76.dataset.toml` in `goldsluice/examples/` and are not in the repository.
+
+Both links are pinned to commit `22f308d`: they show the notebooks as they were at that commit, which may be older than the latest versions, and the files may have moved since (see `data_analysis/README.md`).
 
 ## Data and setup
 

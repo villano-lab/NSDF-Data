@@ -29,6 +29,7 @@
 <tr><td><a href="#goldpan.status"><code>goldpan.status</code></a></td><td>Development-status tagging for functions in this library</td><td>2</td><td>0</td><td>0</td></tr>
 <tr><td><a href="#goldpan.algorithms"><code>goldpan.algorithms</code></a></td><td>Trace algorithms: filters and per-trace quantities (ported from <code>pulsedata.algorithms</code> of <code>scdms-analysis-tools</code>)</td><td>8</td><td>8</td><td>0</td></tr>
 <tr><td><a href="#goldpan.data"><code>goldpan.data</code></a></td><td>The in-memory container of one detector's events: traces, quantities, readout, provenance</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td><a href="#goldpan.dataset"><code>goldpan.dataset</code></a></td><td>A dataset definition: which raw files, how to read them, and which processing to run on them</td><td>3</td><td>3</td><td>0</td></tr>
 <tr><td><a href="#goldpan.rq_cuts"><code>goldpan.rq_cuts</code></a></td><td>Selections made from already-processed RQs, with no raw traces: the fast path (ported from <code>scdms-analysis-tools</code>)</td><td>11</td><td>9</td><td>2</td></tr>
 <tr><td><a href="#goldpan.testing"><code>goldpan.testing</code></a></td><td>The conformance test of an adapter, for the people who write one (see the guide "Writing an adapter" when it exists)</td><td>1</td><td>1</td><td>0</td></tr>
 <tr><td><a href="#goldpan.adapters.idx"><code>goldpan.adapters.idx</code></a></td><td>The idx adapter: a dump of the NSDF archive (NEXUS-DM <code>idx</code>) into an <code>Events</code></td><td>1</td><td>1</td><td>0</td></tr>
@@ -224,6 +225,58 @@ ev2 = compute(ev, {"max": pulse_max, "tmax": max_time}, channels=["A"])      # a
 <tr><td><code>n_samples</code></td><td>Samples per trace in this segment.</td></tr>
 <tr><td><code>config</code></td><td>The readout of this segment: its pretrigger window, glitch samples and sample period.</td></tr>
 <tr><td><code>start_s</code></td><td>Time of the first sample relative to the trigger, in seconds (negative before it); <code>None</code> if unknown.</td></tr>
+</tbody></table></div>
+
+<h2 id="goldpan.dataset">goldpan.dataset</h2>
+<p>A dataset definition: which raw files, how to read them, and which processing to run on them. One TOML file, read by both packages: <code>goldsluice</code> runs the processing in batch, <code>goldpan</code> reads the pulses and the processed quantities back.</p>
+<p>The file (<code>r76.dataset.toml</code>):</p>
+<pre>[dataset]
+name = "r76-nai"
+output = "processed/r76-nai"            # the processed quantities: a goldpan Parquet dataset (directory), relative to this file</pre>
+<pre>[[sources]]                             # where the pulses come from; as many as you like
+name = "side2"
+format = "idx"                          # any adapter: idx, midas, parquet, or one you registered
+paths = ["~/idx/07221203_2025_F0001"]   # raw files or dump folders ...
+glob = "~/idx/07221203_2025_F*"         # ... and/or a pattern (sorted)
+detector = "NAI-S2"                     # the detector name (the adapter's detector_name)
+readout = "DCRC_RUN76"                  # a preset of goldpan.config, or { pretrigger_samples = 1000, glitch_samples = 10, sample_period_s = 0.8e-6 }
+[sources.read]                          # the other keyword arguments of the adapter's read(), verbatim
+channels = { Side2pA = [0, 0], Side2pB = [0, 1] }
+roles = { Side2pA = "phonon", Side2pB = "phonon" }</pre>
+<pre>[[processing]]                          # the steps, in order; each adds quantities to the channels it names
+algorithm = "peak"                      # a goldsluice algorithm
+channels = "role:phonon"                # "all", "role:&lt;role&gt;", or a list of channel names
+[processing.params]
+glitch_samples = "@readout.glitch_samples"        # "@readout.&lt;field&gt;": taken from the readout of the data
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.5e-9</pre>
+<p>Nothing is assumed: the readout, the channels and every algorithm parameter are written down. <code>Dataset.open(path)</code> gives the same file to both packages:</p>
+<pre>ds = Dataset.open("r76.dataset.toml")
+ev = ds.read()                          # the pulses, with the processed quantities attached (one Events)
+q = ds.processed()                      # only the processed quantities, no pulses: small and fast
+ev.quantities["Side2pA"]["current_max"]</pre>
+<p>The processed quantities are stored one record per channel (<code>quantities["Side2pA"]["adc_max"]</code>), keyed by <code>series</code>, <code>dump</code>, <code>event</code>. <code>python -m goldsluice run &lt;file&gt;</code> produces them; reading them before that raises an error that says so.</p>
+<h3><code>Dataset(spec: DatasetSpec)</code></h3>
+<p>A dataset definition opened for reading: the pulses from its sources and the quantities processed from them.</p>
+<h3><code>DatasetSpec(name: str, output: pathlib.Path, sources: Tuple[Source, ...], steps: Tuple[Step, ...], path: pathlib.Path, raw: Mapping[str, Any]) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>path</code></td><td>The definition file.</td></tr>
+<tr><td><code>raw</code></td><td>The parsed TOML, kept for provenance.</td></tr>
+</tbody></table></div>
+<h3><code>Source(name: str, format: str, patterns: Tuple[str, ...], detector: str, readout: Optional[PulseConfig], read: Mapping[str, Any], base: pathlib.Path) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>patterns</code></td><td>The <code>paths</code> and <code>glob</code> entries as written (with <code>~</code> and relative to the folder of the definition file when used).</td></tr>
+<tr><td><code>read</code></td><td>Keyword arguments of the adapter's <code>read</code>, as written in the file.</td></tr>
+<tr><td><code>base</code></td><td>The folder of the definition file, for relative paths.</td></tr>
+</tbody></table></div>
+<h3><code>Step(algorithm: str, channels: Any, params: Mapping[str, Any]) -&gt; None</code></h3>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>channels</code></td><td><code>"all"</code>, <code>"role:&lt;role&gt;"</code> or a tuple of channel names.</td></tr>
+</tbody></table></div>
+<div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
+<tr id="goldpan.dataset.load"><td><code>load</code><br><small><code>(path) -&gt; DatasetSpec</code></small></td><td>Read and check a dataset definition file. Nothing is opened: the raw files need not exist yet.</td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.dataset.fingerprint"><td><code>fingerprint</code><br><small><code>(spec: DatasetSpec, source: Source) -&gt; str</code></small></td><td>A short hash of what determines the processed quantities of <code>source</code>: how it is read and the processing steps. The batch run stores it in every output file and skips a file whose fingerprint has not changed.</td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.dataset.read_raw"><td><code>read_raw</code><br><small><code>(source: Source, path, *, chunk: Optional[int] = None) -&gt; Iterator[Events]</code></small></td><td>The pulses of one raw file of <code>source</code> as <code>Events</code> read by its adapter: one <code>Events</code>, or with <code>chunk</code> pieces of at most that many events when the adapter can (<code>iter_chunks</code>; otherwise the whole file is one piece).</td><td><span class="status done">done</span></td></tr>
 </tbody></table></div>
 
 <h2 id="goldpan.rq_cuts">goldpan.rq_cuts</h2>

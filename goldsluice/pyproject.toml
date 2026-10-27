@@ -15,6 +15,8 @@ dependencies = ["numpy>=1.26"]
 test = ["pytest"]
 # Batch mode (python -m goldsluice run) reads the dataset definition and the raw files with goldpan (goldpan.dataset, new in goldpan 0.3).
 batch = ["goldpan[parquet]>=0.3"]
+# The same, and the output as RQ-style ROOT files (output_format = "root" in the definition file).
+root = ["goldpan[parquet,root]>=0.3"]
 
 [tool.maturin]
 python-source = "python"

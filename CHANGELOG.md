@@ -4,6 +4,14 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-26
+
+**Students, please:** the library gained new parts and four new packages, so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python python/check_environment.py`, which should say `Environment OK`. Python is still 3.12, so you do not need a new environment. The new packages are `awkward`, `pyarrow`, `uproot` and `lz4`, and `goldpan` itself is now 0.2.0; until you reinstall, the check warns about them. Nothing you already run changes: the old names (`pulse_cuts` and the others) and your notebooks work as before, and no result changes.
+
+The library `goldpan` can now read and write data, not only analyse it: an immutable container of one detector's events (`goldpan.data`), adapters for the idx dumps, the native Parquet format, the raw SuperCDMS SNOLAB DAQ files (`.mid`, `.mid.gz`, `.mid.lz4`) and the RQ files in ROOT, the RQ-only noise cuts and trace algorithms ported from `scdms-analysis-tools`, and a synthetic series in all four formats for testing. A new developer quick-sheet explains how to write an adapter, and a workflow can publish the library to PyPI (nothing is published by it yet).
+
+`goldpan` 0.2.0: new modules `goldpan.data`, `goldpan.adapters` (`idx`, `parquet`, `midas`, `rq_root`, `rq`), `goldpan.rq_cuts`, `goldpan.algorithms` and `goldpan.testing`; the readout has no defaults in the package (the old flat names keep the Run 76 defaults); new optional extras `parquet`, `root` and `midas`; new dependency `awkward`. No result of an existing function changes.
+
 ### Added
 
 - **`goldpan.data`: the immutable container of one detector's events (first step of the design of 2026-10-25/26).** `Events` holds a `Detector` (its name, `ChannelInfo`s with roles, and a `Readout` made of named `Segment`s, each with its own `PulseConfig`; only the default segment `main` is used so far, so that hybrid sampling later changes no signature or file), the read-only `traces` keyed by (channel, segment), the `quantities` as an Awkward Array with the event key fields `series`, `dump`, `event` and an optional `t_trigger`, and `meta`. `select`, `with_quantities`, `concatenate` and `time_axis` return new objects; the invariants are checked once, when it is built. No file format and no adapter yet (next: the idx and Parquet adapters). **New dependency: `awkward` (pinned 2.14.0 in `requirements.txt`)**, so existing environments need `pip install -r requirements.txt` (a *Students, please:* line at the next release; the library becomes 0.2.0). 20 tests in `python/tests/test_goldpan_data.py`.

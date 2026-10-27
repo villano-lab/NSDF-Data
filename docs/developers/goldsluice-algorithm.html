@@ -24,9 +24,11 @@ pulse-reduction kernels in <strong>Rust</strong>, each with a
 develop in Python on ordinary arrays, then port the same computation to
 Rust; a test makes sure the two never disagree. It lives in
 <code>goldsluice/</code> (start with its <code>README.md</code>;
-<code>PORTING.md</code> is the reference for the port). One algorithm
-exists, <code>peak</code>: the largest ADC value and the largest current
-above the baseline of each trace.</p>
+<code>PORTING.md</code> is the reference for the port). Two algorithms
+exist: <code>peak</code> (the largest ADC value and the largest current
+above the baseline of each trace) and <code>max_time</code> (the time of
+the largest sample); <code>max_time</code> is the worked example below,
+and the smaller model to copy.</p>
 <h2 id="one-time-setup">1. One-time setup</h2>
 <p>You need <strong>Rust</strong>, <strong>Python 3.9 or newer</strong>
 and a Python environment (the <code>darkmatter_cli_env</code> of the
@@ -94,8 +96,10 @@ ms with all cores, 149 ms on one thread, Python 15.7 s.</p>
 <h2 id="develop-an-algorithm-the-worked-example-max_time">4. Develop an
 algorithm: the worked example <code>max_time</code></h2>
 <p>The time of the largest sample (as
-<code>goldpan.algorithms.max_time</code>). The steps are the same for
-every algorithm. Replace <code>max_time</code> by your name.</p>
+<code>goldpan.algorithms.max_time</code>). It is in the repository
+(<code>reference/max_time.py</code>, <code>src/max_time.rs</code>): read
+it next to this page. The steps are the same for every algorithm;
+replace <code>max_time</code> by your name.</p>
 <p><strong>Step 1. Write the mirror</strong>,
 <code>python/goldsluice/reference/max_time.py</code>, in the <em>kernel
 subset</em>: one trace in, plain loops, no numpy inside

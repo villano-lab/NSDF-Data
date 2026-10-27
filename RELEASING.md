@@ -121,6 +121,8 @@ The rulesets `protect-develop` and `protect-master` block deletion and force-pus
 4. **Delete both files** (`notes-bot` and `notes-bot.pub`). The key lives only in GitHub.
 5. In both rulesets, Bypass list, Add bypass, tick **Deploy keys** (mode Always).
 
+The *Documentation* workflow (`.github/workflows/docs.yml`) uses the same deploy key to commit the generated Sphinx pages in `docs/api/` ("Publish the documentation") on pushes to `develop` and `master`; no other key or secret is needed.
+
 To check it, merge a student note (or a change to `tools/build_notes.py`) and see that the *Student notes* run on `develop` ends with "Publish student notes". If the run fails with "The push was rejected", the secret or the bypass is missing. To revoke the bot's access, delete the deploy key in Settings. A lost private key cannot be recovered: repeat the steps with a new pair.
 
 ## One-time repository settings (maintainer)

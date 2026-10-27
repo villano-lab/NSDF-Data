@@ -1,5 +1,6 @@
 //! `cargo bench` times the kernels alone (no Python, no copying): the floor that the Python wrapper adds its overhead to.
 
+use _core::max_time::{MaxTimeParams, max_time_many};
 use _core::peak::{PeakParams, peak_many, peak_one};
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
@@ -26,6 +27,15 @@ fn bench_peak(c: &mut Criterion) {
     g.throughput(Throughput::Elements(n_events as u64));
     g.bench_function("10000 traces x 4096 samples", |b| {
         b.iter(|| peak_many(black_box(&many), n_samples, &p, &mut a, &mut cur))
+    });
+    g.finish();
+
+    let t = MaxTimeParams { sample_period_s: 0.8e-6 };
+    let mut out = vec![0.0; n_events];
+    let mut g = c.benchmark_group("max_time_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |b| {
+        b.iter(|| max_time_many(black_box(&many), n_samples, &t, &mut out))
     });
     g.finish();
 }

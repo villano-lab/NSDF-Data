@@ -2,6 +2,7 @@
 //!
 //! One `#[pyfunction]` per algorithm, named like the algorithm and taking the same keyword arguments as its Python mirror.
 
+pub mod max_time;
 pub mod peak;
 
 use numpy::{IntoPyArray, PyArray1, PyReadonlyArray2, PyUntypedArrayMethods};
@@ -42,8 +43,32 @@ fn peak_py<'py>(
     Ok((adc.into_pyarray(py), current.into_pyarray(py)))
 }
 
+/// max_time(traces, *, sample_period_s) -> (max_time_s,)
+#[pyfunction]
+#[pyo3(name = "max_time", signature = (traces, *, sample_period_s))]
+fn max_time_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    sample_period_s: f64,
+) -> PyResult<(Bound<'py, PyArray1<f64>>,)> {
+    let p = max_time::MaxTimeParams { sample_period_s };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = max_time::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut out = vec![0.0; n_events];
+    py.detach(|| max_time::max_time_many(data, n_samples, &p, &mut out));
+    Ok((out.into_pyarray(py),))
+}
+
 #[pymodule(name = "_core")]
 fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(peak_py, m)?)?;
+    m.add_function(wrap_pyfunction!(max_time_py, m)?)?;
     Ok(())
 }

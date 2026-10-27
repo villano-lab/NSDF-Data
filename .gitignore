@@ -219,3 +219,6 @@ idx/
 # goldsluice (Rust build output)
 goldsluice/target/
 goldsluice/python/goldsluice/_core*
+
+# Sphinx autosummary stubs (generated at build time)
+sphinx/reference/generated/

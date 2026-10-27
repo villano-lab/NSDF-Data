@@ -97,7 +97,7 @@ class Source:
 class Step:
     algorithm: str
     channels: Any
-    """`"all"`, `"role:<role>"` or a tuple of channel names."""
+    """``"all"``, ``"role:<role>"`` or a tuple of channel names."""
     params: Mapping[str, Any]
 
     def channel_names(self, detector) -> list:

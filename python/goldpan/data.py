@@ -76,7 +76,7 @@ class Segment:
 @dataclass(frozen=True)
 class Readout:
     segments: tuple
-    """The `Segment`s of a trace, with unique names."""
+    """The `Segment` objects of a trace, with unique names."""
 
     def __post_init__(self):
         object.__setattr__(self, "segments", tuple(self.segments))
@@ -115,7 +115,7 @@ class Detector:
     """The detector's name, unique inside a dataset."""
 
     channels: tuple
-    """The `ChannelInfo`s of the detector, with unique names."""
+    """The `ChannelInfo` objects of the detector, with unique names."""
 
     readout: Readout
     """How its traces are sampled."""
@@ -148,7 +148,7 @@ class Events:
     """The detector these events were recorded by."""
 
     traces: Mapping[tuple, np.ndarray]
-    """`{(channel, segment): (n_events, n_samples)}`, read-only views."""
+    """``{(channel, segment): (n_events, n_samples)}``, read-only views."""
 
     quantities: ak.Array
     """One record per event: the key fields, the optional `t_trigger`, then the quantities."""

@@ -60,6 +60,11 @@ def test_the_changelog_line_must_be_in_a_released_section(tmp_path):
     assert cgr.problems("goldpan-v0.2.0", tree(tmp_path, changelog="## [Unreleased]\n\n- goldpan 0.2.0\n"))
 
 
+def test_the_line_may_have_the_name_in_backticks_as_the_changelog_writes_it(tmp_path):
+    log = "## [Unreleased]\n\n## [0.10.0] - 2026-10-26\n\n`goldpan` 0.2.0: new modules.\n"
+    assert cgr.problems("goldpan-v0.2.0", tree(tmp_path, changelog=log)) == []
+
+
 def test_both_problems_are_reported_together(tmp_path):
     assert len(cgr.problems("goldpan-v0.9.9", tree(tmp_path))) == 2
 

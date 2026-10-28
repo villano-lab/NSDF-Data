@@ -1,5 +1,6 @@
 //! `cargo bench` times the kernels alone (no Python, no copying): the floor that the Python wrapper adds its overhead to.
 
+use _core::baseline::{BaselineParams, baseline_many, baseline_one};
 use _core::max_time::{MaxTimeParams, max_time_many};
 use _core::peak::{PeakParams, peak_many, peak_one};
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
@@ -36,6 +37,22 @@ fn bench_peak(c: &mut Criterion) {
     g.throughput(Throughput::Elements(n_events as u64));
     g.bench_function("10000 traces x 4096 samples", |b| {
         b.iter(|| max_time_many(black_box(&many), n_samples, &t, &mut out))
+    });
+    g.finish();
+
+    // the baseline of the Run 76 window (500 samples after 10 glitch samples)
+    let b = BaselineParams {
+        glitch_samples: 10,
+        pretrigger_samples: 500,
+    };
+    c.bench_function("baseline_one, 4096 samples", |bch| {
+        bch.iter(|| baseline_one(black_box(&one), &b))
+    });
+    let mut sd = vec![0.0; n_events];
+    let mut g = c.benchmark_group("baseline_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| baseline_many(black_box(&many), n_samples, &b, &mut a, &mut sd))
     });
     g.finish();
 }

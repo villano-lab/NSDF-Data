@@ -30,6 +30,40 @@ What are the packages `goldpan` and `goldsluice`? These are data analysis progra
 
 A *dataset definition file* tells `goldpan` where the data are and how to read them: the source (the raw files, their format and the detector they came from), and, through the detector registry, the readout of that detector (sample period, trigger position, channel names). Nothing about the electronics is assumed in the code. `Dataset.open` reads the file; no data are read until we ask for them.
 
+The file used here is `goldsluice/examples/r76-registry.dataset.toml`. A copy as of this note, to copy into a file of your own (the `registry` and `glob` paths and the output folder are the ones to change):
+
+```toml
+# The same dataset as r76.dataset.toml, with the detector described in the registry (../../registry) instead of in this file:
+# the readout, the channel map and the roles come from the record of "NAI-S2", and root_detector from its `number`.
+# Everything written here wins over the registry, key by key. `python -m goldsluice check r76-registry.dataset.toml` lists the files.
+
+[dataset]
+name = "r76-07221203"
+output = "~/goldsluice-output/r76-07221203"
+registry = ["../../registry"]                  # folders of detector records, relative to this file (goldpan.registry); also GOLDPAN_REGISTRY
+# output_format = "root"                       # for ROOT output the zip<N> number is the record's `number`: no root_detector needed
+
+[[sources]]
+name = "side2"
+format = "idx"
+glob = "~/idx/07221203_2025_F*"
+detector = "NAI-S2"                            # in the registry: it supplies readout = "DCRC_RUN76" and the idx channels and roles
+
+[[processing]]
+algorithm = "peak"
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
+
+[[processing]]
+algorithm = "max_time"
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"
+```
+
 ```python
 from goldpan.dataset import Dataset
 

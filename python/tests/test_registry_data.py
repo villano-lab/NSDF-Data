@@ -1,6 +1,7 @@
 """The registry of this repository (`registry/`, data and not library code) is valid, agrees with the library where both state the
 same thing, and the example that uses it gives the same results as the example that writes everything out. If the folder moves to a
 repository of its own, these tests go with it (they skip when the folder is not here)."""
+import dataclasses
 from pathlib import Path
 
 import pytest
@@ -44,8 +45,10 @@ def test_the_example_that_uses_the_registry_means_the_same_as_the_one_that_write
     via = dataset.load(EXAMPLES / "r76-registry.dataset.toml")
     a, b = explicit.sources[0], via.sources[0]
     assert (a.readout, dict(a.read), a.detector) == (b.readout, dict(b.read), b.detector)
-    assert [s.algorithm for s in explicit.steps] == [s.algorithm for s in via.steps]
-    assert dataset.fingerprint(explicit, a) == dataset.fingerprint(via, b)             # processed files stay valid
+    n = len(explicit.steps)                                                            # the registry example has more steps: all the algorithms
+    assert [(s.algorithm, s.channels, s.params) for s in via.steps[:n]] == [(s.algorithm, s.channels, s.params) for s in explicit.steps]
+    same_steps = dataclasses.replace(via, steps=explicit.steps)                        # then only the way the detector is described differs
+    assert dataset.fingerprint(explicit, a) == dataset.fingerprint(same_steps, same_steps.sources[0])     # processed files stay valid
     assert b.detector_record.number == 1
 
 

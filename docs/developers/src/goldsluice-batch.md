@@ -116,7 +116,33 @@ Any other tool that reads Parquet (pandas, Polars, DuckDB) opens these files. Ea
 
 Add another `[[processing]]` table. Each quantity must come from **one** step (two steps giving `Side2pC.adc_max` is an error that names it); different algorithms add different fields to the same channel's record. Use `channels = ["Side2pC"]` to process only some channels. For an algorithm that does not exist yet, write its Python mirror and Rust kernel (the other sheet): `algorithms` lists it as soon as it is registered.
 
-## 6. When it fails
+## 6. ROOT files instead of Parquet
+
+Two lines in `[dataset]` write the quantities as ROOT files laid out like the collaboration's RQ files (they need `uproot`: `pip install goldsluice[root]`):
+
+```toml
+[dataset]
+name = "r76-07221203"
+output = "~/goldsluice-output/r76-root"
+output_format = "root"             # "parquet" is the default
+root_detector = 1                  # N of the zip<N> tree: required, never assumed
+```
+
+There is one file per series and dump, `<series>_<dump>.root`, with `rqDir/eventTree` (`SeriesNumber`, `DumpNumber`, `EventNumber`) and `rqDir/zip<N>` row-aligned, every branch a `double`, as in the real RQ files. The branches keep **our names**, `Side2pC_adc_max` and not the collaboration's `PAS1max`: ROOT is only the container. The provenance of the run is stored as the string `infoDir/goldsluice`. The ledger, the chunks and the output-location guard work as for Parquet.
+
+Read the files back with the RQ reader of goldpan (`Dataset.processed()` reads Parquet output only, and says so):
+
+```python
+from pathlib import Path
+from goldpan.adapters import rq_root
+
+t = rq_root.read(Path.home() / "goldsluice-output" / "r76-root", detector=1)
+t["Side2pC_adc_max"]        # one record per event
+```
+
+`root_detector = 1` is **our choice** for the NaI detector of Run 76: the number is not in the raw data, so it lives in the definition file; use the same one in every definition of that detector. (The collaboration's Z7 files have `zip7` and `zip14`.) The commented lines in `examples/r76.dataset.toml` show the same two keys.
+
+## 7. When it fails
 
 | Message | Meaning and fix |
 |---|---|
@@ -129,6 +155,9 @@ Add another `[[processing]]` table. Each quantity must come from **one** step (t
 | `missing ... keyword-only argument` | A step lacks a parameter: algorithms have no defaults. |
 | `nothing processed yet` | You read the dataset before `run`. |
 | `has the batch run covered this file` | New raw files were added after the last run; run again. |
+| `inside the Git working tree` | The `output` folder is in a repository that does not ignore it: write it elsewhere (`~/goldsluice-output/...`), ignore it, or pass `--allow-output-in-repo`. |
+| `needs root_detector` | `output_format = "root"` without the number of the `zip<N>` tree. |
+| `rq_root.read` (from `processed()`) | The output is ROOT: read it with `rq_root.read`, not `Dataset.processed()`. |
 
 The numbers in `current_max` are in **ADC counts times `amps_per_adc`**: a placeholder of `1.0`, as in the example file, gives counts.
 

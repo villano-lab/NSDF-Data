@@ -276,3 +276,18 @@ def test_the_example_writes_outside_the_repository_and_the_repository_ignores_pr
     assert root.resolve() not in dataset.load(example).output.resolve().parents
     probe = root / "goldsluice" / "examples" / "processed" / "x" / "_probe.parquet"
     assert subprocess.run(["git", "check-ignore", "-q", "--", str(probe)], cwd=root).returncode == 0
+
+
+def test_the_example_loads_and_its_commented_root_lines_work_when_uncommented(tmp_path):
+    from pathlib import Path
+    from goldpan import dataset
+    example = Path(__file__).resolve().parents[1] / "examples" / "r76.dataset.toml"
+    text = example.read_text(encoding="utf-8")
+    plain = dataset.load(example)
+    assert (plain.output_format, plain.root_detector) == ("parquet", None)
+    assert [s.algorithm for s in plain.steps] == ["peak", "max_time"]
+    assert "# output_format = \"root\"" in text and "# root_detector = " in text
+    root = tmp_path / "r76.dataset.toml"
+    root.write_text(text.replace("# output_format = ", "output_format = ").replace("# root_detector = ", "root_detector = "), encoding="utf-8")
+    spec = dataset.load(root)
+    assert (spec.output_format, spec.root_detector) == ("root", 1)

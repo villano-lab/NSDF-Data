@@ -174,7 +174,42 @@ algorithms add different fields to the same channel’s record. Use
 an algorithm that does not exist yet, write its Python mirror and Rust
 kernel (the other sheet): <code>algorithms</code> lists it as soon as it
 is registered.</p>
-<h2 id="when-it-fails">6. When it fails</h2>
+<h2 id="root-files-instead-of-parquet">6. ROOT files instead of
+Parquet</h2>
+<p>Two lines in <code>[dataset]</code> write the quantities as ROOT
+files laid out like the collaboration’s RQ files (they need
+<code>uproot</code>: <code>pip install goldsluice[root]</code>):</p>
+<pre class="toml"><code>[dataset]
+name = &quot;r76-07221203&quot;
+output = &quot;~/goldsluice-output/r76-root&quot;
+output_format = &quot;root&quot;             # &quot;parquet&quot; is the default
+root_detector = 1                  # N of the zip&lt;N&gt; tree: required, never assumed</code></pre>
+<p>There is one file per series and dump,
+<code>&lt;series&gt;_&lt;dump&gt;.root</code>, with
+<code>rqDir/eventTree</code> (<code>SeriesNumber</code>,
+<code>DumpNumber</code>, <code>EventNumber</code>) and
+<code>rqDir/zip&lt;N&gt;</code> row-aligned, every branch a
+<code>double</code>, as in the real RQ files. The branches keep
+<strong>our names</strong>, <code>Side2pC_adc_max</code> and not the
+collaboration’s <code>PAS1max</code>: ROOT is only the container. The
+provenance of the run is stored as the string
+<code>infoDir/goldsluice</code>. The ledger, the chunks and the
+output-location guard work as for Parquet.</p>
+<p>Read the files back with the RQ reader of goldpan
+(<code>Dataset.processed()</code> reads Parquet output only, and says
+so):</p>
+<pre class="python"><code>from pathlib import Path
+from goldpan.adapters import rq_root
+
+t = rq_root.read(Path.home() / &quot;goldsluice-output&quot; / &quot;r76-root&quot;, detector=1)
+t[&quot;Side2pC_adc_max&quot;]        # one record per event</code></pre>
+<p><code>root_detector = 1</code> is <strong>our choice</strong> for the
+NaI detector of Run 76: the number is not in the raw data, so it lives
+in the definition file; use the same one in every definition of that
+detector. (The collaboration’s Z7 files have <code>zip7</code> and
+<code>zip14</code>.) The commented lines in
+<code>examples/r76.dataset.toml</code> show the same two keys.</p>
+<h2 id="when-it-fails">7. When it fails</h2>
 <div class="table-scroll">
 <table>
 <colgroup>
@@ -229,6 +264,22 @@ algorithm.</td>
 <tr>
 <td><code>has the batch run covered this file</code></td>
 <td>New raw files were added after the last run; run again.</td>
+</tr>
+<tr>
+<td><code>inside the Git working tree</code></td>
+<td>The <code>output</code> folder is in a repository that does not
+ignore it: write it elsewhere (<code>~/goldsluice-output/...</code>),
+ignore it, or pass <code>--allow-output-in-repo</code>.</td>
+</tr>
+<tr>
+<td><code>needs root_detector</code></td>
+<td><code>output_format = "root"</code> without the number of the
+<code>zip&lt;N&gt;</code> tree.</td>
+</tr>
+<tr>
+<td><code>rq_root.read</code> (from <code>processed()</code>)</td>
+<td>The output is ROOT: read it with <code>rq_root.read</code>, not
+<code>Dataset.processed()</code>.</td>
 </tr>
 </tbody>
 </table>

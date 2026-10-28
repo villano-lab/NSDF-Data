@@ -36,6 +36,10 @@ import numpy as np
 from ..data import KEY_COLUMNS, Events
 from ..status import DONE, status
 
+REVISION = 1
+"""Raised by one when a change of this reader changes what it returns for the same file (a fix), so that `goldsluice run` redoes the outputs
+made with the old one (`goldpan.adapters.revision`). Not for a change that leaves the results alone."""
+
 DIRECTORY = "rqDir"
 EVENT_TREE = "eventTree"
 SERIES_NAME = re.compile(r"\d{8}_\d{4,6}")

@@ -14,6 +14,7 @@ from goldpan.data import ChannelInfo, Detector, Events, Readout
 from goldpan.dataset import Dataset
 
 from goldsluice import batch
+from goldsluice.algorithms import ALGORITHMS
 from goldsluice.__main__ import main
 
 N_SAMPLES = 1500
@@ -101,27 +102,56 @@ def test_a_second_run_skips_unchanged_files_and_a_changed_parameter_redoes_them(
                                (raw.trace("A").max(axis=1) - raw.trace("A")[:, 20:1000].mean(axis=1)) * AMPS, rtol=1e-12)
 
 
-def test_a_new_version_of_the_code_redoes_files_made_by_the_old_one(setup, monkeypatch, capsys):
+def test_a_new_revision_of_an_algorithm_the_definition_uses_redoes_the_files_and_no_other_change_does(setup, monkeypatch, capsys):
     tmp, files, spec = setup
     batch.run(spec, progress=None)
     assert all(f.skipped for f in batch.run(spec, progress=None).files)
-    now = batch._versions()
-    monkeypatch.setattr(batch, "_versions", lambda: {**now, "goldsluice": "9.9.9"})            # a fixed kernel: a new release of goldsluice
+    # what the definition does not use changes nothing: another algorithm fixed, and new versions of the packages
+    monkeypatch.setattr(ALGORITHMS["baseline"], "REVISION", 2)
+    monkeypatch.setattr(batch, "_versions", lambda: {"goldsluice": "9.9.9", "goldpan": "9.9.9"})
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)
+    # the algorithm it uses was fixed: its outputs are redone, and then current again
+    monkeypatch.setattr(ALGORITHMS["peak"], "REVISION", 2)
     assert not any(f.skipped for f in batch.run(spec).files)
-    assert "redoing" in capsys.readouterr().out
-    assert all(f.skipped for f in batch.run(spec, progress=None).files)                         # made by 9.9.9 now: unchanged again
-    monkeypatch.setattr(batch, "_versions", lambda: {**now, "goldpan": "9.9.9"})               # the readers changed
-    assert not any(f.skipped for f in batch.run(spec, progress=None).files)
+    assert "algorithm peak revision 1 -> 2" in capsys.readouterr().out
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)
 
 
-def test_an_output_whose_ledger_does_not_record_the_versions_is_redone_once(setup):
+def test_a_new_revision_of_the_reader_redoes_the_files_made_with_it(setup, monkeypatch, capsys):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    from goldpan.adapters import parquet
+    monkeypatch.setattr(parquet, "REVISION", 2)                                                  # the format of the toy dataset
+    assert not any(f.skipped for f in batch.run(spec).files)
+    assert "reader parquet revision 1 -> 2" in capsys.readouterr().out
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)
+
+
+def test_a_ledger_without_revisions_counts_as_revision_1_if_it_has_versions_and_is_redone_once_if_it_has_neither(setup):
     tmp, files, spec = setup
     batch.run(spec, progress=None)
     ledger = tmp / "out" / batch.LEDGER
     data = json.loads(ledger.read_text(encoding="utf-8"))
     for entry in data["files"].values():
-        del entry["versions"]                                                                    # a ledger written before the versions were recorded
+        del entry["revisions"]                                                                   # written by the ledger that compared versions
     ledger.write_text(json.dumps(data), encoding="utf-8")
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)
+    data = json.loads(ledger.read_text(encoding="utf-8"))
+    for entry in data["files"].values():
+        entry.pop("revisions", None)
+        del entry["versions"]                                                                    # written before versions were recorded
+    ledger.write_text(json.dumps(data), encoding="utf-8")
+    assert not any(f.skipped for f in batch.run(spec, progress=None).files)
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)
+
+
+def test_adding_a_step_to_the_definition_processes_the_files_again_because_the_definition_changed(setup):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    window = 'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = "@readout.pretrigger_samples"\n'
+    steps = ('[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\n[processing.params]\n' + window + f"amps_per_adc = {AMPS}\n\n"
+             '[[processing]]\nalgorithm = "baseline"\nchannels = "role:phonon"\n[processing.params]\n' + window)
+    write_spec(spec, files, steps=steps)
     assert not any(f.skipped for f in batch.run(spec, progress=None).files)
     assert all(f.skipped for f in batch.run(spec, progress=None).files)
 

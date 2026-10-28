@@ -214,6 +214,7 @@
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.legacy.html">goldpan.legacy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.operations.html">goldpan.operations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.quantities.html">goldpan.quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.testing.html">goldpan.testing</a></li>
@@ -362,14 +363,14 @@
         </ul></li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.ChannelInfo">ChannelInfo (class in goldpan.data)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Detector.channels">channels (goldpan.data.Detector attribute)</a>
 
         <ul>
           <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Step.channels">(goldpan.dataset.Step attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Detector.channels_with_role">channels_with_role() (goldpan.data.Detector method)</a>
 </li>
         <li><a href="reference/generated/goldsluice.batch.html#goldsluice.batch.check">check() (in module goldsluice.batch)</a>
@@ -380,9 +381,11 @@
 </li>
         <li><a href="reference/generated/goldpan.operations.html#goldpan.operations.clip">clip() (in module goldpan.operations)</a>
 </li>
-        <li><a href="reference/generated/goldsluice.html#goldsluice.compare">compare() (in module goldsluice)</a>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.compare">compare() (in module goldpan.registry)</a>
 
         <ul>
+          <li><a href="reference/generated/goldsluice.html#goldsluice.compare">(in module goldsluice)</a>
+</li>
           <li><a href="reference/generated/goldsluice.profile.html#goldsluice.profile.compare">(in module goldsluice.profile)</a>
 </li>
         </ul></li>
@@ -393,7 +396,11 @@
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Events.concatenate">concatenate() (goldpan.data.Events static method)</a>
 </li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Segment.config">config (goldpan.data.Segment attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord.config">(goldpan.registry.ReadoutRecord attribute)</a>
 </li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Readout.config">config() (goldpan.data.Readout method)</a>
 </li>
     </ul></td>
@@ -416,8 +423,12 @@
 </li>
         <li><a href="reference/generated/goldpan.cuts.html#goldpan.cuts.dead_channel">dead_channel() (in module goldpan.cuts)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.description">description (goldpan.registry.DetectorRecord attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord.description">(goldpan.registry.ReadoutRecord attribute)</a>
+</li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Detector">Detector (class in goldpan.data)</a>
 </li>
         <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.Channel.detector">detector (goldpan.channels.Channel attribute)</a>
@@ -428,8 +439,22 @@
           <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Source.detector">(goldpan.dataset.Source attribute)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry.detector">detector() (goldpan.registry.Registry method)</a>
+</li>
         <li><a href="reference/generated/goldpan.io.html#goldpan.io.detector_index">detector_index() (in module goldpan.io)</a>
 </li>
+        <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Source.detector_record">detector_record (goldpan.dataset.Source attribute)</a>
+</li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord">DetectorRecord (class in goldpan.registry)</a>
+</li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry.detectors">detectors() (goldpan.registry.Registry method)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.detectors">(in module goldpan.adapters.midas)</a>
+</li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.algorithms.html#goldpan.algorithms.downsample">downsample() (in module goldpan.algorithms)</a>
 </li>
         <li><a href="reference/generated/goldpan.algorithms.html#goldpan.algorithms.downsampled_config">downsampled_config() (in module goldpan.algorithms)</a>
@@ -442,18 +467,26 @@
   <h2>E</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ENV_VAR">ENV_VAR (in module goldpan.registry)</a>
+</li>
         <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.RawEvent.event_id">event_id (goldpan.adapters.midas.RawEvent attribute)</a>
 </li>
         <li><a href="reference/generated/goldpan.io.html#goldpan.io.event_id">event_id() (in module goldpan.io)</a>
 </li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Events">Events (class in goldpan.data)</a>
 </li>
-        <li><a href="reference/generated/goldpan.cuts.html#goldpan.cuts.excursion_band">excursion_band() (in module goldpan.cuts)</a>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.evidence">evidence (goldpan.registry.DetectorRecord attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord.evidence">(goldpan.registry.ReadoutRecord attribute)</a>
 </li>
-        <li><a href="reference/generated/goldpan.cuts.html#goldpan.cuts.excursion_band_AI">excursion_band_AI() (in module goldpan.cuts)</a>
+        </ul></li>
+        <li><a href="reference/generated/goldpan.cuts.html#goldpan.cuts.excursion_band">excursion_band() (in module goldpan.cuts)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.cuts.html#goldpan.cuts.excursion_band_AI">excursion_band_AI() (in module goldpan.cuts)</a>
+</li>
         <li><a href="reference/generated/goldpan.cuts.html#goldpan.cuts.excursion_band_loose">excursion_band_loose() (in module goldpan.cuts)</a>
 </li>
         <li><a href="reference/generated/goldpan.rq_cuts.html#goldpan.rq_cuts.excursion_band_rq">excursion_band_rq() (in module goldpan.rq_cuts)</a>
@@ -484,16 +517,22 @@
 </li>
         <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.find_channel">find_channel() (in module goldpan.channels)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.fingerprint">fingerprint() (in module goldpan.dataset)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.legacy.html#goldpan.legacy.flat_namespace">flat_namespace() (in module goldpan.legacy)</a>
+</li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.FolderSource">FolderSource (class in goldpan.registry)</a>
 </li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Source.format">format (goldpan.dataset.Source attribute)</a>
 </li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.FORMAT_VERSION">FORMAT_VERSION (in module goldpan.dataset)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.FORMAT_VERSION">(in module goldpan.registry)</a>
 </li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.quantities.html#goldpan.quantities.frequencies_hz">frequencies_hz() (in module goldpan.quantities)</a>
 </li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Events.from_arrays">from_arrays() (goldpan.data.Events class method)</a>
@@ -610,8 +649,6 @@
           <li><a href="reference/generated/goldpan.dataset.html#module-goldpan.dataset">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     goldpan.io
 
@@ -619,6 +656,8 @@
           <li><a href="reference/generated/goldpan.io.html#module-goldpan.io">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     goldpan.legacy
 
@@ -638,6 +677,13 @@
 
         <ul>
           <li><a href="reference/generated/goldpan.quantities.html#module-goldpan.quantities">module</a>
+</li>
+        </ul></li>
+        <li>
+    goldpan.registry
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#module-goldpan.registry">module</a>
 </li>
         </ul></li>
         <li>
@@ -726,8 +772,12 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.quantities.html#goldpan.quantities.half_max_time_us">half_max_time_us() (in module goldpan.quantities)</a>
 </li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry.has_detector">has_detector() (goldpan.registry.Registry method)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry.has_readout">has_readout() (goldpan.registry.Registry method)</a>
+</li>
         <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.Channel.hv_output">hv_output (goldpan.channels.Channel attribute)</a>
 </li>
     </ul></td>
@@ -790,14 +840,20 @@
 </li>
         <li><a href="reference/generated/goldpan.status.html#goldpan.status.list_statuses">list_statuses() (in module goldpan.status)</a>
 </li>
-        <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.load">load() (in module goldpan.dataset)</a>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.FolderSource.load">load() (goldpan.registry.FolderSource method)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.load">(in module goldpan.dataset)</a>
 </li>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.load">(in module goldpan.registry)</a>
+</li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.io.html#goldpan.io.load_channel_batch">load_channel_batch() (in module goldpan.io)</a>
-</li>
-        <li><a href="reference/generated/goldpan.io.html#goldpan.io.load_channel_batch_multi">load_channel_batch_multi() (in module goldpan.io)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.io.html#goldpan.io.load_channel_batch_multi">load_channel_batch_multi() (in module goldpan.io)</a>
+</li>
         <li><a href="reference/generated/goldpan.archive.html#goldpan.archive.load_good_events">load_good_events() (in module goldpan.archive)</a>
 </li>
         <li><a href="reference/generated/goldpan.quantities.html#goldpan.quantities.log_excursion_ratio">log_excursion_ratio() (in module goldpan.quantities)</a>
@@ -876,6 +932,8 @@
 </li>
           <li><a href="reference/generated/goldpan.quantities.html#module-goldpan.quantities">goldpan.quantities</a>
 </li>
+          <li><a href="reference/generated/goldpan.registry.html#module-goldpan.registry">goldpan.registry</a>
+</li>
           <li><a href="reference/generated/goldpan.rq_cuts.html#module-goldpan.rq_cuts">goldpan.rq_cuts</a>
 </li>
           <li><a href="reference/generated/goldpan.status.html#module-goldpan.status">goldpan.status</a>
@@ -923,9 +981,11 @@
         </ul></li>
         <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.NAI_TRIGGER">NAI_TRIGGER (in module goldpan.channels)</a>
 </li>
-        <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.Channel.name">name (goldpan.channels.Channel attribute)</a>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector.name">name (goldpan.adapters.midas.OdbDetector attribute)</a>
 
         <ul>
+          <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.Channel.name">(goldpan.channels.Channel attribute)</a>
+</li>
           <li><a href="reference/generated/goldpan.data.html#goldpan.data.ChannelInfo.name">(goldpan.data.ChannelInfo attribute)</a>
 </li>
           <li><a href="reference/generated/goldpan.data.html#goldpan.data.Detector.name">(goldpan.data.Detector attribute)</a>
@@ -936,6 +996,10 @@
 </li>
           <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Source.name">(goldpan.dataset.Source attribute)</a>
 </li>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.name">(goldpan.registry.DetectorRecord attribute)</a>
+</li>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord.name">(goldpan.registry.ReadoutRecord attribute)</a>
+</li>
           <li><a href="reference/generated/goldsluice.batch.html#goldsluice.batch.Report.name">(goldsluice.batch.Report attribute)</a>
 </li>
           <li><a href="reference/generated/goldsluice.profile.html#goldsluice.profile.Timing.name">(goldsluice.profile.Timing attribute)</a>
@@ -945,6 +1009,12 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.NOT_CONNECTED">NOT_CONNECTED (in module goldpan.channels)</a>
 </li>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector.number">number (goldpan.adapters.midas.OdbDetector attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.number">(goldpan.registry.DetectorRecord attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -953,10 +1023,20 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.odb_name">odb_name (goldpan.registry.DetectorRecord attribute)</a>
+</li>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector">OdbDetector (class in goldpan.adapters.midas)</a>
+</li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset.open">open() (goldpan.dataset.Dataset class method)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.origin">origin (goldpan.registry.DetectorRecord attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord.origin">(goldpan.registry.ReadoutRecord attribute)</a>
+</li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.DatasetSpec.output">output (goldpan.dataset.DatasetSpec attribute)</a>
 </li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.DatasetSpec.output_format">output_format (goldpan.dataset.DatasetSpec attribute)</a>
@@ -973,6 +1053,8 @@
 </li>
         <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.parse_odb">parse_odb() (in module goldpan.adapters.midas)</a>
 </li>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.parse_odb_detectors">parse_odb_detectors() (in module goldpan.adapters.midas)</a>
+</li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.DatasetSpec.path">path (goldpan.dataset.DatasetSpec attribute)</a>
 
         <ul>
@@ -985,18 +1067,24 @@
 </li>
         <li><a href="reference/generated/goldpan.rq_cuts.html#goldpan.rq_cuts.pileup_randoms">pileup_randoms() (in module goldpan.rq_cuts)</a>
 </li>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector.plane">plane (goldpan.adapters.midas.OdbDetector attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.plane">(goldpan.registry.DetectorRecord attribute)</a>
+</li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.quantities.html#goldpan.quantities.power_spectrum">power_spectrum() (in module goldpan.quantities)</a>
 </li>
         <li><a href="reference/generated/goldpan.quantities.html#goldpan.quantities.pretrigger_mean">pretrigger_mean() (in module goldpan.quantities)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.config.html#goldpan.config.PulseConfig.pretrigger_samples">pretrigger_samples (goldpan.config.PulseConfig attribute)</a>
 
         <ul>
           <li><a href="reference/generated/goldpan.legacy.html#goldpan.legacy.PulseConfig.pretrigger_samples">(goldpan.legacy.PulseConfig attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.quantities.html#goldpan.quantities.pretrigger_std">pretrigger_std() (in module goldpan.quantities)</a>
 </li>
         <li><a href="reference/generated/goldsluice.reference.max_time.html#goldsluice.reference.max_time.problem">problem() (in module goldsluice.reference.max_time)</a>
@@ -1052,7 +1140,11 @@
         <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.RawEvent">RawEvent (class in goldpan.adapters.midas)</a>
 </li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Source.read">read (goldpan.dataset.Source attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.read">(goldpan.registry.DetectorRecord attribute)</a>
 </li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset.read">read() (goldpan.dataset.Dataset method)</a>
 
         <ul>
@@ -1067,23 +1159,43 @@
           <li><a href="reference/generated/goldpan.adapters.rq_root.html#goldpan.adapters.rq_root.read">(in module goldpan.adapters.rq_root)</a>
 </li>
         </ul></li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.read_defaults">read_defaults() (goldpan.registry.DetectorRecord method)</a>
+</li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.read_raw">read_raw() (in module goldpan.dataset)</a>
 </li>
         <li><a href="reference/generated/goldsluice.batch.html#goldsluice.batch.FileReport.read_s">read_s (goldsluice.batch.FileReport attribute)</a>
 </li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Readout">Readout (class in goldpan.data)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="reference/generated/goldpan.data.html#goldpan.data.Detector.readout">readout (goldpan.data.Detector attribute)</a>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector.readout">readout (goldpan.adapters.midas.OdbDetector attribute)</a>
 
         <ul>
+          <li><a href="reference/generated/goldpan.data.html#goldpan.data.Detector.readout">(goldpan.data.Detector attribute)</a>
+</li>
           <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Source.readout">(goldpan.dataset.Source attribute)</a>
 </li>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.readout">(goldpan.registry.DetectorRecord attribute)</a>
+</li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry.readout">readout() (goldpan.registry.Registry method)</a>
+</li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry.readout_config">readout_config() (goldpan.registry.Registry method)</a>
+</li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord">ReadoutRecord (class in goldpan.registry)</a>
+</li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry.readouts">readouts() (goldpan.registry.Registry method)</a>
+</li>
         <li><a href="reference/generated/goldpan.cuts.html#goldpan.cuts.real_triggers">real_triggers() (in module goldpan.cuts)</a>
 </li>
         <li><a href="reference/generated/goldpan.adapters.html#goldpan.adapters.register">register() (in module goldpan.adapters)</a>
+</li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.Registry">Registry (class in goldpan.registry)</a>
+</li>
+        <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.DatasetSpec.registry">registry (goldpan.dataset.DatasetSpec attribute)</a>
+</li>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.registry_entry">registry_entry() (in module goldpan.adapters.midas)</a>
 </li>
         <li><a href="reference/generated/goldsluice.batch.html#goldsluice.batch.Report">Report (class in goldsluice.batch)</a>
 </li>
@@ -1143,6 +1255,12 @@
 </li>
         <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.RawEvent.serial">serial (goldpan.adapters.midas.RawEvent attribute)</a>
 </li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.series">series (goldpan.registry.DetectorRecord attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord.series">(goldpan.registry.ReadoutRecord attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.channels.html#goldpan.channels.Channel.side">side (goldpan.channels.Channel attribute)</a>
@@ -1161,6 +1279,12 @@
 </li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Segment.start_s">start_s (goldpan.data.Segment attribute)</a>
 </li>
+        <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.status">status (goldpan.registry.DetectorRecord attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.ReadoutRecord.status">(goldpan.registry.ReadoutRecord attribute)</a>
+</li>
+        </ul></li>
         <li><a href="reference/generated/goldpan.status.html#goldpan.status.status">status() (in module goldpan.status)</a>
 </li>
         <li><a href="reference/generated/goldpan.dataset.html#goldpan.dataset.Step">Step (class in goldpan.dataset)</a>
@@ -1189,10 +1313,16 @@
 </li>
         <li><a href="reference/generated/goldsluice.profile.html#goldsluice.profile.Timing">Timing (class in goldsluice.profile)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldsluice.batch.html#goldsluice.batch.Report.total_s">total_s (goldsluice.batch.Report attribute)</a>
 </li>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector.tower">tower (goldpan.adapters.midas.OdbDetector attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.tower">(goldpan.registry.DetectorRecord attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Events.trace">trace() (goldpan.data.Events method)</a>
 </li>
         <li><a href="reference/generated/goldpan.data.html#goldpan.data.Events.traces">traces (goldpan.data.Events attribute)</a>
@@ -1203,6 +1333,12 @@
 </li>
         <li><a href="reference/generated/goldpan.operations.html#goldpan.operations.trim_glitch">trim_glitch() (in module goldpan.operations)</a>
 </li>
+        <li><a href="reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector.type_code">type_code (goldpan.adapters.midas.OdbDetector attribute)</a>
+
+        <ul>
+          <li><a href="reference/generated/goldpan.registry.html#goldpan.registry.DetectorRecord.type_code">(goldpan.registry.DetectorRecord attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>

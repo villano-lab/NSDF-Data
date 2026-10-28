@@ -216,6 +216,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.legacy.html">goldpan.legacy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.operations.html">goldpan.operations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.quantities.html">goldpan.quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
@@ -339,13 +340,16 @@ modules with the Run 76 readout as the default <code class="code docutils litera
 <tr class="row-even"><td><p><a class="reference internal" href="goldpan.quantities.html#module-goldpan.quantities" title="goldpan.quantities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quantities</span></code></a></p></td>
 <td><p>Derived quantities: pulses in, one real number (or one array) per pulse out.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="goldpan.rq_cuts.html#module-goldpan.rq_cuts" title="goldpan.rq_cuts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rq_cuts</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="goldpan.registry.html#module-goldpan.registry" title="goldpan.registry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">registry</span></code></a></p></td>
+<td><p>A registry of the facts about an experiment that analysis needs and the library must not contain: the readouts (how a pretrigger window, a glitch and a sample period are set), and the detectors (their number, type, readout and where each named channel is wired in a given file format).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="goldpan.rq_cuts.html#module-goldpan.rq_cuts" title="goldpan.rq_cuts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rq_cuts</span></code></a></p></td>
 <td><p>Selections made from already-processed RQs, with no raw traces: the fast path (ported from <code class="code docutils literal notranslate"><span class="pre">scdms-analysis-tools</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="goldpan.status.html#module-goldpan.status" title="goldpan.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="goldpan.status.html#module-goldpan.status" title="goldpan.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a></p></td>
 <td><p>Development-status tagging for functions in this library.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="goldpan.testing.html#module-goldpan.testing" title="goldpan.testing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">testing</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="goldpan.testing.html#module-goldpan.testing" title="goldpan.testing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">testing</span></code></a></p></td>
 <td><p>The conformance test of an adapter, for the people who write one (see the developer quick-sheet &quot;Writing an adapter&quot;).</p></td>
 </tr>
 </tbody>

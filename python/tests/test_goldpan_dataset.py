@@ -117,7 +117,7 @@ def test_step_channels_by_role_name_or_all(tmp_path):
 
 def test_readout_references_resolve_from_the_data_and_unknown_ones_are_refused():
     step = Step("peak", "all", {"g": "@readout.glitch_samples", "p": "@readout.pretrigger_samples", "n": 5, "s": "text"})
-    assert step.resolve(DCRC_RUN76) == {"g": 10, "p": 1000, "n": 5, "s": "text"}
+    assert step.resolve(DCRC_RUN76) == {"g": 10, "p": 500, "n": 5, "s": "text"}
     with pytest.raises(ValueError, match="the readout has"):
         Step("peak", "all", {"g": "@readout.gain"}).resolve(DCRC_RUN76)
     with pytest.raises(ValueError, match="does not give sample_period_s"):

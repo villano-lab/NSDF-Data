@@ -27,7 +27,7 @@ integer `format_version` (1)::
     format_version = 1
 
     [readouts.DCRC_RUN76]
-    pretrigger_samples = 1000
+    pretrigger_samples = 500
     glitch_samples = 10
     sample_period_s = 0.8e-6
     status = "inferred"                                # "confirmed" or "inferred": required

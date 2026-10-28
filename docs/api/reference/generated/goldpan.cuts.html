@@ -218,6 +218,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.quantities.html">goldpan.quantities</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.rqdata.html">goldpan.rqdata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -398,8 +399,8 @@ to avoid recomputing it when combining with other cuts on the same batch.</p>
 the “tight” Branch 2 cut from 07221203_2025_dump1_noise.ipynb (cleanest
 slice found there, though even it keeps 13 of its 192 traces that look like
 real pulses – see <code class="code docutils literal notranslate"><span class="pre">excursion_band_AI</span></code>). Pass a
-<code class="code docutils literal notranslate"><span class="pre">config</span></code> with the pretrigger window you want (Branch 2 used 500 samples, not
-the library default of 1000).</p>
+<code class="code docutils literal notranslate"><span class="pre">config</span></code> with the pretrigger window you want (Branch 2 used 500 samples, which
+is what the Run 76 readout has now; until 2026-10-28 it was 1000).</p>
 <p>Pass a precomputed <code class="code docutils literal notranslate"><span class="pre">log_ratio</span></code> (e.g.
 <code class="code docutils literal notranslate"><span class="pre">goldpan.quantities.log_excursion_ratio(pulses,</span> <span class="pre">config)</span></code>) to avoid recomputing
 it when combining with other cuts on the same batch.</p>

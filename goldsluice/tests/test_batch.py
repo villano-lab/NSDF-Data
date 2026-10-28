@@ -9,7 +9,7 @@ pytest.importorskip("pyarrow")
 import awkward as ak
 
 from goldpan.adapters import parquet
-from goldpan.config import DCRC_RUN76
+from goldpan.config import PulseConfig
 from goldpan.data import ChannelInfo, Detector, Events, Readout
 from goldpan.dataset import Dataset
 
@@ -17,6 +17,7 @@ from goldsluice import batch
 from goldsluice.__main__ import main
 
 N_SAMPLES = 1500
+READOUT = PulseConfig(pretrigger_samples=1000, glitch_samples=10, sample_period_s=0.8e-6)     # the pulse of the toy traces starts at sample 1200
 AMPS = 1.5e-9
 
 
@@ -24,7 +25,7 @@ def make_raw(root, dumps=(("S1", "F0001", 7), ("S1", "F0002", 5)), seed=0):
     """A small raw dataset in the native format: one file per dump, three channels (two phonon, one charge)."""
     rng = np.random.default_rng(seed)
     det = Detector("TOY", (ChannelInfo("A", role="phonon"), ChannelInfo("B", role="phonon"), ChannelInfo("Q", role="charge")),
-                   Readout.single(N_SAMPLES, DCRC_RUN76))
+                   Readout.single(N_SAMPLES, READOUT))
     files = []
     for series, dump, n in dumps:
         traces = {c: rng.normal(2000.0, 5.0, size=(n, N_SAMPLES)) for c in "ABQ"}

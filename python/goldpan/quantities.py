@@ -176,7 +176,7 @@ def half_max_time_us(pulses, config: PulseConfig):
     reaches 50% of its own `max_deviation`: `rise_sample(fraction=0.5) * sample_period_s`.
 
     Only samples after `config.pretrigger_samples` are searched, so the window must
-    end before the pulse starts: with the default 1000-sample window a pulse rising
+    end before the pulse starts: with a 1000-sample window a pulse rising
     at sample 505 is not seen. Use `replace(config, pretrigger_samples=500)` for
     triggers near sample 500. Raises if `config.sample_period_s` is unset.
     """

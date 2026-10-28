@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from goldpan import channels, dataset, registry
+from goldpan import channels, config, dataset, registry
 from goldpan.config import DCRC_RUN76
 
 REPO = Path(__file__).resolve().parents[2]
@@ -56,3 +56,18 @@ def test_the_registry_example_gives_root_output_without_root_detector(tmp_path):
     p.write_text(text, encoding="utf-8")
     spec = dataset.load(p)
     assert (spec.output_format, spec.root_detector) == ("root", 1)
+
+
+def test_the_readouts_of_the_registry_and_the_presets_of_goldpan_config_are_the_same_numbers():
+    r = reg()
+    assert {"DCRC_RUN76", "Z7"} <= set(r.readouts())
+    for name, rec in r.readouts().items():
+        preset = getattr(config, name, None)
+        if preset is not None:
+            assert rec.config == preset, f"readout {name}: the registry and goldpan.config disagree"
+
+
+def test_the_run_76_readout_ends_its_baseline_window_where_the_pulses_start():
+    rec = reg().readouts()["DCRC_RUN76"]
+    assert rec.config.pretrigger_samples == 500 and rec.config.sample_period_s == 0.8e-6
+    assert "480 to 520" in rec.evidence and rec.status in registry.STATUSES              # the measurement it rests on is stated

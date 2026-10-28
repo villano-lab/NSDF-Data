@@ -4,7 +4,7 @@ format_version = 1
 
 [detectors."NAI-S2"]
 number = 1                         # the N of zip<N> in ROOT output: OUR choice for this detector; it is in no raw file (issue 150)
-readout = "DCRC_RUN76"             # a preset of goldpan.config: 0.8 us per sample, 1000-sample pretrigger window, 10 glitch samples
+readout = "DCRC_RUN76"             # see readouts.toml: 0.8 us per sample, 500-sample pretrigger window, 10 glitch samples
 status = "inferred"
 evidence = """The six sensors and their board inputs come from the Setup table of the Run 76 summary (Side-2 readout); that dump \
 detectors 0, 1, 2 are DCRC1, DCRC3, DCRC4 (ascending board number) is inferred and channels 0 to 3 = inputs pA to pD is assumed: \

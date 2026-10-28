@@ -217,6 +217,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.quantities.html">goldpan.quantities</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.rqdata.html">goldpan.rqdata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -279,9 +280,14 @@
 <span class="sd">are the *same code* as the package with two differences, both for the sake of those notebooks, which all analyse the</span>
 <span class="sd">Run 76 readout:</span>
 
-<span class="sd">* a function that takes a `config` gets the Run 76 readout (`goldpan.config.DCRC_RUN76`) as the default;</span>
+<span class="sd">* a function that takes a `config` gets the Run 76 readout as the default;</span>
 <span class="sd">* `pulse_config.PulseConfig` has the Run 76 values as defaults (and warns when 1.6e-6 s is given, the value those</span>
 <span class="sd">  notebooks used wrongly until 2026-10-22), and `DEFAULT_CONFIG = PulseConfig()`.</span>
+
+<span class="sd">These defaults are frozen at the values the notebooks and notes were run with, including the 1000-sample pretrigger window: the</span>
+<span class="sd">Run 76 pulses start at about sample 500, so `goldpan.config.DCRC_RUN76` has 500 since 2026-10-28 (issue 154), but changing the</span>
+<span class="sd">flat defaults would change the results of every notebook that is run again. Pass a `config` (or `n_samples=500`) to get the</span>
+<span class="sd">window before the pulse.</span>
 
 <span class="sd">New code should import `goldpan.*` and name its readout. The flat names will be removed in a later release.</span>
 <span class="sd">"""</span>

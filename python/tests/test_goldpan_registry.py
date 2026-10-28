@@ -135,8 +135,8 @@ def test_a_detector_in_the_registry_supplies_the_readout_and_the_read_defaults(t
 
 def test_what_the_file_writes_wins_over_the_registry_key_by_key(tmp_path, raw):
     reg = folder(tmp_path, TOY.replace('detector = "TOY"', 'detector = "TOY"\nchunk = 5'))
-    text = spec_text(raw, extra_source='readout = "DCRC_RUN76"\n[sources.read]\nchunk = 9', top=f'name = "t"\noutput = "o"\nregistry = "{reg.as_posix()}"')
-    # the file's own readout is the preset DCRC_RUN76, which equals the registry's: no warning; its read table overrides one key only
+    text = spec_text(raw, extra_source='readout = { pretrigger_samples = 1000, glitch_samples = 10, sample_period_s = 0.8e-6 }\n[sources.read]\nchunk = 9', top=f'name = "t"\noutput = "o"\nregistry = "{reg.as_posix()}"')
+    # the file's own readout equals the registry's: no warning; its read table overrides one key only
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         src = dataset.load(write(tmp_path, text)).sources[0]
@@ -154,7 +154,7 @@ def test_a_readout_that_disagrees_with_the_registry_is_a_warning_and_the_files_o
 
 def test_the_registry_changes_the_fingerprint_only_when_what_it_supplies_changes(tmp_path, raw):
     fp = lambda s: dataset.fingerprint(s, s.sources[0])
-    explicit = dataset.load(write(tmp_path, spec_text(raw, extra_source='readout = "DCRC_RUN76"\n[sources.read]\ndetector = "TOY"'), "e.toml"))
+    explicit = dataset.load(write(tmp_path, spec_text(raw, extra_source='readout = { pretrigger_samples = 1000, glitch_samples = 10, sample_period_s = 0.8e-6 }\n[sources.read]\ndetector = "TOY"'), "e.toml"))
     reg = folder(tmp_path)
     via = dataset.load(write(tmp_path, spec_text(raw, top=f'name = "toy"\noutput = "out"\nregistry = [{str(reg)!r}]'), "v.toml"))
     assert fp(via) == fp(explicit)                                     # the same readout and the same read: the same results

@@ -218,6 +218,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.quantities.html">goldpan.quantities</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.rqdata.html">goldpan.rqdata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -290,10 +291,14 @@
 are the <em>same code</em> as the package with two differences, both for the sake of those notebooks, which all analyse the
 Run 76 readout:</p>
 <ul class="simple">
-<li><p>a function that takes a <code class="code docutils literal notranslate"><span class="pre">config</span></code> gets the Run 76 readout (<code class="code docutils literal notranslate"><span class="pre">goldpan.config.DCRC_RUN76</span></code>) as the default;</p></li>
+<li><p>a function that takes a <code class="code docutils literal notranslate"><span class="pre">config</span></code> gets the Run 76 readout as the default;</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">pulse_config.PulseConfig</span></code> has the Run 76 values as defaults (and warns when 1.6e-6 s is given, the value those
 notebooks used wrongly until 2026-10-22), and <code class="code docutils literal notranslate"><span class="pre">DEFAULT_CONFIG</span> <span class="pre">=</span> <span class="pre">PulseConfig()</span></code>.</p></li>
 </ul>
+<p>These defaults are frozen at the values the notebooks and notes were run with, including the 1000-sample pretrigger window: the
+Run 76 pulses start at about sample 500, so <code class="code docutils literal notranslate"><span class="pre">goldpan.config.DCRC_RUN76</span></code> has 500 since 2026-10-28 (issue 154), but changing the
+flat defaults would change the results of every notebook that is run again. Pass a <code class="code docutils literal notranslate"><span class="pre">config</span></code> (or <code class="code docutils literal notranslate"><span class="pre">n_samples=500</span></code>) to get the
+window before the pulse.</p>
 <p>New code should import <code class="code docutils literal notranslate"><span class="pre">goldpan.*</span></code> and name its readout. The flat names will be removed in a later release.</p>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">

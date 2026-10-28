@@ -29,12 +29,12 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 
 from goldpan.channels import sensor_channels                       # noqa: E402
-from goldpan.config import DCRC_RUN76                              # noqa: E402
+from goldpan.config import PulseConfig                             # noqa: E402
 
 SERIES = "07221203_2025"
 N_SAMPLES = 4096
 N_BOARDS, N_INPUTS = 3, 4                  # DCRC1, DCRC3, DCRC4 with four inputs each (dump detector index 0, 1, 2)
-CONFIG = DCRC_RUN76                        # 1000-sample pretrigger window, 10 glitch samples, 0.8 us
+CONFIG = PulseConfig(pretrigger_samples=1000, glitch_samples=10, sample_period_s=0.8e-6)     # the synthetic pulses start at 1000
 AMPS_PER_COUNT = 1.0e-8                    # synthetic calibration, counts to amps
 BASELINE_COUNTS = 8000
 TRIGGER_TYPES = {1: "Physics", 2: "BeginOfRunRandom", 3: "InRunRandom"}     # the codes of CDMS_EVENT.triggerType

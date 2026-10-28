@@ -26,4 +26,42 @@ Say which series, dump, detector and channel you used, and define every quantity
 
 What are the packages `goldpan` and `goldsluice`? These are data analysis programs that are made to analyze processed data and to process pulse data respectively. `goldsluice` might take in some raw pulses and integrate them, saving the values of the integrals into a file. Those values are sometimes called Reduced Quantities (RQs) and they are in turn analyzed and/or manipulated with `goldpan` to get science results. Any generic function for fetching or manipulating data would go in these programs, rather than sitting in multiple people's analysis codes. The names were chosen with the help of AI because we want to discover something valuable in the data, one program takes a huge chunk of raw data and makes it manageable (`goldsluice`) and one sifts through very carefully for the key science (`goldpan`). 
 
-## 
+## Reading data and doing a simple analysis with `goldpan`
+
+A *dataset definition file* tells `goldpan` where the data are and how to read them: the source (the raw files, their format and the detector they came from), and, through the detector registry, the readout of that detector (sample period, trigger position, channel names). Nothing about the electronics is assumed in the code. `Dataset.open` reads the file; no data are read until we ask for them.
+
+```python
+from goldpan.dataset import Dataset
+
+ds = Dataset.open("goldsluice/examples/r76-registry.dataset.toml")
+ev = next(ds.iter_events(processed=False))     # the pulses of the first raw dump, as one Events
+```
+
+For the Run 76 series `07221203_2025` this is the first of 30 raw files, 1,517 events and six phonon channels (`Side2pA` to `Side2pF`). `ev.trace("Side2pC")` is an array with one row per event and one column per sample (4096 samples of 0.8 us). A simple analysis of it: subtract each event's baseline (the mean of the samples before the trigger, skipping the first ten, which can carry a glitch), take the largest value above it, and histogram that over the events or overlay the largest pulses against `ev.time_axis()`.
+
+```python
+cfg = ev.detector.readout.segments[0].config
+trace = ev.trace("Side2pC")
+baseline = trace[:, cfg.glitch_samples:cfg.pretrigger_samples].mean(axis=1)
+peak = (trace - baseline[:, None])[:, cfg.glitch_samples:].max(axis=1)
+```
+
+In the first dump the median peak of `Side2pC` is 6 ADC counts and the largest is 411. Doing this for every dump means reading all 82,000 events from disk each time, which is slow (a few seconds per dump) and is repeated by every analysis. That is the job of `goldsluice`.
+
+## Processing the downloaded data with `goldsluice` and reading it back in `goldpan`
+
+`goldsluice` reads the same dataset definition file, runs its `[[processing]]` steps over every raw dump and writes the results outside the repository (`~/goldsluice-output/`). Here the steps are `peak` (the largest value above the baseline, `current_max`, and the largest ADC value, `adc_max`) and `max_time` (the time of that maximum, `max_time_s`), on the six phonon channels. It is run from a terminal, in `goldsluice/examples/`; reading the raw dumps takes a couple of minutes and is most of the time.
+
+```
+python -m goldsluice check r76-registry.dataset.toml    # lists the raw files and the steps, reads nothing
+python -m goldsluice run r76-registry.dataset.toml      # processes every dump
+```
+
+The output is a `goldpan` Parquet dataset, one file per dump (`output_format = "root"` in the definition gives ROOT files in the layout of the collaboration's RQ files instead). Reading it back needs no raw data:
+
+```python
+q = ds.processed()                          # the processed quantities of all dumps, no pulses: small and fast
+q.quantities["Side2pC"]["current_max"]      # a record per channel, a field per quantity
+```
+
+This is 81,992 events with three quantities for each of the six channels. `current_max` is still in ADC counts because the conversion to amps (`amps_per_adc`) is a placeholder equal to 1 until the scale is known. For the RQ-file layout, `goldpan.rqdata.load` reads the quantities as numpy arrays and keeps what it read in a cache (`~/.cache/goldpan/rqdata`), so the second read of the same files takes a tenth of a second instead of four.

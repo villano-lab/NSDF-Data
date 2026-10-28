@@ -317,6 +317,16 @@ is not complete), <code class="code docutils literal notranslate"><span class="p
 detector, never required: <code class="code docutils literal notranslate"><span class="pre">read</span></code> takes the detector number and the channels from you.</p></li>
 </ul>
 <p><code class="code docutils literal notranslate"><span class="pre">.mid.lz4</span></code> files need the <code class="code docutils literal notranslate"><span class="pre">lz4</span></code> package (<code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">lz4</span></code>); <code class="code docutils literal notranslate"><span class="pre">.mid.gz</span></code> and plain <code class="code docutils literal notranslate"><span class="pre">.mid</span></code> need nothing.</p>
+<p class="rubric">Module Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.REVISION" title="goldpan.adapters.midas.REVISION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">REVISION</span></code></a></p></td>
+<td><p>Raised by one when a change of this reader changes what it returns for the same file (a fix), so that <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> redoes the outputs made with the old one (<code class="code docutils literal notranslate"><span class="pre">goldpan.adapters.revision</span></code>).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -371,6 +381,13 @@ detector, never required: <code class="code docutils literal notranslate"><span 
 </tbody>
 </table>
 </div>
+<dl class="py data">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.REVISION">
+<span class="sig-prename descclassname"><span class="pre">goldpan.adapters.midas.</span></span><span class="sig-name descname"><span class="pre">REVISION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#goldpan.adapters.midas.REVISION" title="Link to this definition">¶</a></dt>
+<dd><p>Raised by one when a change of this reader changes what it returns for the same file (a fix), so that <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> redoes the outputs
+made with the old one (<code class="code docutils literal notranslate"><span class="pre">goldpan.adapters.revision</span></code>). Not for a change that leaves the results alone.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="goldpan.adapters.midas.RawEvent">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.adapters.midas.</span></span><span class="sig-name descname"><span class="pre">RawEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#goldpan.adapters.midas.RawEvent" title="Link to this definition">¶</a></dt>
@@ -679,6 +696,7 @@ past); <code class="code docutils literal notranslate"><span class="pre">None</s
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">goldpan.adapters.midas</a><ul>
+<li><a class="reference internal" href="#goldpan.adapters.midas.REVISION"><code class="docutils literal notranslate"><span class="pre">REVISION</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.midas.RawEvent"><code class="docutils literal notranslate"><span class="pre">RawEvent</span></code></a><ul>
 <li><a class="reference internal" href="#goldpan.adapters.midas.RawEvent.data"><code class="docutils literal notranslate"><span class="pre">RawEvent.data</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.midas.RawEvent.event_id"><code class="docutils literal notranslate"><span class="pre">RawEvent.event_id</span></code></a></li>

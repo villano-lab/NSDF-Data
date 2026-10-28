@@ -28,7 +28,7 @@
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Windows
-edition &middot; Version 21 · 22 October 2026</p>
+edition &middot; Version 22 · 28 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -96,6 +96,13 @@ downloads and installers.</li>
 your computer, and about 3 GB of free disk space.</li>
 <li><strong>Rule of thumb:</strong> type or paste commands
 <strong>exactly</strong> as written. Capitals and spaces matter.</li>
+<li><strong>What to type, and what not to:</strong> you type only the
+commands: text in a shaded box, or shaded inline like <code
+class="cmd">git --version</code>. A checkpoint that says <em>You should
+see</em> describes what the computer prints back: do not type that. The
+symbol at the start of the line in the terminal (<code>$</code>,
+<code>&gt;</code> or <code>%</code>) is the prompt the terminal shows
+you: do not type that either.</li>
 <li><strong>Nothing to be afraid of:</strong> the commands in this guide
 install software and make new folders. None of them deletes your files.
 If you are not sure what a line does, there is a short table after each
@@ -651,7 +658,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 21, 22 October 2026, Windows edition. Written for
+<p>Guide version 22, 28 October 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="windows-key-links">Key links</h2>
@@ -673,7 +680,7 @@ class="uri">https://git-scm.com</a></li>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — macOS
-edition &middot; Version 21 · 22 October 2026</p>
+edition &middot; Version 22 · 28 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -738,6 +745,13 @@ downloads and installers.</li>
 your computer, and about 3 GB of free disk space.</li>
 <li><strong>Rule of thumb:</strong> type or paste commands
 <strong>exactly</strong> as written. Capitals and spaces matter.</li>
+<li><strong>What to type, and what not to:</strong> you type only the
+commands: text in a shaded box, or shaded inline like <code
+class="cmd">git --version</code>. A checkpoint that says <em>You should
+see</em> describes what the computer prints back: do not type that. The
+symbol at the start of the line in the terminal (<code>$</code>,
+<code>&gt;</code> or <code>%</code>) is the prompt the terminal shows
+you: do not type that either.</li>
 <li><strong>Nothing to be afraid of:</strong> the commands in this guide
 install software and make new folders. None of them deletes your files.
 If you are not sure what a line does, there is a short table after each
@@ -1235,7 +1249,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 21, 22 October 2026, macOS edition. Written for
+<p>Guide version 22, 28 October 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="macos-key-links">Key links</h2>
@@ -1257,7 +1271,7 @@ class="uri">https://git-scm.com</a></li>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Linux
-edition &middot; Version 21 · 22 October 2026</p>
+edition &middot; Version 22 · 28 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1322,6 +1336,13 @@ downloads and installers.</li>
 your computer, and about 3 GB of free disk space.</li>
 <li><strong>Rule of thumb:</strong> type or paste commands
 <strong>exactly</strong> as written. Capitals and spaces matter.</li>
+<li><strong>What to type, and what not to:</strong> you type only the
+commands: text in a shaded box, or shaded inline like <code
+class="cmd">git --version</code>. A checkpoint that says <em>You should
+see</em> describes what the computer prints back: do not type that. The
+symbol at the start of the line in the terminal (<code>$</code>,
+<code>&gt;</code> or <code>%</code>) is the prompt the terminal shows
+you: do not type that either.</li>
 <li><strong>Nothing to be afraid of:</strong> the commands in this guide
 install software and make new folders. None of them deletes your files.
 If you are not sure what a line does, there is a short table after each
@@ -1417,12 +1438,24 @@ class="cmd">echo hello</code> and press Enter: the word
 <code>hello</code> should appear under it.</p>
 </div>
 <h2 id="linux-step-2.-install-git">Step 2. Install Git</h2>
-<p>This guide uses Ubuntu or Debian commands. If you use another
-distribution, use its package manager instead. Type:</p>
+<p>First check whether Git is already installed. Type:</p>
+<pre><code>git --version</code></pre>
+<p>If you see a line starting with <code>git version</code>, Git is
+installed: skip the rest of this step and go to Step 3. If the terminal
+says the command is not found, install it. This guide uses Ubuntu or
+Debian commands (on another distribution, use its package manager
+instead). Type:</p>
 <pre><code>sudo apt install git</code></pre>
 <p>It asks for your password. Nothing appears while you type it; that is
 normal. Press <strong>Return</strong>, then type <code>y</code> and
 press <strong>Return</strong> if it asks to continue.</p>
+<p><strong>If you cannot use <code>sudo</code></strong> (a computer you
+do not administer, such as a shared or university machine, or
+<code>sudo</code> says you are not allowed to): skip the
+<code>apt</code> command. Do Step 3 first. Then, in the new terminal,
+run <code class="cmd">conda install -y -c conda-forge git</code>. That
+installs Git in your own folder and needs no password. Come back to the
+checkpoint below and run <code class="cmd">git --version</code>.</p>
 <div class="checkpoint">
 <p>In the terminal, type <code class="cmd">git --version</code> and
 press Enter. You should see a line starting with
@@ -1445,18 +1478,58 @@ href="https://github.com/conda-forge/miniforge/releases/latest/download/Miniforg
 for an ARM computer. Then install it with this command (use the file
 name you downloaded):</p>
 <pre><code>bash ~/Downloads/Miniforge3-Linux-x86_64.sh</code></pre>
-<p>Press <strong>Return</strong> to read the licence, type
-<code>yes</code>, accept the default location, and when it asks about
-running <code>conda init</code>, type <code>yes</code>. Then
-<strong>close the terminal and open a new one</strong>.</p>
+<p>The installer asks its questions in the terminal. They read like this
+(the wording can differ a little between versions):</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>What the installer shows</th>
+<th>What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Please, press ENTER to continue</code></td>
+<td>Press <strong>Return</strong>. The licence text starts to
+scroll.</td>
+</tr>
+<tr>
+<td>The licence text, then the question
+<code>Do you accept the license terms?</code></td>
+<td>Press <strong>Return</strong> (or <strong>Space</strong>) again and
+again until the text ends and the question appears. Then type
+<code>yes</code> and press <strong>Return</strong>.</td>
+</tr>
+<tr>
+<td><code>Miniforge3 will now be installed into this location</code>,
+with a folder name</td>
+<td>Press <strong>Return</strong> to accept the folder.</td>
+</tr>
+<tr>
+<td><code>Do you wish to update your shell profile to automatically initialize conda?</code></td>
+<td>Type <code>yes</code> and press <strong>Return</strong>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Then it prints a lot of text, and ends with
+<code>Thank you for installing Miniforge3!</code>. Now <strong>close the
+terminal and open a new one</strong>.</p>
 <div class="checkpoint">
 <p>Open a <strong>new</strong> terminal and type <code
 class="cmd">conda --version</code>, then press Enter. You should see
 <code>conda</code> followed by a version number.</p>
 </div>
 <div class="careful">
-<p>Use <code>sudo</code> only for the one command that installs Git.
-Other commands in this guide must not use it.</p>
+<p>Use <code>sudo</code> only to install Git in Step 2, and only if
+<code>git --version</code> did not already work. Every other command in
+this guide must not use it. If you cannot use <code>sudo</code>, Step 2
+gives a route that does not need it.</p>
 </div>
 <h2 id="linux-step-4.-download-the-nsdf-data-code">Step 4. Download the
 NSDF-Data code</h2>
@@ -1818,7 +1891,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 21, 22 October 2026, Linux edition. Written for
+<p>Guide version 22, 28 October 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="linux-key-links">Key links</h2>

@@ -7,6 +7,7 @@
 | `Events` | An immutable container of one detector's events: the traces of each channel and segment (read-only arrays), and one record per event of the quantities, keyed by `series`, `dump` and `event`. | {py:mod}`goldpan.data` |
 | Readout | How the data were sampled: `pretrigger_samples`, `glitch_samples`, `sample_period_s`. A `PulseConfig`, with presets such as `DCRC_RUN76` and `Z7`. **No defaults.** | {py:mod}`goldpan.config` |
 | Adapter | The only code that knows a file format: it turns idx dumps, MIDAS files, Parquet or ROOT RQ files into `Events` (or a table of quantities) and, where possible, writes them. | {py:mod}`goldpan.adapters` |
+| Registry | The facts about the detectors (number, type, readout, which channel is wired where in a file format), kept **outside** the package in folders of TOML files that a dataset definition names with `registry = [...]`; the library holds only the mechanism, so the folder can later become a repository or a database. | {py:mod}`goldpan.registry` |
 | Dataset definition | One TOML file naming the raw files, how to read them and the processing to run. Read by both packages. | {py:mod}`goldpan.dataset` |
 | Kernel | A fast per-trace algorithm in Rust, with a Python **mirror** that defines it readably. | {py:mod}`goldsluice` |
 | Batch mode | `python -m goldsluice run`: reads each raw file in chunks, runs the kernels and writes the quantities into a Parquet dataset that goldpan reads back. | {py:mod}`goldsluice.batch` |

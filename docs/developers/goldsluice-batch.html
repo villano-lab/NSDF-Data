@@ -39,7 +39,7 @@ repository).</p>
 Annotated; the whole file is <code>examples/r76.dataset.toml</code>:</p>
 <pre class="toml"><code>[dataset]
 name = &quot;r76-07221203&quot;
-output = &quot;processed/r76&quot;           # the processed quantities (relative to this file)
+output = &quot;~/goldsluice-output/r76&quot; # the processed quantities: outside the repository
 
 [[sources]]                        # where the pulses come from; several allowed
 name = &quot;side2&quot;
@@ -57,7 +57,13 @@ channels = &quot;role:phonon&quot;           # &quot;all&quot;, &quot;role:&lt;r
 [processing.params]
 glitch_samples = &quot;@readout.glitch_samples&quot;       # from the readout above
 pretrigger_samples = &quot;@readout.pretrigger_samples&quot;
-amps_per_adc = 1.5e-9              # you must supply it: there is no default</code></pre>
+amps_per_adc = 1.5e-9              # you must supply it: there is no default
+
+[[processing]]                     # the next step, run in order
+algorithm = &quot;max_time&quot;             # time of the largest sample, in s
+channels = &quot;role:phonon&quot;
+[processing.params]
+sample_period_s = &quot;@readout.sample_period_s&quot;   # from the readout</code></pre>
 <div class="table-scroll">
 <table>
 <colgroup>
@@ -123,6 +129,14 @@ default 1000: it bounds the memory used by the pulses),
 <code>--force</code> (redo files that are unchanged) and
 <code>--backend python</code> (the Python mirrors: slow, to compare
 numbers).</p>
+<p><strong>Results do not belong in the repository.</strong>
+<code>check</code> and <code>run</code> refuse an <code>output</code>
+folder that lies inside a Git working tree whose <code>.gitignore</code>
+does not cover the data files written there, and say so before anything
+is written. The repository ignores <code>processed/</code> and
+<code>_goldsluice.json</code>, and the example writes to
+<code>~/goldsluice-output/</code>, so the common cases pass. If you
+really mean it, add <code>--allow-output-in-repo</code>.</p>
 <h2 id="read-it-back-with-goldpan">3. Read it back with goldpan</h2>
 <pre class="python"><code>from goldpan.dataset import Dataset
 
@@ -138,7 +152,7 @@ cannot disagree about what the dataset is. Reading before the batch run
 raises an error that names the command to run.</p>
 <h2 id="what-is-written-and-what-makes-it-run-again">4. What is written,
 and what makes it run again</h2>
-<pre><code>processed/r76/
+<pre><code>~/goldsluice-output/r76/
     _goldpan.json        the goldpan Parquet manifest
     _goldsluice.json     the ledger: per raw file, what was done, with what, how long
     NAI-S2/07221203_2025_F0001.parquet    one file per series and dump:

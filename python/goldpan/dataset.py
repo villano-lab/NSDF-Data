@@ -5,7 +5,8 @@ The file (`r76.dataset.toml`)::
 
     [dataset]
     name = "r76-nai"
-    output = "processed/r76-nai"            # the processed quantities: a goldpan Parquet dataset (directory), relative to this file
+    output = "~/goldsluice-output/r76-nai"  # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
+    # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
 
     [[sources]]                             # where the pulses come from; as many as you like
     name = "side2"
@@ -34,6 +35,10 @@ file to both packages::
     q = ds.processed()                      # only the processed quantities, no pulses: small and fast
     ev.quantities["Side2pA"]["current_max"]
 
+With `output_format = "root"` the quantities are written as ROOT files in the layout of the collaboration's RQ files (`rqDir/eventTree`
+and `rqDir/zip<N>`, see `goldpan.adapters.rq_root.write`), under our names (`Side2pA_adc_max`); `root_detector` is that `N`. Read them with
+`goldpan.adapters.rq_root.read`: `Dataset.processed()` reads the Parquet output only.
+
 The processed quantities are stored one record per channel (`quantities["Side2pA"]["adc_max"]`), keyed by `series`, `dump`,
 `event`. `python -m goldsluice run <file>` produces them; reading them before that raises an error that says so.
 """
@@ -54,11 +59,12 @@ from .config import PulseConfig
 from .data import Events
 from .status import DONE, status
 
-FORMAT_VERSION = 1
-"""The version of the dataset definition file; a reader refuses a newer one."""
+FORMAT_VERSION = 2
+"""The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`."""
 
 _TOP = {"dataset", "sources", "processing"}
-_DATASET = {"name", "output", "description", "format_version"}
+_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector"}
+_OUTPUT_FORMATS = ("parquet", "root")
 _SOURCE = {"name", "format", "paths", "glob", "detector", "readout", "read"}
 _STEP = {"algorithm", "channels", "params"}
 _READOUT = {"pretrigger_samples", "glitch_samples", "sample_period_s"}
@@ -139,6 +145,10 @@ class DatasetSpec:
     """The definition file."""
     raw: Mapping[str, Any]
     """The parsed TOML, kept for provenance."""
+    output_format: str = "parquet"
+    """`"parquet"` (a goldpan dataset) or `"root"` (RQ-style ROOT files, `goldpan.adapters.rq_root.write`)."""
+    root_detector: Optional[int] = None
+    """The number `N` of the `zip<N>` tree of the ROOT output; required with `output_format = "root"`, otherwise `None`."""
 
     def source(self, name: Optional[str] = None) -> Source:
         if name is None:
@@ -196,6 +206,15 @@ def load(path) -> DatasetSpec:
     base = path.parent
     output = Path(d["output"]).expanduser()
     output = output if output.is_absolute() else base / output
+    output_format = d.get("output_format", "parquet")
+    if output_format not in _OUTPUT_FORMATS:
+        raise ValueError(f"{path}: [dataset] output_format must be one of {list(_OUTPUT_FORMATS)}, not {output_format!r}")
+    root_detector = d.get("root_detector")
+    if output_format == "root":
+        if not isinstance(root_detector, int) or isinstance(root_detector, bool) or root_detector < 0:
+            raise ValueError(f"{path}: output_format = \"root\" needs root_detector = N, the number of the zip<N> tree (a whole number)")
+    elif root_detector is not None:
+        raise ValueError(f"{path}: root_detector only applies with output_format = \"root\"")
 
     sources = []
     for i, s in enumerate(raw.get("sources", [])):
@@ -227,7 +246,7 @@ def load(path) -> DatasetSpec:
         elif not (channels == "all" or (isinstance(channels, str) and channels.startswith("role:") and len(channels) > 5)):
             raise ValueError(f"{where}: channels must be \"all\", \"role:<role>\" or a list of names, not {channels!r}")
         steps.append(Step(st["algorithm"], channels, dict(st.get("params", {}))))
-    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw)
+    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector)
 
 
 @status(DONE)
@@ -238,6 +257,8 @@ def fingerprint(spec: DatasetSpec, source: Source) -> str:
                           "readout": None if source.readout is None else asdict(source.readout),
                           "read": source.read},
                "steps": [{"algorithm": s.algorithm, "channels": s.channels, "params": s.params} for s in spec.steps]}
+    if spec.output_format != "parquet":                    # a Parquet definition keeps the fingerprint it had before the key existed
+        payload["output"] = {"format": spec.output_format, "root_detector": spec.root_detector}
     blob = json.dumps(payload, sort_keys=True, default=str)
     return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]
 
@@ -287,6 +308,9 @@ class Dataset:
     def processed(self, *, detector: Optional[str] = None) -> Events:
         """The processed quantities of a detector, without pulses (an `Events` with no traces): one record per event."""
         out = self.spec.output
+        if self.spec.output_format == "root":
+            raise ValueError(f"{self.spec.path}: the output is ROOT files ({out}); read them with "
+                             f"goldpan.adapters.rq_root.read(path, detector={self.spec.root_detector}). processed() reads Parquet output only")
         if not (out / _parquet.MANIFEST).exists():
             raise FileNotFoundError(f"nothing processed yet in {out}: run `python -m goldsluice run {self.spec.path}`")
         return _parquet.read(out, detector=detector if detector is not None else self._detector())

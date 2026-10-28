@@ -5,11 +5,30 @@ use _core::excursion::{ExcursionParams, excursion_many, excursion_one};
 use _core::integral::{IntegralParams, integral_many, integral_one};
 use _core::max_time::{MaxTimeParams, max_time_many};
 use _core::peak::{PeakParams, peak_many, peak_one};
+use _core::rise_time::{RiseTimeParams, rise_time_many, rise_time_one};
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
 fn traces(n_events: usize, n_samples: usize) -> Vec<f64> {
     (0..n_events * n_samples).map(|i| ((i * 2654435761) % 4096) as f64).collect()
+}
+
+/// Traces with a pulse: a baseline of 3000 with a little scatter, and a pulse of 1000 rising over 8 samples at sample 500, then decaying.
+fn pulse_traces(n_events: usize, n_samples: usize) -> Vec<f64> {
+    (0..n_events * n_samples)
+        .map(|i| {
+            let s = i % n_samples;
+            let noise = ((i * 2654435761) % 7) as f64 - 3.0;
+            let pulse = if s < 500 {
+                0.0
+            } else if s < 508 {
+                (s - 500) as f64 / 8.0
+            } else {
+                (-((s - 508) as f64) / 300.0).exp()
+            };
+            3000.0 + noise + 1000.0 * pulse
+        })
+        .collect()
 }
 
 fn bench_peak(c: &mut Criterion) {
@@ -85,6 +104,26 @@ fn bench_peak(c: &mut Criterion) {
     g.throughput(Throughput::Elements(n_events as u64));
     g.bench_function("10000 traces x 4096 samples", |bch| {
         bch.iter(|| excursion_many(black_box(&many), n_samples, &x, &mut a, &mut cur))
+    });
+    g.finish();
+
+    // the 10-90 % rise time of a trace with a pulse at sample 500 (the peak is early, so most of the trace is only read once)
+    let r = RiseTimeParams {
+        glitch_samples: 10,
+        pretrigger_samples: 500,
+        sample_period_s: 0.8e-6,
+        lo: 0.1,
+        hi: 0.9,
+    };
+    let pulses_one = pulse_traces(1, n_samples);
+    c.bench_function("rise_time_one, 4096 samples", |bch| {
+        bch.iter(|| rise_time_one(black_box(&pulses_one), &r))
+    });
+    let pulses = pulse_traces(n_events, n_samples);
+    let mut g = c.benchmark_group("rise_time_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| rise_time_many(black_box(&pulses), n_samples, &r, &mut sd))
     });
     g.finish();
 }

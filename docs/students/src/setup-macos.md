@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 21 · 22 October 2026"
+date: "Version 22 · 28 October 2026"
 ---
 
 ::: tip
@@ -13,6 +13,7 @@ date: "Version 21 · 22 October 2026"
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
+- **What to type, and what not to:** you type only the commands: text in a shaded box, or shaded inline like `git --version`{.cmd}. A checkpoint that says *You should see* describes what the computer prints back: do not type that. The symbol at the start of the line in the terminal (`$`, `>` or `%`) is the prompt the terminal shows you: do not type that either.
 - **Nothing to be afraid of:** the commands in this guide install software and make new folders. None of them deletes your files. If you are not sure what a line does, there is a short table after each group of commands.
 - **When something goes wrong:** do not guess. Copy the message, note the step you were on, and ask the project lead. See *If something goes wrong* at the end.
 
@@ -300,7 +301,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 21, 22 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 22, 28 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

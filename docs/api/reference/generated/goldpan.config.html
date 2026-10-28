@@ -218,6 +218,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.quantities.html">goldpan.quantities</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.rqdata.html">goldpan.rqdata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -296,7 +297,7 @@ without any error. Name the readout of your data, either with a preset or with t
 <span class="n">config</span> <span class="o">=</span> <span class="n">PulseConfig</span><span class="p">(</span><span class="n">pretrigger_samples</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">glitch_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sample_period_s</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>   <span class="c1"># your own</span>
 </pre></div>
 </div>
-<p>The presets are data, not recommendations: <code class="code docutils literal notranslate"><span class="pre">DCRC_RUN76</span></code> is the DCRC readout of the Run 76 (UMN, 2022) series, 0.8 us per
+<p>The presets are data, not recommendations (the registry, <code class="code docutils literal notranslate"><span class="pre">goldpan.registry</span></code>, holds the same readouts with their evidence): <code class="code docutils literal notranslate"><span class="pre">DCRC_RUN76</span></code> is the DCRC readout of the Run 76 (UMN, 2022) series, 0.8 us per
 sample (1.25 MHz; see “The sample period” in <code class="code docutils literal notranslate"><span class="pre">python/README.md</span></code> for the evidence), and <code class="code docutils literal notranslate"><span class="pre">Z7</span></code> is the Z7 (SNOLAB) readout,
 1.6 us per sample (625 kHz). Both are right for their data and wrong for each other’s.</p>
 <p class="rubric">Module Attributes</p>
@@ -304,7 +305,7 @@ sample (1.25 MHz; see “The sample period” in <code class="code docutils lite
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.config.DCRC_RUN76" title="goldpan.config.DCRC_RUN76"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DCRC_RUN76</span></code></a></p></td>
-<td><p>1000-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of 4096 samples is 3.2768 ms.</p></td>
+<td><p>500-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of 4096 samples is 3.2768 ms.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#goldpan.config.Z7" title="goldpan.config.Z7"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z7</span></code></a></p></td>
 <td><p>6250-sample pretrigger window (10 ms), 1.6 us per sample (625 kHz).</p></td>
@@ -370,9 +371,11 @@ the very start of some traces (see 07221203_2025_dump1_noise.ipynb).</p>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="goldpan.config.DCRC_RUN76">
-<span class="sig-prename descclassname"><span class="pre">goldpan.config.</span></span><span class="sig-name descname"><span class="pre">DCRC_RUN76</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PulseConfig(pretrigger_samples=1000,</span> <span class="pre">glitch_samples=10,</span> <span class="pre">sample_period_s=8e-07)</span></span><a class="headerlink" href="#goldpan.config.DCRC_RUN76" title="Link to this definition">¶</a></dt>
-<dd><p>1000-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of
-4096 samples is 3.2768 ms.</p>
+<span class="sig-prename descclassname"><span class="pre">goldpan.config.</span></span><span class="sig-name descname"><span class="pre">DCRC_RUN76</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">PulseConfig(pretrigger_samples=500,</span> <span class="pre">glitch_samples=10,</span> <span class="pre">sample_period_s=8e-07)</span></span><a class="headerlink" href="#goldpan.config.DCRC_RUN76" title="Link to this definition">¶</a></dt>
+<dd><p>500-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of
+4096 samples is 3.2768 ms. The pulses of the trigger-locked events start at about sample 500, not at 1000 (value until 2026-10-28;
+issue 154). The record with the evidence is <code class="code docutils literal notranslate"><span class="pre">[readouts.DCRC_RUN76]</span></code> in <code class="code docutils literal notranslate"><span class="pre">registry/readouts.toml</span></code> (<code class="code docutils literal notranslate"><span class="pre">goldpan.registry</span></code>); this preset is
+kept for existing code and a test checks that the two agree.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The DCRC readout of the Run 76 series (UMN)</p>

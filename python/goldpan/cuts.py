@@ -81,8 +81,8 @@ def excursion_band(pulses, config: PulseConfig, low=0.5, high=0.7,
     the "tight" Branch 2 cut from 07221203_2025_dump1_noise.ipynb (cleanest
     slice found there, though even it keeps 13 of its 192 traces that look like
     real pulses -- see `excursion_band_AI`). Pass a
-    `config` with the pretrigger window you want (Branch 2 used 500 samples, not
-    the library default of 1000).
+    `config` with the pretrigger window you want (Branch 2 used 500 samples, which
+    is what the Run 76 readout has now; until 2026-10-28 it was 1000).
 
     Pass a precomputed `log_ratio` (e.g.
     `goldpan.quantities.log_excursion_ratio(pulses, config)`) to avoid recomputing

@@ -17,7 +17,7 @@ name = "side2"
 format = "idx"                                 # goldpan.adapters.idx: one dump folder per file
 glob = "~/idx/07221203_2025_F*"                # every dump of the series, in order
 detector = "NAI-S2"
-readout = "DCRC_RUN76"                         # 0.8 us per sample, 1000-sample pretrigger window, 10 glitch samples
+readout = "DCRC_RUN76"                         # 0.8 us per sample, 500-sample pretrigger window (the pulses start at about sample 500), 10 glitch samples
 
 [sources.read]                                 # keyword arguments of idx.read, verbatim: name = [board, input]
 channels = { Side2pC = [0, 0], Side2pF = [0, 1], Side2pE = [0, 3], Side2pB = [1, 0], Side2pA = [1, 1], Side2pD = [1, 3] }

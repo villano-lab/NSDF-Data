@@ -27,3 +27,35 @@ algorithm = "max_time"
 channels = "role:phonon"
 [processing.params]
 sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "baseline"                         # the mean and the standard deviation of the pretrigger window (ADC counts)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "excursion"                        # the largest distance from the baseline after the window, and that over the window's scatter
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "integral"                         # the area of the baseline-subtracted trace (ADC counts times seconds)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "rise_time"                        # the 10-90 % rise time of the largest pulse (s)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+lo = 0.1                                       # the collaboration's 10 and 90 %: part of the definition of the quantity
+hi = 0.9

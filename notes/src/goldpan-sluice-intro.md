@@ -105,7 +105,7 @@ The raw dump labels a trace only by two small integers, `<event>_<detector>_Phon
 
 ![](img/goldpan-sluice-intro-fig2.png)
 
-**Figure 2: From the dump's trace labels to the channel names of the Side-2 readout.** Each box is a readout board and each row one of its four inputs. The blue rows are the six sensors, `Side2pA` to `Side2pF`. The orange row is the input of the NaI array's trigger signal, which is not a channel of the detector, and the grey rows are not connected (their signal never changes). The order of the boards and of the inputs is inferred, not yet checked against a file.
+**Figure 2: From the dump's trace labels to the channel names of the Side-2 readout.** Each box is a readout board and each row one of its four inputs. The blue rows are the six sensors, `Side2pA` to `Side2pF`. The orange row is the input of the NaI array's trigger signal, which is not a channel of the detector, and the grey rows are not connected (their signal never changes). The order of the boards and of the inputs comes from the Run 76 summary and the run diaries. The dumps carry no board names to check it against, so the registry marks it `inferred`, but we are confident it is right.
 
 The names are defined in the registry, in `registry/run76.toml` (Appendix A), as a pair `[detector, channel]` for each name: `Side2pC = [0, 0]` is channel 0 of detector 0. A dataset definition picks that up with `detector = "NAI-S2"`, and a `channels` table written in the definition file itself wins over the registry. `goldpan.channels` holds a second copy of the same map, from the setup table of the Run 76 summary; it is marked under development, and a test checks that the registry agrees with it.
 

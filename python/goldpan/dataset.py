@@ -7,6 +7,7 @@ The file (`r76.dataset.toml`)::
     name = "r76-nai"
     output = "~/goldsluice-output/r76-nai"  # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
     # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
+    # registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file
 
     [[sources]]                             # where the pulses come from; as many as you like
     name = "side2"
@@ -27,8 +28,11 @@ The file (`r76.dataset.toml`)::
     pretrigger_samples = "@readout.pretrigger_samples"
     amps_per_adc = 1.5e-9
 
-Nothing is assumed: the readout, the channels and every algorithm parameter are written down. `Dataset.open(path)` gives the same
-file to both packages::
+Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.
+With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the
+readout, the `[sources.read]` defaults of its file format and, for ROOT output, `root_detector` from the detector's record
+(`goldpan.registry`); whatever the file itself states wins, key by key, and a readout that disagrees with the registry's is a warning.
+A detector name that is not in any registry is only a label, as before. `Dataset.open(path)` gives the same file to both packages::
 
     ds = Dataset.open("r76.dataset.toml")
     ev = ds.read()                          # the pulses, with the processed quantities attached (one Events)
@@ -47,11 +51,12 @@ import hashlib
 import inspect
 import json
 import tomllib
+import warnings
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Iterator, Mapping, Optional, Tuple
 
-from . import config as _config
+from . import registry as _registry
 from .adapters import _adapter
 from .adapters import parquet as _parquet
 from .adapters import rq as _rq
@@ -59,11 +64,12 @@ from .config import PulseConfig
 from .data import Events
 from .status import DONE, status
 
-FORMAT_VERSION = 2
-"""The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`."""
+FORMAT_VERSION = 3
+"""The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`
+(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`)."""
 
 _TOP = {"dataset", "sources", "processing"}
-_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector"}
+_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry"}
 _OUTPUT_FORMATS = ("parquet", "root")
 _SOURCE = {"name", "format", "paths", "glob", "detector", "readout", "read"}
 _STEP = {"algorithm", "channels", "params"}
@@ -82,6 +88,8 @@ class Source:
     """Keyword arguments of the adapter's `read`, as written in the file."""
     base: Path
     """The folder of the definition file, for relative paths."""
+    detector_record: Optional[_registry.DetectorRecord] = None
+    """The registry's record of `detector`, if a registry has one; `read` and `readout` already include what it supplies."""
 
     def files(self) -> list:
         """The raw files or dump folders of the source, in order. `ValueError` if a pattern or path matches nothing."""
@@ -148,7 +156,10 @@ class DatasetSpec:
     output_format: str = "parquet"
     """`"parquet"` (a goldpan dataset) or `"root"` (RQ-style ROOT files, `goldpan.adapters.rq_root.write`)."""
     root_detector: Optional[int] = None
-    """The number `N` of the `zip<N>` tree of the ROOT output; required with `output_format = "root"`, otherwise `None`."""
+    """The number `N` of the `zip<N>` tree of the ROOT output; required with `output_format = "root"` (written in the file, or the
+    `number` of the registry's record of the detector), otherwise `None`."""
+    registry: Optional[_registry.Registry] = None
+    """The registry the definition names (and the environment variable adds); empty if there is none."""
 
     def source(self, name: Optional[str] = None) -> Source:
         if name is None:
@@ -167,15 +178,14 @@ def _unknown(where: str, table: Mapping, allowed: set) -> None:
         raise ValueError(f"{where}: unknown key(s) {extra}; allowed: {sorted(allowed)}")
 
 
-def _readout(value, where: str) -> Optional[PulseConfig]:
+def _readout(value, where: str, reg: _registry.Registry) -> Optional[PulseConfig]:
     if value is None:
         return None
     if isinstance(value, str):
-        preset = getattr(_config, value, None)
-        if not isinstance(preset, PulseConfig):
-            presets = sorted(n for n, v in vars(_config).items() if isinstance(v, PulseConfig))
-            raise ValueError(f"{where}: readout {value!r} is not a preset of goldpan.config (presets: {presets})")
-        return preset
+        try:
+            return reg.readout_config(value)
+        except KeyError as e:
+            raise ValueError(f"{where}: readout {e.args[0]}") from None
     if isinstance(value, Mapping):
         _unknown(f"{where}: readout", value, _READOUT)
         missing = sorted(_READOUT - set(value))
@@ -204,16 +214,24 @@ def load(path) -> DatasetSpec:
         if key not in d:
             raise ValueError(f"{path}: [dataset] needs {key!r}")
     base = path.parent
+    folders = d.get("registry", [])
+    folders = [folders] if isinstance(folders, str) else folders
+    if not (isinstance(folders, list) and all(isinstance(f, str) for f in folders)):
+        raise ValueError(f"{path}: [dataset] registry must be a folder or a list of folders")
+    try:
+        reg = _registry.load(*[(Path(f).expanduser() if Path(f).expanduser().is_absolute() else base / Path(f).expanduser())
+                               for f in folders])
+    except ValueError as e:
+        raise ValueError(f"{path}: {e}") from None
     output = Path(d["output"]).expanduser()
     output = output if output.is_absolute() else base / output
     output_format = d.get("output_format", "parquet")
     if output_format not in _OUTPUT_FORMATS:
         raise ValueError(f"{path}: [dataset] output_format must be one of {list(_OUTPUT_FORMATS)}, not {output_format!r}")
     root_detector = d.get("root_detector")
-    if output_format == "root":
-        if not isinstance(root_detector, int) or isinstance(root_detector, bool) or root_detector < 0:
-            raise ValueError(f"{path}: output_format = \"root\" needs root_detector = N, the number of the zip<N> tree (a whole number)")
-    elif root_detector is not None:
+    if root_detector is not None and (not isinstance(root_detector, int) or isinstance(root_detector, bool) or root_detector < 0):
+        raise ValueError(f"{path}: root_detector must be a whole number, the N of the zip<N> tree (output_format = \"root\" needs root_detector = N)")
+    if output_format != "root" and root_detector is not None:
         raise ValueError(f"{path}: root_detector only applies with output_format = \"root\"")
 
     sources = []
@@ -226,12 +244,33 @@ def load(path) -> DatasetSpec:
         patterns = tuple(list(s.get("paths", [])) + ([s["glob"]] if "glob" in s else []))
         if not patterns:
             raise ValueError(f"{where} needs paths and/or glob")
-        sources.append(Source(s.get("name", f"source{i}"), s["format"], patterns, s["detector"],
-                              _readout(s.get("readout"), where), dict(s.get("read", {})), base))
+        record = reg.detector(s["detector"]) if reg.has_detector(s["detector"]) else None
+        readout = _readout(s.get("readout"), where, reg)
+        read = dict(s.get("read", {}))
+        if record is not None:
+            if record.readout is not None:
+                from_registry = _readout(record.readout, f"{where}: the registry's detector {record.name!r}", reg)
+                if readout is None:
+                    readout = from_registry
+                elif readout != from_registry:
+                    warnings.warn(f"{where}: the readout written here ({readout}) is not the one the registry gives detector "
+                                  f"{record.name!r} ({record.readout}: {from_registry}); the one written here is used", stacklevel=2)
+            read = {**record.read_defaults(s["format"]), **read}
+        sources.append(Source(s.get("name", f"source{i}"), s["format"], patterns, s["detector"], readout, read, base, record))
     if not sources:
         raise ValueError(f"{path}: needs at least one [[sources]]")
     if len({s.name for s in sources}) != len(sources):
         raise ValueError(f"{path}: source names must be unique, got {[s.name for s in sources]}")
+    if output_format == "root":
+        numbers = {s.detector_record.number for s in sources if s.detector_record is not None and s.detector_record.number is not None}
+        if root_detector is None:
+            if len(numbers) != 1:
+                raise ValueError(f"{path}: output_format = \"root\" needs root_detector = N, the number of the zip<N> tree (a whole number), "
+                                 "or one detector in a registry that has a `number`" + (f" (the sources have {sorted(numbers)})" if numbers else ""))
+            root_detector = next(iter(numbers))
+        elif numbers and numbers != {root_detector}:
+            warnings.warn(f"{path}: root_detector = {root_detector} is not the number the registry gives the detector "
+                          f"({sorted(numbers)}); the one written here is used", stacklevel=2)
 
     steps = []
     for i, st in enumerate(raw.get("processing", [])):
@@ -246,7 +285,7 @@ def load(path) -> DatasetSpec:
         elif not (channels == "all" or (isinstance(channels, str) and channels.startswith("role:") and len(channels) > 5)):
             raise ValueError(f"{where}: channels must be \"all\", \"role:<role>\" or a list of names, not {channels!r}")
         steps.append(Step(st["algorithm"], channels, dict(st.get("params", {}))))
-    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector)
+    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg)
 
 
 @status(DONE)

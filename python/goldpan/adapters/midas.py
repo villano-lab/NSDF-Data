@@ -22,6 +22,9 @@ named channels, and you name the readout, which is checked against the sample ra
 * `meta`: `run` (run number, state, start and stop time from the ODB), `complete` (the end-of-run event was seen: a file cut short
   is not complete), `skipped_events`, `format_version`, `source`.
 * Hybrid sampling (pre- or post-pulse samples at a coarser rate) is not read yet: such a file raises `NotImplementedError`.
+* `detectors(path)` lists what the ODB says about each detector (number, name, type, tower, plane, the readout lengths), and
+  `registry_entry` writes a starting entry for `goldpan.registry` from it. The ODB is read as a source of information about the
+  detector, never required: `read` takes the detector number and the channels from you.
 
 `.mid.lz4` files need the `lz4` package (`pip install lz4`); `.mid.gz` and plain `.mid` need nothing.
 """
@@ -30,7 +33,7 @@ import re
 import struct
 from collections import namedtuple
 from pathlib import Path
-from typing import Iterator, Mapping, Optional
+from typing import Iterator, Mapping, NamedTuple, Optional
 
 import numpy as np
 
@@ -124,6 +127,105 @@ def parse_odb(xml) -> dict:
         if k:
             out[field] = int(k.group(1))
     return out
+
+
+class OdbDetector(NamedTuple):
+    """What the ODB of a file says about one detector (`/Detectors/Det<NN>`)."""
+    number: int
+    """The `NN` of `Det<NN>`; the N of `zip<N>` in RQ files."""
+    name: Optional[str]
+    """`DCRCInfo/DetectorName`, for example `G149`."""
+    type_code: Optional[int]
+    """`DCRCInfo/DetectorType`: 710 and 711 are Ge and Si HV, 700 and 701 iZIP."""
+    tower: Optional[int]
+    plane: Optional[int]
+    readout: Mapping[str, float]
+    """The phonon lengths of `ReadoutControl` that the block has, by name: `phonon_on_pulse_ms`, `phonon_on_pulse_samples`,
+    `phonon_pre_trigger_offset_ms`, `phonon_pre_trigger_offset_samples`, `phonon_pre_pulse_ms`, `phonon_pre_pulse_samples`,
+    `phonon_post_pulse_ms`, `phonon_post_pulse_samples` (pre- and post-pulse are the down-sampled regions of hybrid readout)."""
+
+
+_DET_DIR = re.compile(r'<dir name="Det(\d+)"')
+_DCRC_KEYS = {"type_code": ("DetectorType", int), "tower": ("Tower", int), "plane": ("Plane", int), "name": ("DetectorName", str)}
+_READOUT_KEYS = {"on-pulse length (ms)": "phonon_on_pulse_ms", "on-pulse length (samp)": "phonon_on_pulse_samples",
+                 "pre-trigger offset (ms)": "phonon_pre_trigger_offset_ms", "pre-trigger offset (samp": "phonon_pre_trigger_offset_samples",
+                 "pre-pulse length (ms)": "phonon_pre_pulse_ms", "pre-pulse length (samp)": "phonon_pre_pulse_samples",
+                 "post-pulse length (ms)": "phonon_post_pulse_ms", "post-pulse length (samp)": "phonon_post_pulse_samples"}
+
+
+def _odb_key(section: str, name: str, convert):
+    k = re.search(r'<key name="' + re.escape(name) + r'" type="[A-Z0-9]+"[^>]*>([^<]*)</key>', section)
+    if not k:
+        return None
+    try:
+        return convert(k.group(1).strip())
+    except ValueError:
+        return None
+
+
+@status(DONE)
+def parse_odb_detectors(xml) -> list:
+    """The `OdbDetector` of every `/Detectors/Det<NN>` block of an ODB (XML bytes of a begin-of-run event), in order. Only the
+    `DCRCInfo` and `ReadoutControl` keys are read, by search, not by parsing the tens of megabytes; a key a block lacks is `None`
+    (or missing from `readout`). An ODB without a `/Detectors` directory gives an empty list."""
+    text = xml.decode("latin-1") if isinstance(xml, (bytes, bytearray)) else xml
+    start = text.find('<dir name="Detectors"')
+    if start < 0:
+        return []
+    blocks, last, limit = [], -1, len(text)
+    for m in _DET_DIR.finditer(text, start):
+        number = int(m.group(1))
+        if number <= last:                       # the next directory that also has Det01...: we left /Detectors
+            limit = m.start()
+            break
+        blocks.append((number, m.end()))
+        last = number
+    out = []
+    for i, (number, begin) in enumerate(blocks):
+        end = blocks[i + 1][1] if i + 1 < len(blocks) else limit
+        block = text[begin:min(end, begin + 2_000_000)]
+        d = block.find('<dir name="DCRCInfo"')
+        info = block[d:d + 6000] if d >= 0 else ""
+        values = {field: _odb_key(info, key, conv) for field, (key, conv) in _DCRC_KEYS.items()}
+        r = block.find('<dir name="ReadoutControl"')
+        readout = {}
+        if r >= 0:
+            section = block[r:r + 6000]
+            for key, field in _READOUT_KEYS.items():
+                v = _odb_key(section, "Phonon " + key, float)
+                if v is not None:
+                    readout[field] = v
+        out.append(OdbDetector(number, values["name"], values["type_code"], values["tower"], values["plane"], readout))
+    return out
+
+
+@status(DONE)
+def detectors(path) -> list:
+    """What the begin-of-run ODB of a MIDAS file says about each detector: the `OdbDetector` list of `parse_odb_detectors`. Reads
+    only up to the first event (the ODB); `ValueError` if the file does not begin with one."""
+    for ev in iter_events(path):
+        if ev.event_id == EVENT_BEGIN_OF_RUN:
+            return parse_odb_detectors(ev.data)
+        break
+    raise ValueError(f"{path}: the file does not begin with a begin-of-run event, so it has no ODB to read")
+
+
+@status(DONE)
+def registry_entry(detector: OdbDetector, *, origin: str = "the begin-of-run ODB of a MIDAS file") -> str:
+    """A starting entry for a `goldpan.registry` file from what the ODB says about `detector`, as TOML text. It states what the ODB
+    gives (number, name, type, tower, plane) as confirmed; the readout, the channels and the series are for you to add."""
+    lines = [f'[detectors."{detector.name or "Det%02d" % detector.number}"]', f"number = {detector.number}"]
+    if detector.name is not None:
+        lines.append(f'odb_name = "{detector.name}"')
+    for field in ("type_code", "tower", "plane"):
+        if getattr(detector, field) is not None:
+            lines.append(f"{field} = {getattr(detector, field)}")
+    lines += ['status = "confirmed"',
+              f'evidence = "/Detectors/Det{detector.number:02d}/DCRCInfo in {origin}"',
+              "# readout = \"...\"                      # add: the name of the readout of these data",
+              "# series = [\"...\"]                     # add: the series this entry applies to",
+              f'# [detectors."{detector.name or "Det%02d" % detector.number}".midas]   # add: detector_id and the channels of this file format']
+    return "\n".join(lines) + "\n"
 
 
 # ---- one trigger ---------------------------------------------------------------------------------------------------

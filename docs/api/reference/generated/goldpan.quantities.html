@@ -218,6 +218,7 @@
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">goldpan.quantities</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.rqdata.html">goldpan.rqdata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -525,7 +526,7 @@ so this never silently falls back to index 0 for “no crossing found”.</p>
 <p>Time (microseconds from the first sample of the trace) at which the pulse first
 reaches 50% of its own <code class="code docutils literal notranslate"><span class="pre">max_deviation</span></code>: <code class="code docutils literal notranslate"><span class="pre">rise_sample(fraction=0.5)</span> <span class="pre">*</span> <span class="pre">sample_period_s</span></code>.</p>
 <p>Only samples after <code class="code docutils literal notranslate"><span class="pre">config.pretrigger_samples</span></code> are searched, so the window must
-end before the pulse starts: with the default 1000-sample window a pulse rising
+end before the pulse starts: with a 1000-sample window a pulse rising
 at sample 505 is not seen. Use <code class="code docutils literal notranslate"><span class="pre">replace(config,</span> <span class="pre">pretrigger_samples=500)</span></code> for
 triggers near sample 500. Raises if <code class="code docutils literal notranslate"><span class="pre">config.sample_period_s</span></code> is unset.</p>
 <dl class="field-list simple">

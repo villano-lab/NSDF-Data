@@ -59,6 +59,8 @@ not read yet.
 (`"P*max"`), a missing branch is NaN, and the detector number is always given. `goldpan.adapters.rq.attach(events, table)` adds such a table to an `Events` of
 the same events, matched on the key (refusing missing events, duplicate rows and name clashes).
 
+**The RQs of a whole list of series, cached.** `goldpan.rqdata.load(dataset, rqs)` has the call of the collaboration's `rqdata`: `data = load("24260424_145101", ["EventType", "PTOFamps", "P*max"])`, then `data["PTOFamps"]` is one numpy array over every event of every series (a series name, a list of them, or a CSV with a `series` column), `data["series"]` says where each row came from and `data.files` which file was read. The second `load` comes from a cache in `~/.cache/goldpan/rqdata` (`$GOLDPAN_CACHE`), keyed on the size and modification time of the files and on the goldpan version, so a rewritten file is read again; asking for fewer RQs than a cached read has is free, `refresh=True` reads again, `cache=False` skips the cache, and `cache_info()` / `cache_clear()` manage it. Where the files are is not in the library: set `GOLDPAN_RQ_FILES` (a pattern with `{series}`) and `GOLDPAN_RQ_DETECTOR` once, or pass `files=` and `detector=`.
+
 **Synthetic data in every format.** `python python/tests/synthetic_series.py OUTDIR` writes one small made-up series (two dumps, six Side-2
 sensors plus the other DCRC inputs, 4096 samples at 0.8 us) as an idx dump, as SuperCDMS SNOLAB MIDAS files (`.mid.gz`, CDMS I/O library format version 8),
 as RQs in Parquet and in ROOT (`rqDir/eventTree` and `rqDir/zip1`), and as a native goldpan dataset, all from the same events, so that every adapter and
@@ -158,8 +160,10 @@ that needs `h5py`.
 A frozen dataclass (`pretrigger_samples`, `glitch_samples`, `sample_period_s`) passed explicitly to every function, instead
 of each notebook hardcoding its own copy of these constants. **In `goldpan.config` it has no defaults** (pass
 `sample_period_s=None` if the period is unknown: functions that need it then raise). The presets are
-`DCRC_RUN76 = PulseConfig(1000, 10, 0.8e-6)` and `Z7 = PulseConfig(6250, 10, 1.6e-6)`. In the flat alias
-`pulse_config`, `PulseConfig()` has the Run 76 values as defaults (see above).
+`DCRC_RUN76 = PulseConfig(500, 10, 0.8e-6)` and `Z7 = PulseConfig(6250, 10, 1.6e-6)` (the same readouts, with the evidence for
+each number, are in `registry/readouts.toml`; the Run 76 pulses start at about sample 500, so the pretrigger window ends there,
+which was 1000 until 2026-10-28, issue 154). In the flat alias `pulse_config`, `PulseConfig()` keeps the values the notebooks were
+run with, 1000-sample window included (see above).
 
 ### The sample period (changed on 2026-10-22)
 

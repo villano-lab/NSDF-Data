@@ -7,6 +7,7 @@ pub mod excursion;
 pub mod integral;
 pub mod max_time;
 pub mod peak;
+pub mod rise_time;
 
 use numpy::{IntoPyArray, PyArray1, PyReadonlyArray2, PyUntypedArrayMethods};
 use pyo3::exceptions::PyValueError;
@@ -137,6 +138,41 @@ fn excursion_py<'py>(
     Ok((dev.into_pyarray(py), ratio.into_pyarray(py)))
 }
 
+/// rise_time(traces, *, glitch_samples, pretrigger_samples, sample_period_s, lo, hi) -> (rise_time_s,)
+///
+/// The time between the last samples before the peak that lie below `lo` and `hi` of its height (`nan` where there is none).
+#[pyfunction]
+#[pyo3(name = "rise_time", signature = (traces, *, glitch_samples, pretrigger_samples, sample_period_s, lo, hi))]
+fn rise_time_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    glitch_samples: usize,
+    pretrigger_samples: usize,
+    sample_period_s: f64,
+    lo: f64,
+    hi: f64,
+) -> PyResult<(Bound<'py, PyArray1<f64>>,)> {
+    let p = rise_time::RiseTimeParams {
+        glitch_samples,
+        pretrigger_samples,
+        sample_period_s,
+        lo,
+        hi,
+    };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = rise_time::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut out = vec![0.0; n_events];
+    py.detach(|| rise_time::rise_time_many(data, n_samples, &p, &mut out));
+    Ok((out.into_pyarray(py),))
+}
+
 /// max_time(traces, *, sample_period_s) -> (max_time_s,)
 #[pyfunction]
 #[pyo3(name = "max_time", signature = (traces, *, sample_period_s))]
@@ -167,5 +203,6 @@ fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(baseline_py, m)?)?;
     m.add_function(wrap_pyfunction!(integral_py, m)?)?;
     m.add_function(wrap_pyfunction!(excursion_py, m)?)?;
+    m.add_function(wrap_pyfunction!(rise_time_py, m)?)?;
     Ok(())
 }

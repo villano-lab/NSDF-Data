@@ -71,12 +71,12 @@ OS = {
 "linux": dict(
   NAME="Linux", FILE="linux", SHORT="Linux",
   MOD="Ctrl",
-  VSC_INSTALL="This guide uses Ubuntu or Debian commands. If you use another distribution, follow [Microsoft's instructions for Linux](https://code.visualstudio.com/docs/setup/linux) instead. On Ubuntu the simplest way needs no download. In a terminal, run:\n\n```\nsudo snap install --classic code\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. (The `--classic` is needed: without it the command fails.) When it finishes, start **Visual Studio Code** from your applications menu.\n\nIf you cannot use `snap`, use the `.deb` file instead. Go to [code.visualstudio.com](https://code.visualstudio.com/) and download it. In a terminal, go to the folder with the file (usually `cd ~/Downloads`) and run:\n\n```\nsudo apt install ./code_*.deb\n```\n\nIf you have downloaded more than one such file, use the exact file name instead of the `*`.",
+  VSC_INSTALL="This guide uses Ubuntu or Debian commands. If you use another distribution, follow [Microsoft's instructions for Linux](https://code.visualstudio.com/docs/setup/linux) instead. On Ubuntu the simplest way needs no download. In a terminal, run:\n\n```\nsudo snap install --classic code\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. (The `--classic` is needed: without it the command fails.) When it finishes, start **Visual Studio Code** from your applications menu.\n\nIf you cannot use `snap`, use the `.deb` file instead. Go to [code.visualstudio.com](https://code.visualstudio.com/) and download it. In a terminal, go to the folder with the file (usually `cd ~/Downloads`) and run:\n\n```\nsudo apt install ./code_*.deb\n```\n\nIf you have downloaded more than one such file, use the exact file name instead of the `*`.\n\n**If you cannot use `sudo`** (a computer you do not administer): use the `.tar.gz` file. It needs no password and no installer. Go to [code.visualstudio.com/Download](https://code.visualstudio.com/Download) and download the **.tar.gz** for your computer (x64 for most PCs, Arm64 for an ARM computer). In a terminal, go to the folder with the file (usually `cd ~/Downloads`) and run:\n\n```\nmkdir -p ~/apps\ntar -xzf code-stable-*.tar.gz -C ~/apps\nls ~/apps\n```\n\nThe last line shows the folder it made, normally `VSCode-linux-x64`. Start VS Code with `~/apps/VSCode-linux-x64/code`{.cmd} (use the folder name you see). If you downloaded more than one such file, use the exact file name instead of the `*`.",
   TERMINAL="Press **Ctrl + Alt + T** (on Ubuntu), or search your applications for **Terminal**. A window with a text prompt opens. This is the terminal for everything in this guide.",
   PASTE="Paste with **Ctrl + Shift + V** (plain Ctrl+V does not work in most terminals).",
-  GIT="This guide uses Ubuntu or Debian commands. If you use another distribution, use its package manager instead. Type:\n\n```\nsudo apt install git\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. Press **Return**, then type `y` and press **Return** if it asks to continue.",
+  GIT="First check whether Git is already installed. Type:\n\n```\ngit --version\n```\n\nIf you see a line starting with `git version`, Git is installed: skip the rest of this step and go to Step 3. If the terminal says the command is not found, install it. This guide uses Ubuntu or Debian commands (on another distribution, use its package manager instead). Type:\n\n```\nsudo apt install git\n```\n\nIt asks for your password. Nothing appears while you type it; that is normal. Press **Return**, then type `y` and press **Return** if it asks to continue.\n\n**If you cannot use `sudo`** (a computer you do not administer, such as a shared or university machine, or `sudo` says you are not allowed to): skip the `apt` command. Do Step 3 first. Then, in the new terminal, run `conda install -y -c conda-forge git`{.cmd}. That installs Git in your own folder and needs no password. Come back to the checkpoint below and run `git --version`{.cmd}.",
   MINIFORGE_FILE="Miniforge3-Linux-x86_64.sh (most PCs)",
-  MINIFORGE="Check your computer type with this command, which prints one word:\n\n```\nuname -m\n```\n\n`x86_64` means the file below. `aarch64` means an ARM computer: use **Miniforge3-Linux-aarch64.sh** instead.\n\nDownload the file into your **Downloads** folder: [Miniforge3-Linux-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh), or [Miniforge3-Linux-aarch64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh) for an ARM computer. Then install it with this command (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-Linux-x86_64.sh\n```\n\nPress **Return** to read the licence, type `yes`, accept the default location, and when it asks about running `conda init`, type `yes`. Then **close the terminal and open a new one**.",
+  MINIFORGE="Check your computer type with this command, which prints one word:\n\n```\nuname -m\n```\n\n`x86_64` means the file below. `aarch64` means an ARM computer: use **Miniforge3-Linux-aarch64.sh** instead.\n\nDownload the file into your **Downloads** folder: [Miniforge3-Linux-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh), or [Miniforge3-Linux-aarch64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh) for an ARM computer. Then install it with this command (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-Linux-x86_64.sh\n```\n\nThe installer asks its questions in the terminal. They read like this (the wording can differ a little between versions):\n\n| What the installer shows | What you do |\n|---|---|\n| `Please, press ENTER to continue` | Press **Return**. The licence text starts to scroll. |\n| The licence text, then the question `Do you accept the license terms?` | Press **Return** (or **Space**) again and again until the text ends and the question appears. Then type `yes` and press **Return**. |\n| `Miniforge3 will now be installed into this location`, with a folder name | Press **Return** to accept the folder. |\n| `Do you wish to update your shell profile to automatically initialize conda?` | Type `yes` and press **Return**. |\n\nThen it prints a lot of text, and ends with `Thank you for installing Miniforge3!`. Now **close the terminal and open a new one**.",
   FOLDER="~/Research",
   CD_REPO="cd ~/Research/NSDF-Data",
   CD_PYTHON="cd ~/Research/NSDF-Data/python",
@@ -95,7 +95,7 @@ OS = {
   GOHOME="cd ~",
   OLDENV="~/old-environment.txt",
   HOMEEX="`/home/yourname`  (the `~` symbol means this folder)",
-  CAREFUL_EXTRA="Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.",
+  CAREFUL_EXTRA="Use `sudo` only to install Git in Step 2, and only if `git --version` did not already work. Every other command in this guide must not use it. If you cannot use `sudo`, Step 2 gives a route that does not need it.",
   CRLF_NOTE="",
   P_CONFIG=".nexus-dm/config.json",
   P_STUDENT="data_analysis/R76/student",
@@ -124,7 +124,7 @@ GLOSSARY = """
 SETUP = """---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 21 · 22 October 2026"
+date: "Version 22 · 28 October 2026"
 ---
 
 ::: tip
@@ -136,6 +136,7 @@ date: "Version 21 · 22 October 2026"
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
+- **What to type, and what not to:** you type only the commands: text in a shaded box, or shaded inline like `git --version`{.cmd}. A checkpoint that says *You should see* describes what the computer prints back: do not type that. The symbol at the start of the line in the terminal (`$`, `>` or `%`) is the prompt the terminal shows you: do not type that either.
 - **Nothing to be afraid of:** the commands in this guide install software and make new folders. None of them deletes your files. If you are not sure what a line does, there is a short table after each group of commands.
 - **When something goes wrong:** do not guess. Copy the message, note the step you were on, and ask the project lead. See *If something goes wrong* at the end.
 
@@ -396,7 +397,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 21, 22 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 22, 28 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -1009,7 +1010,7 @@ Guide version 6, 13 October 2026, @NAME@ edition. Written for beginners; please 
 GITVSCODE = """---
 title: "Git in VS Code"
 subtitle: "NSDF-Data student guide 9 — @NAME@ edition, optional"
-date: "Version 5 · 20 October 2026"
+date: "Version 6 · 28 October 2026"
 ---
 
 ::: tip
@@ -1180,7 +1181,7 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 
 ## Session Info
 
-Guide version 5, 20 October 2026, @NAME@ edition. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
+Guide version 6, 28 October 2026, @NAME@ edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

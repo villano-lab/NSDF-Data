@@ -15,6 +15,7 @@ A mirror module `python/goldsluice/reference/<name>.py` defines:
 | Name | What |
 |---|---|
 | `NAME` | the algorithm's name, the same as the Rust function |
+| `REVISION` | a whole number, **1** for a new algorithm. Raise it by one, **in the pull request that does it**, whenever a change makes the algorithm give different numbers for the same input (a fixed kernel). `goldsluice run` records the revision of each algorithm that a definition uses and redoes the outputs made with another one: only those, so adding an algorithm, or fixing one that a definition does not use, redoes nothing. Not raised for speed, messages or documentation |
 | `OUTPUTS` | the names of the numbers it returns for one trace, in order, for example `("adc_max", "current_max")` |
 | `problem(n_samples, **params)` | why the parameters do not fit a trace of `n_samples` (a message), or `None` |
 | `kernel(trace, **params)` | **one trace** in, a tuple of numbers out |
@@ -88,6 +89,7 @@ the arithmetic as `f64` or check the cases by hand.
 ## Checklist
 
 - [ ] the mirror follows the kernel subset (no numpy in `kernel`)
+- [ ] `REVISION = 1` (a new algorithm) or raised by one (a fix that changes its results)
 - [ ] `problem` messages are identical in Python and Rust
 - [ ] a hand-computed test in Rust and in Python
 - [ ] `cases()` has an ordinary, an edge and a trap case; `bad_cases()` has one input for each way `problem` refuses

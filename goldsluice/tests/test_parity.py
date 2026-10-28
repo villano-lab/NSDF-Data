@@ -51,6 +51,13 @@ def test_both_backends_refuse_bad_parameters_with_the_same_message(name):
         assert messages[0] == messages[1]
 
 
+@pytest.mark.parametrize("name", NAMES)
+def test_every_algorithm_has_a_revision(name):
+    """`REVISION` is what the ledger of `goldsluice run` compares: a whole number, 1 for a new algorithm, raised when its results change."""
+    revision = ALGORITHMS[name].REVISION
+    assert isinstance(revision, int) and not isinstance(revision, bool) and revision >= 1
+
+
 def test_parameters_have_no_defaults():
     with pytest.raises(TypeError):
         run("peak", np.zeros((1, 8)), glitch_samples=1, pretrigger_samples=4)          # no amps_per_adc

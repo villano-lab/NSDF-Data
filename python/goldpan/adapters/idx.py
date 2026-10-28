@@ -25,6 +25,10 @@ from ..config import PulseConfig
 from ..data import ChannelInfo, Detector, Events, Readout
 from ..status import DONE, status
 
+REVISION = 1
+"""Raised by one when a change of this reader changes what it returns for the same file (a fix), so that `goldsluice run` redoes the outputs
+made with the old one (`goldpan.adapters.revision`). Not for a change that leaves the results alone."""
+
 _DUMP_NAME = re.compile(r"^(?P<series>.+)_(?P<dump>F\d+)$")
 
 

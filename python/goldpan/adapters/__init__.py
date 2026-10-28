@@ -8,6 +8,9 @@
 
 Anyone can add one: a module with `read(path, **kw) -> Events`, optionally `iter_chunks(path, *, chunk, **kw)` and `write(events, path)`;
 `goldpan.testing.check_adapter` checks it against the contract. `register` makes it available to `read(path, format=...)`.
+
+A reader can also define `REVISION`, a whole number (1 if it is absent) that is raised by one whenever a fix changes what it returns for the same
+file. `goldsluice run` records the revision of the reader of each output and redoes the outputs made with another one (`revision`).
 """
 import importlib
 
@@ -21,6 +24,12 @@ def register(name: str, module) -> None:
     if not hasattr(module, "read"):
         raise TypeError(f"{module!r} has no read(): it is not an adapter")
     _registered[name] = module
+
+
+def revision(name: str) -> int:
+    """The `REVISION` of the adapter `name`: raised when a fix changes what the reader returns for the same file, 1 for an adapter that
+    does not say. `goldsluice run` compares it with the one an output was made with."""
+    return int(getattr(_adapter(name), "REVISION", 1))
 
 
 def available() -> list:

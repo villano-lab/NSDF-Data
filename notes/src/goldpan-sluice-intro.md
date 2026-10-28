@@ -30,7 +30,12 @@ What are the packages `goldpan` and `goldsluice`? These are data analysis progra
 
 A *dataset definition file* tells `goldpan` where the data are and how to read them: the source (the raw files, their format and the detector they came from), and, through the detector registry, the readout of that detector (sample period, trigger position, channel names). Nothing about the electronics is assumed in the code. `Dataset.open` reads the file; no data are read until we ask for them.
 
-The file used here is `goldsluice/examples/r76-registry.dataset.toml`. A copy as of this note, to copy into a file of your own (the `registry` and `glob` paths and the output folder are the ones to change):
+The file used here is `goldsluice/examples/r76-registry.dataset.toml`.
+
+<details>
+<summary>The dataset definition file, to copy into a file of your own</summary>
+
+A copy as of this note (the `registry` and `glob` paths and the output folder are the ones to change):
 
 ```toml
 # The same dataset as r76.dataset.toml, with the detector described in the registry (../../registry) instead of in this file:
@@ -64,6 +69,8 @@ channels = "role:phonon"
 sample_period_s = "@readout.sample_period_s"
 ```
 
+</details>
+
 ```python
 from goldpan.dataset import Dataset
 
@@ -71,9 +78,19 @@ ds = Dataset.open("goldsluice/examples/r76-registry.dataset.toml")
 ev = next(ds.iter_events(processed=False))     # the pulses of the first raw dump, as one Events
 ```
 
+<details>
+<summary>What does <code>next(ds.iter_events(processed=False))</code> do?</summary>
+
+`ds.iter_events(...)` returns a generator. It goes through the raw files of the dataset's source one at a time (30 here), reads each with the adapter for its format (`idx`) and gives back an `Events` with the pulses, the event keys (`series`, `dump`, `event`) and the trigger type. Nothing is read until the next item is asked for.
+
+- `processed=False` says that only the pulses are wanted. The default, `True`, also reads the processed quantities from the `goldsluice` output and attaches them to each event, and fails if the batch run did not cover the file.
+- `next(...)` advances the generator once, so only the first file (`07221203_2025_F0001`) is read. A loop `for ev in ds.iter_events(...)` would read all 30 files, one after the other, and never hold more than one in memory.
+
+</details>
+
 The lines `registry = [...]` and `detector = "NAI-S2"` hand the description of the detector (its channels, their roles and the readout) to the registry, which is explained, with a copy of its files, in [Appendix A](#appendix-a-the-detector-registry).
 
-For the Run 76 series `07221203_2025` this is the first of 30 raw files, 1,517 events and six phonon channels (`Side2pA` to `Side2pF`). `ev.trace("Side2pC")` is an array with one row per event and one column per sample (4096 samples of 0.8 us). A simple analysis of it: subtract each event's baseline (the mean of the samples before the trigger, skipping the first ten, which can carry a glitch), take the largest value above it, and histogram that over the events or overlay the largest pulses against `ev.time_axis()`.
+For the Run 76 series `07221203_2025` this is the first of 30 raw files, 1,517 events and six phonon channels (`Side2pA` to `Side2pF`). `ev.trace("Side2pC")` is an array with one row per event and one column per sample (4096 samples of 0.8 us). The traces are the raw ADC values: they are **not** baseline-subtracted, and sit at about 3,200 counts for this channel. A simple analysis is to subtract each event's own baseline, take the largest value above it and histogram that over the events, or to overlay the largest pulses against `ev.time_axis()`. `goldpan.operations.baseline_subtract` does the subtraction: it takes each event's mean over the samples before the trigger (`cfg.pretrigger_samples`, here 500), leaving out the first ten, which can carry an electronics glitch.
 
 The channel names say where a trace comes from. A name such as `Side2pC` is the sensor `pC` on Side 2 of the detector; Figure 1, the figure of Note 9, shows where the six sensors are on the detector.
 
@@ -81,20 +98,36 @@ The channel names say where a trace comes from. A name such as `Side2pC` is the 
 
 **Figure 1: The six sensors of detector S104 on Side 2**, the face that is read out in this series (as seen after flipping the detector over; figure of Note 9). Each region is coloured by its readout board, DCRC1 (orange) or DCRC3 (blue), and labelled with its letter, its board and input.
 
-The raw dump labels a trace only by two small integers, `<event>_<detector>_Phonon_<n>`. In Run 76 the three "detectors" 0, 1 and 2 are not detectors but three four-input readout boards (DCRC1, DCRC3 and DCRC4) of one detector, and `n` is the input of the board, `pA` to `pD`. Figure 2 shows how the dump's labels map to the channel names. Only six of the twelve inputs are sensors, one is the trigger signal of the NaI array and five are not connected, so `goldpan` has six channels for this series. The map is in the registry (Appendix A) and in `goldpan.channels`.
+<details>
+<summary>How do the dump's trace labels become channel names, and where is that defined?</summary>
+
+The raw dump labels a trace only by two small integers, `<event>_<detector>_Phonon_<n>`. In Run 76 the three "detectors" 0, 1 and 2 are not detectors but three four-input readout boards (DCRC1, DCRC3 and DCRC4) of one detector, and `n` is the input of the board, `pA` to `pD`. Figure 2 shows how the dump's labels map to the channel names. Only six of the twelve inputs are sensors, one is the trigger signal of the NaI array and five are not connected, so `goldpan` has six channels for this series.
 
 ![](img/goldpan-sluice-intro-fig2.png)
 
 **Figure 2: From the dump's trace labels to the channel names of the Side-2 readout.** Each box is a readout board and each row one of its four inputs. The blue rows are the six sensors, `Side2pA` to `Side2pF`. The orange row is the input of the NaI array's trigger signal, which is not a channel of the detector, and the grey rows are not connected (their signal never changes). The order of the boards and of the inputs is inferred, not yet checked against a file.
 
+The names are defined in the registry, in `registry/run76.toml` (Appendix A), as a pair `[detector, channel]` for each name: `Side2pC = [0, 0]` is channel 0 of detector 0. A dataset definition picks that up with `detector = "NAI-S2"`, and a `channels` table written in the definition file itself wins over the registry. `goldpan.channels` holds a second copy of the same map, from the setup table of the Run 76 summary; it is marked under development, and a test checks that the registry agrees with it.
+
+</details>
+
 ```python
-cfg = ev.detector.readout.segments[0].config
-trace = ev.trace("Side2pC")
-baseline = trace[:, cfg.glitch_samples:cfg.pretrigger_samples].mean(axis=1)
-peak = (trace - baseline[:, None])[:, cfg.glitch_samples:].max(axis=1)
+from goldpan import operations
+
+cfg = ev.detector.readout.segments[0].config           # the readout: sample period, trigger sample, glitch samples
+trace = ev.trace("Side2pC")                            # raw ADC counts, (events, samples)
+pulse = operations.baseline_subtract(trace, cfg)       # each event minus its own mean before the trigger
+peak = pulse[:, cfg.glitch_samples:].max(axis=1)       # the largest value above the baseline, per event
 ```
 
-In the first dump the median peak of `Side2pC` is 6 ADC counts and the largest is 411. **Reading the traces is the slow part, and it is not cached.** `iter_events` reads the raw dump from disk every time you call it: about 3 seconds for this one dump, and `ds.read()` would do the same for all 30 dumps (82,000 events) and hold six 4096-sample traces for each event in memory. Only the processed quantities are cached (see below). So read the traces of one dump, or of a few events, to look at pulses, and leave the pass over all the data to `goldsluice`.
+In the first dump the median peak of `Side2pC` is 6 ADC counts and the largest is 411. **Reading the traces is the slow part, and it is not cached.** `iter_events` reads the raw dump from disk every time you call it: about 3 seconds for this one dump. Only the processed quantities are cached (see below). So read the traces of one dump, or of a few events, to look at pulses, and leave the pass over all the data to `goldsluice`.
+
+<details>
+<summary>Why not read all the dumps at once with <code>ds.read()</code>?</summary>
+
+`ds.read()` reads every file of the source and joins them into one `Events`, so everything is in memory at once. For all 30 dumps that is 82,000 events with six 4096-sample traces each, read from disk again every time, with no caching. `iter_events` gives the same data one file at a time, so a loop over it can compute what it needs from each dump and let it go.
+
+</details>
 
 ## Processing the downloaded data with `goldsluice` and reading it back in `goldpan`
 

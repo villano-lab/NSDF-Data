@@ -303,6 +303,16 @@ you name the readout, because neither belongs to the library:</p>
 <p>For Run 76 the map of every sensor is in <code class="code docutils literal notranslate"><span class="pre">goldpan.channels</span></code> (<code class="code docutils literal notranslate"><span class="pre">sensor_channels()</span></code>). Only this module and <code class="code docutils literal notranslate"><span class="pre">goldpan.io</span></code> know
 <code class="code docutils literal notranslate"><span class="pre">nsdf_dark_matter</span></code>’s <code class="code docutils literal notranslate"><span class="pre">cdms</span></code> object; it is imported when a path is given, so tests can pass any object with
 <code class="code docutils literal notranslate"><span class="pre">get_detector_ids()</span></code>, <code class="code docutils literal notranslate"><span class="pre">get_detector_channels(id)</span></code> and <code class="code docutils literal notranslate"><span class="pre">get_event_metadata(event)</span></code>.</p>
+<p class="rubric">Module Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.idx.REVISION" title="goldpan.adapters.idx.REVISION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">REVISION</span></code></a></p></td>
+<td><p>Raised by one when a change of this reader changes what it returns for the same file (a fix), so that <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> redoes the outputs made with the old one (<code class="code docutils literal notranslate"><span class="pre">goldpan.adapters.revision</span></code>).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -313,6 +323,13 @@ you name the readout, because neither belongs to the library:</p>
 </tbody>
 </table>
 </div>
+<dl class="py data">
+<dt class="sig sig-object py" id="goldpan.adapters.idx.REVISION">
+<span class="sig-prename descclassname"><span class="pre">goldpan.adapters.idx.</span></span><span class="sig-name descname"><span class="pre">REVISION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#goldpan.adapters.idx.REVISION" title="Link to this definition">¶</a></dt>
+<dd><p>Raised by one when a change of this reader changes what it returns for the same file (a fix), so that <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> redoes the outputs
+made with the old one (<code class="code docutils literal notranslate"><span class="pre">goldpan.adapters.revision</span></code>). Not for a change that leaves the results alone.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="goldpan.adapters.idx.read">
 <span class="sig-prename descclassname"><span class="pre">goldpan.adapters.idx.</span></span><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">series</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/adapters/idx.html#read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.adapters.idx.read" title="Link to this definition">¶</a></dt>
@@ -396,6 +413,7 @@ is recorded in <code class="code docutils literal notranslate"><span class="pre"
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">goldpan.adapters.idx</a><ul>
+<li><a class="reference internal" href="#goldpan.adapters.idx.REVISION"><code class="docutils literal notranslate"><span class="pre">REVISION</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.idx.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
 </ul>
 </li>

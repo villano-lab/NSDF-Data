@@ -320,6 +320,16 @@ only some columns.</p>
 <p><strong>Versioning.</strong> An addition that old readers can ignore (a new quantity, a new metadata key) keeps the version; a change they
 cannot read raises <code class="code docutils literal notranslate"><span class="pre">goldpan.format_version</span></code>. The sample dataset in <code class="code docutils literal notranslate"><span class="pre">python/tests/data/sample_dataset/</span></code> is read by the tests of
 goldpan and is the file that goldsluice’s tests read too.</p>
+<p class="rubric">Module Attributes</p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.parquet.REVISION" title="goldpan.adapters.parquet.REVISION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">REVISION</span></code></a></p></td>
+<td><p>Raised by one when a change of this reader changes what it returns for the same file (a fix), so that <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> redoes the outputs made with the old one (<code class="code docutils literal notranslate"><span class="pre">goldpan.adapters.revision</span></code>).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -336,6 +346,13 @@ goldpan and is the file that goldsluice’s tests read too.</p>
 </tbody>
 </table>
 </div>
+<dl class="py data">
+<dt class="sig sig-object py" id="goldpan.adapters.parquet.REVISION">
+<span class="sig-prename descclassname"><span class="pre">goldpan.adapters.parquet.</span></span><span class="sig-name descname"><span class="pre">REVISION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#goldpan.adapters.parquet.REVISION" title="Link to this definition">¶</a></dt>
+<dd><p>Raised by one when a change of this reader changes what it returns for the same file (a fix), so that <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> redoes the outputs
+made with the old one (<code class="code docutils literal notranslate"><span class="pre">goldpan.adapters.revision</span></code>). Not for a change that leaves the results alone.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="goldpan.adapters.parquet.write">
 <span class="sig-prename descclassname"><span class="pre">goldpan.adapters.parquet.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_group_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/adapters/parquet.html#write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.adapters.parquet.write" title="Link to this definition">¶</a></dt>
@@ -447,6 +464,7 @@ slice or a list of positions to keep (applied after reading: for a dataset large
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">goldpan.adapters.parquet</a><ul>
+<li><a class="reference internal" href="#goldpan.adapters.parquet.REVISION"><code class="docutils literal notranslate"><span class="pre">REVISION</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.parquet.write"><code class="docutils literal notranslate"><span class="pre">write()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.parquet.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.parquet.iter_chunks"><code class="docutils literal notranslate"><span class="pre">iter_chunks()</span></code></a></li>

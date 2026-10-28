@@ -42,7 +42,7 @@ ev.quantities["Side2pA"]["current_max"]
 
 `run` reads each raw file in chunks, applies every step to the channels it names with the Rust kernels and writes the quantities (one
 record per channel, keyed by series, dump and event; no pulses) into the `output` of the definition, a goldpan Parquet dataset. A
-ledger (`_goldsluice.json`) records what was done for each raw file, so a second run does only what changed (a new version of `goldsluice` or `goldpan` counts as a change), and every output file
+ledger (`_goldsluice.json`) records what was done for each raw file, so a second run does only what changed (a definition, a raw file, or an algorithm or reader it uses whose `REVISION` was raised), and every output file
 carries its provenance in its metadata. The report gives the time of every phase: reading is usually most of it, the Rust kernels
 the least (6000 events of 4096 samples, 3 channels: 1.2 s reading, 0.05 s in `peak`, 0.1 s writing).
 

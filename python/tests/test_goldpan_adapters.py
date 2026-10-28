@@ -247,3 +247,19 @@ def test_check_adapter_catches_chunks_that_do_not_add_up():
 
     with pytest.raises(AssertionError, match="iter_chunks"):
         check_adapter(Lossy, SAMPLE)
+
+
+def test_every_built_in_adapter_has_a_revision_and_an_adapter_without_one_has_revision_1():
+    """`REVISION` is what `goldsluice run` compares to decide whether an output was made by the reader as it is now."""
+    from types import SimpleNamespace
+    for name in ("idx", "parquet", "rq_root", "midas"):
+        module = adapters._adapter(name)
+        assert isinstance(module.REVISION, int) and module.REVISION >= 1
+        assert adapters.revision(name) == module.REVISION
+    adapters.register("revision-test", SimpleNamespace(read=lambda path: None))
+    try:
+        assert adapters.revision("revision-test") == 1
+    finally:
+        adapters._registered.pop("revision-test")
+    with pytest.raises(KeyError, match="no adapter"):
+        adapters.revision("nope")

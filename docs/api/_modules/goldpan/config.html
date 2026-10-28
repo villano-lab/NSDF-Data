@@ -285,7 +285,7 @@
 <span class="sd">    config = DCRC_RUN76                                                  # the Run 76 phonon channels</span>
 <span class="sd">    config = PulseConfig(pretrigger_samples=2000, glitch_samples=10, sample_period_s=1e-6)   # your own</span>
 
-<span class="sd">The presets are data, not recommendations: `DCRC_RUN76` is the DCRC readout of the Run 76 (UMN, 2022) series, 0.8 us per</span>
+<span class="sd">The presets are data, not recommendations (the registry, `goldpan.registry`, holds the same readouts with their evidence): `DCRC_RUN76` is the DCRC readout of the Run 76 (UMN, 2022) series, 0.8 us per</span>
 <span class="sd">sample (1.25 MHz; see "The sample period" in `python/README.md` for the evidence), and `Z7` is the Z7 (SNOLAB) readout,</span>
 <span class="sd">1.6 us per sample (625 kHz). Both are right for their data and wrong for each other's.</span>
 <span class="sd">"""</span>
@@ -317,9 +317,11 @@
 
 
 
-<span class="n">DCRC_RUN76</span> <span class="o">=</span> <span class="n">PulseConfig</span><span class="p">(</span><span class="n">pretrigger_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">glitch_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sample_period_s</span><span class="o">=</span><span class="mf">0.8e-6</span><span class="p">)</span>
-<span class="sd">"""The DCRC readout of the Run 76 series (UMN): 1000-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of</span>
-<span class="sd">4096 samples is 3.2768 ms."""</span>
+<span class="n">DCRC_RUN76</span> <span class="o">=</span> <span class="n">PulseConfig</span><span class="p">(</span><span class="n">pretrigger_samples</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">glitch_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sample_period_s</span><span class="o">=</span><span class="mf">0.8e-6</span><span class="p">)</span>
+<span class="sd">"""The DCRC readout of the Run 76 series (UMN): 500-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of</span>
+<span class="sd">4096 samples is 3.2768 ms. The pulses of the trigger-locked events start at about sample 500, not at 1000 (value until 2026-10-28;</span>
+<span class="sd">issue 154). The record with the evidence is `[readouts.DCRC_RUN76]` in `registry/readouts.toml` (`goldpan.registry`); this preset is</span>
+<span class="sd">kept for existing code and a test checks that the two agree."""</span>
 
 <span class="n">Z7</span> <span class="o">=</span> <span class="n">PulseConfig</span><span class="p">(</span><span class="n">pretrigger_samples</span><span class="o">=</span><span class="mi">6250</span><span class="p">,</span> <span class="n">glitch_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">sample_period_s</span><span class="o">=</span><span class="mf">1.6e-6</span><span class="p">)</span>
 <span class="sd">"""The Z7 readout (SNOLAB): 6250-sample pretrigger window (10 ms), 1.6 us per sample (625 kHz)."""</span>

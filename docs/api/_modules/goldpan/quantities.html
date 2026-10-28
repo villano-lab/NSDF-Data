@@ -485,7 +485,7 @@
 <span class="sd">    reaches 50% of its own `max_deviation`: `rise_sample(fraction=0.5) * sample_period_s`.</span>
 
 <span class="sd">    Only samples after `config.pretrigger_samples` are searched, so the window must</span>
-<span class="sd">    end before the pulse starts: with the default 1000-sample window a pulse rising</span>
+<span class="sd">    end before the pulse starts: with a 1000-sample window a pulse rising</span>
 <span class="sd">    at sample 505 is not seen. Use `replace(config, pretrigger_samples=500)` for</span>
 <span class="sd">    triggers near sample 500. Raises if `config.sample_period_s` is unset.</span>
 <span class="sd">    """</span>

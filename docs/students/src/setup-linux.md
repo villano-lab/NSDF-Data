@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Linux edition"
-date: "Version 21 · 22 October 2026"
+date: "Version 22 · 28 October 2026"
 ---
 
 ::: tip
@@ -13,6 +13,7 @@ date: "Version 21 · 22 October 2026"
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
+- **What to type, and what not to:** you type only the commands: text in a shaded box, or shaded inline like `git --version`{.cmd}. A checkpoint that says *You should see* describes what the computer prints back: do not type that. The symbol at the start of the line in the terminal (`$`, `>` or `%`) is the prompt the terminal shows you: do not type that either.
 - **Nothing to be afraid of:** the commands in this guide install software and make new folders. None of them deletes your files. If you are not sure what a line does, there is a short table after each group of commands.
 - **When something goes wrong:** do not guess. Copy the message, note the step you were on, and ask the project lead. See *If something goes wrong* at the end.
 
@@ -45,13 +46,21 @@ You see a line of text ending in a symbol such as `>`, `$` or `%`. Type `echo he
 
 ## Step 2. Install Git
 
-This guide uses Ubuntu or Debian commands. If you use another distribution, use its package manager instead. Type:
+First check whether Git is already installed. Type:
+
+```
+git --version
+```
+
+If you see a line starting with `git version`, Git is installed: skip the rest of this step and go to Step 3. If the terminal says the command is not found, install it. This guide uses Ubuntu or Debian commands (on another distribution, use its package manager instead). Type:
 
 ```
 sudo apt install git
 ```
 
 It asks for your password. Nothing appears while you type it; that is normal. Press **Return**, then type `y` and press **Return** if it asks to continue.
+
+**If you cannot use `sudo`** (a computer you do not administer, such as a shared or university machine, or `sudo` says you are not allowed to): skip the `apt` command. Do Step 3 first. Then, in the new terminal, run `conda install -y -c conda-forge git`{.cmd}. That installs Git in your own folder and needs no password. Come back to the checkpoint below and run `git --version`{.cmd}.
 
 ::: checkpoint
 In the terminal, type `git --version`{.cmd} and press Enter. You should see a line starting with `git version`.
@@ -75,14 +84,23 @@ Download the file into your **Downloads** folder: [Miniforge3-Linux-x86_64.sh](h
 bash ~/Downloads/Miniforge3-Linux-x86_64.sh
 ```
 
-Press **Return** to read the licence, type `yes`, accept the default location, and when it asks about running `conda init`, type `yes`. Then **close the terminal and open a new one**.
+The installer asks its questions in the terminal. They read like this (the wording can differ a little between versions):
+
+| What the installer shows | What you do |
+|---|---|
+| `Please, press ENTER to continue` | Press **Return**. The licence text starts to scroll. |
+| The licence text, then the question `Do you accept the license terms?` | Press **Return** (or **Space**) again and again until the text ends and the question appears. Then type `yes` and press **Return**. |
+| `Miniforge3 will now be installed into this location`, with a folder name | Press **Return** to accept the folder. |
+| `Do you wish to update your shell profile to automatically initialize conda?` | Type `yes` and press **Return**. |
+
+Then it prints a lot of text, and ends with `Thank you for installing Miniforge3!`. Now **close the terminal and open a new one**.
 
 ::: checkpoint
 Open a **new** terminal and type `conda --version`{.cmd}, then press Enter. You should see `conda` followed by a version number.
 :::
 
 ::: careful
-Use `sudo` only for the one command that installs Git. Other commands in this guide must not use it.
+Use `sudo` only to install Git in Step 2, and only if `git --version` did not already work. Every other command in this guide must not use it. If you cannot use `sudo`, Step 2 gives a route that does not need it.
 :::
 
 ## Step 4. Download the NSDF-Data code
@@ -306,7 +324,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 21, 22 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 22, 28 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

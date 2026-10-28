@@ -1,5 +1,7 @@
-# The same dataset as r76.dataset.toml, with the detector described in the registry (../../registry) instead of in this file:
-# the readout, the channel map and the roles come from the record of "NAI-S2", and root_detector from its `number`.
+# The dataset of r76.dataset.toml, with the detector described in the registry (../../registry) instead of in this file: the readout, the
+# channel map and the roles come from the record of "NAI-S2", and root_detector from its `number`. Unlike r76.dataset.toml, which keeps the
+# two steps of the guides, this one uses **every algorithm of goldsluice** (python -m goldsluice algorithms): six steps, nine quantities
+# for each of the six channels.
 # Everything written here wins over the registry, key by key. `python -m goldsluice check r76-registry.dataset.toml` lists the files.
 
 [dataset]
@@ -14,8 +16,11 @@ format = "idx"
 glob = "~/idx/07221203_2025_F*"
 detector = "NAI-S2"                            # in the registry: it supplies readout = "DCRC_RUN76" and the idx channels and roles
 
+# Every step names the channels it applies to ("role:phonon": the six sensors) and takes its numbers from the readout with "@readout.<key>",
+# so that the window of the baseline is written once (in registry/readouts.toml) and cannot differ between steps.
+
 [[processing]]
-algorithm = "peak"
+algorithm = "peak"                             # adc_max: the largest sample; current_max: the largest sample above the baseline
 channels = "role:phonon"
 [processing.params]
 glitch_samples = "@readout.glitch_samples"
@@ -23,27 +28,20 @@ pretrigger_samples = "@readout.pretrigger_samples"
 amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
 
 [[processing]]
-algorithm = "max_time"
+algorithm = "max_time"                         # max_time_s: when the largest sample happens, in seconds from the start of the trace
 channels = "role:phonon"
 [processing.params]
 sample_period_s = "@readout.sample_period_s"
 
 [[processing]]
-algorithm = "baseline"                         # the mean and the standard deviation of the pretrigger window (ADC counts)
+algorithm = "baseline"                         # baseline_mean, baseline_std: the mean and the deviation of the pretrigger window (ADC counts)
 channels = "role:phonon"
 [processing.params]
 glitch_samples = "@readout.glitch_samples"
 pretrigger_samples = "@readout.pretrigger_samples"
 
 [[processing]]
-algorithm = "excursion"                        # the largest distance from the baseline after the window, and that over the window's scatter
-channels = "role:phonon"
-[processing.params]
-glitch_samples = "@readout.glitch_samples"
-pretrigger_samples = "@readout.pretrigger_samples"
-
-[[processing]]
-algorithm = "integral"                         # the area of the baseline-subtracted trace (ADC counts times seconds)
+algorithm = "integral"                         # integral: the sum of (x - baseline) over the whole trace, times the sample period (ADC counts x s)
 channels = "role:phonon"
 [processing.params]
 glitch_samples = "@readout.glitch_samples"
@@ -51,11 +49,18 @@ pretrigger_samples = "@readout.pretrigger_samples"
 sample_period_s = "@readout.sample_period_s"
 
 [[processing]]
-algorithm = "rise_time"                        # the 10-90 % rise time of the largest pulse (s)
+algorithm = "excursion"                        # max_deviation: the largest |x - baseline| after the window; excursion_ratio: that over baseline_std
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "rise_time"                        # rise_time_s: from lo to hi of the height of the largest pulse (nan if it has no rise)
 channels = "role:phonon"
 [processing.params]
 glitch_samples = "@readout.glitch_samples"
 pretrigger_samples = "@readout.pretrigger_samples"
 sample_period_s = "@readout.sample_period_s"
-lo = 0.1                                       # the collaboration's 10 and 90 %: part of the definition of the quantity
+lo = 0.1                                       # the usual 10-90 % rise time: these two are part of the definition of the quantity
 hi = 0.9

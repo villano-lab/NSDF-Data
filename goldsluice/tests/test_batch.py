@@ -177,3 +177,102 @@ def test_command_line_reports_a_missing_parameter_as_an_error_not_a_traceback(se
     spec = write_spec(tmp / "nop.dataset.toml", files, params="glitch_samples = 1\npretrigger_samples = 100\n")
     assert main(["run", str(spec)]) == 1
     assert "amps_per_adc" in capsys.readouterr().err
+
+
+def test_a_batch_run_can_write_rq_style_root_files_with_our_names(tmp_path):
+    uproot = pytest.importorskip("uproot")
+    from goldpan.adapters import rq_root
+    tmp = tmp_path                                                          # a series name is a number in an RQ file: not the toy S1
+    files = make_raw(tmp / "raw", dumps=(("24260424_145101", "F0001", 7), ("24260424_145101", "F0002", 5)))
+    spec = write_spec(tmp / "toy.dataset.toml", files)
+    spec.write_text(spec.read_text(encoding="utf-8").replace('output = "out"', 'output = "out"\noutput_format = "root"\nroot_detector = 3'),
+                    encoding="utf-8")
+    report = batch.run(spec, progress=None)
+    assert report.n_events == 12
+    assert sorted(p.name for p in (tmp / "out").glob("*.root")) == ["24260424_145101_F0001.root", "24260424_145101_F0002.root"]
+    t = rq_root.read(tmp / "out", detector=3)
+    assert len(t) == 12 and "A_adc_max" in t.fields and "B_current_max" in t.fields and "Q_adc_max" not in t.fields
+    raw = Events.concatenate(*[parquet.read(f) for f in files])
+    np.testing.assert_allclose(ak.to_numpy(t["A_adc_max"]), raw.trace("A").max(axis=1))
+    with uproot.open(tmp / "out" / "24260424_145101_F0001.root") as f:
+        assert json.loads(str(f["infoDir/goldsluice"]))["steps"][0]["algorithm"] == "peak"          # the provenance travels
+    assert [f.skipped for f in batch.run(spec, progress=None).files] == [True, True]                 # the ledger works for ROOT too
+    with pytest.raises(ValueError, match="rq_root.read"):
+        Dataset.open(spec).processed()
+
+
+# ---- the output must not land in a Git repository
+
+def _repo(tmp_path, gitignore=None, **spec_kwargs):
+    """A Git working tree with a dataset definition inside it, whose output ("out") would be inside the tree."""
+    import shutil
+    import subprocess
+    if shutil.which("git") is None:
+        pytest.skip("git is not installed")
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    if gitignore is not None:
+        (repo / ".gitignore").write_text(gitignore, encoding="utf-8")
+    files = make_raw(tmp_path / "raw")                                  # the raw data is elsewhere
+    return repo, write_spec(repo / "toy.dataset.toml", files, **spec_kwargs)
+
+
+def test_an_output_inside_a_git_tree_that_does_not_ignore_it_is_refused_and_nothing_is_written(tmp_path, capsys):
+    repo, spec = _repo(tmp_path)
+    with pytest.raises(ValueError, match="inside the Git working tree"):
+        batch.check(spec)
+    with pytest.raises(ValueError, match="must not be committed"):
+        batch.run(spec, progress=None)
+    assert not (repo / "out").exists()
+    assert main(["run", str(spec)]) == 1 and "inside the Git working tree" in capsys.readouterr().err
+    assert main(["check", str(spec)]) == 1
+
+
+def test_the_refusal_can_be_overridden_on_purpose(tmp_path):
+    repo, spec = _repo(tmp_path)
+    assert len(batch.check(spec, allow_output_in_repo=True)) == 2
+    assert main(["check", str(spec), "--allow-output-in-repo"]) == 0
+    assert batch.run(spec, allow_output_in_repo=True, progress=None).n_events == 12
+    assert (repo / "out").is_dir()
+
+
+def test_an_output_that_the_tree_ignores_is_accepted_and_git_sees_no_results(tmp_path):
+    import subprocess
+    repo, spec = _repo(tmp_path, gitignore="out/\n")
+    assert batch.run(spec, progress=None).n_events == 12
+    status = subprocess.run(["git", "status", "--porcelain", "--untracked-files=all"], cwd=repo, capture_output=True, text=True).stdout
+    assert "out/" not in status and "toy.dataset.toml" in status
+
+
+def test_the_probe_is_a_data_file_of_the_output_format_so_ignoring_only_the_ledger_is_not_enough(tmp_path):
+    repo, spec = _repo(tmp_path, gitignore="_goldsluice.json\n")        # the ledger is ignored, the data is not
+    with pytest.raises(ValueError, match="inside the Git working tree"):
+        batch.check(spec)
+    (tmp_path / "second").mkdir()
+    repo2, spec2 = _repo(tmp_path / "second", gitignore="*.parquet\n")  # Parquet ignored, but this definition writes ROOT
+    spec2.write_text(spec2.read_text(encoding="utf-8").replace('output = "out"', 'output = "out"\noutput_format = "root"\nroot_detector = 1'),
+                     encoding="utf-8")
+    with pytest.raises(ValueError, match="inside the Git working tree"):
+        batch.check(spec2)
+    spec2.write_text(spec2.read_text(encoding="utf-8").replace('output_format = "root"\nroot_detector = 1', ""), encoding="utf-8")
+    assert len(batch.check(spec2)) == 2                                 # Parquet again: ignored, accepted
+
+
+def test_an_output_outside_any_git_tree_is_accepted(setup):
+    tmp, files, spec = setup                                            # pytest's temporary folders are not in a repository
+    assert len(batch.check(spec)) == 2
+
+
+def test_the_example_writes_outside_the_repository_and_the_repository_ignores_processed_output():
+    import shutil
+    import subprocess
+    from pathlib import Path
+    from goldpan import dataset
+    root = Path(__file__).resolve().parents[2]
+    example = root / "goldsluice" / "examples" / "r76.dataset.toml"
+    if not example.exists() or not (root / ".git").exists() or shutil.which("git") is None:
+        pytest.skip("not in a Git checkout of the repository")
+    assert root.resolve() not in dataset.load(example).output.resolve().parents
+    probe = root / "goldsluice" / "examples" / "processed" / "x" / "_probe.parquet"
+    assert subprocess.run(["git", "check-ignore", "-q", "--", str(probe)], cwd=root).returncode == 0

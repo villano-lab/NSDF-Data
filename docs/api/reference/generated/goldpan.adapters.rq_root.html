@@ -283,7 +283,8 @@
         <article role="main" id="furo-main-content">
           <section id="module-goldpan.adapters.rq_root">
 <span id="goldpan-adapters-rq-root"></span><h1>goldpan.adapters.rq_root<a class="headerlink" href="#module-goldpan.adapters.rq_root" title="Link to this heading">¶</a></h1>
-<p>The ROOT RQ adapter: the processed quantities (RQs) of the collaboration’s reconstruction, read with uproot. Read only.</p>
+<p>The ROOT RQ adapter: the processed quantities (RQs) of the collaboration’s reconstruction, read with uproot; and <code class="code docutils literal notranslate"><span class="pre">write</span></code>, which
+puts our own processed quantities into the same layout.</p>
 <p>The RQs of a series are in a ROOT file with a directory <code class="code docutils literal notranslate"><span class="pre">rqDir</span></code> holding <code class="code docutils literal notranslate"><span class="pre">eventTree</span></code> (event-level quantities) and <code class="code docutils literal notranslate"><span class="pre">zip&lt;N&gt;</span></code> (the
 quantities of detector number <code class="code docutils literal notranslate"><span class="pre">N</span></code>), row-aligned. This adapter returns them as a <strong>table of quantities</strong>: an Awkward Array with one
 record per event whose first fields are the event key (<code class="code docutils literal notranslate"><span class="pre">series</span></code>, <code class="code docutils literal notranslate"><span class="pre">dump</span></code>, <code class="code docutils literal notranslate"><span class="pre">event</span></code>, as in <code class="code docutils literal notranslate"><span class="pre">goldpan.data.KEY_COLUMNS</span></code>) followed by the
@@ -303,6 +304,9 @@ not have is <strong>filled with NaN</strong> (a series without a channel’s RQs
 <li><p><code class="code docutils literal notranslate"><span class="pre">path</span></code> may be one file, a list of files or a folder of <code class="code docutils literal notranslate"><span class="pre">.root</span></code> files; their events follow one after another.</p></li>
 </ul>
 <p>Needs <code class="code docutils literal notranslate"><span class="pre">uproot</span></code> (<code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">uproot</span></code>, in <code class="code docutils literal notranslate"><span class="pre">requirements.txt</span></code>).</p>
+<p>Writing (<code class="code docutils literal notranslate"><span class="pre">write</span></code>) keeps <strong>our names</strong>: a channel’s quantities become branches <code class="code docutils literal notranslate"><span class="pre">&lt;channel&gt;_&lt;quantity&gt;</span></code> (<code class="code docutils literal notranslate"><span class="pre">Side2pC_adc_max</span></code>) in <code class="code docutils literal notranslate"><span class="pre">zip&lt;N&gt;</span></code>,
+not the collaboration’s <code class="code docutils literal notranslate"><span class="pre">P&lt;letter&gt;S&lt;side&gt;&lt;quantity&gt;</span></code>. Only the container is theirs: <code class="code docutils literal notranslate"><span class="pre">rqDir/eventTree</span></code> with <code class="code docutils literal notranslate"><span class="pre">SeriesNumber</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">DumpNumber</span></code>, <code class="code docutils literal notranslate"><span class="pre">EventNumber</span></code>, <code class="code docutils literal notranslate"><span class="pre">rqDir/zip&lt;N&gt;</span></code> row-aligned with it, every branch a <code class="code docutils literal notranslate"><span class="pre">double</span></code>. <code class="code docutils literal notranslate"><span class="pre">read</span></code> reads the files back.</p>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -318,6 +322,9 @@ not have is <strong>filled with NaN</strong> (a series without a channel’s RQs
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#goldpan.adapters.rq_root.read" title="goldpan.adapters.rq_root.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(path, *, detector[, branches, series])</p></td>
 <td><p>The RQs of <code class="code docutils literal notranslate"><span class="pre">path</span></code> (a file, a list of files or a folder of <code class="code docutils literal notranslate"><span class="pre">.root</span></code> files) as a table of quantities, one record per event.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.rq_root.write" title="goldpan.adapters.rq_root.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>(events, path, *, detector)</p></td>
+<td><p>Write the quantities of <code class="code docutils literal notranslate"><span class="pre">events</span></code> (their pulses are not written) as RQ-style ROOT files in the folder <code class="code docutils literal notranslate"><span class="pre">path</span></code>; returns the files.</p></td>
 </tr>
 </tbody>
 </table>
@@ -387,6 +394,28 @@ for all; a name that no tree has is filled with NaN. The first fields are <code 
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.adapters.rq_root.write">
+<span class="sig-prename descclassname"><span class="pre">goldpan.adapters.rq_root.</span></span><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/adapters/rq_root.html#write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.adapters.rq_root.write" title="Link to this definition">¶</a></dt>
+<dd><p>Write the quantities of <code class="code docutils literal notranslate"><span class="pre">events</span></code> (their pulses are not written) as RQ-style ROOT files in the folder <code class="code docutils literal notranslate"><span class="pre">path</span></code>; returns the
+files. One file per series and dump, <code class="code docutils literal notranslate"><span class="pre">&lt;series&gt;_&lt;dump&gt;.root</span></code>, which <code class="code docutils literal notranslate"><span class="pre">read</span></code> accepts (a folder of them is one dataset).</p>
+<p>Each file has <code class="code docutils literal notranslate"><span class="pre">rqDir/eventTree</span></code> (<code class="code docutils literal notranslate"><span class="pre">SeriesNumber</span></code>, <code class="code docutils literal notranslate"><span class="pre">DumpNumber</span></code>, <code class="code docutils literal notranslate"><span class="pre">EventNumber</span></code>) and <code class="code docutils literal notranslate"><span class="pre">rqDir/zip&lt;detector&gt;</span></code> (one branch
+<code class="code docutils literal notranslate"><span class="pre">&lt;channel&gt;_&lt;quantity&gt;</span></code> for each quantity of each channel, our names), row-aligned, every branch a <code class="code docutils literal notranslate"><span class="pre">double</span></code>. A
+<code class="code docutils literal notranslate"><span class="pre">goldsluice</span></code> entry in <code class="code docutils literal notranslate"><span class="pre">events.meta</span></code> (the provenance of a batch run) is stored as the string <code class="code docutils literal notranslate"><span class="pre">infoDir/goldsluice</span></code>.
+<code class="code docutils literal notranslate"><span class="pre">detector</span></code> is the number of the <code class="code docutils literal notranslate"><span class="pre">zip&lt;N&gt;</span></code> tree: it is never assumed. An existing file of the same name is replaced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>events</strong> (<a class="reference internal" href="goldpan.data.html#goldpan.data.Events" title="goldpan.data.Events"><em>Events</em></a>)</p></li>
+<li><p><strong>detector</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -449,6 +478,7 @@ for all; a name that no tree has is filled with NaN. The first fields are <code 
 <li><a class="reference internal" href="#goldpan.adapters.rq_root.iter_chunks"><code class="docutils literal notranslate"><span class="pre">iter_chunks()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.rq_root.branches"><code class="docutils literal notranslate"><span class="pre">branches()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.rq_root.missing"><code class="docutils literal notranslate"><span class="pre">missing()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.rq_root.write"><code class="docutils literal notranslate"><span class="pre">write()</span></code></a></li>
 </ul>
 </li>
 </ul>

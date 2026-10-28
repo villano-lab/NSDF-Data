@@ -6,7 +6,7 @@
 
 [dataset]
 name = "r76-07221203"
-output = "processed/r76-07221203"             # the processed quantities, a goldpan Parquet dataset; relative to this file
+output = "~/goldsluice-output/r76-07221203"   # the processed quantities, a goldpan Parquet dataset; outside the repository on purpose
 
 [[sources]]
 name = "side2"
@@ -26,3 +26,9 @@ channels = "role:phonon"
 glitch_samples = "@readout.glitch_samples"     # taken from the readout above, so the two cannot disagree
 pretrigger_samples = "@readout.pretrigger_samples"
 amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
+
+[[processing]]
+algorithm = "max_time"                         # when the largest sample happens, in seconds from the start of the trace
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"   # from the readout as well: 0.8 us for DCRC_RUN76

@@ -29,7 +29,7 @@ A TOML file, by convention `<name>.dataset.toml`. Annotated; the whole file is `
 ```toml
 [dataset]
 name = "r76-07221203"
-output = "processed/r76"           # the processed quantities (relative to this file)
+output = "~/goldsluice-output/r76" # the processed quantities: outside the repository
 
 [[sources]]                        # where the pulses come from; several allowed
 name = "side2"
@@ -48,6 +48,12 @@ channels = "role:phonon"           # "all", "role:<role>", or a list of names
 glitch_samples = "@readout.glitch_samples"       # from the readout above
 pretrigger_samples = "@readout.pretrigger_samples"
 amps_per_adc = 1.5e-9              # you must supply it: there is no default
+
+[[processing]]                     # the next step, run in order
+algorithm = "max_time"             # time of the largest sample, in s
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"   # from the readout
 ```
 
 | Key | Rule |
@@ -79,6 +85,8 @@ dataset big: 2 file(s) processed, 0 unchanged, 6000 events in 1.49 s
 
 That is 6000 events of 3 channels and 4096 samples from a Parquet source. **Reading is usually most of the time**; the Rust kernels the least. Options: `--chunk N` (events read at once, default 1000: it bounds the memory used by the pulses), `--force` (redo files that are unchanged) and `--backend python` (the Python mirrors: slow, to compare numbers).
 
+**Results do not belong in the repository.** `check` and `run` refuse an `output` folder that lies inside a Git working tree whose `.gitignore` does not cover the data files written there, and say so before anything is written. The repository ignores `processed/` and `_goldsluice.json`, and the example writes to `~/goldsluice-output/`, so the common cases pass. If you really mean it, add `--allow-output-in-repo`.
+
 ## 3. Read it back with goldpan
 
 ```python
@@ -95,7 +103,7 @@ ev.quantities["Side2pC"]["current_max"]    # a record per channel, a field per o
 ## 4. What is written, and what makes it run again
 
 ```
-processed/r76/
+~/goldsluice-output/r76/
     _goldpan.json        the goldpan Parquet manifest
     _goldsluice.json     the ledger: per raw file, what was done, with what, how long
     NAI-S2/07221203_2025_F0001.parquet    one file per series and dump:

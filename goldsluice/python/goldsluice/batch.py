@@ -6,13 +6,19 @@
 or from Python, `goldsluice.batch.run("r76.dataset.toml")`. For every raw file the pulses are read in pieces by the source's
 adapter (`goldpan.adapters`), every step is applied to the channels it names with the Rust kernels, and the quantities (one record
 per channel, keyed by series, dump and event, **without** the pulses) are written into the output dataset of the definition, a
-goldpan Parquet dataset that `goldpan.dataset.Dataset.processed()` reads. A ledger, `_goldsluice.json` in the output folder, records
+goldpan Parquet dataset that `goldpan.dataset.Dataset.processed()` reads (or, with `output_format = "root"`, RQ-style ROOT files
+under our names, written by `goldpan.adapters.rq_root.write` and read with `rq_root.read`; needs `goldsluice[root]`). A ledger, `_goldsluice.json` in the output folder, records
 for each raw file what was done, with what, and how long it took, so that a second run only does what changed (`force=True`
 redoes everything). Every output file also carries its provenance in its metadata (`goldsluice` key).
 
 `goldpan` does the reading and the definition, so batch mode needs it (`pip install goldsluice[batch]`).
+
+Processed data must not end up in a Git repository: `check` and `run` refuse an output folder that lies inside a Git working tree
+and whose data files that tree does not ignore (`check_output_location`; `allow_output_in_repo=True`, or `--allow-output-in-repo`
+on the command line, overrides it).
 """
 import json
+import subprocess
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -86,9 +92,38 @@ def _load_ledger(out: Path) -> dict:
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {"format_version": 1, "files": {}}
 
 
-def check(spec_path) -> list:
+def _git_root(path: Path) -> Optional[Path]:
+    """The top of the Git working tree that contains `path` (which need not exist yet), or None."""
+    here = path.resolve()
+    for folder in (here, *here.parents):
+        if (folder / ".git").exists():
+            return folder
+    return None
+
+
+def check_output_location(out: Path, output_format: str = "parquet") -> None:
+    """Raise `ValueError` if the output folder `out` is inside a Git working tree that does not ignore the data files written there
+    (`_probe.parquet`, or `_probe.root` for ROOT output): results must not be committed by accident. An output outside any
+    repository, or inside one that ignores it (the `processed/` rule of this repository's `.gitignore`), passes. When Git cannot
+    answer (it is not installed, or it fails on that folder) nothing is refused."""
+    root = _git_root(out)
+    if root is None:
+        return
+    probe = out.resolve() / ("_probe.root" if output_format == "root" else "_probe.parquet")
+    try:
+        answer = subprocess.run(["git", "check-ignore", "-q", "--", str(probe)], cwd=root, capture_output=True)
+    except OSError:
+        return
+    if answer.returncode == 1:                                  # 0 = ignored, 1 = not ignored, anything else = Git cannot tell
+        raise ValueError(f"the output folder {out} is inside the Git working tree {root} and is not ignored by it: processed data "
+                         f"must not be committed. Write it elsewhere (output = \"~/goldsluice-output/<name>\" in the definition), "
+                         f"or add the folder to .gitignore, or, if you really mean it, pass allow_output_in_repo=True "
+                         f"(--allow-output-in-repo)")
+
+
+def check(spec_path, *, allow_output_in_repo: bool = False) -> list:
     """Read the definition and return what `run` would look at, as `[(source name, path), ...]`; raises on any problem (an unknown
-    algorithm, a pattern that matches nothing, a bad readout)."""
+    algorithm, a pattern that matches nothing, a bad readout, an output folder inside a Git working tree that does not ignore it)."""
     _, dataset, _, _ = _goldpan()
     spec = dataset.load(spec_path)
     if not spec.steps:
@@ -96,15 +131,17 @@ def check(spec_path) -> list:
     for step in spec.steps:
         if step.algorithm not in ALGORITHMS:
             raise ValueError(f"unknown algorithm {step.algorithm!r}; goldsluice has {sorted(ALGORITHMS)}")
+    if not allow_output_in_repo:
+        check_output_location(spec.output, spec.output_format)
     return [(s.name, f) for s in spec.sources for f in s.files()]
 
 
-def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "rust",
+def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "rust", allow_output_in_repo: bool = False,
         progress: Optional[Callable[[str], None]] = print) -> Report:
     """Process the dataset defined in `spec_path`; returns the `Report` (what was done and the timing). `chunk` is the number of
     events read at once (it bounds the memory used by the pulses); `backend="python"` runs the mirrors, for comparison."""
     ak, dataset, parquet, Events = _goldpan()
-    todo = check(spec_path)
+    todo = check(spec_path, allow_output_in_repo=allow_output_in_repo)
     spec = dataset.load(spec_path)
     out = spec.output
     out.mkdir(parents=True, exist_ok=True)
@@ -157,7 +194,11 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
         events = Events(events.detector, {}, events.quantities, {"goldsluice": provenance})
         t2 = time.perf_counter()
-        parquet.write(events, out)
+        if spec.output_format == "root":
+            from goldpan.adapters import rq_root          # needs uproot (goldpan[root])
+            rq_root.write(events, out, detector=spec.root_detector)
+        else:
+            parquet.write(events, out)
         fr.write_s = time.perf_counter() - t2
         series_dumps = sorted({f"{s}_{d}" for s, d in zip(events.quantities["series"].to_list(),
                                                           events.quantities["dump"].to_list())})

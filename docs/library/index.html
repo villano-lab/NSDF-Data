@@ -36,7 +36,7 @@
 <tr><td><a href="#goldpan.adapters.midas"><code>goldpan.adapters.midas</code></a></td><td>The MIDAS adapter: raw SuperCDMS SNOLAB DAQ files (<code>.mid</code>, <code>.mid.gz</code>, <code>.mid.lz4</code>) into an <code>Events</code></td><td>5</td><td>5</td><td>0</td></tr>
 <tr><td><a href="#goldpan.adapters.parquet"><code>goldpan.adapters.parquet</code></a></td><td>The native format of goldpan and goldsluice: Parquet (specification, format version 1)</td><td>3</td><td>3</td><td>0</td></tr>
 <tr><td><a href="#goldpan.adapters.rq"><code>goldpan.adapters.rq</code></a></td><td>Quantity tables from any RQ source, and how they join an <code>Events</code></td><td>1</td><td>1</td><td>0</td></tr>
-<tr><td><a href="#goldpan.adapters.rq_root"><code>goldpan.adapters.rq_root</code></a></td><td>The ROOT RQ adapter: the processed quantities (RQs) of the collaboration's reconstruction, read with uproot</td><td>4</td><td>4</td><td>0</td></tr>
+<tr><td><a href="#goldpan.adapters.rq_root"><code>goldpan.adapters.rq_root</code></a></td><td>The ROOT RQ adapter: the processed quantities (RQs) of the collaboration's reconstruction, read with uproot; and <code>write</code>, which puts our own processed quantities into the same layout</td><td>5</td><td>5</td><td>0</td></tr>
 </tbody></table></div>
 
 <h2 id="goldpan.io">goldpan.io</h2>
@@ -232,7 +232,8 @@ ev2 = compute(ev, {"max": pulse_max, "tmax": max_time}, channels=["A"])      # a
 <p>The file (<code>r76.dataset.toml</code>):</p>
 <pre>[dataset]
 name = "r76-nai"
-output = "processed/r76-nai"            # the processed quantities: a goldpan Parquet dataset (directory), relative to this file</pre>
+output = "~/goldsluice-output/r76-nai"  # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
+# output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)</pre>
 <pre>[[sources]]                             # where the pulses come from; as many as you like
 name = "side2"
 format = "idx"                          # any adapter: idx, midas, parquet, or one you registered
@@ -255,13 +256,16 @@ amps_per_adc = 1.5e-9</pre>
 ev = ds.read()                          # the pulses, with the processed quantities attached (one Events)
 q = ds.processed()                      # only the processed quantities, no pulses: small and fast
 ev.quantities["Side2pA"]["current_max"]</pre>
+<p>With <code>output_format = "root"</code> the quantities are written as ROOT files in the layout of the collaboration's RQ files (<code>rqDir/eventTree</code> and <code>rqDir/zip&lt;N&gt;</code>, see <code>goldpan.adapters.rq_root.write</code>), under our names (<code>Side2pA_adc_max</code>); <code>root_detector</code> is that <code>N</code>. Read them with <code>goldpan.adapters.rq_root.read</code>: <code>Dataset.processed()</code> reads the Parquet output only.</p>
 <p>The processed quantities are stored one record per channel (<code>quantities["Side2pA"]["adc_max"]</code>), keyed by <code>series</code>, <code>dump</code>, <code>event</code>. <code>python -m goldsluice run &lt;file&gt;</code> produces them; reading them before that raises an error that says so.</p>
 <h3><code>Dataset(spec: DatasetSpec)</code></h3>
 <p>A dataset definition opened for reading: the pulses from its sources and the quantities processed from them.</p>
-<h3><code>DatasetSpec(name: str, output: pathlib.Path, sources: Tuple[Source, ...], steps: Tuple[Step, ...], path: pathlib.Path, raw: Mapping[str, Any]) -&gt; None</code></h3>
+<h3><code>DatasetSpec(name: str, output: pathlib.Path, sources: Tuple[Source, ...], steps: Tuple[Step, ...], path: pathlib.Path, raw: Mapping[str, Any], output_format: str = 'parquet', root_detector: Optional[int] = None) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
 <tr><td><code>path</code></td><td>The definition file.</td></tr>
 <tr><td><code>raw</code></td><td>The parsed TOML, kept for provenance.</td></tr>
+<tr><td><code>output_format</code></td><td><code>"parquet"</code> (a goldpan dataset) or <code>"root"</code> (RQ-style ROOT files, <code>goldpan.adapters.rq_root.write</code>).</td></tr>
+<tr><td><code>root_detector</code></td><td>The number <code>N</code> of the <code>zip&lt;N&gt;</code> tree of the ROOT output; required with <code>output_format = "root"</code>, otherwise <code>None</code>.</td></tr>
 </tbody></table></div>
 <h3><code>Source(name: str, format: str, patterns: Tuple[str, ...], detector: str, readout: Optional[PulseConfig], read: Mapping[str, Any], base: pathlib.Path) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
@@ -371,18 +375,20 @@ ev.quantities["PTOFamps"]</pre>
 </tbody></table></div>
 
 <h2 id="goldpan.adapters.rq_root">goldpan.adapters.rq_root</h2>
-<p>The ROOT RQ adapter: the processed quantities (RQs) of the collaboration's reconstruction, read with uproot. Read only.</p>
+<p>The ROOT RQ adapter: the processed quantities (RQs) of the collaboration's reconstruction, read with uproot; and <code>write</code>, which puts our own processed quantities into the same layout.</p>
 <p>The RQs of a series are in a ROOT file with a directory <code>rqDir</code> holding <code>eventTree</code> (event-level quantities) and <code>zip&lt;N&gt;</code> (the quantities of detector number <code>N</code>), row-aligned. This adapter returns them as a <strong>table of quantities</strong>: an Awkward Array with one record per event whose first fields are the event key (<code>series</code>, <code>dump</code>, <code>event</code>, as in <code>goldpan.data.KEY_COLUMNS</code>) followed by the RQs, so that <code>goldpan.adapters.rq.attach</code> can add them to an <code>Events</code> of the same events:</p>
 <pre>from goldpan.adapters import rq_root, rq
 table = rq_root.read("24260424_145101.root", detector=7, branches=["EventType", "PTOFamps", "P*max", "P*std"])
 events = rq.attach(events, table)</pre>
 <ul><li>The detector number is never assumed: pass <code>detector=</code>.</li><li><code>branches</code> limits what is read; names may use <code>*</code> and <code>?</code> (<code>"P*max"</code>). <code>None</code> reads everything. A branch that the file does not have is <strong>filled with NaN</strong> (a series without a channel's RQs is not an error), listed in <code>meta</code>-less form by <code>missing()</code>.</li><li>The key comes from the file: <code>DumpNumber</code> becomes the label <code>F&lt;dump:04d&gt;</code> (<code>3</code> is <code>"F0003"</code>), <code>EventNumber</code> is <code>event</code>, and <code>series</code> is <code>series=</code> or, by default, the series name found in the file name (<code>\d{8}_\d{4,6}</code>).</li><li>Values are returned as stored (including a fill value such as -999999 where a detector was not read out).</li><li><code>path</code> may be one file, a list of files or a folder of <code>.root</code> files; their events follow one after another.</li></ul>
 <p>Needs <code>uproot</code> (<code>pip install uproot</code>, in <code>requirements.txt</code>).</p>
+<p>Writing (<code>write</code>) keeps <strong>our names</strong>: a channel's quantities become branches <code>&lt;channel&gt;_&lt;quantity&gt;</code> (<code>Side2pC_adc_max</code>) in <code>zip&lt;N&gt;</code>, not the collaboration's <code>P&lt;letter&gt;S&lt;side&gt;&lt;quantity&gt;</code>. Only the container is theirs: <code>rqDir/eventTree</code> with <code>SeriesNumber</code>, <code>DumpNumber</code>, <code>EventNumber</code>, <code>rqDir/zip&lt;N&gt;</code> row-aligned with it, every branch a <code>double</code>. <code>read</code> reads the files back.</p>
 <div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
 <tr id="goldpan.adapters.rq_root.read"><td><code>read</code><br><small><code>(path, *, detector: int, branches=None, series: Optional[str] = None) -&gt; awkward.highlevel.Array</code></small></td><td>The RQs of <code>path</code> (a file, a list of files or a folder of <code>.root</code> files) as a table of quantities, one record per event.<details><summary>details</summary><p><code>detector</code> is the number of the <code>zip&lt;N&gt;</code> tree to read (required). <code>branches</code>: names (with <code>*</code>/<code>?</code> wildcards) to read, <code>None</code> for all; a name that no tree has is filled with NaN. The first fields are <code>series</code>, <code>dump</code>, <code>event</code>.</p></details></td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.adapters.rq_root.iter_chunks"><td><code>iter_chunks</code><br><small><code>(path, *, chunk: int = 256, detector: int, branches=None, series: Optional[str] = None) -&gt; Iterator[awkward.highlevel.Array]</code></small></td><td>Yield the table of <code>read</code> in pieces of at most <code>chunk</code> events, file by file, without reading a file at once.</td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.adapters.rq_root.branches"><td><code>branches</code><br><small><code>(path, *, detector: int) -&gt; dict</code></small></td><td>The branch names of the first file of <code>path</code>: <code>{"eventTree": [...], "zip&lt;N&gt;": [...]}</code>.</td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.adapters.rq_root.missing"><td><code>missing</code><br><small><code>(path, *, detector: int, branches) -&gt; list</code></small></td><td>The requested <code>branches</code> (wildcards included) that the first file of <code>path</code> does not have, and that <code>read</code> fills with NaN.</td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.adapters.rq_root.write"><td><code>write</code><br><small><code>(events: Events, path, *, detector: int) -&gt; list</code></small></td><td>Write the quantities of <code>events</code> (their pulses are not written) as RQ-style ROOT files in the folder <code>path</code>; returns the files. One file per series and dump, <code>&lt;series&gt;_&lt;dump&gt;.root</code>, which <code>read</code> accepts (a folder of them is one dataset).<details><summary>details</summary><p>Each file has <code>rqDir/eventTree</code> (<code>SeriesNumber</code>, <code>DumpNumber</code>, <code>EventNumber</code>) and <code>rqDir/zip&lt;detector&gt;</code> (one branch <code>&lt;channel&gt;_&lt;quantity&gt;</code> for each quantity of each channel, our names), row-aligned, every branch a <code>double</code>. A <code>goldsluice</code> entry in <code>events.meta</code> (the provenance of a batch run) is stored as the string <code>infoDir/goldsluice</code>. <code>detector</code> is the number of the <code>zip&lt;N&gt;</code> tree: it is never assumed. An existing file of the same name is replaced.</p></details></td><td><span class="status done">done</span></td></tr>
 </tbody></table></div>
 
 </div>

@@ -46,7 +46,7 @@ baseline = trace[:, cfg.glitch_samples:cfg.pretrigger_samples].mean(axis=1)
 peak = (trace - baseline[:, None])[:, cfg.glitch_samples:].max(axis=1)
 ```
 
-In the first dump the median peak of `Side2pC` is 6 ADC counts and the largest is 411. Doing this for every dump means reading all 82,000 events from disk each time, which is slow (a few seconds per dump) and is repeated by every analysis. That is the job of `goldsluice`.
+In the first dump the median peak of `Side2pC` is 6 ADC counts and the largest is 411. **Reading the traces is the slow part, and it is not cached.** `iter_events` reads the raw dump from disk every time you call it: about 3 seconds for this one dump, and `ds.read()` would do the same for all 30 dumps (82,000 events) and hold six 4096-sample traces for each event in memory. Only the processed quantities are cached (see below). So read the traces of one dump, or of a few events, to look at pulses, and leave the pass over all the data to `goldsluice`.
 
 ## Processing the downloaded data with `goldsluice` and reading it back in `goldpan`
 
@@ -65,3 +65,23 @@ q.quantities["Side2pC"]["current_max"]      # a record per channel, a field per 
 ```
 
 This is 81,992 events with three quantities for each of the six channels. `current_max` is still in ADC counts because the conversion to amps (`amps_per_adc`) is a placeholder equal to 1 until the scale is known. For the RQ-file layout, `goldpan.rqdata.load` reads the quantities as numpy arrays and keeps what it read in a cache (`~/.cache/goldpan/rqdata`), so the second read of the same files takes a tenth of a second instead of four.
+
+## Cached reading of the quantities (under development)
+
+There is a second way to read the quantities, `goldpan.rqdata.load`, which reads RQ files (the format of the collaboration's processed files) as numpy arrays and keeps what it read in a cache, `~/.cache/goldpan/rqdata`. `goldsluice` can write its quantities as such files (`output_format = "root"` in the definition), or `goldpan.adapters.rq_root.write` can write the Parquet quantities of the previous section as RQ files, one per dump with a branch `<channel>_<quantity>` for each. The quantities are chosen with patterns, where `P*` stands for the six sensors:
+
+```python
+from goldpan import rqdata
+
+RQS = ["P*_adc_max", "P*_current_max", "P*_max_time_s"]
+where = dict(detector=N, files=str(RQ_DIR / "{series}_F*.root"), phonon_channels=sensors, all_files=True)
+
+data = rqdata.load("07221203_2025", RQS, **where)     # first time: reads the 30 files
+data = rqdata.load("07221203_2025", RQS, **where)     # second time: from the cache
+data["Side2pA_current_max"]                           # a numpy array, one number per event
+```
+
+For the 30 files (81,992 events, 18 branches) the first read took 4.0 seconds and the second 0.1 seconds. Asking for fewer quantities than a cached read has (`["P*_current_max"]`) is also served from the cache, and a file that is rewritten is read again, never served stale. `rqdata.cache_info()` lists the entries (here 2 entries, 37 MB) and `rqdata.cache_clear()` removes them.
+
+This is not the same reader as `Dataset` and `ds.processed()`: it returns flat arrays and not an `Events`, it takes patterns for the quantities, which the other reader does not, and it reads ROOT files only. Whether there should be two ways of reading, and where the cache belongs, is an open question for the development ([issue 177](https://github.com/villano-lab/NSDF-Data/issues/177)). The raw traces are not cached by either.
+

@@ -158,8 +158,10 @@ that needs `h5py`.
 A frozen dataclass (`pretrigger_samples`, `glitch_samples`, `sample_period_s`) passed explicitly to every function, instead
 of each notebook hardcoding its own copy of these constants. **In `goldpan.config` it has no defaults** (pass
 `sample_period_s=None` if the period is unknown: functions that need it then raise). The presets are
-`DCRC_RUN76 = PulseConfig(1000, 10, 0.8e-6)` and `Z7 = PulseConfig(6250, 10, 1.6e-6)`. In the flat alias
-`pulse_config`, `PulseConfig()` has the Run 76 values as defaults (see above).
+`DCRC_RUN76 = PulseConfig(500, 10, 0.8e-6)` and `Z7 = PulseConfig(6250, 10, 1.6e-6)` (the same readouts, with the evidence for
+each number, are in `registry/readouts.toml`; the Run 76 pulses start at about sample 500, so the pretrigger window ends there,
+which was 1000 until 2026-10-28, issue 154). In the flat alias `pulse_config`, `PulseConfig()` keeps the values the notebooks were
+run with, 1000-sample window included (see above).
 
 ### The sample period (changed on 2026-10-22)
 

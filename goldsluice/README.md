@@ -1,7 +1,7 @@
 # goldsluice
 
 Fast pulse-reduction kernels in Rust, with a **Python mirror of every algorithm**. It is the reduction half of the pair that
-`goldpan` (analysis, in `../python/`) belongs to. It is in its first steps: two algorithms, `peak` and `max_time`.
+`goldpan` (analysis, in `../python/`) belongs to. It is in its first steps: three algorithms, `peak`, `max_time` and `baseline` (issue 155).
 
 ```python
 from goldsluice import run, compare

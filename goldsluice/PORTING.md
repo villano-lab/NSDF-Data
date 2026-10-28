@@ -90,6 +90,7 @@ the arithmetic as `f64` or check the cases by hand.
 
 - [ ] the mirror follows the kernel subset (no numpy in `kernel`)
 - [ ] `REVISION = 1` (a new algorithm) or raised by one (a fix that changes its results)
+- [ ] a step for it in `examples/r76-registry.dataset.toml`, the example that shows every algorithm (`tests/test_examples.py` fails until there is one)
 - [ ] `problem` messages are identical in Python and Rust
 - [ ] a hand-computed test in Rust and in Python
 - [ ] `cases()` has an ordinary, an edge and a trap case; `bad_cases()` has one input for each way `problem` refuses

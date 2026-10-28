@@ -140,7 +140,7 @@ t = rq_root.read(Path.home() / "goldsluice-output" / "r76-root", detector=1)
 t["Side2pC_adc_max"]        # one record per event
 ```
 
-`root_detector = 1` is **our choice** for the NaI detector of Run 76: the number is not in the raw data, so it is written in the definition file (the Z7 files of series 24260424_145101 have `zip7` and `zip14`, which are the collaboration's detector numbers). Use the same number for every definition of that detector, so that the files can be read together. The commented lines in `examples/r76.dataset.toml` show the same two keys.
+`root_detector = 1` is **our choice** for the NaI detector of Run 76: the number is not in the raw data, so it lives in the definition file; use the same one in every definition of that detector. (The collaboration's Z7 files have `zip7` and `zip14`.) The commented lines in `examples/r76.dataset.toml` show the same two keys.
 
 ## 7. When it fails
 

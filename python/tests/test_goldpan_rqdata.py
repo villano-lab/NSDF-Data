@@ -208,3 +208,47 @@ def test_series_list_accepts_a_name_a_list_or_a_csv(tmp_path):
     csv.write_text("run\n4\n", encoding="utf-8")
     with pytest.raises(ValueError, match="no `series` column"):
         rqdata.series_list(str(csv))
+
+
+# ---- a series stored as many files (the dumps of Run 76) ---------------------------------------------------------------
+
+@pytest.fixture
+def dump_files(env):
+    tmp, root, dumps = env
+    folder = tmp / "dumps"
+    for d in dumps[:2]:
+        write_file(folder, f"{SERIES[0]}_{d.dump}", d)                     # <series>_<dump>.root, as goldpan.rq_root.write names them
+    return folder, dumps
+
+
+def test_all_files_reads_every_dump_of_the_series_in_name_order(dump_files, capsys):
+    folder, dumps = dump_files
+    pattern = str(folder / "{series}_F*.root")
+    data = load_(SERIES[0], ["EventType", "PTOFamps"], files=pattern, all_files=True)
+    ref = np.concatenate([ss.rqs(d)["PTOFamps"] for d in dumps[:2]])
+    np.testing.assert_allclose(data["PTOFamps"], ref)
+    assert data["dump"].tolist() == [dumps[0].dump] * dumps[0].n_events + [dumps[1].dump] * dumps[1].n_events
+    assert set(data["series"]) == {SERIES[0]} and len(data.files[SERIES[0]]) == 2 and "(2 files)" in capsys.readouterr().out
+    again = load_(SERIES[0], ["EventType", "PTOFamps"], files=pattern, all_files=True)
+    assert "from cache" in capsys.readouterr().out
+    np.testing.assert_array_equal(again["PTOFamps"], data["PTOFamps"])
+
+
+def test_without_all_files_only_the_last_match_is_read_and_a_new_dump_makes_the_cache_stale(dump_files, capsys):
+    folder, dumps = dump_files
+    pattern = str(folder / "{series}_F*.root")
+    last = load_(SERIES[0], ["PTOFamps"], files=pattern, verbose=False)
+    assert len(last["PTOFamps"]) == dumps[1].n_events
+    load_(SERIES[0], ["PTOFamps"], files=pattern, all_files=True, verbose=False)
+    write_file(folder, f"{SERIES[0]}_F0003", dumps[0])                       # another dump appears
+    more = load_(SERIES[0], ["PTOFamps"], files=pattern, all_files=True)
+    assert "from the RQ files" in capsys.readouterr().out and len(more["PTOFamps"]) == 2 * dumps[0].n_events + dumps[1].n_events
+
+
+def test_find_files_gives_all_matches_or_what_the_function_returns(dump_files):
+    folder, dumps = dump_files
+    got = rqdata.find_files(SERIES[0], str(folder / "{series}_F*.root"))
+    assert [os.path.basename(g) for g in got] == [f"{SERIES[0]}_F0001.root", f"{SERIES[0]}_F0002.root"]
+    assert rqdata.find_files("24260101_000000", str(folder / "{series}_F*.root")) == []
+    assert rqdata.find_files(SERIES[0], lambda s: got) == got and rqdata.find_files(SERIES[0], lambda s: got[0]) == [got[0]]
+    assert rqdata.find_files(SERIES[0], lambda s: None) == []

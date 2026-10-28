@@ -71,7 +71,21 @@ ds = Dataset.open("goldsluice/examples/r76-registry.dataset.toml")
 ev = next(ds.iter_events(processed=False))     # the pulses of the first raw dump, as one Events
 ```
 
+The lines `registry = [...]` and `detector = "NAI-S2"` hand the description of the detector (its channels, their roles and the readout) to the registry, which is explained, with a copy of its files, in [Appendix A](#appendix-a-the-detector-registry).
+
 For the Run 76 series `07221203_2025` this is the first of 30 raw files, 1,517 events and six phonon channels (`Side2pA` to `Side2pF`). `ev.trace("Side2pC")` is an array with one row per event and one column per sample (4096 samples of 0.8 us). A simple analysis of it: subtract each event's baseline (the mean of the samples before the trigger, skipping the first ten, which can carry a glitch), take the largest value above it, and histogram that over the events or overlay the largest pulses against `ev.time_axis()`.
+
+The channel names say where a trace comes from. A name such as `Side2pC` is the sensor `pC` on Side 2 of the detector; Figure 1, the figure of Note 9, shows where the six sensors are on the detector.
+
+![](img/goldpan-sluice-intro-fig1.png)
+
+**Figure 1: The six sensors of detector S104 on Side 2**, the face that is read out in this series (as seen after flipping the detector over; figure of Note 9). Each region is coloured by its readout board, DCRC1 (orange) or DCRC3 (blue), and labelled with its letter, its board and input.
+
+The raw dump labels a trace only by two small integers, `<event>_<detector>_Phonon_<n>`. In Run 76 the three "detectors" 0, 1 and 2 are not detectors but three four-input readout boards (DCRC1, DCRC3 and DCRC4) of one detector, and `n` is the input of the board, `pA` to `pD`. Figure 2 shows how the dump's labels map to the channel names. Only six of the twelve inputs are sensors, one is the trigger signal of the NaI array and five are not connected, so `goldpan` has six channels for this series. The map is in the registry (Appendix A) and in `goldpan.channels`.
+
+![](img/goldpan-sluice-intro-fig2.png)
+
+**Figure 2: From the dump's trace labels to the channel names of the Side-2 readout.** Each box is a readout board and each row one of its four inputs. The blue rows are the six sensors, `Side2pA` to `Side2pF`. The orange row is the input of the NaI array's trigger signal, which is not a channel of the detector, and the grey rows are not connected (their signal never changes). The order of the boards and of the inputs is inferred, not yet checked against a file.
 
 ```python
 cfg = ev.detector.readout.segments[0].config
@@ -119,3 +133,72 @@ For the 30 files (81,992 events, 18 branches) the first read took 4.0 seconds an
 
 This is not the same reader as `Dataset` and `ds.processed()`: it returns flat arrays and not an `Events`, it takes patterns for the quantities, which the other reader does not, and it reads ROOT files only. Whether there should be two ways of reading, and where the cache belongs, is an open question for the development ([issue 177](https://github.com/villano-lab/NSDF-Data/issues/177)). The raw traces are not cached by either.
 
+## Appendix A: The detector registry
+
+The dataset definition file above does not say how the detector is wired or how its traces are sampled. That is data about the detector, not code, so it lives in the `registry/` folder of the repository, in TOML files read by `goldpan.registry`. Nothing in `goldpan` or `goldsluice` contains it. The folder is laid out so that it can later become a repository of its own, or a database behind the same interface (issue 150).
+
+- A **detector** record (`run76.toml`) has the detector's name (`NAI-S2`), its number (the `N` of the `zip<N>` tree in ROOT output), the name of its readout, and, for each file format, where each named channel is wired and what role it has. For the idx dumps a channel is a pair `[board, input]`, so `Side2pC = [0, 0]` is input 0 of dump channel 0.
+- A **readout** record (`readouts.toml`) has what is needed to interpret a trace: the sample period, the number of samples before the trigger that are used as the baseline (`pretrigger_samples`) and the number of samples at the start of the trace that carry a glitch (`glitch_samples`).
+- Every record has a `status`, `confirmed` or `inferred`, and an `evidence` text that says where the numbers come from. A guess is never written as `confirmed`. Both records here are `inferred`: the idx dumps carry no detector name or number, so nothing can be checked against a file.
+- A dataset definition names the folder with `[dataset] registry = ["../../registry"]` (relative to the definition file), or the environment variable `GOLDPAN_REGISTRY` lists folders. Anything the definition file writes itself wins over the registry, key by key. A name may be defined only once.
+
+A copy of the two files as of this note (the repository has the current ones):
+
+`registry/run76.toml`
+
+```toml
+# The Run 76 detector (UMN, NaI array with Side-2 readout): the one the series 07221203_2025 was taken with.
+# Read by goldpan.registry (`registry = ["../registry"]` in a dataset definition file). Not part of the library.
+format_version = 1
+
+[detectors."NAI-S2"]
+number = 1                         # the N of zip<N> in ROOT output: OUR choice for this detector; it is in no raw file (issue 150)
+readout = "DCRC_RUN76"             # see readouts.toml: 0.8 us per sample, 500-sample pretrigger window, 10 glitch samples
+status = "inferred"
+evidence = """The six sensors and their board inputs come from the Setup table of the Run 76 summary (Side-2 readout); that dump \
+detectors 0, 1, 2 are DCRC1, DCRC3, DCRC4 (ascending board number) is inferred and channels 0 to 3 = inputs pA to pD is assumed: \
+see goldpan.channels, which holds the same map and is marked under development. The detector number is our own choice (issue 150). \
+The Run 76 idx dumps carry no detector name or number, so nothing here can be checked against a file."""
+description = "Run 76 NaI array, Side-2 readout; DCRC4 pA is the NaI trigger input and is not a channel of this detector."
+series = ["07221203_2025"]
+
+[detectors."NAI-S2".idx]           # defaults for [sources.read] of an idx source: channel name = [board, input]
+channels = { Side2pC = [0, 0], Side2pF = [0, 1], Side2pE = [0, 3], Side2pB = [1, 0], Side2pA = [1, 1], Side2pD = [1, 3] }
+roles = { Side2pC = "phonon", Side2pF = "phonon", Side2pE = "phonon", Side2pB = "phonon", Side2pA = "phonon", Side2pD = "phonon" }
+```
+
+`registry/readouts.toml`
+
+```toml
+# The readouts (how a trace is sampled and where its baseline window ends) of the data we analyse. A detector record names one
+# (`readout = "..."`). Read by goldpan.registry. Not part of the library; `goldpan.config` keeps the same two numbers as presets for
+# old code, and a test checks that they agree with this file.
+format_version = 1
+
+[readouts.DCRC_RUN76]
+pretrigger_samples = 500           # the end of the baseline window, and the sample where the trigger-locked pulses start: see evidence
+glitch_samples = 10
+sample_period_s = 0.8e-6
+status = "inferred"
+series = ["07221203_2025"]
+description = "DCRC readout of the Run 76 series (UMN, Side-2 readout): 4096 samples at 0.8 us (1.25 MHz) is a trace of 3.2768 ms."
+evidence = """sample_period_s: the first-pulse analysis of the Run 76 phonon channels, see 'The sample period' in python/README.md (we used \
+1.6 us until 2026-10-22, which is the Z7 value). pretrigger_samples: measured on dumps F0005, F0015 and F0025 of 07221203_2025 \
+(about 8,800 events, issue 154). The 90 % of the events whose trigger_type label is 'Unknown' have their pulse start at sample \
+480 to 520 (the 10 % rise point is at sample 498, p10 to p90 480 to 510) and are flat before sample 470, so the pulse starts at \
+about sample 500, not at the 1000 that this entry had until 2026-10-28. With 1000, the baseline of `peak` (the mean of samples \
+10 to 1000) was about half pulse and `current_max` came out at 0.52 of its value; a baseline over samples 10 to 500 gives 0.999 \
+of it. Note 2 compares the two windows and uses 500. The events labelled 'Physics' have pulses at random times. The numbers are \
+the same on Side2pA, B and F. glitch_samples: see goldpan.config."""
+
+[readouts.Z7]
+pretrigger_samples = 6250
+glitch_samples = 10
+sample_period_s = 1.6e-6
+status = "inferred"
+description = "The Z7 readout (SNOLAB): a 6250-sample pretrigger window (10 ms), 1.6 us per sample (625 kHz)."
+evidence = """Taken from the Z7 analysis of the collaboration's scdms-analysis-tools (a fixed 10 ms pretrigger window at 1.6 us per \
+sample). NOT checked against a file: the begin-of-run ODB of series 24260424_145101 (Det07) gives a pre-trigger offset of 16383 \
+samples (26.2 ms) and an on-pulse length of 32768 samples (52.4 ms), which is a different number; they may be different \
+configurations. Confirm before using this entry for that series (issue 150)."""
+```

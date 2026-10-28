@@ -215,6 +215,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.legacy.html">goldpan.legacy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.operations.html">goldpan.operations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.quantities.html">goldpan.quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.testing.html">goldpan.testing</a></li>
@@ -295,6 +296,9 @@
 <span class="sd">* `meta`: `run` (run number, state, start and stop time from the ODB), `complete` (the end-of-run event was seen: a file cut short</span>
 <span class="sd">  is not complete), `skipped_events`, `format_version`, `source`.</span>
 <span class="sd">* Hybrid sampling (pre- or post-pulse samples at a coarser rate) is not read yet: such a file raises `NotImplementedError`.</span>
+<span class="sd">* `detectors(path)` lists what the ODB says about each detector (number, name, type, tower, plane, the readout lengths), and</span>
+<span class="sd">  `registry_entry` writes a starting entry for `goldpan.registry` from it. The ODB is read as a source of information about the</span>
+<span class="sd">  detector, never required: `read` takes the detector number and the channels from you.</span>
 
 <span class="sd">`.mid.lz4` files need the `lz4` package (`pip install lz4`); `.mid.gz` and plain `.mid` need nothing.</span>
 <span class="sd">"""</span>
@@ -303,7 +307,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -405,6 +409,117 @@
         <span class="k">if</span> <span class="n">k</span><span class="p">:</span>
             <span class="n">out</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="OdbDetector">
+<a class="viewcode-back" href="../../../reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.OdbDetector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OdbDetector</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""What the ODB of a file says about one detector (`/Detectors/Det&lt;NN&gt;`)."""</span>
+    <span class="n">number</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">"""The `NN` of `Det&lt;NN&gt;`; the N of `zip&lt;N&gt;` in RQ files."""</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">"""`DCRCInfo/DetectorName`, for example `G149`."""</span>
+    <span class="n">type_code</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">"""`DCRCInfo/DetectorType`: 710 and 711 are Ge and Si HV, 700 and 701 iZIP."""</span>
+    <span class="n">tower</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">plane</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">readout</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">"""The phonon lengths of `ReadoutControl` that the block has, by name: `phonon_on_pulse_ms`, `phonon_on_pulse_samples`,</span>
+<span class="sd">    `phonon_pre_trigger_offset_ms`, `phonon_pre_trigger_offset_samples`, `phonon_pre_pulse_ms`, `phonon_pre_pulse_samples`,</span>
+<span class="sd">    `phonon_post_pulse_ms`, `phonon_post_pulse_samples` (pre- and post-pulse are the down-sampled regions of hybrid readout)."""</span></div>
+
+
+
+<span class="n">_DET_DIR</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">'&lt;dir name="Det(\d+)"'</span><span class="p">)</span>
+<span class="n">_DCRC_KEYS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"type_code"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"DetectorType"</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">"tower"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"Tower"</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">"plane"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"Plane"</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s2">"name"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"DetectorName"</span><span class="p">,</span> <span class="nb">str</span><span class="p">)}</span>
+<span class="n">_READOUT_KEYS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"on-pulse length (ms)"</span><span class="p">:</span> <span class="s2">"phonon_on_pulse_ms"</span><span class="p">,</span> <span class="s2">"on-pulse length (samp)"</span><span class="p">:</span> <span class="s2">"phonon_on_pulse_samples"</span><span class="p">,</span>
+                 <span class="s2">"pre-trigger offset (ms)"</span><span class="p">:</span> <span class="s2">"phonon_pre_trigger_offset_ms"</span><span class="p">,</span> <span class="s2">"pre-trigger offset (samp"</span><span class="p">:</span> <span class="s2">"phonon_pre_trigger_offset_samples"</span><span class="p">,</span>
+                 <span class="s2">"pre-pulse length (ms)"</span><span class="p">:</span> <span class="s2">"phonon_pre_pulse_ms"</span><span class="p">,</span> <span class="s2">"pre-pulse length (samp)"</span><span class="p">:</span> <span class="s2">"phonon_pre_pulse_samples"</span><span class="p">,</span>
+                 <span class="s2">"post-pulse length (ms)"</span><span class="p">:</span> <span class="s2">"phonon_post_pulse_ms"</span><span class="p">,</span> <span class="s2">"post-pulse length (samp)"</span><span class="p">:</span> <span class="s2">"phonon_post_pulse_samples"</span><span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_odb_key</span><span class="p">(</span><span class="n">section</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">convert</span><span class="p">):</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">'&lt;key name="'</span> <span class="o">+</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s1">'" type="[A-Z0-9]+"[^&gt;]*&gt;([^&lt;]*)&lt;/key&gt;'</span><span class="p">,</span> <span class="n">section</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">convert</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="parse_odb_detectors">
+<a class="viewcode-back" href="../../../reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.parse_odb_detectors">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_odb_detectors</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The `OdbDetector` of every `/Detectors/Det&lt;NN&gt;` block of an ODB (XML bytes of a begin-of-run event), in order. Only the</span>
+<span class="sd">    `DCRCInfo` and `ReadoutControl` keys are read, by search, not by parsing the tens of megabytes; a key a block lacks is `None`</span>
+<span class="sd">    (or missing from `readout`). An ODB without a `/Detectors` directory gives an empty list."""</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">xml</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"latin-1"</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xml</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">))</span> <span class="k">else</span> <span class="n">xml</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'&lt;dir name="Detectors"'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="n">blocks</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="p">[],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">_DET_DIR</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="n">last</span><span class="p">:</span>                       <span class="c1"># the next directory that also has Det01...: we left /Detectors</span>
+            <span class="n">limit</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="k">break</span>
+        <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">number</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">end</span><span class="p">()))</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="n">number</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">begin</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">blocks</span><span class="p">):</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span> <span class="k">else</span> <span class="n">limit</span>
+        <span class="n">block</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">begin</span><span class="p">:</span><span class="nb">min</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">begin</span> <span class="o">+</span> <span class="mi">2_000_000</span><span class="p">)]</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'&lt;dir name="DCRCInfo"'</span><span class="p">)</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="n">d</span><span class="p">:</span><span class="n">d</span> <span class="o">+</span> <span class="mi">6000</span><span class="p">]</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">""</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="p">:</span> <span class="n">_odb_key</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">conv</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">conv</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_DCRC_KEYS</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'&lt;dir name="ReadoutControl"'</span><span class="p">)</span>
+        <span class="n">readout</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="n">r</span><span class="p">:</span><span class="n">r</span> <span class="o">+</span> <span class="mi">6000</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">_READOUT_KEYS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">_odb_key</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">"Phonon "</span> <span class="o">+</span> <span class="n">key</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">readout</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">OdbDetector</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="s2">"type_code"</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="s2">"tower"</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="s2">"plane"</span><span class="p">],</span> <span class="n">readout</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="detectors">
+<a class="viewcode-back" href="../../../reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.detectors">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">detectors</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""What the begin-of-run ODB of a MIDAS file says about each detector: the `OdbDetector` list of `parse_odb_detectors`. Reads</span>
+<span class="sd">    only up to the first event (the ODB); `ValueError` if the file does not begin with one."""</span>
+    <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">iter_events</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ev</span><span class="o">.</span><span class="n">event_id</span> <span class="o">==</span> <span class="n">EVENT_BEGIN_OF_RUN</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">parse_odb_detectors</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">break</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: the file does not begin with a begin-of-run event, so it has no ODB to read"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="registry_entry">
+<a class="viewcode-back" href="../../../reference/generated/goldpan.adapters.midas.html#goldpan.adapters.midas.registry_entry">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">registry_entry</span><span class="p">(</span><span class="n">detector</span><span class="p">:</span> <span class="n">OdbDetector</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"the begin-of-run ODB of a MIDAS file"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A starting entry for a `goldpan.registry` file from what the ODB says about `detector`, as TOML text. It states what the ODB</span>
+<span class="sd">    gives (number, name, type, tower, plane) as confirmed; the readout, the channels and the series are for you to add."""</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">'[detectors."</span><span class="si">{</span><span class="n">detector</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">"Det</span><span class="si">%02d</span><span class="s2">"</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">detector</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s1">"]'</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"number = </span><span class="si">{</span><span class="n">detector</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">detector</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'odb_name = "</span><span class="si">{</span><span class="n">detector</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">"'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"type_code"</span><span class="p">,</span> <span class="s2">"tower"</span><span class="p">,</span> <span class="s2">"plane"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span><span class="w"> </span><span class="n">field</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">'status = "confirmed"'</span><span class="p">,</span>
+              <span class="sa">f</span><span class="s1">'evidence = "/Detectors/Det</span><span class="si">{</span><span class="n">detector</span><span class="o">.</span><span class="n">number</span><span class="si">:</span><span class="s1">02d</span><span class="si">}</span><span class="s1">/DCRCInfo in </span><span class="si">{</span><span class="n">origin</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
+              <span class="s2">"# readout = </span><span class="se">\"</span><span class="s2">...</span><span class="se">\"</span><span class="s2">                      # add: the name of the readout of these data"</span><span class="p">,</span>
+              <span class="s2">"# series = [</span><span class="se">\"</span><span class="s2">...</span><span class="se">\"</span><span class="s2">]                     # add: the series this entry applies to"</span><span class="p">,</span>
+              <span class="sa">f</span><span class="s1">'# [detectors."</span><span class="si">{</span><span class="n">detector</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s2">"Det</span><span class="si">%02d</span><span class="s2">"</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">detector</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s1">".midas]   # add: detector_id and the channels of this file format'</span><span class="p">]</span>
+    <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 

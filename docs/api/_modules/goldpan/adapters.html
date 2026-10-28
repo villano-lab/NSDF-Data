@@ -287,6 +287,9 @@
 
 <span class="sd">Anyone can add one: a module with `read(path, **kw) -&gt; Events`, optionally `iter_chunks(path, *, chunk, **kw)` and `write(events, path)`;</span>
 <span class="sd">`goldpan.testing.check_adapter` checks it against the contract. `register` makes it available to `read(path, format=...)`.</span>
+
+<span class="sd">A reader can also define `REVISION`, a whole number (1 if it is absent) that is raised by one whenever a fix changes what it returns for the same</span>
+<span class="sd">file. `goldsluice run` records the revision of the reader of each output and redoes the outputs made with another one (`revision`).</span>
 <span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
 
@@ -302,6 +305,15 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">"read"</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">module</span><span class="si">!r}</span><span class="s2"> has no read(): it is not an adapter"</span><span class="p">)</span>
     <span class="n">_registered</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span></div>
+
+
+
+<div class="viewcode-block" id="revision">
+<a class="viewcode-back" href="../../reference/generated/goldpan.adapters.html#goldpan.adapters.revision">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">revision</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The `REVISION` of the adapter `name`: raised when a fix changes what the reader returns for the same file, 1 for an adapter that</span>
+<span class="sd">    does not say. `goldsluice run` compares it with the one an output was made with."""</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">_adapter</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="s2">"REVISION"</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span></div>
 
 
 

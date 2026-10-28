@@ -16,6 +16,9 @@ import numpy as np
 
 NAME = "rise_time"
 OUTPUTS = ("rise_time_s",)
+REVISION = 1
+# Raised by one when a change makes this algorithm give different numbers for the same input (a fixed kernel): `goldsluice run`
+# redoes the outputs made with the old revision, and only those made with this algorithm (see PORTING.md).
 
 
 def goldpan_expected(traces, params):

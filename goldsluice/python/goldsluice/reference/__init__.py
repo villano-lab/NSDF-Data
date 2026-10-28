@@ -5,6 +5,6 @@ tuple of numbers back), `cases()` (the standard inputs of the parity test), `bad
 `goldpan_expected(traces, params)` (the same numbers from goldpan's own functions) or `NO_GOLDPAN`, a string that says why goldpan has none. The Rust function of the same `NAME` and keyword
 arguments lives in `src/`; `PORTING.md` explains how to port one to the other.
 """
-from . import baseline, max_time, peak
+from . import baseline, excursion, integral, max_time, peak
 
-ALL = [peak, max_time, baseline]
+ALL = [peak, max_time, baseline, integral, excursion]

@@ -3,6 +3,8 @@
 //! One `#[pyfunction]` per algorithm, named like the algorithm and taking the same keyword arguments as its Python mirror.
 
 pub mod baseline;
+pub mod excursion;
+pub mod integral;
 pub mod max_time;
 pub mod peak;
 
@@ -74,6 +76,67 @@ fn baseline_py<'py>(
     Ok((mean.into_pyarray(py), std.into_pyarray(py)))
 }
 
+/// integral(traces, *, glitch_samples, pretrigger_samples, sample_period_s) -> (integral,)
+///
+/// The sum of `traces[i] - baseline` over every sample, times `sample_period_s`; the baseline is the mean of the window.
+#[pyfunction]
+#[pyo3(name = "integral", signature = (traces, *, glitch_samples, pretrigger_samples, sample_period_s))]
+fn integral_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    glitch_samples: usize,
+    pretrigger_samples: usize,
+    sample_period_s: f64,
+) -> PyResult<(Bound<'py, PyArray1<f64>>,)> {
+    let p = integral::IntegralParams {
+        glitch_samples,
+        pretrigger_samples,
+        sample_period_s,
+    };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = integral::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut out = vec![0.0; n_events];
+    py.detach(|| integral::integral_many(data, n_samples, &p, &mut out));
+    Ok((out.into_pyarray(py),))
+}
+
+/// excursion(traces, *, glitch_samples, pretrigger_samples) -> (max_deviation, excursion_ratio)
+///
+/// The largest `|x - baseline mean|` after the window, and that divided by the window's standard deviation.
+#[pyfunction]
+#[pyo3(name = "excursion", signature = (traces, *, glitch_samples, pretrigger_samples))]
+fn excursion_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    glitch_samples: usize,
+    pretrigger_samples: usize,
+) -> PyResult<Pair<'py>> {
+    let p = excursion::ExcursionParams {
+        glitch_samples,
+        pretrigger_samples,
+    };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = excursion::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut dev = vec![0.0; n_events];
+    let mut ratio = vec![0.0; n_events];
+    py.detach(|| excursion::excursion_many(data, n_samples, &p, &mut dev, &mut ratio));
+    Ok((dev.into_pyarray(py), ratio.into_pyarray(py)))
+}
+
 /// max_time(traces, *, sample_period_s) -> (max_time_s,)
 #[pyfunction]
 #[pyo3(name = "max_time", signature = (traces, *, sample_period_s))]
@@ -102,5 +165,7 @@ fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(peak_py, m)?)?;
     m.add_function(wrap_pyfunction!(max_time_py, m)?)?;
     m.add_function(wrap_pyfunction!(baseline_py, m)?)?;
+    m.add_function(wrap_pyfunction!(integral_py, m)?)?;
+    m.add_function(wrap_pyfunction!(excursion_py, m)?)?;
     Ok(())
 }

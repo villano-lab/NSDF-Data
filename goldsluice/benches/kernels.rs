@@ -1,6 +1,8 @@
 //! `cargo bench` times the kernels alone (no Python, no copying): the floor that the Python wrapper adds its overhead to.
 
 use _core::baseline::{BaselineParams, baseline_many, baseline_one};
+use _core::excursion::{ExcursionParams, excursion_many, excursion_one};
+use _core::integral::{IntegralParams, integral_many, integral_one};
 use _core::max_time::{MaxTimeParams, max_time_many};
 use _core::peak::{PeakParams, peak_many, peak_one};
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
@@ -53,6 +55,36 @@ fn bench_peak(c: &mut Criterion) {
     g.throughput(Throughput::Elements(n_events as u64));
     g.bench_function("10000 traces x 4096 samples", |bch| {
         bch.iter(|| baseline_many(black_box(&many), n_samples, &b, &mut a, &mut sd))
+    });
+    g.finish();
+
+    // the integral over the whole trace, and the excursion after the window (Run 76: 500-sample window)
+    let i = IntegralParams {
+        glitch_samples: 10,
+        pretrigger_samples: 500,
+        sample_period_s: 0.8e-6,
+    };
+    c.bench_function("integral_one, 4096 samples", |bch| {
+        bch.iter(|| integral_one(black_box(&one), &i))
+    });
+    let mut g = c.benchmark_group("integral_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| integral_many(black_box(&many), n_samples, &i, &mut sd))
+    });
+    g.finish();
+
+    let x = ExcursionParams {
+        glitch_samples: 10,
+        pretrigger_samples: 500,
+    };
+    c.bench_function("excursion_one, 4096 samples", |bch| {
+        bch.iter(|| excursion_one(black_box(&one), &x))
+    });
+    let mut g = c.benchmark_group("excursion_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| excursion_many(black_box(&many), n_samples, &x, &mut a, &mut cur))
     });
     g.finish();
 }

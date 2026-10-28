@@ -12,6 +12,11 @@ for each raw file what was done, with what, and how long it took, so that a seco
 if its fingerprint (the definition), its stamp (the raw file) **and** the revisions of the algorithms and of the reader that made the output are
 unchanged (`force=True` redoes everything). Every output file also carries its provenance in its metadata (`goldsluice` key).
 
+Reading a dump dominates the time, and it is the same work for every dump, so `run(..., workers=N)` (`--workers N`) processes N raw files at
+once, each in its own thread (the readers and the kernels let go of the interpreter lock while they work): each file is read,
+reduced and written by one thread, the writing of the output and the ledger by one at a time. Every file needs its dump in memory, about
+a gigabyte for a dump of 3000 events, so choose N by the memory of the machine as well as by its cores.
+
 `goldpan` does the reading and the definition, so batch mode needs it (`pip install goldsluice[batch]`).
 
 Processed data must not end up in a Git repository: `check` and `run` refuse an output folder that lies inside a Git working tree
@@ -21,7 +26,9 @@ on the command line, overrides it).
 import importlib.metadata
 import json
 import subprocess
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
@@ -104,6 +111,7 @@ class Report:
     name: str
     files: list = field(default_factory=list)
     total_s: float = 0.0
+    workers: int = 1
 
     @property
     def n_events(self) -> int:
@@ -112,7 +120,7 @@ class Report:
     def __str__(self) -> str:
         done = [f for f in self.files if not f.skipped]
         lines = [f"dataset {self.name}: {len(done)} file(s) processed, {len(self.files) - len(done)} unchanged, "
-                 f"{self.n_events} events in {self.total_s:.2f} s"]
+                 f"{self.n_events} events in {self.total_s:.2f} s" + (f" ({self.workers} workers: the times below are summed over files)" if self.workers > 1 else "")]
         if done:
             lines.append(f"  read    {sum(f.read_s for f in done):9.3f} s   (the adapters)")
             compute = {}
@@ -177,9 +185,13 @@ def check(spec_path, *, allow_output_in_repo: bool = False) -> list:
 
 
 def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "rust", allow_output_in_repo: bool = False,
-        progress: Optional[Callable[[str], None]] = print) -> Report:
+        workers: int = 1, progress: Optional[Callable[[str], None]] = print) -> Report:
     """Process the dataset defined in `spec_path`; returns the `Report` (what was done and the timing). `chunk` is the number of
-    events read at once (it bounds the memory used by the pulses); `backend="python"` runs the mirrors, for comparison."""
+    events read at once (it bounds the memory used by the pulses); `backend="python"` runs the mirrors, for comparison. `workers` is the
+    number of raw files processed at the same time (default 1, one after the other): the results are the same, only faster, and every
+    file in flight holds its dump in memory (see the module documentation)."""
+    if not isinstance(workers, int) or isinstance(workers, bool) or workers < 1:
+        raise ValueError("workers must be a whole number of at least 1")
     ak, dataset, parquet, Events = _goldpan()
     todo = check(spec_path, allow_output_in_repo=allow_output_in_repo)
     spec = dataset.load(spec_path)
@@ -188,11 +200,13 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
     ledger = _load_ledger(out)
     versions = _versions()
     adapters = importlib.import_module("goldpan.adapters")
-    report = Report(spec.name)
+    report = Report(spec.name, workers=workers)
     say = progress or (lambda _msg: None)
     t_all = time.perf_counter()
 
-    for source_name, path in todo:
+    slots = [None] * len(todo)                                   # the FileReport of each file, in the order of `todo`
+    jobs = []
+    for index, (source_name, path) in enumerate(todo):
         source = spec.source(source_name)
         fp = dataset.fingerprint(spec, source)
         revisions = _revisions(spec, source, adapters)
@@ -202,11 +216,17 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
             recorded = _recorded_revisions(old, adapters.available())
             changed = ["revisions not recorded"] if recorded is None else _what_changed(recorded, revisions)
             if not changed:
-                report.files.append(FileReport(str(path), skipped=True, n_events=old.get("n_events", 0)))
+                slots[index] = FileReport(str(path), skipped=True, n_events=old.get("n_events", 0))
                 say(f"unchanged  {path}")
                 continue
             say(f"redoing    {path}: {'; '.join(changed)}")
+        jobs.append((index, source, path, fp, revisions, key, stamp))
 
+    write_lock = threading.Lock()                                # the output writers update shared files (the manifest of Parquet)
+
+    def process(job):
+        """Read, reduce and write one raw file: runs in a worker thread. Returns what the main thread records."""
+        index, source, path, fp, revisions, key, stamp = job
         fr = FileReport(str(path))
         pieces = []
         t0 = time.perf_counter()
@@ -241,21 +261,41 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
         events = Events(events.detector, {}, events.quantities, {"goldsluice": provenance})
         t2 = time.perf_counter()
-        if spec.output_format == "root":
-            from goldpan.adapters import rq_root          # needs uproot (goldpan[root])
-            rq_root.write(events, out, detector=spec.root_detector)
-        else:
-            parquet.write(events, out)
+        with write_lock:
+            if spec.output_format == "root":
+                from goldpan.adapters import rq_root          # needs uproot (goldpan[root])
+                rq_root.write(events, out, detector=spec.root_detector)
+            else:
+                parquet.write(events, out)
         fr.write_s = time.perf_counter() - t2
         series_dumps = sorted({f"{s}_{d}" for s, d in zip(events.quantities["series"].to_list(),
                                                           events.quantities["dump"].to_list())})
-        ledger["files"][key] = {"fingerprint": fp, "stamp": stamp, "n_events": fr.n_events, "version": __version__,
-                                "versions": versions, "revisions": revisions,
-                                "series_dumps": series_dumps,
-                                "seconds": {"read": fr.read_s, "write": fr.write_s, **fr.compute_s}}
-        (out / LEDGER).write_text(json.dumps(ledger, indent=1, sort_keys=True), encoding="utf-8")
-        report.files.append(fr)
-        say(f"processed  {path}: {fr.n_events} events in {fr.read_s + sum(fr.compute_s.values()) + fr.write_s:.2f} s")
+        entry = {"fingerprint": fp, "stamp": stamp, "n_events": fr.n_events, "version": __version__,
+                 "versions": versions, "revisions": revisions, "series_dumps": series_dumps,
+                 "seconds": {"read": fr.read_s, "write": fr.write_s, **fr.compute_s}}
+        return job, fr, entry
 
+    def record(job, fr, entry):
+        """Note a finished file in the ledger and the report: only the main thread calls this."""
+        ledger["files"][job[5]] = entry
+        (out / LEDGER).write_text(json.dumps(ledger, indent=1, sort_keys=True), encoding="utf-8")
+        slots[job[0]] = fr
+        say(f"processed  {job[2]}: {fr.n_events} events in {fr.read_s + sum(fr.compute_s.values()) + fr.write_s:.2f} s")
+
+    if workers == 1 or len(jobs) <= 1:
+        for job in jobs:
+            record(*process(job))
+    else:
+        with ThreadPoolExecutor(max_workers=min(workers, len(jobs))) as pool:
+            futures = [pool.submit(process, job) for job in jobs]
+            try:
+                for future in as_completed(futures):
+                    record(*future.result())
+            except BaseException:
+                for future in futures:
+                    future.cancel()                              # the files not started are not started; the running ones finish
+                raise
+
+    report.files = [slot for slot in slots if slot is not None]
     report.total_s = time.perf_counter() - t_all
     return report

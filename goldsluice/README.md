@@ -28,7 +28,7 @@ readout), and the processing steps with every parameter written down.
 ```
 pip install -e ../python[parquet]                    # batch mode reads the data with goldpan
 python -m goldsluice check r76.dataset.toml          # read the definition, list the raw files
-python -m goldsluice run r76.dataset.toml            # process what is new or changed (--chunk, --force, --backend python)
+python -m goldsluice run r76.dataset.toml            # process what is new or changed (--chunk, --force, --workers N, --backend python)
 ```
 
 ```python

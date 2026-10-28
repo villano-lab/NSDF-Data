@@ -401,3 +401,39 @@ def test_the_rise_time_step_agrees_with_goldpan_and_its_levels_are_written_in_th
     write_spec(spec, files, steps=steps.replace("lo = 0.1\n", ""))                    # the levels have no default: a definition must write them
     with pytest.raises(TypeError):
         batch.run(spec, progress=None)
+
+
+def test_workers_give_the_same_output_as_one_file_at_a_time(setup, tmp_path):
+    tmp, files, spec = setup
+    dumps = (("S1", "F0001", 7), ("S1", "F0002", 5), ("S1", "F0003", 9), ("S2", "F0001", 4), ("S2", "F0002", 6))
+    files = make_raw(tmp / "raw", dumps=dumps)
+    one, many = tmp / "one.dataset.toml", tmp / "many.dataset.toml"
+    write_spec(one, files, steps=None)
+    write_spec(many, files, steps=None)
+    many.write_text(many.read_text(encoding="utf-8").replace('output = "out"', 'output = "out_many"'), encoding="utf-8")
+    report_one = batch.run(one, progress=None)
+    report_many = batch.run(many, workers=3, progress=None)
+    assert report_many.workers == 3 and report_one.n_events == report_many.n_events == sum(n for _, _, n in dumps)
+    assert [f.path for f in report_one.files] == [f.path for f in report_many.files]            # the order of the report is the order of the files
+    a, b = Dataset.open(one).processed().quantities, Dataset.open(many).processed().quantities
+    assert a.to_list() == b.to_list()
+    ledger = json.loads((tmp / "out_many" / batch.LEDGER).read_text(encoding="utf-8"))
+    assert len(ledger["files"]) == len(files)                                                    # every file is in the ledger, none lost to a race
+    assert all(f.skipped for f in batch.run(many, workers=3, progress=None).files)             # and the next run does nothing
+
+
+def test_a_failing_file_stops_the_run_with_its_error_and_keeps_what_was_done(setup):
+    tmp, files, spec = setup
+    steps = ('[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\n[processing.params]\n'
+             'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = 99999\namps_per_adc = 1.0\n')   # a window longer than every trace
+    write_spec(spec, files, steps=steps)
+    with pytest.raises(ValueError, match="longer than the trace"):
+        batch.run(spec, workers=2, progress=None)
+
+
+def test_workers_must_be_a_whole_number_of_at_least_one(setup):
+    tmp, files, spec = setup
+    for bad in (0, -1, 2.5, True):
+        with pytest.raises(ValueError, match="workers must be"):
+            batch.run(spec, workers=bad, progress=None)
+    assert main(["run", str(spec), "--workers", "2"]) == 0

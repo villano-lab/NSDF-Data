@@ -203,11 +203,14 @@ from goldpan.adapters import rq_root
 
 t = rq_root.read(Path.home() / &quot;goldsluice-output&quot; / &quot;r76-root&quot;, detector=1)
 t[&quot;Side2pC_adc_max&quot;]        # one record per event</code></pre>
-<p><code>root_detector = 1</code> is a <strong>placeholder</strong>: the
-<code>zip&lt;N&gt;</code> number of the NaI series is not known yet (the
-Z7 files of series 24260424_145101 have <code>zip7</code> and
-<code>zip14</code>). The commented lines in
-<code>examples/r76.dataset.toml</code> show the same two keys.</p>
+<p><code>root_detector = 1</code> is <strong>our choice</strong> for the
+NaI detector of Run 76: the number is not in the raw data, so it is
+written in the definition file (the Z7 files of series 24260424_145101
+have <code>zip7</code> and <code>zip14</code>, which are the
+collaboration’s detector numbers). Use the same number for every
+definition of that detector, so that the files can be read together. The
+commented lines in <code>examples/r76.dataset.toml</code> show the same
+two keys.</p>
 <h2 id="when-it-fails">7. When it fails</h2>
 <div class="table-scroll">
 <table>

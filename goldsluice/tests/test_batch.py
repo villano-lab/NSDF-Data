@@ -354,3 +354,20 @@ def test_the_integral_and_excursion_steps_agree_with_goldpan_on_the_toy_dataset(
     np.testing.assert_allclose(q["A"]["integral"][:7], algorithms.integral(x, config), rtol=0, atol=1e-11 * scale.max())
     np.testing.assert_allclose(q["A"]["max_deviation"][:7], quantities.max_deviation(x, config), rtol=1e-12)
     np.testing.assert_allclose(q["A"]["excursion_ratio"][:7], quantities.excursion_ratio(x, config), rtol=1e-10)
+
+
+def test_the_rise_time_step_agrees_with_goldpan_and_its_levels_are_written_in_the_definition(setup):
+    tmp, files, spec = setup
+    steps = ('[[processing]]\nalgorithm = "rise_time"\nchannels = "role:phonon"\n[processing.params]\n'
+             'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = "@readout.pretrigger_samples"\n'
+             'sample_period_s = "@readout.sample_period_s"\nlo = 0.1\nhi = 0.9\n')
+    write_spec(spec, files, steps=steps)
+    batch.run(spec, progress=None)
+    q = Dataset.open(spec).processed().quantities
+    raw = parquet.read(files[0])
+    from goldpan import algorithms
+    expected = algorithms.rise_time(raw.trace("A"), raw.detector.readout.config(), lo=0.1, hi=0.9)
+    np.testing.assert_allclose(q["A"]["rise_time_s"][:7], expected, rtol=1e-12, equal_nan=True)
+    write_spec(spec, files, steps=steps.replace("lo = 0.1\n", ""))                    # the levels have no default: a definition must write them
+    with pytest.raises(TypeError):
+        batch.run(spec, progress=None)

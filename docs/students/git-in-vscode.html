@@ -28,7 +28,7 @@
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — Windows edition,
-optional &middot; Version 5 · 20 October 2026</p>
+optional &middot; Version 6 · 28 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -491,20 +491,22 @@ Code.</td>
 </table>
 </div>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 5, 20 October 2026, Windows edition. Kitty Mickelson
-went through the steps on Ubuntu, where they already use Git through VS
-Code, on 15 October and found them accurate; version 4 follows their
-review. The Git steps were also checked in a browser version of VS Code
-on a test copy of the project, on Windows (commit, the branch list, the
-merge list, and installing the extension). The names of the commands
-(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
-<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
-<strong>Sync Changes</strong> question and the way out of a conflict
-were written from VS Code’s documentation and have not been tried on a
-real conflict. The install on a computer that does not have VS Code yet,
-the sign-in, and the pull-request part have not been tried on a
-student’s computer. Please tell the project lead where a step was
-unclear.</p>
+<p>Guide version 6, 28 October 2026, Windows edition. Version 6 adds,
+for Linux, a way to install VS Code without administrator rights (the
+<code>.tar.gz</code> file); that route has not been tried on a real
+Linux computer. Kitty Mickelson went through the steps on Ubuntu, where
+they already use Git through VS Code, on 15 October and found them
+accurate; version 4 follows their review. The Git steps were also
+checked in a browser version of VS Code on a test copy of the project,
+on Windows (commit, the branch list, the merge list, and installing the
+extension). The names of the commands (<code>Git: Fetch</code>,
+<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
+against VS Code 1.141. The <strong>Sync Changes</strong> question and
+the way out of a conflict were written from VS Code’s documentation and
+have not been tried on a real conflict. The install on a computer that
+does not have VS Code yet, the sign-in, and the pull-request part have
+not been tried on a student’s computer. Please tell the project lead
+where a step was unclear.</p>
 <h2 id="windows-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -527,7 +529,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — macOS edition,
-optional &middot; Version 5 · 20 October 2026</p>
+optional &middot; Version 6 · 28 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -987,20 +989,22 @@ Code.</td>
 </table>
 </div>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 5, 20 October 2026, macOS edition. Kitty Mickelson went
-through the steps on Ubuntu, where they already use Git through VS Code,
-on 15 October and found them accurate; version 4 follows their review.
-The Git steps were also checked in a browser version of VS Code on a
-test copy of the project, on Windows (commit, the branch list, the merge
-list, and installing the extension). The names of the commands
-(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
-<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
-<strong>Sync Changes</strong> question and the way out of a conflict
-were written from VS Code’s documentation and have not been tried on a
-real conflict. The install on a computer that does not have VS Code yet,
-the sign-in, and the pull-request part have not been tried on a
-student’s computer. Please tell the project lead where a step was
-unclear.</p>
+<p>Guide version 6, 28 October 2026, macOS edition. Version 6 adds, for
+Linux, a way to install VS Code without administrator rights (the
+<code>.tar.gz</code> file); that route has not been tried on a real
+Linux computer. Kitty Mickelson went through the steps on Ubuntu, where
+they already use Git through VS Code, on 15 October and found them
+accurate; version 4 follows their review. The Git steps were also
+checked in a browser version of VS Code on a test copy of the project,
+on Windows (commit, the branch list, the merge list, and installing the
+extension). The names of the commands (<code>Git: Fetch</code>,
+<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
+against VS Code 1.141. The <strong>Sync Changes</strong> question and
+the way out of a conflict were written from VS Code’s documentation and
+have not been tried on a real conflict. The install on a computer that
+does not have VS Code yet, the sign-in, and the pull-request part have
+not been tried on a student’s computer. Please tell the project lead
+where a step was unclear.</p>
 <h2 id="macos-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -1023,7 +1027,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 9 — Linux edition,
-optional &middot; Version 5 · 20 October 2026</p>
+optional &middot; Version 6 · 28 October 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1104,6 +1108,21 @@ download it. In a terminal, go to the folder with the file (usually
 <pre><code>sudo apt install ./code_*.deb</code></pre>
 <p>If you have downloaded more than one such file, use the exact file
 name instead of the <code>*</code>.</p>
+<p><strong>If you cannot use <code>sudo</code></strong> (a computer you
+do not administer): use the <code>.tar.gz</code> file. It needs no
+password and no installer. Go to <a
+href="https://code.visualstudio.com/Download">code.visualstudio.com/Download</a>
+and download the <strong>.tar.gz</strong> for your computer (x64 for
+most PCs, Arm64 for an ARM computer). In a terminal, go to the folder
+with the file (usually <code>cd ~/Downloads</code>) and run:</p>
+<pre><code>mkdir -p ~/apps
+tar -xzf code-stable-*.tar.gz -C ~/apps
+ls ~/apps</code></pre>
+<p>The last line shows the folder it made, normally
+<code>VSCode-linux-x64</code>. Start VS Code with <code
+class="cmd">~/apps/VSCode-linux-x64/code</code> (use the folder name you
+see). If you downloaded more than one such file, use the exact file name
+instead of the <code>*</code>.</p>
 <div class="checkpoint">
 <p>VS Code starts and shows a <strong>Welcome</strong> page.</p>
 </div>
@@ -1492,20 +1511,22 @@ Code.</td>
 </table>
 </div>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 5, 20 October 2026, Linux edition. Kitty Mickelson went
-through the steps on Ubuntu, where they already use Git through VS Code,
-on 15 October and found them accurate; version 4 follows their review.
-The Git steps were also checked in a browser version of VS Code on a
-test copy of the project, on Windows (commit, the branch list, the merge
-list, and installing the extension). The names of the commands
-(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
-<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
-<strong>Sync Changes</strong> question and the way out of a conflict
-were written from VS Code’s documentation and have not been tried on a
-real conflict. The install on a computer that does not have VS Code yet,
-the sign-in, and the pull-request part have not been tried on a
-student’s computer. Please tell the project lead where a step was
-unclear.</p>
+<p>Guide version 6, 28 October 2026, Linux edition. Version 6 adds, for
+Linux, a way to install VS Code without administrator rights (the
+<code>.tar.gz</code> file); that route has not been tried on a real
+Linux computer. Kitty Mickelson went through the steps on Ubuntu, where
+they already use Git through VS Code, on 15 October and found them
+accurate; version 4 follows their review. The Git steps were also
+checked in a browser version of VS Code on a test copy of the project,
+on Windows (commit, the branch list, the merge list, and installing the
+extension). The names of the commands (<code>Git: Fetch</code>,
+<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
+against VS Code 1.141. The <strong>Sync Changes</strong> question and
+the way out of a conflict were written from VS Code’s documentation and
+have not been tried on a real conflict. The install on a computer that
+does not have VS Code yet, the sign-in, and the pull-request part have
+not been tried on a student’s computer. Please tell the project lead
+where a step was unclear.</p>
 <h2 id="linux-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"

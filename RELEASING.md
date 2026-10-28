@@ -47,12 +47,21 @@ The library in `python/` (the `goldpan` distribution, see issue 71) has a versio
 - **What counts as the library:** the modules listed in `python/pyproject.toml`. Tools, tests, `check_environment.py` and the guides are not versioned by it.
 - `python/tests/test_library_install.py` checks that the version is well formed and that the list of modules matches the files.
 
+## goldsluice's own version
+
+`goldsluice/` (the Rust kernels and `goldsluice run`, see `goldsluice/README.md`) has a version of its own, **independent of `VERSION` and of the library's**. It is written in three places that must agree: `version` in `goldsluice/Cargo.toml`, `version` in `goldsluice/pyproject.toml` and `__version__` in `goldsluice/python/goldsluice/__init__.py` (`goldsluice/tests/test_version.py` fails if they differ or are not `X.Y.Z`).
+
+- **Semantic versioning,** starting at 0.1.0 and staying 0.x while the algorithms and the definition format settle. While 0.x, raise the **minor** number (0.2.0) when an algorithm is added or removed, a parameter or an output is added, renamed or removed, or **any result changes** (a bug fixed in a kernel included); raise the **patch** number (0.1.1) for a change that does none of those (speed, messages, documentation, internal code).
+- **Bump it on the `release/*` or `hotfix/*` branch, not in a feature pull request.** A bump has a visible effect: `goldsluice run` records the versions of `goldsluice` and `goldpan` that made each output, and redoes a file made by another version, so a new version makes the next run process everything again (about 100 s for the 30 dumps of Run 76). That is what lets a fixed kernel replace the outputs of the old one. It also means the version in the file may lag behind the code between releases, and that `--force` is the way to redo outputs in between. A release that only adds algorithms leaves the old outputs valid but still triggers the redo; that is the price of a rule that cannot be fooled.
+- **Say it in the release notes.** In that release's `CHANGELOG.md` section, add the line `goldsluice X.Y.Z` and what changed in it. There is no *Students, please:* line for it: students do not install `goldsluice` (it is not in `requirements.txt`).
+- **Rebuild after a bump.** The compiled extension carries the version; run `maturin develop --release` in `goldsluice/` so that the build and the files agree.
+
 ## Making a release
 
 1. Make sure `develop` is green (CI passing) and every finished feature is merged.
 2. `git switch develop && git pull`, then `git switch -c release/X.Y.Z`.
 3. On that branch:
-   - set the number in `VERSION`, and, if the library changed since the last release, its own version in `python/pyproject.toml` (see "The library's own version");
+   - set the number in `VERSION`, and, if the library changed since the last release, its own version in `python/pyproject.toml` (see "The library's own version"), and likewise `goldsluice`'s three version numbers if `goldsluice/` changed (see "goldsluice's own version");
    - in `CHANGELOG.md`, rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and start a new empty `[Unreleased]` section;
    - rebuild any student guide PDFs whose source changed (see `AGENTS.md`) and commit sources and PDFs together;
    - **if the release changes the environment** (the Python version, a package pin in `requirements.txt`, or the library's own version in `python/pyproject.toml`), start that release's `CHANGELOG.md` section with a line beginning **Students, please:** that says what to do and points to *Updating your setup* (student guide 7), and tell the students when the release is out. Students learn about it from `python check_environment.py` (it warns when the environment differs from `requirements.txt` and the guides) and from that line;
@@ -85,7 +94,7 @@ A version on PyPI can never be replaced or reused: a bad upload can only be yank
 A hotfix repairs **released code** (for example a broken library function in a tagged release). A broken guide or site page is *not* a hotfix: fix it with a feature PR into `develop`, and it is live on merge.
 
 1. `git switch master && git pull`, then `git switch -c hotfix/X.Y.Z` (X.Y.Z is the next patch number).
-2. Fix it, set `VERSION` (and the library's own version in `python/pyproject.toml` if the fix changes the library), and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
+2. Fix it, set `VERSION` (and the library's own version in `python/pyproject.toml` if the fix changes the library, or goldsluice's three version numbers if it changes `goldsluice/`), and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
 3. Open a pull request into `master`. The maintainer merges it, then tags `vX.Y.Z` as above.
 4. Merge `master` back into `develop`.
 

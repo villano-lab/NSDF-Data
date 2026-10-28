@@ -120,7 +120,13 @@ pulse = operations.baseline_subtract(trace, cfg)       # each event minus its ow
 peak = pulse[:, cfg.glitch_samples:].max(axis=1)       # the largest value above the baseline, per event
 ```
 
-In the first dump the median peak of `Side2pC` is 6 ADC counts and the largest is 411. **Reading the traces is the slow part, and it is not cached.** `iter_events` reads the raw dump from disk every time you call it: about 3 seconds for this one dump. Only the processed quantities are cached (see below). So read the traces of one dump, or of a few events, to look at pulses, and leave the pass over all the data to `goldsluice`.
+In the first dump the median peak of `Side2pC` is 6 ADC counts and the largest is 411. **Reading the traces is the slow part, and it is not cached.** `iter_events` reads the raw dump from disk every time you call it: about 3 seconds for this one dump. Only the processed quantities are cached (see below). So read the traces of one dump to look at pulses, and leave the pass over all the data to `goldsluice`. The cost is per dump: the raw reader cannot fetch single traces from the file, so looking at a few events still reads their whole dump (about 3 seconds). Afterwards you can keep just those events, by position or by event number:
+
+```python
+ev.select([12, 345])                                   # the events at positions 12 and 345 of this dump
+few = ev.select(ev.quantities["event"].to_numpy() == 10003)    # the event with number 10003 (event numbers restart in every dump)
+few.trace("Side2pC")                                   # (events kept, samples)
+```
 
 <details>
 <summary>Why not read all the dumps at once with <code>ds.read()</code>?</summary>

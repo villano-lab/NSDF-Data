@@ -8,8 +8,9 @@ adapter (`goldpan.adapters`), every step is applied to the channels it names wit
 per channel, keyed by series, dump and event, **without** the pulses) are written into the output dataset of the definition, a
 goldpan Parquet dataset that `goldpan.dataset.Dataset.processed()` reads (or, with `output_format = "root"`, RQ-style ROOT files
 under our names, written by `goldpan.adapters.rq_root.write` and read with `rq_root.read`; needs `goldsluice[root]`). A ledger, `_goldsluice.json` in the output folder, records
-for each raw file what was done, with what, and how long it took, so that a second run only does what changed (`force=True`
-redoes everything). Every output file also carries its provenance in its metadata (`goldsluice` key).
+for each raw file what was done, with what, and how long it took, so that a second run only does what changed: a file is skipped only
+if its fingerprint (the definition), its stamp (the raw file) **and** the versions of `goldsluice` and `goldpan` that made the output are
+unchanged (`force=True` redoes everything). Every output file also carries its provenance in its metadata (`goldsluice` key).
 
 `goldpan` does the reading and the definition, so batch mode needs it (`pip install goldsluice[batch]`).
 
@@ -17,6 +18,7 @@ Processed data must not end up in a Git repository: `check` and `run` refuse an 
 and whose data files that tree does not ignore (`check_output_location`; `allow_output_in_repo=True`, or `--allow-output-in-repo`
 on the command line, overrides it).
 """
+import importlib.metadata
 import json
 import subprocess
 import time
@@ -40,6 +42,17 @@ def _goldpan():
         raise ImportError(f"batch mode needs goldpan (and awkward, pyarrow): {e}. Install it with `pip install goldsluice[batch]` "
                           f"or, in the repository, `pip install -e ./python[parquet]`") from None
     return ak, dataset, parquet, Events
+
+
+def _versions() -> dict:
+    """The versions of the code that makes an output: the kernels (`goldsluice`) and the readers and definition (`goldpan`). Part of
+    the test for skipping a file, so that a fixed kernel or reader is not hidden behind an output made by the old one. They change
+    only at a release: between releases, `--force` redoes everything."""
+    try:
+        goldpan = importlib.metadata.version("goldpan")
+    except importlib.metadata.PackageNotFoundError:
+        goldpan = None
+    return {"goldsluice": __version__, "goldpan": goldpan}
 
 
 def _stamp(path: Path) -> dict:
@@ -146,6 +159,7 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
     out = spec.output
     out.mkdir(parents=True, exist_ok=True)
     ledger = _load_ledger(out)
+    versions = _versions()
     report = Report(spec.name)
     say = progress or (lambda _msg: None)
     t_all = time.perf_counter()
@@ -156,9 +170,11 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         key, stamp = f"{source.name}:{path}", _stamp(path)
         old = ledger["files"].get(key)
         if old and not force and old.get("fingerprint") == fp and old.get("stamp") == stamp:
-            report.files.append(FileReport(str(path), skipped=True, n_events=old.get("n_events", 0)))
-            say(f"unchanged  {path}")
-            continue
+            if old.get("versions") == versions:
+                report.files.append(FileReport(str(path), skipped=True, n_events=old.get("n_events", 0)))
+                say(f"unchanged  {path}")
+                continue
+            say(f"redoing    {path}: made with {old.get('versions') or 'versions not recorded'}, now {versions}")
 
         fr = FileReport(str(path))
         pieces = []
@@ -188,7 +204,7 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
 
         events = Events.concatenate(*pieces)
         fr.n_events = events.n_events
-        provenance = {"version": __version__, "dataset": spec.name, "source": source.name, "raw": str(path),
+        provenance = {"version": __version__, "versions": versions, "dataset": spec.name, "source": source.name, "raw": str(path),
                       "fingerprint": fp, "backend": backend,
                       "steps": [{"algorithm": s.algorithm, "channels": s.channels, "params": s.params} for s in spec.steps],
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
@@ -203,6 +219,7 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         series_dumps = sorted({f"{s}_{d}" for s, d in zip(events.quantities["series"].to_list(),
                                                           events.quantities["dump"].to_list())})
         ledger["files"][key] = {"fingerprint": fp, "stamp": stamp, "n_events": fr.n_events, "version": __version__,
+                                "versions": versions,
                                 "series_dumps": series_dumps,
                                 "seconds": {"read": fr.read_s, "write": fr.write_s, **fr.compute_s}}
         (out / LEDGER).write_text(json.dumps(ledger, indent=1, sort_keys=True), encoding="utf-8")

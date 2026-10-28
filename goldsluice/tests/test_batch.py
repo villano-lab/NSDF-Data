@@ -101,6 +101,31 @@ def test_a_second_run_skips_unchanged_files_and_a_changed_parameter_redoes_them(
                                (raw.trace("A").max(axis=1) - raw.trace("A")[:, 20:1000].mean(axis=1)) * AMPS, rtol=1e-12)
 
 
+def test_a_new_version_of_the_code_redoes_files_made_by_the_old_one(setup, monkeypatch, capsys):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)
+    now = batch._versions()
+    monkeypatch.setattr(batch, "_versions", lambda: {**now, "goldsluice": "9.9.9"})            # a fixed kernel: a new release of goldsluice
+    assert not any(f.skipped for f in batch.run(spec).files)
+    assert "redoing" in capsys.readouterr().out
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)                         # made by 9.9.9 now: unchanged again
+    monkeypatch.setattr(batch, "_versions", lambda: {**now, "goldpan": "9.9.9"})               # the readers changed
+    assert not any(f.skipped for f in batch.run(spec, progress=None).files)
+
+
+def test_an_output_whose_ledger_does_not_record_the_versions_is_redone_once(setup):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    ledger = tmp / "out" / batch.LEDGER
+    data = json.loads(ledger.read_text(encoding="utf-8"))
+    for entry in data["files"].values():
+        del entry["versions"]                                                                    # a ledger written before the versions were recorded
+    ledger.write_text(json.dumps(data), encoding="utf-8")
+    assert not any(f.skipped for f in batch.run(spec, progress=None).files)
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)
+
+
 def test_a_changed_raw_file_is_processed_again(setup):
     tmp, files, spec = setup
     batch.run(spec, progress=None)

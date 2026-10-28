@@ -1,0 +1,18 @@
+# The Run 76 detector (UMN, NaI array with Side-2 readout): the one the series 07221203_2025 was taken with.
+# Read by goldpan.registry (`registry = ["../registry"]` in a dataset definition file). Not part of the library.
+format_version = 1
+
+[detectors."NAI-S2"]
+number = 1                         # the N of zip<N> in ROOT output: OUR choice for this detector; it is in no raw file (issue 150)
+readout = "DCRC_RUN76"             # a preset of goldpan.config: 0.8 us per sample, 1000-sample pretrigger window, 10 glitch samples
+status = "inferred"
+evidence = """The six sensors and their board inputs come from the Setup table of the Run 76 summary (Side-2 readout); that dump \
+detectors 0, 1, 2 are DCRC1, DCRC3, DCRC4 (ascending board number) is inferred and channels 0 to 3 = inputs pA to pD is assumed: \
+see goldpan.channels, which holds the same map and is marked under development. The detector number is our own choice (issue 150). \
+The Run 76 idx dumps carry no detector name or number, so nothing here can be checked against a file."""
+description = "Run 76 NaI array, Side-2 readout; DCRC4 pA is the NaI trigger input and is not a channel of this detector."
+series = ["07221203_2025"]
+
+[detectors."NAI-S2".idx]           # defaults for [sources.read] of an idx source: channel name = [board, input]
+channels = { Side2pC = [0, 0], Side2pF = [0, 1], Side2pE = [0, 3], Side2pB = [1, 0], Side2pA = [1, 1], Side2pD = [1, 3] }
+roles = { Side2pC = "phonon", Side2pF = "phonon", Side2pE = "phonon", Side2pB = "phonon", Side2pA = "phonon", Side2pD = "phonon" }

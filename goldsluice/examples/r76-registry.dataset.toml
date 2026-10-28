@@ -1,0 +1,29 @@
+# The same dataset as r76.dataset.toml, with the detector described in the registry (../../registry) instead of in this file:
+# the readout, the channel map and the roles come from the record of "NAI-S2", and root_detector from its `number`.
+# Everything written here wins over the registry, key by key. `python -m goldsluice check r76-registry.dataset.toml` lists the files.
+
+[dataset]
+name = "r76-07221203"
+output = "~/goldsluice-output/r76-07221203"
+registry = ["../../registry"]                  # folders of detector records, relative to this file (goldpan.registry); also GOLDPAN_REGISTRY
+# output_format = "root"                       # for ROOT output the zip<N> number is the record's `number`: no root_detector needed
+
+[[sources]]
+name = "side2"
+format = "idx"
+glob = "~/idx/07221203_2025_F*"
+detector = "NAI-S2"                            # in the registry: it supplies readout = "DCRC_RUN76" and the idx channels and roles
+
+[[processing]]
+algorithm = "peak"
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
+
+[[processing]]
+algorithm = "max_time"
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"

@@ -216,6 +216,7 @@
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.legacy.html">goldpan.legacy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.operations.html">goldpan.operations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.quantities.html">goldpan.quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="reference/generated/goldpan.testing.html">goldpan.testing</a></li>
@@ -306,15 +307,19 @@
 <td><p>The only code that knows a file format: it turns idx dumps, MIDAS files, Parquet or ROOT RQ files into <code class="docutils literal notranslate"><span class="pre">Events</span></code> (or a table of quantities) and, where possible, writes them.</p></td>
 <td><p><a class="reference internal" href="reference/generated/goldpan.adapters.html#module-goldpan.adapters" title="goldpan.adapters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">goldpan.adapters</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p>Dataset definition</p></td>
+<tr class="row-odd"><td><p>Registry</p></td>
+<td><p>The facts about the detectors (number, type, readout, which channel is wired where in a file format), kept <strong>outside</strong> the package in folders of TOML files that a dataset definition names with <code class="docutils literal notranslate"><span class="pre">registry</span> <span class="pre">=</span> <span class="pre">[...]</span></code>; the library holds only the mechanism, so the folder can later become a repository or a database.</p></td>
+<td><p><a class="reference internal" href="reference/generated/goldpan.registry.html#module-goldpan.registry" title="goldpan.registry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">goldpan.registry</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Dataset definition</p></td>
 <td><p>One TOML file naming the raw files, how to read them and the processing to run. Read by both packages.</p></td>
 <td><p><a class="reference internal" href="reference/generated/goldpan.dataset.html#module-goldpan.dataset" title="goldpan.dataset"><code class="xref py py-mod docutils literal notranslate"><span class="pre">goldpan.dataset</span></code></a></p></td>
 </tr>
-<tr class="row-even"><td><p>Kernel</p></td>
+<tr class="row-odd"><td><p>Kernel</p></td>
 <td><p>A fast per-trace algorithm in Rust, with a Python <strong>mirror</strong> that defines it readably.</p></td>
 <td><p><a class="reference internal" href="reference/generated/goldsluice.html#module-goldsluice" title="goldsluice"><code class="xref py py-mod docutils literal notranslate"><span class="pre">goldsluice</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p>Batch mode</p></td>
+<tr class="row-even"><td><p>Batch mode</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">goldsluice</span> <span class="pre">run</span></code>: reads each raw file in chunks, runs the kernels and writes the quantities into a Parquet dataset that goldpan reads back.</p></td>
 <td><p><a class="reference internal" href="reference/generated/goldsluice.batch.html#module-goldsluice.batch" title="goldsluice.batch"><code class="xref py py-mod docutils literal notranslate"><span class="pre">goldsluice.batch</span></code></a></p></td>
 </tr>

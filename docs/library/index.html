@@ -30,10 +30,11 @@
 <tr><td><a href="#goldpan.algorithms"><code>goldpan.algorithms</code></a></td><td>Trace algorithms: filters and per-trace quantities (ported from <code>pulsedata.algorithms</code> of <code>scdms-analysis-tools</code>)</td><td>8</td><td>8</td><td>0</td></tr>
 <tr><td><a href="#goldpan.data"><code>goldpan.data</code></a></td><td>The in-memory container of one detector's events: traces, quantities, readout, provenance</td><td>0</td><td>0</td><td>0</td></tr>
 <tr><td><a href="#goldpan.dataset"><code>goldpan.dataset</code></a></td><td>A dataset definition: which raw files, how to read them, and which processing to run on them</td><td>3</td><td>3</td><td>0</td></tr>
+<tr><td><a href="#goldpan.registry"><code>goldpan.registry</code></a></td><td>A registry of the facts about an experiment that analysis needs and the library must not contain: the readouts (how a pretrigger window, a glitch and a sample period are set), and the detectors (their number, type, readout and where each named channel is wired in a given file format)</td><td>2</td><td>2</td><td>0</td></tr>
 <tr><td><a href="#goldpan.rq_cuts"><code>goldpan.rq_cuts</code></a></td><td>Selections made from already-processed RQs, with no raw traces: the fast path (ported from <code>scdms-analysis-tools</code>)</td><td>11</td><td>9</td><td>2</td></tr>
 <tr><td><a href="#goldpan.testing"><code>goldpan.testing</code></a></td><td>The conformance test of an adapter, for the people who write one (see the developer quick-sheet "Writing an adapter")</td><td>1</td><td>1</td><td>0</td></tr>
 <tr><td><a href="#goldpan.adapters.idx"><code>goldpan.adapters.idx</code></a></td><td>The idx adapter: a dump of the NSDF archive (NEXUS-DM <code>idx</code>) into an <code>Events</code></td><td>1</td><td>1</td><td>0</td></tr>
-<tr><td><a href="#goldpan.adapters.midas"><code>goldpan.adapters.midas</code></a></td><td>The MIDAS adapter: raw SuperCDMS SNOLAB DAQ files (<code>.mid</code>, <code>.mid.gz</code>, <code>.mid.lz4</code>) into an <code>Events</code></td><td>5</td><td>5</td><td>0</td></tr>
+<tr><td><a href="#goldpan.adapters.midas"><code>goldpan.adapters.midas</code></a></td><td>The MIDAS adapter: raw SuperCDMS SNOLAB DAQ files (<code>.mid</code>, <code>.mid.gz</code>, <code>.mid.lz4</code>) into an <code>Events</code></td><td>8</td><td>8</td><td>0</td></tr>
 <tr><td><a href="#goldpan.adapters.parquet"><code>goldpan.adapters.parquet</code></a></td><td>The native format of goldpan and goldsluice: Parquet (specification, format version 1)</td><td>3</td><td>3</td><td>0</td></tr>
 <tr><td><a href="#goldpan.adapters.rq"><code>goldpan.adapters.rq</code></a></td><td>Quantity tables from any RQ source, and how they join an <code>Events</code></td><td>1</td><td>1</td><td>0</td></tr>
 <tr><td><a href="#goldpan.adapters.rq_root"><code>goldpan.adapters.rq_root</code></a></td><td>The ROOT RQ adapter: the processed quantities (RQs) of the collaboration's reconstruction, read with uproot; and <code>write</code>, which puts our own processed quantities into the same layout</td><td>5</td><td>5</td><td>0</td></tr>
@@ -233,7 +234,8 @@ ev2 = compute(ev, {"max": pulse_max, "tmax": max_time}, channels=["A"])      # a
 <pre>[dataset]
 name = "r76-nai"
 output = "~/goldsluice-output/r76-nai"  # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
-# output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)</pre>
+# output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
+# registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file</pre>
 <pre>[[sources]]                             # where the pulses come from; as many as you like
 name = "side2"
 format = "idx"                          # any adapter: idx, midas, parquet, or one you registered
@@ -251,7 +253,7 @@ channels = "role:phonon"                # "all", "role:&lt;role&gt;", or a list 
 glitch_samples = "@readout.glitch_samples"        # "@readout.&lt;field&gt;": taken from the readout of the data
 pretrigger_samples = "@readout.pretrigger_samples"
 amps_per_adc = 1.5e-9</pre>
-<p>Nothing is assumed: the readout, the channels and every algorithm parameter are written down. <code>Dataset.open(path)</code> gives the same file to both packages:</p>
+<p>Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names. With <code>registry</code> (and/or the environment variable <code>GOLDPAN_REGISTRY</code>), a source whose <code>detector</code> is a name in the registry takes the readout, the <code>[sources.read]</code> defaults of its file format and, for ROOT output, <code>root_detector</code> from the detector's record (<code>goldpan.registry</code>); whatever the file itself states wins, key by key, and a readout that disagrees with the registry's is a warning. A detector name that is not in any registry is only a label, as before. <code>Dataset.open(path)</code> gives the same file to both packages:</p>
 <pre>ds = Dataset.open("r76.dataset.toml")
 ev = ds.read()                          # the pulses, with the processed quantities attached (one Events)
 q = ds.processed()                      # only the processed quantities, no pulses: small and fast
@@ -260,18 +262,20 @@ ev.quantities["Side2pA"]["current_max"]</pre>
 <p>The processed quantities are stored one record per channel (<code>quantities["Side2pA"]["adc_max"]</code>), keyed by <code>series</code>, <code>dump</code>, <code>event</code>. <code>python -m goldsluice run &lt;file&gt;</code> produces them; reading them before that raises an error that says so.</p>
 <h3><code>Dataset(spec: DatasetSpec)</code></h3>
 <p>A dataset definition opened for reading: the pulses from its sources and the quantities processed from them.</p>
-<h3><code>DatasetSpec(name: str, output: pathlib.Path, sources: Tuple[Source, ...], steps: Tuple[Step, ...], path: pathlib.Path, raw: Mapping[str, Any], output_format: str = 'parquet', root_detector: Optional[int] = None) -&gt; None</code></h3>
+<h3><code>DatasetSpec(name: str, output: pathlib.Path, sources: Tuple[Source, ...], steps: Tuple[Step, ...], path: pathlib.Path, raw: Mapping[str, Any], output_format: str = 'parquet', root_detector: Optional[int] = None, registry: Optional[Registry] = None) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
 <tr><td><code>path</code></td><td>The definition file.</td></tr>
 <tr><td><code>raw</code></td><td>The parsed TOML, kept for provenance.</td></tr>
 <tr><td><code>output_format</code></td><td><code>"parquet"</code> (a goldpan dataset) or <code>"root"</code> (RQ-style ROOT files, <code>goldpan.adapters.rq_root.write</code>).</td></tr>
-<tr><td><code>root_detector</code></td><td>The number <code>N</code> of the <code>zip&lt;N&gt;</code> tree of the ROOT output; required with <code>output_format = "root"</code>, otherwise <code>None</code>.</td></tr>
+<tr><td><code>root_detector</code></td><td>The number <code>N</code> of the <code>zip&lt;N&gt;</code> tree of the ROOT output; required with <code>output_format = "root"</code> (written in the file, or the <code>number</code> of the registry's record of the detector), otherwise <code>None</code>.</td></tr>
+<tr><td><code>registry</code></td><td>The registry the definition names (and the environment variable adds); empty if there is none.</td></tr>
 </tbody></table></div>
-<h3><code>Source(name: str, format: str, patterns: Tuple[str, ...], detector: str, readout: Optional[PulseConfig], read: Mapping[str, Any], base: pathlib.Path) -&gt; None</code></h3>
+<h3><code>Source(name: str, format: str, patterns: Tuple[str, ...], detector: str, readout: Optional[PulseConfig], read: Mapping[str, Any], base: pathlib.Path, detector_record: Optional[DetectorRecord] = None) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
 <tr><td><code>patterns</code></td><td>The <code>paths</code> and <code>glob</code> entries as written (with <code>~</code> and relative to the folder of the definition file when used).</td></tr>
 <tr><td><code>read</code></td><td>Keyword arguments of the adapter's <code>read</code>, as written in the file.</td></tr>
 <tr><td><code>base</code></td><td>The folder of the definition file, for relative paths.</td></tr>
+<tr><td><code>detector_record</code></td><td>The registry's record of <code>detector</code>, if a registry has one; <code>read</code> and <code>readout</code> already include what it supplies.</td></tr>
 </tbody></table></div>
 <h3><code>Step(algorithm: str, channels: Any, params: Mapping[str, Any]) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
@@ -281,6 +285,57 @@ ev.quantities["Side2pA"]["current_max"]</pre>
 <tr id="goldpan.dataset.load"><td><code>load</code><br><small><code>(path) -&gt; DatasetSpec</code></small></td><td>Read and check a dataset definition file. Nothing is opened: the raw files need not exist yet.</td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.dataset.fingerprint"><td><code>fingerprint</code><br><small><code>(spec: DatasetSpec, source: Source) -&gt; str</code></small></td><td>A short hash of what determines the processed quantities of <code>source</code>: how it is read and the processing steps. The batch run stores it in every output file and skips a file whose fingerprint has not changed.</td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.dataset.read_raw"><td><code>read_raw</code><br><small><code>(source: Source, path, *, chunk: Optional[int] = None) -&gt; Iterator[Events]</code></small></td><td>The pulses of one raw file of <code>source</code> as <code>Events</code> read by its adapter: one <code>Events</code>, or with <code>chunk</code> pieces of at most that many events when the adapter can (<code>iter_chunks</code>; otherwise the whole file is one piece).</td><td><span class="status done">done</span></td></tr>
+</tbody></table></div>
+
+<h2 id="goldpan.registry">goldpan.registry</h2>
+<p>A registry of the facts about an experiment that analysis needs and the library must not contain: the readouts (how a pretrigger window, a glitch and a sample period are set), and the detectors (their number, type, readout and where each named channel is wired in a given file format).</p>
+<p><strong>This module is the mechanism only.</strong> No detector of any experiment is written in <code>goldpan</code>; the records are data and live outside the package, in folders of TOML files (for the Run 76 detector of this project, the <code>registry/</code> folder of the repository, which is laid out so it can become a repository of its own). The readout presets <code>DCRC_RUN76</code> and <code>Z7</code> of <code>goldpan.config</code> are older and stay where they are; a registry may define readouts too, and a name is looked up in the registry first and then among those presets. A registry is built from <em>sources</em>; a folder of TOML files is the first kind, and anything with a <code>load()</code> method that yields <code>(origin, tables)</code> pairs can take its place later (a Git repository, a database) without a change anywhere else:</p>
+<pre>from goldpan import registry</pre>
+<pre>reg = registry.load("~/NSDF-Data/registry")        # one or more folders; the environment variable GOLDPAN_REGISTRY is added
+reg.readout_config("DCRC_RUN76")                   # a goldpan.config.PulseConfig (a preset, or the registry's own readout)
+reg.detector("NAI-S2").number                      # 1
+reg.detector("NAI-S2").read_defaults("idx")        # {'channels': {...}, 'roles': {...}}: the defaults of [sources.read]</pre>
+<p>A dataset definition file names the folders in <code>[dataset] registry = [...]</code> (see <code>goldpan.dataset</code>), and a source whose <code>detector</code> is a name in the registry takes its readout, its channels and its roles from there. Anything written in the definition file itself wins over the registry, key by key.</p>
+<p><strong>The files.</strong> Any file <code>*.toml</code> of a folder (sorted by name); every file holds the tables <code>readouts</code> and <code>detectors</code>, and the integer <code>format_version</code> (1):</p>
+<pre>format_version = 1</pre>
+<pre>[readouts.DCRC_RUN76]
+pretrigger_samples = 1000
+glitch_samples = 10
+sample_period_s = 0.8e-6
+status = "inferred"                                # "confirmed" or "inferred": required
+evidence = "where the numbers come from"           # required: what a reader needs to judge the entry</pre>
+<pre>[detectors."NAI-S2"]
+number = 1                                         # the N of zip&lt;N&gt; in RQ files, the detector number of the MIDAS ODB
+readout = "DCRC_RUN76"
+status = "inferred"
+evidence = "..."
+[detectors."NAI-S2".idx]                           # defaults for [sources.read] of a source of this format
+channels = { Side2pC = [0, 0] }</pre>
+<p>Readouts take <code>pretrigger_samples</code>, <code>glitch_samples</code>, <code>sample_period_s</code> (all three: nothing is assumed), <code>status</code>, <code>evidence</code>, <code>description</code> and <code>series</code>; detectors take <code>number</code>, <code>type_code</code>, <code>tower</code>, <code>plane</code>, <code>odb_name</code>, <code>readout</code>, <code>status</code>, <code>evidence</code>, <code>description</code> and <code>series</code>, plus one table per file format. Unknown keys are errors, as in the dataset definition file, and a name defined twice (in two files or two sources) is an error, so two folders can never disagree silently.</p>
+<h3><code>DetectorRecord(name: str, number: Optional[int], type_code: Optional[int], tower: Optional[int], plane: Optional[int], odb_name: Optional[str], readout: Optional[str], status: str, evidence: str, description: str = '', series: Tuple[str, ...] = (), read: Mapping[str, Mapping[str, Any]] = &lt;factory&gt;, origin: str = '') -&gt; None</code></h3>
+<p>A detector: its identity, its readout, and per file format the defaults of <code>[sources.read]</code>.</p>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>number</code></td><td>The N of <code>zip&lt;N&gt;</code> in RQ files and the detector number of the MIDAS ODB (<code>Det07</code> is 7).</td></tr>
+<tr><td><code>type_code</code></td><td>The ODB <code>DetectorType</code> (710 and 711 are Ge and Si HV, 700 and 701 iZIP).</td></tr>
+<tr><td><code>odb_name</code></td><td>The <code>DetectorName</code> of the ODB (for example <code>G149</code>), when the name here is a different one.</td></tr>
+<tr><td><code>readout</code></td><td>The name of the readout, to be found in the same registry.</td></tr>
+<tr><td><code>read</code></td><td>Per file format, the keyword arguments of that adapter's <code>read</code> that this detector sets.</td></tr>
+</tbody></table></div>
+<h3><code>FolderSource(folder)</code></h3>
+<p>The registry files of one folder (<code>*.toml</code>, in name order). Anything with this <code>load</code> method is a source.</p>
+<h3><code>ReadoutRecord(name: str, config: Any, status: str, evidence: str, description: str = '', series: Tuple[str, ...] = (), origin: str = '') -&gt; None</code></h3>
+<p>A readout: the three numbers of a <code>goldpan.config.PulseConfig</code>, and where they come from.</p>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>config</code></td><td>The <code>PulseConfig</code>.</td></tr>
+<tr><td><code>status</code></td><td><code>"confirmed"</code> or <code>"inferred"</code>.</td></tr>
+<tr><td><code>series</code></td><td>The series (or patterns) the readout applies to, as written.</td></tr>
+<tr><td><code>origin</code></td><td>The file the record was read from.</td></tr>
+</tbody></table></div>
+<h3><code>Registry(sources: Iterable = ())</code></h3>
+<p>The records of one or more sources, read and checked when it is made.</p>
+<div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
+<tr id="goldpan.registry.load"><td><code>load</code><br><small><code>(*folders, use_environment: bool = True) -&gt; Registry</code></small></td><td>A <code>Registry</code> of the TOML files in <code>folders</code> (and of the folders of the environment variable <code>GOLDPAN_REGISTRY</code>, unless <code>use_environment</code> is false). An empty registry if there are none. <code>ValueError</code> for a folder that does not exist, a file that is not valid, or a name that two files define.</td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.registry.compare"><td><code>compare</code><br><small><code>(record: DetectorRecord, found: Any) -&gt; list</code></small></td><td>What a detector record and another description of the same detector disagree on, as messages (empty if they agree). <code>found</code> is anything with the attributes <code>number</code>, <code>type_code</code>, <code>tower</code>, <code>plane</code> and <code>name</code>, such as the <code>OdbDetector</code> of <code>goldpan.adapters.midas.detectors</code>; only what the record states is compared (<code>name</code> against <code>odb_name</code>, else the record's name).</td><td><span class="status done">done</span></td></tr>
 </tbody></table></div>
 
 <h2 id="goldpan.rq_cuts">goldpan.rq_cuts</h2>
@@ -334,14 +389,25 @@ ev = idx.read("~/idx/07221203_2025_F0001", detector_name="S104", config=DCRC_RUN
 from goldpan.config import Z7
 ev = midas.read("24260424_145101_F0001.mid.lz4", detector_name="Z7", detector_id=7, config=Z7, max_events=100,
                 channels={"PAS1": 0, "PAS2": 1, "PBS1": 2})              # channel name -&gt; channel number</pre>
-<ul><li><code>channels</code> are <strong>phonon</strong> channels (<code>channel_type=1</code>; pass <code>channel_type=0</code> for charge). The traces keep the file's <code>uint16</code>.</li><li>Only the channels you name are copied; the others are read past, so a 15 GB file costs a pass over it. Use <code>max_events=</code> to stop early, or <code>iter_chunks</code> to process a file in pieces.</li><li>Event quantities: <code>series</code> and <code>dump</code> (from a file name like <code>&lt;series&gt;_F0003.mid.lz4</code>, or <code>series=</code>/<code>dump=</code>), <code>event</code> (the event number), <code>trigger_id</code>, <code>trigger_type</code> (as text: "Physics", "BeginOfRunRandom", ...), <code>readout_type</code> and <code>global_timestamp</code>.</li><li><code>meta</code>: <code>run</code> (run number, state, start and stop time from the ODB), <code>complete</code> (the end-of-run event was seen: a file cut short is not complete), <code>skipped_events</code>, <code>format_version</code>, <code>source</code>.</li><li>Hybrid sampling (pre- or post-pulse samples at a coarser rate) is not read yet: such a file raises <code>NotImplementedError</code>.</li></ul>
+<ul><li><code>channels</code> are <strong>phonon</strong> channels (<code>channel_type=1</code>; pass <code>channel_type=0</code> for charge). The traces keep the file's <code>uint16</code>.</li><li>Only the channels you name are copied; the others are read past, so a 15 GB file costs a pass over it. Use <code>max_events=</code> to stop early, or <code>iter_chunks</code> to process a file in pieces.</li><li>Event quantities: <code>series</code> and <code>dump</code> (from a file name like <code>&lt;series&gt;_F0003.mid.lz4</code>, or <code>series=</code>/<code>dump=</code>), <code>event</code> (the event number), <code>trigger_id</code>, <code>trigger_type</code> (as text: "Physics", "BeginOfRunRandom", ...), <code>readout_type</code> and <code>global_timestamp</code>.</li><li><code>meta</code>: <code>run</code> (run number, state, start and stop time from the ODB), <code>complete</code> (the end-of-run event was seen: a file cut short is not complete), <code>skipped_events</code>, <code>format_version</code>, <code>source</code>.</li><li>Hybrid sampling (pre- or post-pulse samples at a coarser rate) is not read yet: such a file raises <code>NotImplementedError</code>.</li><li><code>detectors(path)</code> lists what the ODB says about each detector (number, name, type, tower, plane, the readout lengths), and <code>registry_entry</code> writes a starting entry for <code>goldpan.registry</code> from it. The ODB is read as a source of information about the detector, never required: <code>read</code> takes the detector number and the channels from you.</li></ul>
 <p><code>.mid.lz4</code> files need the <code>lz4</code> package (<code>pip install lz4</code>); <code>.mid.gz</code> and plain <code>.mid</code> need nothing.</p>
 <h3><code>MidasFormatError(...)</code></h3>
 <p>The file does not follow the SNOLAB data format (the message says where).</p>
+<h3><code>OdbDetector(number: int, name: Optional[str], type_code: Optional[int], tower: Optional[int], plane: Optional[int], readout: Mapping[str, float])</code></h3>
+<p>What the ODB of a file says about one detector (<code>/Detectors/Det&lt;NN&gt;</code>).</p>
+<div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>number</code></td><td>The <code>NN</code> of <code>Det&lt;NN&gt;</code>; the N of <code>zip&lt;N&gt;</code> in RQ files.</td></tr>
+<tr><td><code>name</code></td><td><code>DCRCInfo/DetectorName</code>, for example <code>G149</code>.</td></tr>
+<tr><td><code>type_code</code></td><td><code>DCRCInfo/DetectorType</code>: 710 and 711 are Ge and Si HV, 700 and 701 iZIP.</td></tr>
+<tr><td><code>readout</code></td><td>The phonon lengths of <code>ReadoutControl</code> that the block has, by name: <code>phonon_on_pulse_ms</code>, <code>phonon_on_pulse_samples</code>, <code>phonon_pre_trigger_offset_ms</code>, <code>phonon_pre_trigger_offset_samples</code>, <code>phonon_pre_pulse_ms</code>, <code>phonon_pre_pulse_samples</code>, <code>phonon_post_pulse_ms</code>, <code>phonon_post_pulse_samples</code> (pre- and post-pulse are the down-sampled regions of hybrid readout).</td></tr>
+</tbody></table></div>
 <h3><code>RawEvent(event_id, mask, serial, timestamp, data)</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Function</th><th>Summary</th><th>Status</th></tr></thead><tbody>
 <tr id="goldpan.adapters.midas.iter_events"><td><code>iter_events</code><br><small><code>(path) -&gt; Iterator[midas.RawEvent]</code></small></td><td>The MIDAS events of a file one by one, as <code>RawEvent(event_id, mask, serial, timestamp, data)</code> with <code>data</code> the bytes after the 16-byte header. A file that stops in the middle of an event ends there without an error.</td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.adapters.midas.parse_odb"><td><code>parse_odb</code><br><small><code>(xml) -&gt; dict</code></small></td><td>The run information of an ODB (XML bytes of a begin- or end-of-run event), from its <code>/Runinfo</code> directory: <code>run_number</code>, <code>state</code> (as stored; the real begin- and end-of-run dumps show 1 and 3), <code>start_time</code> and <code>stop_time</code> (unix seconds; 0 while running). Keys that are not found are left out; the rest of the ODB (tens of megabytes) is not parsed.</td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.adapters.midas.parse_odb_detectors"><td><code>parse_odb_detectors</code><br><small><code>(xml) -&gt; list</code></small></td><td>The <code>OdbDetector</code> of every <code>/Detectors/Det&lt;NN&gt;</code> block of an ODB (XML bytes of a begin-of-run event), in order. Only the <code>DCRCInfo</code> and <code>ReadoutControl</code> keys are read, by search, not by parsing the tens of megabytes; a key a block lacks is <code>None</code> (or missing from <code>readout</code>). An ODB without a <code>/Detectors</code> directory gives an empty list.</td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.adapters.midas.detectors"><td><code>detectors</code><br><small><code>(path) -&gt; list</code></small></td><td>What the begin-of-run ODB of a MIDAS file says about each detector: the <code>OdbDetector</code> list of <code>parse_odb_detectors</code>. Reads only up to the first event (the ODB); <code>ValueError</code> if the file does not begin with one.</td><td><span class="status done">done</span></td></tr>
+<tr id="goldpan.adapters.midas.registry_entry"><td><code>registry_entry</code><br><small><code>(detector: midas.OdbDetector, *, origin: str = 'the begin-of-run ODB of a MIDAS file') -&gt; str</code></small></td><td>A starting entry for a <code>goldpan.registry</code> file from what the ODB says about <code>detector</code>, as TOML text. It states what the ODB gives (number, name, type, tower, plane) as confirmed; the readout, the channels and the series are for you to add.</td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.adapters.midas.unpack_scd0"><td><code>unpack_scd0</code><br><small><code>(data: bytes, want: Optional[Mapping] = None, channel_type: int = 1) -&gt; dict</code></small></td><td>The trigger in the <code>SCD0</code> bank of a MIDAS data event.<details><summary>details</summary><p>Returns <code>dict(format_version, trigger_id, event_number, trigger_type, readout_type, global_timestamp, detectors)</code> where <code>detectors</code> maps a detector number to <code>{channel_number: dict(rate_khz, downsampling, pretrigger, pre, on, post, data)}</code>. <code>want</code> (<code>{detector: {channel numbers}}</code>) keeps the waveforms of those channels of type <code>channel_type</code> only (the others are read past); <code>None</code> keeps every channel. Returns <code>None</code> for an event without an <code>SCD0</code> bank.</p></details></td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.adapters.midas.read"><td><code>read</code><br><small><code>(path, *, detector_name: str, detector_id: int, channels: Mapping[str, int], config: PulseConfig, roles=None, channel_type: int = 1, series: Optional[str] = None, dump: Optional[str] = None, max_events: Optional[int] = None) -&gt; Events</code></small></td><td>The events of a MIDAS file in which <code>detector_id</code> has the <code>channels</code> (name -&gt; channel number), as <code>Events</code>.<details><summary>details</summary><p><code>config</code> is the readout of the data; its sample period is checked against the file. <code>max_events</code> stops after that many events (a whole file can be 15 GB). <code>meta["complete"]</code> is True only if the end-of-run event was reached.</p></details></td><td><span class="status done">done</span></td></tr>
 <tr id="goldpan.adapters.midas.iter_chunks"><td><code>iter_chunks</code><br><small><code>(path, *, chunk: int = 256, detector_name: str, detector_id: int, channels: Mapping[str, int], config: PulseConfig, roles=None, channel_type: int = 1, series: Optional[str] = None, dump: Optional[str] = None, max_events: Optional[int] = None) -&gt; Iterator[Events]</code></small></td><td>Yield the events of <code>read</code> in pieces of at most <code>chunk</code> events, reading the file once from the start. Every chunk's <code>meta["run"]</code> has the begin-of-run information; whether the file is complete is only known to <code>read</code>.</td><td><span class="status done">done</span></td></tr>

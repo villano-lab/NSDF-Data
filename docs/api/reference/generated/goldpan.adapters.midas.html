@@ -216,6 +216,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.legacy.html">goldpan.legacy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.operations.html">goldpan.operations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.quantities.html">goldpan.quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
@@ -306,25 +307,37 @@ number), <code class="code docutils literal notranslate"><span class="pre">trigg
 <li><p><code class="code docutils literal notranslate"><span class="pre">meta</span></code>: <code class="code docutils literal notranslate"><span class="pre">run</span></code> (run number, state, start and stop time from the ODB), <code class="code docutils literal notranslate"><span class="pre">complete</span></code> (the end-of-run event was seen: a file cut short
 is not complete), <code class="code docutils literal notranslate"><span class="pre">skipped_events</span></code>, <code class="code docutils literal notranslate"><span class="pre">format_version</span></code>, <code class="code docutils literal notranslate"><span class="pre">source</span></code>.</p></li>
 <li><p>Hybrid sampling (pre- or post-pulse samples at a coarser rate) is not read yet: such a file raises <code class="code docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">detectors(path)</span></code> lists what the ODB says about each detector (number, name, type, tower, plane, the readout lengths), and
+<code class="code docutils literal notranslate"><span class="pre">registry_entry</span></code> writes a starting entry for <code class="code docutils literal notranslate"><span class="pre">goldpan.registry</span></code> from it. The ODB is read as a source of information about the
+detector, never required: <code class="code docutils literal notranslate"><span class="pre">read</span></code> takes the detector number and the channels from you.</p></li>
 </ul>
 <p><code class="code docutils literal notranslate"><span class="pre">.mid.lz4</span></code> files need the <code class="code docutils literal notranslate"><span class="pre">lz4</span></code> package (<code class="code docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">lz4</span></code>); <code class="code docutils literal notranslate"><span class="pre">.mid.gz</span></code> and plain <code class="code docutils literal notranslate"><span class="pre">.mid</span></code> need nothing.</p>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.iter_chunks" title="goldpan.adapters.midas.iter_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_chunks</span></code></a>(path, *[, chunk, roles, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.detectors" title="goldpan.adapters.midas.detectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detectors</span></code></a>(path)</p></td>
+<td><p>What the begin-of-run ODB of a MIDAS file says about each detector: the <code class="code docutils literal notranslate"><span class="pre">OdbDetector</span></code> list of <code class="code docutils literal notranslate"><span class="pre">parse_odb_detectors</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.adapters.midas.iter_chunks" title="goldpan.adapters.midas.iter_chunks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_chunks</span></code></a>(path, *[, chunk, roles, ...])</p></td>
 <td><p>Yield the events of <code class="code docutils literal notranslate"><span class="pre">read</span></code> in pieces of at most <code class="code docutils literal notranslate"><span class="pre">chunk</span></code> events, reading the file once from the start.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.adapters.midas.iter_events" title="goldpan.adapters.midas.iter_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_events</span></code></a>(path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.iter_events" title="goldpan.adapters.midas.iter_events"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_events</span></code></a>(path)</p></td>
 <td><p>The MIDAS events of a file one by one, as <code class="code docutils literal notranslate"><span class="pre">RawEvent(event_id,</span> <span class="pre">mask,</span> <span class="pre">serial,</span> <span class="pre">timestamp,</span> <span class="pre">data)</span></code> with <code class="code docutils literal notranslate"><span class="pre">data</span></code> the bytes after the 16-byte header.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.parse_odb" title="goldpan.adapters.midas.parse_odb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_odb</span></code></a>(xml)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.adapters.midas.parse_odb" title="goldpan.adapters.midas.parse_odb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_odb</span></code></a>(xml)</p></td>
 <td><p>The run information of an ODB (XML bytes of a begin- or end-of-run event), from its <code class="code docutils literal notranslate"><span class="pre">/Runinfo</span></code> directory: <code class="code docutils literal notranslate"><span class="pre">run_number</span></code>, <code class="code docutils literal notranslate"><span class="pre">state</span></code> (as stored; the real begin- and end-of-run dumps show 1 and 3), <code class="code docutils literal notranslate"><span class="pre">start_time</span></code> and <code class="code docutils literal notranslate"><span class="pre">stop_time</span></code> (unix seconds; 0 while running).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.parse_odb_detectors" title="goldpan.adapters.midas.parse_odb_detectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_odb_detectors</span></code></a>(xml)</p></td>
+<td><p>The <code class="code docutils literal notranslate"><span class="pre">OdbDetector</span></code> of every <code class="code docutils literal notranslate"><span class="pre">/Detectors/Det&lt;NN&gt;</span></code> block of an ODB (XML bytes of a begin-of-run event), in order.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#goldpan.adapters.midas.read" title="goldpan.adapters.midas.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(path, *, detector_name, detector_id, ...)</p></td>
 <td><p>The events of a MIDAS file in which <code class="code docutils literal notranslate"><span class="pre">detector_id</span></code> has the <code class="code docutils literal notranslate"><span class="pre">channels</span></code> (name -&gt; channel number), as <code class="code docutils literal notranslate"><span class="pre">Events</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.unpack_scd0" title="goldpan.adapters.midas.unpack_scd0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unpack_scd0</span></code></a>(data[, want, channel_type])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.registry_entry" title="goldpan.adapters.midas.registry_entry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">registry_entry</span></code></a>(detector, *[, origin])</p></td>
+<td><p>A starting entry for a <code class="code docutils literal notranslate"><span class="pre">goldpan.registry</span></code> file from what the ODB says about <code class="code docutils literal notranslate"><span class="pre">detector</span></code>, as TOML text.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.adapters.midas.unpack_scd0" title="goldpan.adapters.midas.unpack_scd0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unpack_scd0</span></code></a>(data[, want, channel_type])</p></td>
 <td><p>The trigger in the <code class="code docutils literal notranslate"><span class="pre">SCD0</span></code> bank of a MIDAS data event.</p></td>
 </tr>
 </tbody>
@@ -334,7 +347,10 @@ is not complete), <code class="code docutils literal notranslate"><span class="p
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.RawEvent" title="goldpan.adapters.midas.RawEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RawEvent</span></code></a>(event_id, mask, serial, timestamp, data)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector" title="goldpan.adapters.midas.OdbDetector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OdbDetector</span></code></a>(number, name, type_code, tower, ...)</p></td>
+<td><p>What the ODB of a file says about one detector (<code class="code docutils literal notranslate"><span class="pre">/Detectors/Det&lt;NN&gt;</span></code>).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.adapters.midas.RawEvent" title="goldpan.adapters.midas.RawEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RawEvent</span></code></a>(event_id, mask, serial, timestamp, data)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -414,6 +430,116 @@ Keys that are not found are left out; the rest of the ODB (tens of megabytes) is
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.OdbDetector">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.adapters.midas.</span></span><span class="sig-name descname"><span class="pre">OdbDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plane</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/adapters/midas.html#OdbDetector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.adapters.midas.OdbDetector" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.NamedTuple" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></a></p>
+<p>What the ODB of a file says about one detector (<code class="code docutils literal notranslate"><span class="pre">/Detectors/Det&lt;NN&gt;</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>number</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a>)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>type_code</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>tower</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>plane</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>readout</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><em>float</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.OdbDetector.number">
+<span class="sig-name descname"><span class="pre">number</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><a class="headerlink" href="#goldpan.adapters.midas.OdbDetector.number" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="code docutils literal notranslate"><span class="pre">NN</span></code> of <code class="code docutils literal notranslate"><span class="pre">Det&lt;NN&gt;</span></code>; the N of <code class="code docutils literal notranslate"><span class="pre">zip&lt;N&gt;</span></code> in RQ files.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.OdbDetector.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#goldpan.adapters.midas.OdbDetector.name" title="Link to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">DCRCInfo/DetectorName</span></code>, for example <code class="code docutils literal notranslate"><span class="pre">G149</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.OdbDetector.type_code">
+<span class="sig-name descname"><span class="pre">type_code</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#goldpan.adapters.midas.OdbDetector.type_code" title="Link to this definition">¶</a></dt>
+<dd><p>710 and 711 are Ge and Si HV, 700 and 701 iZIP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">DCRCInfo/DetectorType</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.OdbDetector.tower">
+<span class="sig-name descname"><span class="pre">tower</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#goldpan.adapters.midas.OdbDetector.tower" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.OdbDetector.plane">
+<span class="sig-name descname"><span class="pre">plane</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><a class="headerlink" href="#goldpan.adapters.midas.OdbDetector.plane" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.OdbDetector.readout">
+<span class="sig-name descname"><span class="pre">readout</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#goldpan.adapters.midas.OdbDetector.readout" title="Link to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">phonon_on_pulse_ms</span></code>, <code class="code docutils literal notranslate"><span class="pre">phonon_on_pulse_samples</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">phonon_pre_trigger_offset_ms</span></code>, <code class="code docutils literal notranslate"><span class="pre">phonon_pre_trigger_offset_samples</span></code>, <code class="code docutils literal notranslate"><span class="pre">phonon_pre_pulse_ms</span></code>, <code class="code docutils literal notranslate"><span class="pre">phonon_pre_pulse_samples</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">phonon_post_pulse_ms</span></code>, <code class="code docutils literal notranslate"><span class="pre">phonon_post_pulse_samples</span></code> (pre- and post-pulse are the down-sampled regions of hybrid readout).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The phonon lengths of <code class="code docutils literal notranslate"><span class="pre">ReadoutControl</span></code> that the block has, by name</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.parse_odb_detectors">
+<span class="sig-prename descclassname"><span class="pre">goldpan.adapters.midas.</span></span><span class="sig-name descname"><span class="pre">parse_odb_detectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/adapters/midas.html#parse_odb_detectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.adapters.midas.parse_odb_detectors" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="code docutils literal notranslate"><span class="pre">OdbDetector</span></code> of every <code class="code docutils literal notranslate"><span class="pre">/Detectors/Det&lt;NN&gt;</span></code> block of an ODB (XML bytes of a begin-of-run event), in order. Only the
+<code class="code docutils literal notranslate"><span class="pre">DCRCInfo</span></code> and <code class="code docutils literal notranslate"><span class="pre">ReadoutControl</span></code> keys are read, by search, not by parsing the tens of megabytes; a key a block lacks is <code class="code docutils literal notranslate"><span class="pre">None</span></code>
+(or missing from <code class="code docutils literal notranslate"><span class="pre">readout</span></code>). An ODB without a <code class="code docutils literal notranslate"><span class="pre">/Detectors</span></code> directory gives an empty list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.detectors">
+<span class="sig-prename descclassname"><span class="pre">goldpan.adapters.midas.</span></span><span class="sig-name descname"><span class="pre">detectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/adapters/midas.html#detectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.adapters.midas.detectors" title="Link to this definition">¶</a></dt>
+<dd><p>What the begin-of-run ODB of a MIDAS file says about each detector: the <code class="code docutils literal notranslate"><span class="pre">OdbDetector</span></code> list of <code class="code docutils literal notranslate"><span class="pre">parse_odb_detectors</span></code>. Reads
+only up to the first event (the ODB); <code class="code docutils literal notranslate"><span class="pre">ValueError</span></code> if the file does not begin with one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.15)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.adapters.midas.registry_entry">
+<span class="sig-prename descclassname"><span class="pre">goldpan.adapters.midas.</span></span><span class="sig-name descname"><span class="pre">registry_entry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detector</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'the</span> <span class="pre">begin-of-run</span> <span class="pre">ODB</span> <span class="pre">of</span> <span class="pre">a</span> <span class="pre">MIDAS</span> <span class="pre">file'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/adapters/midas.html#registry_entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.adapters.midas.registry_entry" title="Link to this definition">¶</a></dt>
+<dd><p>A starting entry for a <code class="code docutils literal notranslate"><span class="pre">goldpan.registry</span></code> file from what the ODB says about <code class="code docutils literal notranslate"><span class="pre">detector</span></code>, as TOML text. It states what the ODB
+gives (number, name, type, tower, plane) as confirmed; the readout, the channels and the series are for you to add.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>detector</strong> (<a class="reference internal" href="#goldpan.adapters.midas.OdbDetector" title="goldpan.adapters.midas.OdbDetector"><em>OdbDetector</em></a>)</p></li>
+<li><p><strong>origin</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -559,6 +685,18 @@ past); <code class="code docutils literal notranslate"><span class="pre">None</s
 <li><a class="reference internal" href="#goldpan.adapters.midas.MidasFormatError"><code class="docutils literal notranslate"><span class="pre">MidasFormatError</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.midas.iter_events"><code class="docutils literal notranslate"><span class="pre">iter_events()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.midas.parse_odb"><code class="docutils literal notranslate"><span class="pre">parse_odb()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector"><code class="docutils literal notranslate"><span class="pre">OdbDetector</span></code></a><ul>
+<li><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector.number"><code class="docutils literal notranslate"><span class="pre">OdbDetector.number</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector.name"><code class="docutils literal notranslate"><span class="pre">OdbDetector.name</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector.type_code"><code class="docutils literal notranslate"><span class="pre">OdbDetector.type_code</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector.tower"><code class="docutils literal notranslate"><span class="pre">OdbDetector.tower</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector.plane"><code class="docutils literal notranslate"><span class="pre">OdbDetector.plane</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.OdbDetector.readout"><code class="docutils literal notranslate"><span class="pre">OdbDetector.readout</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.parse_odb_detectors"><code class="docutils literal notranslate"><span class="pre">parse_odb_detectors()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.detectors"><code class="docutils literal notranslate"><span class="pre">detectors()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.adapters.midas.registry_entry"><code class="docutils literal notranslate"><span class="pre">registry_entry()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.midas.unpack_scd0"><code class="docutils literal notranslate"><span class="pre">unpack_scd0()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.midas.read"><code class="docutils literal notranslate"><span class="pre">read()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.adapters.midas.iter_chunks"><code class="docutils literal notranslate"><span class="pre">iter_chunks()</span></code></a></li>

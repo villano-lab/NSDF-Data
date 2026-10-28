@@ -317,3 +317,20 @@ def test_the_example_loads_and_its_commented_root_lines_work_when_uncommented(tm
     root.write_text(text.replace("# output_format = ", "output_format = ").replace("# root_detector = ", "root_detector = "), encoding="utf-8")
     spec = dataset.load(root)
     assert (spec.output_format, spec.root_detector) == ("root", 1)
+
+
+def test_the_baseline_step_writes_the_mean_and_the_deviation_of_the_window_and_agrees_with_peak(setup):
+    tmp, files, spec = setup
+    steps = ('[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\n[processing.params]\n'
+             'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = "@readout.pretrigger_samples"\namps_per_adc = 1.0\n\n'
+             '[[processing]]\nalgorithm = "baseline"\nchannels = "role:phonon"\n[processing.params]\n'
+             'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = "@readout.pretrigger_samples"\n')
+    write_spec(spec, files, steps=steps)
+    batch.run(spec, progress=None)
+    q = Dataset.open(spec).processed().quantities
+    raw = parquet.read(files[0])
+    window = raw.trace("A")[:, 10:1000]
+    np.testing.assert_allclose(q["A"]["baseline_mean"][:7], window.mean(axis=1), rtol=1e-12)
+    np.testing.assert_allclose(q["A"]["baseline_std"][:7], window.std(axis=1), rtol=1e-10)
+    np.testing.assert_allclose(q["A"]["baseline_mean"], q["A"]["adc_max"] - q["A"]["current_max"], rtol=1e-12)     # the baseline `peak` subtracts
+    assert "baseline_mean" not in q["Q"].fields if "Q" in q.fields else True                                       # role charge: not a phonon channel

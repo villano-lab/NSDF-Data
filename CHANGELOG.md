@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Fixed
+
+- **`goldpan.rqdata.load` can read a series that is stored as many files (`all_files=True`).** `load` took the last file that matched a series, which is right for the collaboration's processed files (one per series) and reads one dump of 30 for Run 76. With `all_files=True` every match is read, in name order (`files="~/goldsluice-output/r76-rq/{series}_F*.root"`), `data.files` maps the series to the list of files and the cache is stale if a dump is added or rewritten. New `find_files(series, files)`. Found by reading the processed Run 76 quantities back as RQs.
+
 ### Changed
 
 - **The Run 76 readout has a 500-sample pretrigger window, not 1000 (issue 154); the readouts are now in `registry/readouts.toml`.** Measured on three dumps of `07221203_2025` (about 8,800 events): the trigger-locked pulses start at sample 480 to 520 and the trace is flat before, so the 1000-sample baseline of `peak` was about half pulse and `current_max` came out at 0.52 of its value (a baseline over samples 10 to 500 gives 0.999). `goldpan.config.DCRC_RUN76` and the registry's `[readouts.DCRC_RUN76]` now say 500 (also t = 0 of the time axis is now sample 500), so **the processed output of a definition that uses `readout = "DCRC_RUN76"` is redone on the next run** (the fingerprint changes; about 100 s for the 30 dumps of the series) and any `current_max` made before is too low by about half for the trigger-locked events. `registry/readouts.toml` holds `DCRC_RUN76` and `Z7` with their `status` and `evidence`; the presets of `goldpan.config` stay for existing code, and a test checks that they agree with the file. The `Z7` entry says it is not checked against a file: the ODB of series 24260424_145101 gives a different pre-trigger offset. The flat names for the existing notebooks (`pulse_config.PulseConfig()` and the defaults of `pulse_*`) keep the 1000-sample window they were run with, so those notebooks give the same numbers when run again.

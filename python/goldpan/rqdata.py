@@ -18,7 +18,8 @@ first, then in `zip<N>`; a branch a file does not have is filled with NaN for th
 **Where the files are is not in this library.** Say it once, in the environment, and the call above needs nothing more:
 
 * `GOLDPAN_RQ_FILES` (or `files=` in the call): a pattern with `{series}` in it, for example
-  `"/data/R*/Processed/Prompt/*/Submerged/*_{series}.root"`; of the files that match, the last in name order is read;
+  `"/data/R*/Processed/Prompt/*/Submerged/*_{series}.root"`; of the files that match, the last in name order is read (a series
+  with one file per dump, like Run 76, is `files="/data/{series}_F*.root"` with `all_files=True`: every match is read, in name order);
 * `GOLDPAN_RQ_DETECTOR` (or `detector=`): the number `N` of the `zip<N>` tree.
 
 **The cache.** `load` saves what it read in `$GOLDPAN_CACHE/rqdata` (default `~/.cache/goldpan/rqdata`, a folder of your own, never
@@ -118,6 +119,22 @@ def find_file(series: str, files: Union[str, Callable, None] = None) -> Optional
 
 
 @status(DONE)
+def find_files(series: str, files: Union[str, Callable, None] = None) -> list:
+    """Every file of `series`, in name order: the matches of the pattern `files` (default: `$GOLDPAN_RQ_FILES`), or what the function
+    `files(series)` returns (a path, a list of paths or `None`). The empty list if there is none. For a series that is stored as
+    many files, such as the dumps of Run 76."""
+    if callable(files):
+        found = files(series)
+        return [] if found is None else ([str(f) for f in found] if isinstance(found, (list, tuple)) else [str(found)])
+    pattern = files or os.environ.get(ENV_FILES)
+    if not pattern:
+        raise ValueError(f"say where the RQ files are: files=\"<pattern with {{series}}>\" or the environment variable {ENV_FILES}")
+    if "{series}" not in pattern:
+        raise ValueError(f"the pattern for the RQ files must contain {{series}}, got {pattern!r}")
+    return sorted(glob(os.path.expanduser(pattern.replace("{series}", series))))
+
+
+@status(DONE)
 def expand_branches(rqs: Sequence[str], phonon_channels: Optional[Sequence[str]] = None) -> list:
     """`rqs` with every `P*` replaced by the phonon channels (`P*max` -> `PAS1max`, ...), each name once, in order."""
     channels = list(phonon_channels) if phonon_channels is not None else PHONON_CHANNELS
@@ -144,7 +161,7 @@ def _stamp(path: str) -> list:
     return [os.path.abspath(path), st.st_size, st.st_mtime_ns]
 
 
-def _fileset_key(dataset, files: dict, detector: int) -> str:
+def _fileset_key(dataset, files: dict, detector: int) -> str:                  # files: series -> the stamp(s) of its file(s)
     h = hashlib.sha1(json.dumps([detector, sorted(files.items()), _goldpan_version()]).encode()).hexdigest()[:10]
     named = isinstance(dataset, str) and SERIES_NAME.match(dataset)
     name = dataset if named else (Path(dataset).stem if isinstance(dataset, (str, Path)) else "custom")
@@ -168,7 +185,7 @@ def _read_files(files: dict, requested: list, detector: int) -> dict:
     parts = {}
     names = None
     for series, path in files.items():
-        table = rq_root.read(path, detector=detector, branches=requested, series=series)
+        table = rq_root.read(path, detector=detector, branches=requested, series=series)             # path: a file or a list of files
         fields = ak.fields(table)
         names = fields if names is None else names + [f for f in fields if f not in names]
         n = len(table)
@@ -191,21 +208,26 @@ def _read_files(files: dict, requested: list, detector: int) -> dict:
 
 @status(DONE)
 def load(dataset, rqs: Sequence[str], detector: Union[int, str, None] = None, cache: bool = True, refresh: bool = False,
-         verbose: bool = True, files: Union[str, Callable, None] = None, phonon_channels: Optional[Sequence[str]] = None) -> RQData:
+         verbose: bool = True, files: Union[str, Callable, None] = None, phonon_channels: Optional[Sequence[str]] = None,
+         all_files: bool = False) -> RQData:
     """All the requested RQs of every series of `dataset`, concatenated (see the module documentation).
 
     `dataset`: a series name, a list of series names, or the path of a CSV with a `series` column. `rqs`: branch names, patterns
     and `P*` names. `detector`: the number `N` of the `zip<N>` tree (default `$GOLDPAN_RQ_DETECTOR`). `files`: where the files
     are (default `$GOLDPAN_RQ_FILES`), see `find_file`. `cache=False` bypasses the cache and `refresh=True` reads again and
-    replaces the entry. Series with no file are skipped and listed in `data.skipped`."""
+    replaces the entry. `all_files=True` reads every file that matches a series (its dumps, in name order) instead of the last one;
+    `data.files` then maps each series to a list of files. Series with no file are skipped and listed in `data.skipped`."""
     t0 = time.time()
     requested = expand_branches(rqs, phonon_channels)
     detector = _detector(detector)
     found, skipped = {}, []
     for series in series_list(dataset):
-        path = find_file(series, files)
+        if all_files:
+            path = find_files(series, files) or None
+        else:
+            path = find_file(series, files)
         (skipped.append(series) if path is None else found.__setitem__(series, path))
-    stamps = {s: _stamp(p) for s, p in found.items()}
+    stamps = {s: ([_stamp(f) for f in p] if isinstance(p, list) else _stamp(p)) for s, p in found.items()}
     prefix = _fileset_key(dataset, stamps, detector)
 
     out = RQData()
@@ -234,7 +256,8 @@ def load(dataset, rqs: Sequence[str], detector: Union[int, str, None] = None, ca
         else:
             n_ev = len(out["series"])
             src = f"cache {os.path.basename(hit)}" if hit else "the RQ files"
-            print(f"{dataset}: {len(found)} series, {n_ev} events, {len(requested)} branches from {src} in {time.time() - t0:.1f} s"
+            n_files = sum(len(p) if isinstance(p, list) else 1 for p in found.values())
+            print(f"{dataset}: {len(found)} series ({n_files} files), {n_ev} events, {len(requested)} branches from {src} in {time.time() - t0:.1f} s"
                   + (f"; {len(skipped)} series with no file skipped" if skipped else ""))
     return out
 

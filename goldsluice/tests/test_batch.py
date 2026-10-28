@@ -334,3 +334,23 @@ def test_the_baseline_step_writes_the_mean_and_the_deviation_of_the_window_and_a
     np.testing.assert_allclose(q["A"]["baseline_std"][:7], window.std(axis=1), rtol=1e-10)
     np.testing.assert_allclose(q["A"]["baseline_mean"], q["A"]["adc_max"] - q["A"]["current_max"], rtol=1e-12)     # the baseline `peak` subtracts
     assert "baseline_mean" not in q["Q"].fields if "Q" in q.fields else True                                       # role charge: not a phonon channel
+
+
+def test_the_integral_and_excursion_steps_agree_with_goldpan_on_the_toy_dataset(setup):
+    tmp, files, spec = setup
+    window = 'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = "@readout.pretrigger_samples"\n'
+    steps = ('[[processing]]\nalgorithm = "integral"\nchannels = "role:phonon"\n[processing.params]\n' + window +
+             'sample_period_s = "@readout.sample_period_s"\n\n'
+             '[[processing]]\nalgorithm = "excursion"\nchannels = "role:phonon"\n[processing.params]\n' + window)
+    write_spec(spec, files, steps=steps)
+    batch.run(spec, progress=None)
+    q = Dataset.open(spec).processed().quantities
+    raw = parquet.read(files[0])
+    x = raw.trace("A")
+    from goldpan import algorithms, quantities
+    config = raw.detector.readout.config()
+    # the integral is a sum of terms of both signs: compare with the size of the terms, not with the (possibly small) result
+    scale = np.abs(x - x[:, 10:1000].mean(axis=1)[:, None]).sum(axis=1) * config.sample_period_s
+    np.testing.assert_allclose(q["A"]["integral"][:7], algorithms.integral(x, config), rtol=0, atol=1e-11 * scale.max())
+    np.testing.assert_allclose(q["A"]["max_deviation"][:7], quantities.max_deviation(x, config), rtol=1e-12)
+    np.testing.assert_allclose(q["A"]["excursion_ratio"][:7], quantities.excursion_ratio(x, config), rtol=1e-10)

@@ -12,12 +12,12 @@ description: "In doing some early data analysis--for example Notes 2, 7, and 9--
 
 ## Code repository
 
-The code is in the [`NSDF-Data`](https://github.com/villano-lab/NSDF-Data) repository: `python/` is `goldpan`, `goldsluice/` is `goldsluice`, `registry/` is the detector registry (Appendix A), and the notebooks are in `data_analysis/R76/notebooks/goldpan-goldsluice/`. The notebooks of the section *Examples* run on made-up data saved next to them, so they work on a fresh clone:
+The code is in the [`NSDF-Data`](https://github.com/villano-lab/NSDF-Data) repository: `python/` is `goldpan`, `goldsluice/` is `goldsluice`, `registry/` is the detector registry ([Appendix A](#appendix-a-the-detector-registry)), and the notebooks are in `data_analysis/R76/notebooks/goldpan-goldsluice/`. The notebooks of the section *Examples* run on made-up data saved next to them, so they work on a fresh clone:
 
 - [`example-1-read-rqs-and-plot.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/3216890ab10f27a3085a048b7b826ecc6ffaff4f/data_analysis/R76/notebooks/goldpan-goldsluice/example-1-read-rqs-and-plot.ipynb): read RQ files (ROOT) and plot one quantity.
 - [`example-2-read-processed-quantities-and-plot.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/729c10eb4de82929d04275757edab15f6eebfde1/data_analysis/R76/notebooks/goldpan-goldsluice/example-2-read-processed-quantities-and-plot.ipynb): read the Parquet quantities of a `goldsluice` run and plot one.
 - [`example-3-trace-and-its-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/91a26cdbb55f053f7038212384a6b8d035c86f31/data_analysis/R76/notebooks/goldpan-goldsluice/example-3-trace-and-its-rqs.ipynb): a trace next to its quantities, computed with `goldsluice.run`, and the same after a low-pass filter.
-- [`example-4-trace-and-its-processed-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb): a trace next to its processed quantities, read from disk with `ds.read()`.
+- [`example-4-trace-and-its-processed-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb): a trace next to its processed quantities, both read from disk with `ds.read()`.
 
 Notebooks on the real Run 76 series `07221203_2025`; the processed files they read are the output of `python -m goldsluice run` in `goldsluice/examples/` (in `~/goldsluice-output/`) and are not in the repository:
 
@@ -257,7 +257,7 @@ The notebook goes on to the case where the pulses are filtered before the quanti
 
 ### Example 4: I have the traces and their processed quantities on disk, and want them side by side
 
-The same picture as Example 3, when `goldsluice` has already processed the pulses and written the quantities. [`example-4-trace-and-its-processed-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb) opens the definition file and calls `ds.read()`, which reads the traces and the processed quantities of the same events together as one `Events`; the quantities are then read and not computed. The pair is `synthetic-goldpan/` and `synthetic-quantities/out/` of Examples 2 and 3. Its figure is Figure 5 again, with the same numbers, which is the check that the processed quantities are those that the algorithms give.
+The same picture as Example 3, when `goldsluice` has already processed the pulses and written the quantities. [`example-4-trace-and-its-processed-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb) opens the definition file and calls `ds.read()`, which reads the traces and the processed quantities of the same events together as one `Events`; both the traces and the quantities are read from disk, and nothing is computed. The pair is `synthetic-goldpan/` and `synthetic-quantities/out/` of Examples 2 and 3. Its figure is Figure 5 again, with the same numbers, which is the check that the processed quantities are those that the algorithms give.
 
 More examples will follow, each for one question.
 

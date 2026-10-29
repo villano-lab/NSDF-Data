@@ -15,7 +15,7 @@
 <header class="site"><nav><a href="../index.html">&larr; All notes</a></nav></header>
 
 <h1>What are the packages <code>goldpan</code> and <code>goldsluice</code>?</h1>
-<p class="meta"><strong>Note 11</strong> &middot; Author(s): Anthony Villano &middot; 2026-10-26 &middot; Status: <span class="status in-progress">In progress</span></p>
+<p class="meta"><strong>Note 11</strong> &middot; Author(s): Anthony Villano &middot; 2026-10-26 &middot; Status: <span class="status complete">Complete (2026-10-29)</span></p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -39,7 +39,8 @@ registry</a></li>
 href="https://github.com/villano-lab/NSDF-Data"><code>NSDF-Data</code></a>
 repository: <code>python/</code> is <code>goldpan</code>,
 <code>goldsluice/</code> is <code>goldsluice</code>,
-<code>registry/</code> is the detector registry (Appendix A), and the
+<code>registry/</code> is the detector registry (<a
+href="#appendix-a-the-detector-registry">Appendix A</a>), and the
 notebooks are in
 <code>data_analysis/R76/notebooks/goldpan-goldsluice/</code>. The
 notebooks of the section <em>Examples</em> run on made-up data saved
@@ -53,12 +54,12 @@ href="https://github.com/villano-lab/NSDF-Data/blob/729c10eb4de82929d04275757eda
 read the Parquet quantities of a <code>goldsluice</code> run and plot
 one.</li>
 <li><a
-href="https://github.com/villano-lab/NSDF-Data/blob/91a26cdbb55f053f7038212384a6b8d035c86f31/data_analysis/R76/notebooks/goldpan-goldsluice/example-3-trace-and-its-rqs.ipynb"><code>example-3-trace-and-its-rqs.ipynb</code></a>:
+href="https://github.com/villano-lab/NSDF-Data/blob/1f4841f236d8938215ecd8530b32647d87d5243e/data_analysis/R76/notebooks/goldpan-goldsluice/example-3-trace-and-its-rqs.ipynb"><code>example-3-trace-and-its-rqs.ipynb</code></a>:
 a trace next to its quantities, computed with
 <code>goldsluice.run</code>, and the same after a low-pass filter.</li>
 <li><a
 href="https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb"><code>example-4-trace-and-its-processed-rqs.ipynb</code></a>:
-a trace next to its processed quantities, read from disk with
+a trace next to its processed quantities, both read from disk with
 <code>ds.read()</code>.</li>
 </ul>
 <p>Notebooks on the real Run 76 series <code>07221203_2025</code>; the
@@ -90,13 +91,21 @@ show it as it was then, which may be older than the latest version, and
 the files may have moved since (see
 <code>data_analysis/README.md</code>).</p>
 <h2 id="data-and-setup">Data and setup</h2>
-<p><strong>Setup.</strong> <code>goldpan</code> and
-<code>goldsluice</code> come with the repository: follow the <a
+<p><strong>Setup.</strong> Follow the <a
 href="https://villano-lab.github.io/NSDF-Data/students/setup.html">setup
-guide</a> (it installs the packages with
-<code>pip install -r requirements.txt</code>) and the <a
+guide</a> and the <a
 href="https://villano-lab.github.io/NSDF-Data/students/first-analysis.html">first-analysis
-guide</a>.</p>
+guide</a>. <code>pip install -r requirements.txt</code> installs
+<code>goldpan</code>, but not <code>goldsluice</code>: its kernels are
+written in Rust and you build it yourself. Install Rust (on Windows also
+the Visual Studio <em>Build Tools</em> with “Desktop development with
+C++”) and then, in the <code>goldsluice/</code> folder of the
+repository, run <code>python -m pip install maturin</code> and
+<code>maturin develop --release</code> (see
+<code>goldsluice/README.md</code>). You need <code>goldsluice</code> to
+run the processing (the section <em>Processing the downloaded data</em>)
+and for Example 3; everything that only reads files, which is all the
+other sections and examples, needs <code>goldpan</code> alone.</p>
 <p><strong>The datasets of this note.</strong> One real series,
 <code>07221203_2025</code>, and what is made from it, and some made-up
 data that is saved in the repository so that the examples run on a fresh
@@ -196,8 +205,10 @@ nsdf-cli download 07221203_2025_F0001</code></pre>
 whole series, 30 dumps and about 1.9 GB, is</p>
 <pre><code>nsdf-cli download 07221203_2025 --all</code></pre>
 <p>and <code>nsdf-cli config --output-global ~/idx</code> makes every
-later download go to <code>~/idx</code> whichever folder you are in.
-Both guides above say more.</p>
+later download go to <code>~/idx</code> whichever folder you are in. The
+<a
+href="https://villano-lab.github.io/NSDF-Data/students/first-analysis.html">first-analysis
+guide</a> says more about downloading.</p>
 <p><strong>The quantities.</strong> Which series, dump, detector and
 channel is used is stated where it is used. The quantities are the
 outputs of the algorithms of <code>goldsluice</code>:
@@ -557,7 +568,7 @@ id="example-3-i-have-a-raw-trace-and-want-to-see-it-next-to-its-rqs">Example
 3: I have a raw trace and want to see it next to its RQs</h3>
 <p>The quantities are short descriptions of a trace, so the natural
 check is to draw the trace and mark what they say on it. <a
-href="https://github.com/villano-lab/NSDF-Data/blob/91a26cdbb55f053f7038212384a6b8d035c86f31/data_analysis/R76/notebooks/goldpan-goldsluice/example-3-trace-and-its-rqs.ipynb"><code>example-3-trace-and-its-rqs.ipynb</code></a>
+href="https://github.com/villano-lab/NSDF-Data/blob/1f4841f236d8938215ecd8530b32647d87d5243e/data_analysis/R76/notebooks/goldpan-goldsluice/example-3-trace-and-its-rqs.ipynb"><code>example-3-trace-and-its-rqs.ipynb</code></a>
 reads the traces with <code>adapters.read</code>, computes the
 quantities of one channel on the spot with <code>goldsluice.run</code>
 (one call for each of the six algorithms, with the pretrigger window and
@@ -604,8 +615,9 @@ already processed the pulses and written the quantities. <a
 href="https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb"><code>example-4-trace-and-its-processed-rqs.ipynb</code></a>
 opens the definition file and calls <code>ds.read()</code>, which reads
 the traces and the processed quantities of the same events together as
-one <code>Events</code>; the quantities are then read and not computed.
-The pair is <code>synthetic-goldpan/</code> and
+one <code>Events</code>; both the traces and the quantities are read
+from disk, and nothing is computed. The pair is
+<code>synthetic-goldpan/</code> and
 <code>synthetic-quantities/out/</code> of Examples 2 and 3. Its figure
 is Figure 5 again, with the same numbers, which is the check that the
 processed quantities are those that the algorithms give.</p>

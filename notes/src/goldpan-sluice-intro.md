@@ -137,21 +137,21 @@ few.trace("Side2pC")                                   # (events kept, samples)
 
 ## Processing the downloaded data with `goldsluice` and reading it back in `goldpan`
 
-`goldsluice` reads the same dataset definition file, runs its `[[processing]]` steps over every raw dump and writes the results outside the repository (`~/goldsluice-output/`). Here the steps are `peak` (the largest value above the baseline, `current_max`, and the largest ADC value, `adc_max`) and `max_time` (the time of that maximum, `max_time_s`), on the six phonon channels. It is run from a terminal, in `goldsluice/examples/`; reading the raw dumps takes a couple of minutes and is most of the time.
+`goldsluice` reads the same dataset definition file, runs its `[[processing]]` steps over every raw dump and writes the results outside the repository (e.g. `~/goldsluice-output/`). Here the steps are `peak` (the largest value above the baseline, `current_max`, and the largest ADC value, `adc_max`) and `max_time` (the time of that maximum, `max_time_s`), on the six phonon channels. It is run from a terminal, in `goldsluice/examples/`; reading the raw dumps takes a couple of minutes and is most of the time.
 
 ```
 python -m goldsluice check r76-registry.dataset.toml    # lists the raw files and the steps, reads nothing
 python -m goldsluice run r76-registry.dataset.toml      # processes every dump
 ```
 
-The output is a `goldpan` Parquet dataset, one file per dump (`output_format = "root"` in the definition gives ROOT files in the layout of the collaboration's RQ files instead). Reading it back needs no raw data:
+The output is a `goldpan` Parquet dataset, one file per dump (`output_format = "root"` in the definition gives ROOT files in the layout of the SuperCDMS collaboration's RQ files instead). Reading it back needs no raw data:
 
 ```python
 q = ds.processed()                          # the processed quantities of all dumps, no pulses: small and fast
 q.quantities["Side2pC"]["current_max"]      # a record per channel, a field per quantity
 ```
 
-This is 81,992 events with three quantities for each of the six channels. `current_max` is still in ADC counts because the conversion to amps (`amps_per_adc`) is a placeholder equal to 1 until the scale is known. For the RQ-file layout, `goldpan.rqdata.load` reads the quantities as numpy arrays and keeps what it read in a cache (`~/.cache/goldpan/rqdata`), so the second read of the same files takes a tenth of a second instead of four.
+This is 81,992 events with three quantities for each of the six channels. `current_max` is still in ADC counts because the conversion to amps (`amps_per_adc`) is a placeholder equal to 1 until the scale is known. For the RQ-file layout there is a cached reader, `goldpan.rqdata.load`, described in the next section.
 
 ## Cached reading of the quantities (under development)
 

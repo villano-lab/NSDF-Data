@@ -1,5 +1,5 @@
 ---
-id: "TBD"
+id: "11"
 title: "What are the packages `goldpan` and `goldsluice`?"
 author: "Anthony Villano"
 date: "2026-10-26"

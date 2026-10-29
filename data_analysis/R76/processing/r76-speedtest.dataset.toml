@@ -1,10 +1,7 @@
-# Speed test: the smallest series of D:\idx (07221203_1744, 64 dumps, 4.9 GiB) processed from a copy on C: (the SSD), to compare with
-# r76-d-idx.dataset.toml, which reads from D: (a hard disk). Same six steps, same detector record.
-#   1. copy the series (PowerShell):
-#        robocopy D:\idx C:\idx-speedtest 07221203_1744_F* /E
-#      (the pattern copies the dump folders; the .csv, .idx and .txt files next to them are copied too)
-#   2. python -m goldsluice run r76-speedtest.dataset.toml     # note the time per dump
-# Delete C:\idx-speedtest and ~/goldsluice-output/r76-speedtest afterwards.
+# Speed test: the smallest series (07221203_1744, 64 dumps, 4.9 GiB) read from C:\NSDF\idx (the SSD). To compare with a hard disk, point
+# the glob at a copy of the series there. Same six steps and detector record as r76-d-idx.dataset.toml.
+#   python -m goldsluice run r76-speedtest.dataset.toml     # note the time per dump
+# Delete ~/goldsluice-output/r76-speedtest afterwards.
 
 [dataset]
 name = "r76-speedtest"
@@ -14,7 +11,7 @@ registry = ["../../../registry"]
 [[sources]]
 name = "side2"
 format = "idx"
-glob = "C:/idx-speedtest/07221203_1744_F[0-9][0-9][0-9][0-9]"
+glob = "C:/NSDF/idx/07221203_1744_F[0-9][0-9][0-9][0-9]"
 detector = "NAI-S2"
 
 [[processing]]

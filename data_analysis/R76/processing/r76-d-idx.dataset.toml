@@ -1,4 +1,4 @@
-# Every algorithm of goldsluice on all the Side-2 series in D:\idx (12 series, 2,993 dumps, about 150 GiB of raw data; the series
+# Every algorithm of goldsluice on the Side-2 series in C:\NSDF\idx (the raw data were moved there from D:\idx; 12 series, 2,993 dumps, about 150 GiB in all; the series
 # 07221203_2025 of r76-registry.dataset.toml is not among them, it is in ~/idx). Same six steps and the same detector record ("NAI-S2").
 #   python -m goldsluice check r76-d-idx.dataset.toml     # lists the files, runs nothing
 #   python -m goldsluice run   r76-d-idx.dataset.toml     # expect hours: about 3 s of reading per dump
@@ -8,13 +8,13 @@
 
 [dataset]
 name = "r76-d-idx"
-output = "D:/goldsluice-output/r76-d-idx"      # outside the repository, on the disk with room
+output = "D:/goldsluice-output/r76-d-idx"      # outside the repository; the raw data are on C:, the output goes to D:
 registry = ["../../../registry"]               # relative to this file
 
 [[sources]]
 name = "side2"
 format = "idx"
-glob = "D:/idx/0722*_F[0-9][0-9][0-9][0-9]"    # the dump folders of all the series; the .csv, .idx and .txt files next to them do not match
+glob = "C:/NSDF/idx/0722*_F[0-9][0-9][0-9][0-9]"  # the dump folders of all the series; the .csv, .idx and .txt files next to them do not match
 detector = "NAI-S2"
 
 # Every step names the channels it applies to and takes its numbers from the readout (see r76-registry.dataset.toml).

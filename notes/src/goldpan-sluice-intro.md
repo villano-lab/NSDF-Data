@@ -12,11 +12,7 @@ description: "In doing some early data analysis--for example Notes 2, 7, and 9--
 
 ## Code repository
 
-- [`rq-histogram-goldpan.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/22f308d7590971578a25c9051da242d9a7b8057d/data_analysis/R76/notebooks/goldpan-goldsluice/rq-histogram-goldpan.ipynb) — reads the RQs of a series from ROOT files with `goldpan`, histograms one of them, then loads the traces of the same events and plots the RQs over the pulses. It runs on the small synthetic files saved next to it (`synthetic-rq/`, `synthetic-goldpan/`), so it works on a fresh clone with no raw data.
-- [`goldsluice-processed-plots.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/22f308d7590971578a25c9051da242d9a7b8057d/data_analysis/R76/notebooks/goldpan-goldsluice/goldsluice-processed-plots.ipynb) — reads back the Parquet dataset that `goldsluice` wrote for Run 76 series `07221203_2025` (30 dumps, 81,992 events, six phonon channels, the quantities `adc_max` and `current_max`) and plots the distributions, the correlations between channels and the trend from dump to dump. The processed files are the output of `python -m goldsluice run r76.dataset.toml` in `goldsluice/examples/` and are not in the repository.
-- [`goldsluice-root-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/6000af9835e48009074a238c383f9dff0be43feb/data_analysis/R76/notebooks/goldpan-goldsluice/goldsluice-root-rqs.ipynb) — opens the RQs of a `goldsluice` run written as ROOT files (`rqDir/eventTree`, `rqDir/zip1`, `infoDir/goldsluice`) with `goldpan`, prints and draws the structure of the files, and plots the quantities `adc_max`, `current_max` and `max_time_s` of the six phonon channels. The ROOT files are in `~/goldsluice-output/`, written by `goldsluice`, and are not in the repository.
-
-The first two links are pinned to commit `22f308d` and the third to commit `6000af9`: they show the notebooks as they were at those commits, which may be older than the latest versions, and the files may have moved since (see `data_analysis/README.md`).
+The code is in the [`NSDF-Data`](https://github.com/villano-lab/NSDF-Data) repository: `python/` is `goldpan`, `goldsluice/` is `goldsluice`, `registry/` is the detector registry (Appendix A), and the notebooks are in `data_analysis/R76/notebooks/goldpan-goldsluice/`. Worked examples, each with one simple goal, are in the section *Examples*.
 
 ## Data and setup
 
@@ -182,6 +178,46 @@ data["Side2pA_current_max"]                           # a numpy array, one numbe
 For the 30 files (81,992 events, 18 branches) the first read took 4.0 seconds and the second 0.1 seconds. Asking for fewer quantities than a cached read has (`["P*_current_max"]`) is also served from the cache, and a file that is rewritten is read again, never served stale. `rqdata.cache_info()` lists the entries (here 2 entries, 37 MB) and `rqdata.cache_clear()` removes them.
 
 This is not the same reader as `Dataset` and `ds.processed()`: it returns flat arrays and not an `Events`, it takes patterns for the quantities, which the other reader does not, and it reads ROOT files only (the Parquet quantities are read by `ds.processed()`, which has no cache, so no reader at the moment both reads Parquet and caches). Whether there should be two ways of reading, and where the cache belongs, is an open question for the development ([issue 177](https://github.com/villano-lab/NSDF-Data/issues/177)). The raw traces are not cached by either.
+
+## Examples
+
+Each example is a short notebook with one goal, and runs on a fresh clone. The links are pinned to the commit that produced them, so they show the notebooks as they were then; the file may have moved or changed since (see `data_analysis/README.md`).
+
+### Example 1: I have RQ files and want a plot
+
+You have RQ files, the reduced quantities of a series with one ROOT file per dump, and how they were made does not matter. [`example-1-read-rqs-and-plot.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/3216890ab10f27a3085a048b7b826ecc6ffaff4f/data_analysis/R76/notebooks/goldpan-goldsluice/example-1-read-rqs-and-plot.ipynb) reads them with `goldpan.adapters.rq_root.read`, prints the names of the fields, and histograms one quantity for all six channels. It uses the small synthetic files saved next to it; for your own files you change the folder and the detector number in one cell.
+
+![](img/goldpan-sluice-intro-fig3.png)
+
+**Figure 3: The distribution of the RQ `max` for the six channels**, from the notebook of Example 1. The data are the 24 made-up events of the synthetic files, so the shape means nothing: 13 events have no pulse (a value near 0) in every channel and the rest are spread between 3 and 15. With real files the same cell draws the distribution of a real quantity.
+
+### Example 2: I have the Parquet quantities of a `goldsluice` run and want a plot
+
+`goldsluice` has processed some pulses and written the quantities as a `goldpan` Parquet dataset. [`example-2-read-processed-quantities-and-plot.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/729c10eb4de82929d04275757edab15f6eebfde1/data_analysis/R76/notebooks/goldpan-goldsluice/example-2-read-processed-quantities-and-plot.ipynb) opens the dataset definition file with `Dataset.open`, reads the quantities with `ds.processed()` and histograms one of them for the six channels. The folder `synthetic-quantities/` next to it has the definition file and the quantities that came out of it (made-up traces, 14 events, all six algorithms), so it runs on a fresh clone; for your own run you point it at your definition file.
+
+![](img/goldpan-sluice-intro-fig4.png)
+
+**Figure 4: The distribution of the quantity `current_max` for the six channels**, from the notebook of Example 2. The data are the 14 made-up events of the synthetic traces, so the shape means nothing: 8 events have no pulse in every channel and the rest have pulses of 400 to 1,300 ADC counts.
+
+### Example 3: I have a raw trace and want to see it next to its RQs
+
+The quantities are short descriptions of a trace, so the natural check is to draw the trace and mark what they say on it. [`example-3-trace-and-its-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/91a26cdbb55f053f7038212384a6b8d035c86f31/data_analysis/R76/notebooks/goldpan-goldsluice/example-3-trace-and-its-rqs.ipynb) reads the traces with `adapters.read`, computes the quantities of one channel on the spot with `goldsluice.run` (one call for each of the six algorithms, with the pretrigger window and the sample period taken from the data's readout), and draws the trace of the event with the largest pulse next to a table of its quantities. Nothing is read from a processed file. It uses the made-up traces in `synthetic-goldpan/`; a raw dump is read the same way.
+
+![](img/goldpan-sluice-intro-fig5.png)
+
+**Figure 5: A trace and its quantities.** The channel `Side2pC` of the event with the largest pulse in the synthetic dump (made-up data). Left: the trace, the baseline window (shaded), `baseline_mean` (dashed), the level `baseline_mean + current_max` (dotted), the sample at `max_time_s` (dot) and the 10 % and 90 % levels between which `rise_time_s` is measured (thin lines). Right: the nine quantities of the event.
+
+The notebook goes on to the case where the pulses are filtered before the quantities are taken. `goldpan.algorithms.lowpass` is a zero-phase low-pass filter (the pulse is not shifted in time), and `goldpan.quantities.power_spectrum` with `frequencies_hz` gives the spectrum. The same six algorithms are run on the raw and on the filtered traces (`goldsluice.run` only needs an array of shape (events, samples)), so the quantities can be compared.
+
+![](img/goldpan-sluice-intro-fig6.png)
+
+**Figure 6: The same pulse before and after a 50 kHz low-pass** (made-up data). Left: the pulse, raw and filtered. Middle: the power spectrum of the baseline-subtracted trace; everything above the dashed line is cut. Right: the quantities of the event. The pulse height, its time and its integral hardly change. Away from the pulse the noise of the trace falls from 3.0 to 0.8 counts, but `baseline_std` over the baseline window goes up (3.0 to 4.0): a zero-phase filter spreads the sharp rise backward in time, into the end of the window. Whether and how to filter is part of the definition of a quantity.
+
+### Example 4: I have the traces and their processed quantities on disk, and want them side by side
+
+The same picture as Example 3, when `goldsluice` has already processed the pulses and written the quantities. [`example-4-trace-and-its-processed-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb) opens the definition file and calls `ds.read()`, which reads the traces and the processed quantities of the same events together as one `Events`; the quantities are then read and not computed. The pair is `synthetic-goldpan/` and `synthetic-quantities/out/` of Examples 2 and 3. Its figure is Figure 5 again, with the same numbers, which is the check that the processed quantities are those that the algorithms give.
+
+More examples will follow, each for one question.
 
 ## Appendix A: The detector registry
 

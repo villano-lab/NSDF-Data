@@ -56,7 +56,7 @@ That is one dump (about 34 MB), enough for the first section. The whole series, 
 nsdf-cli download 07221203_2025 --all
 ```
 
-and `nsdf-cli config --output-global ~/idx` makes every later download go to `~/idx` whichever folder you are in. Both guides above say more.
+and `nsdf-cli config --output-global ~/idx` makes every later download go to `~/idx` whichever folder you are in. The [first-analysis guide](https://villano-lab.github.io/NSDF-Data/students/first-analysis.html) says more about downloading.
 
 **The quantities.** Which series, dump, detector and channel is used is stated where it is used. The quantities are the outputs of the algorithms of `goldsluice`: `python -m goldsluice algorithms` lists them, and Example 3 shows what each one measures on a trace.
 

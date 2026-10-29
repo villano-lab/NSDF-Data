@@ -1,0 +1,66 @@
+# Every algorithm of goldsluice on all the Side-2 series in D:\idx (12 series, 2,993 dumps, about 150 GiB of raw data; the series
+# 07221203_2025 of r76-registry.dataset.toml is not among them, it is in ~/idx). Same six steps and the same detector record ("NAI-S2").
+#   python -m goldsluice check r76-d-idx.dataset.toml     # lists the files, runs nothing
+#   python -m goldsluice run   r76-d-idx.dataset.toml     # expect hours: about 3 s of reading per dump
+# The detector record names 07221203_2025 as its series, but that field is only a note; the Side-2 type of all 12 series is from
+# series_lists/nsdf_r76_series.csv. The readout is assumed to be the same as for 07221203_2025 (DCRC_RUN76): check one dump of
+# each series for the pulse position (pretrigger_samples) before you trust the numbers of the other series.
+
+[dataset]
+name = "r76-d-idx"
+output = "D:/goldsluice-output/r76-d-idx"      # outside the repository, on the disk with room
+registry = ["../../../registry"]               # relative to this file
+
+[[sources]]
+name = "side2"
+format = "idx"
+glob = "D:/idx/0722*_F[0-9][0-9][0-9][0-9]"    # the dump folders of all the series; the .csv, .idx and .txt files next to them do not match
+detector = "NAI-S2"
+
+# Every step names the channels it applies to and takes its numbers from the readout (see r76-registry.dataset.toml).
+
+[[processing]]
+algorithm = "peak"                             # adc_max: the largest sample; current_max: the largest sample above the baseline
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
+
+[[processing]]
+algorithm = "max_time"                         # max_time_s: when the largest sample happens, in seconds from the start of the trace
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "baseline"                         # baseline_mean, baseline_std: the mean and the deviation of the pretrigger window (ADC counts)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "integral"                         # integral: the sum of (x - baseline) over the whole trace, times the sample period (ADC counts x s)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "excursion"                        # max_deviation: the largest |x - baseline| after the window; excursion_ratio: that over baseline_std
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "rise_time"                        # rise_time_s: from lo to hi of the height of the largest pulse (nan if it has no rise)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+lo = 0.1                                       # the usual 10-90 % rise time: these two are part of the definition of the quantity
+hi = 0.9

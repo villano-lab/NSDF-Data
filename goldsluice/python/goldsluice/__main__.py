@@ -13,6 +13,7 @@ def main(argv=None) -> int:
     r.add_argument("--chunk", type=int, default=1000, help="events read at once (default 1000)")
     r.add_argument("--force", action="store_true", help="redo files that are unchanged")
     r.add_argument("--workers", type=int, default=1, help="raw files processed at the same time (default 1); each holds its dump in memory")
+    r.add_argument("--readahead", type=int, default=None, help="raw files read from the disk ahead of the workers (default workers + 2; 0 = off)")
     r.add_argument("--backend", choices=("rust", "python"), default="rust", help="python runs the mirrors (slow, for comparison)")
     r.add_argument("--allow-output-in-repo", action="store_true", help="allow an output folder inside a Git working tree that does not ignore it")
     c = sub.add_parser("check", help="read the definition and list the raw files that would be looked at")
@@ -31,7 +32,8 @@ def main(argv=None) -> int:
             print(f"{len(files)} raw file(s)")
         else:
             print(batch.run(args.dataset, chunk=args.chunk, force=args.force, backend=args.backend,
-                            allow_output_in_repo=args.allow_output_in_repo, workers=args.workers))
+                            allow_output_in_repo=args.allow_output_in_repo, workers=args.workers,
+                            readahead=args.readahead))
     except (ValueError, KeyError, TypeError, FileNotFoundError, ImportError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 1

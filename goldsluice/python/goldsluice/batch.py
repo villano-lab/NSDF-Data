@@ -13,9 +13,13 @@ if its fingerprint (the definition), its stamp (the raw file) **and** the revisi
 unchanged (`force=True` redoes everything). Every output file also carries its provenance in its metadata (`goldsluice` key).
 
 Reading a dump dominates the time, and it is the same work for every dump, so `run(..., workers=N)` (`--workers N`) processes N raw files at
-once, each in its own thread (the readers and the kernels let go of the interpreter lock while they work): each file is read,
-reduced and written by one thread, the writing of the output and the ledger by one at a time. Every file needs its dump in memory, about
+once, each in its own thread (the readers, the kernels and the writers let go of the interpreter lock while they work): each file is
+read, reduced and written by one thread; only the small shared files (the manifest of a Parquet dataset, the ledger) are updated one at a time. Every file needs its dump in memory, about
 a gigabyte for a dump of 3000 events, so choose N by the memory of the machine as well as by its cores.
+
+On a hard disk the readers fight for the head and the decoding waits for the disk, so a thread of its own reads the next raw files
+from the disk, one after the other, into the cache of the operating system a few files ahead of the workers (`readahead`, by default
+two more files than there are workers; `readahead=0` turns it off). It reads only; the workers still decode and reduce.
 
 `goldpan` does the reading and the definition, so batch mode needs it (`pip install goldsluice[batch]`).
 
@@ -87,6 +91,34 @@ def _recorded_revisions(entry: dict, formats):
     if "versions" in entry:
         return {"algorithms": {name: 1 for name in ALGORITHMS}, "reader": {name: 1 for name in formats}}
     return None
+
+
+def _prefetch(paths, ahead: int, stop: threading.Event, slots: threading.Semaphore, ready=None) -> None:
+    """Read every file under each of `paths`, in order, into the cache of the operating system, never more than `ahead` raw files before the
+    ones the workers have finished (`slots` has `ahead` places, and a worker gives one back when it finishes a file), and set `ready[i]` when
+    the files of `paths[i]` have been read (a worker waits for it, so that the disk is read in order, by one reader, and not by every worker
+    at once). Runs in a thread of its own; it reads and forgets, so the memory it holds is one block. A file that cannot be read is left to
+    the worker, which will say why; whatever happens, every `ready` is set at the end, so that no worker waits for ever."""
+    try:
+        for i, path in enumerate(paths):
+            while not slots.acquire(timeout=0.2):
+                if stop.is_set():
+                    return
+            if stop.is_set():
+                return
+            try:
+                files = [path] if path.is_file() else sorted(p for p in path.rglob("*") if p.is_file())
+                for f in files:
+                    with open(f, "rb", buffering=0) as fh:
+                        while fh.read(8 << 20) and not stop.is_set():
+                            pass
+            except OSError:
+                pass
+            if ready is not None:
+                ready[i].set()
+    finally:
+        for event in ready or ():
+            event.set()
 
 
 def _stamp(path: Path) -> dict:
@@ -185,13 +217,16 @@ def check(spec_path, *, allow_output_in_repo: bool = False) -> list:
 
 
 def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "rust", allow_output_in_repo: bool = False,
-        workers: int = 1, progress: Optional[Callable[[str], None]] = print) -> Report:
+        workers: int = 1, readahead: Optional[int] = None, progress: Optional[Callable[[str], None]] = print) -> Report:
     """Process the dataset defined in `spec_path`; returns the `Report` (what was done and the timing). `chunk` is the number of
     events read at once (it bounds the memory used by the pulses); `backend="python"` runs the mirrors, for comparison. `workers` is the
     number of raw files processed at the same time (default 1, one after the other): the results are the same, only faster, and every
-    file in flight holds its dump in memory (see the module documentation)."""
+    file in flight holds its dump in memory (see the module documentation). `readahead` is how many raw files ahead of the workers a thread
+    reads from the disk into the cache of the operating system (default `workers + 2`; 0 turns it off): it matters on a hard disk."""
     if not isinstance(workers, int) or isinstance(workers, bool) or workers < 1:
         raise ValueError("workers must be a whole number of at least 1")
+    if readahead is not None and (not isinstance(readahead, int) or isinstance(readahead, bool) or readahead < 0):
+        raise ValueError("readahead must be a whole number of at least 0")
     ak, dataset, parquet, Events = _goldpan()
     todo = check(spec_path, allow_output_in_repo=allow_output_in_repo)
     spec = dataset.load(spec_path)
@@ -222,10 +257,22 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
             say(f"redoing    {path}: {'; '.join(changed)}")
         jobs.append((index, source, path, fp, revisions, key, stamp))
 
-    write_lock = threading.Lock()                                # the output writers update shared files (the manifest of Parquet)
+    ahead = workers + 2 if readahead is None else readahead
+    stop, places = threading.Event(), threading.Semaphore(max(ahead, 1))
+    ready = {job[0]: threading.Event() for job in jobs}          # set when the read-ahead has read the raw file of that job
+    prefetcher = threading.Thread(target=_prefetch, args=([job[2] for job in jobs], ahead, stop, places, [ready[job[0]] for job in jobs]),
+                                  daemon=True) if ahead and jobs else None
 
     def process(job):
         """Read, reduce and write one raw file: runs in a worker thread. Returns what the main thread records."""
+        try:
+            if prefetcher:
+                ready[job[0]].wait()                             # the disk is read in order by the read-ahead; the worker decodes from the cache
+            return process_file(job)
+        finally:
+            places.release()                                     # the prefetcher may read one more file
+
+    def process_file(job):
         index, source, path, fp, revisions, key, stamp = job
         fr = FileReport(str(path))
         pieces = []
@@ -261,12 +308,11 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
         events = Events(events.detector, {}, events.quantities, {"goldsluice": provenance})
         t2 = time.perf_counter()
-        with write_lock:
-            if spec.output_format == "root":
-                from goldpan.adapters import rq_root          # needs uproot (goldpan[root])
-                rq_root.write(events, out, detector=spec.root_detector)
-            else:
-                parquet.write(events, out)
+        if spec.output_format == "root":
+            from goldpan.adapters import rq_root              # needs uproot (goldpan[root])
+            rq_root.write(events, out, detector=spec.root_detector)      # one file per dump: nothing shared
+        else:
+            parquet.write(events, out)                        # updates the manifest under its own lock
         fr.write_s = time.perf_counter() - t2
         series_dumps = sorted({f"{s}_{d}" for s, d in zip(events.quantities["series"].to_list(),
                                                           events.quantities["dump"].to_list())})
@@ -282,19 +328,26 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         slots[job[0]] = fr
         say(f"processed  {job[2]}: {fr.n_events} events in {fr.read_s + sum(fr.compute_s.values()) + fr.write_s:.2f} s")
 
-    if workers == 1 or len(jobs) <= 1:
-        for job in jobs:
-            record(*process(job))
-    else:
-        with ThreadPoolExecutor(max_workers=min(workers, len(jobs))) as pool:
-            futures = [pool.submit(process, job) for job in jobs]
-            try:
-                for future in as_completed(futures):
-                    record(*future.result())
-            except BaseException:
-                for future in futures:
-                    future.cancel()                              # the files not started are not started; the running ones finish
-                raise
+    if prefetcher:
+        prefetcher.start()
+    try:
+        if workers == 1 or len(jobs) <= 1:
+            for job in jobs:
+                record(*process(job))
+        else:
+            with ThreadPoolExecutor(max_workers=min(workers, len(jobs))) as pool:
+                futures = [pool.submit(process, job) for job in jobs]
+                try:
+                    for future in as_completed(futures):
+                        record(*future.result())
+                except BaseException:
+                    for future in futures:
+                        future.cancel()                          # the files not started are not started; the running ones finish
+                    raise
+    finally:
+        stop.set()
+        if prefetcher:
+            prefetcher.join(timeout=5)
 
     report.files = [slot for slot in slots if slot is not None]
     report.total_s = time.perf_counter() - t_all

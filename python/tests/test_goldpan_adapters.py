@@ -263,3 +263,25 @@ def test_every_built_in_adapter_has_a_revision_and_an_adapter_without_one_has_re
         adapters._registered.pop("revision-test")
     with pytest.raises(KeyError, match="no adapter"):
         adapters.revision("nope")
+
+
+def test_threads_writing_different_dumps_into_one_dataset_all_reach_the_manifest(tmp_path):
+    """`goldsluice run --workers N`: the data files are written outside the lock, the manifest under it, so no dump is lost."""
+    from concurrent.futures import ThreadPoolExecutor
+    dumps = [f"F{k:04d}" for k in range(1, 25)]
+
+    def write_dump(dump):
+        ev = Events.from_arrays(detector(), {"A": np.full((3, N), 1.0), "B": np.full((3, N), 2.0)}, series="S1", dump=dump)
+        parquet.write(ev, tmp_path / "ds")
+        return dump
+
+    for _ in range(3):                                         # a race is a matter of luck: try several times, with fresh datasets
+        target = tmp_path / "ds"
+        if target.exists():
+            import shutil
+            shutil.rmtree(target)
+        with ThreadPoolExecutor(8) as pool:
+            assert sorted(pool.map(write_dump, dumps)) == dumps
+        manifest = json.loads((target / "_goldpan.json").read_text(encoding="utf-8"))
+        assert manifest["streams"]["S1"]["files"] == sorted(f"S1/S1_{d}.parquet" for d in dumps)
+        assert parquet.read(target).n_events == 3 * len(dumps)

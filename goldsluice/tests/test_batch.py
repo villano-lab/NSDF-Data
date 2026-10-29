@@ -437,3 +437,54 @@ def test_workers_must_be_a_whole_number_of_at_least_one(setup):
         with pytest.raises(ValueError, match="workers must be"):
             batch.run(spec, workers=bad, progress=None)
     assert main(["run", str(spec), "--workers", "2"]) == 0
+
+
+# ---- reading ahead of the workers (a hard disk is read one file after the other, not by every worker at once) -----------------------
+
+def test_readahead_does_not_change_the_output_and_its_values_are_checked(setup, tmp_path):
+    tmp, files, spec = setup
+    outputs = []
+    for k, ahead in enumerate((None, 0, 1, 8)):
+        d = tmp / f"ra{k}.dataset.toml"
+        write_spec(d, files, steps=None)
+        d.write_text(d.read_text(encoding="utf-8").replace('output = "out"', f'output = "out_ra{k}"'), encoding="utf-8")
+        batch.run(d, workers=2, readahead=ahead, progress=None)
+        outputs.append(Dataset.open(d).processed().quantities.to_list())
+    assert all(o == outputs[0] for o in outputs)
+    for bad in (-1, 1.5, True):
+        with pytest.raises(ValueError, match="readahead must be"):
+            batch.run(spec, readahead=bad, progress=None)
+    assert main(["run", str(spec), "--readahead", "0", "--force"]) == 0
+
+
+def test_the_prefetcher_reads_in_order_stays_ahead_by_the_places_it_has_and_always_sets_every_ready(tmp_path):
+    import threading
+    import time
+    paths = []
+    for k in range(3):
+        d = tmp_path / f"dump{k}"
+        d.mkdir()
+        (d / "a.bin").write_bytes(b"x" * 1000)
+        (d / "b.bin").write_bytes(b"y" * 1000)
+        paths.append(d)
+    ready = [threading.Event() for _ in paths]
+    places, stop = threading.Semaphore(2), threading.Event()
+    thread = threading.Thread(target=batch._prefetch, args=(paths, 2, stop, places, ready), daemon=True)
+    thread.start()
+    assert ready[0].wait(5) and ready[1].wait(5)
+    time.sleep(0.5)
+    assert not ready[2].is_set()                               # two places, both taken: it waits for a worker to finish a file
+    places.release()                                           # a worker finished
+    assert ready[2].wait(5)
+    thread.join(5)
+    assert not thread.is_alive()
+
+    # a path that cannot be read is left to the worker, and a stop sets everything so that nothing waits for ever
+    ready = [threading.Event() for _ in range(3)]
+    stop = threading.Event()
+    stop.set()
+    batch._prefetch([tmp_path / "missing", paths[0], paths[1]], 1, stop, threading.Semaphore(0), ready)
+    assert all(e.is_set() for e in ready)
+    ready = [threading.Event() for _ in range(2)]
+    batch._prefetch([tmp_path / "missing", paths[0]], 2, threading.Event(), threading.Semaphore(2), ready)
+    assert all(e.is_set() for e in ready)

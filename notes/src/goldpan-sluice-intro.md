@@ -3,7 +3,7 @@ id: "11"
 title: "What are the packages `goldpan` and `goldsluice`?"
 author: "Anthony Villano"
 date: "2026-10-26"
-status: "In progress"
+status: "Complete"
 keywords: "libraries, data analysis, pip, PyPI"
 description: "In doing some early data analysis--for example Notes 2, 7, and 9--it was useful to make some library functions. Those originally sat in `python/` at the top level of the `NSDF-Data` repository. As the tools have grown it seems like putting them into their own Python package makes sense. I am starting that work and there will be two resulting packages `goldpan` and `goldsluice` that are explained a bit in this note."
 ---

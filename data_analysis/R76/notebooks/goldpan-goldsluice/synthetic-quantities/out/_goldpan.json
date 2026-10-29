@@ -1,0 +1,64 @@
+{
+ "format": "goldpan-dataset",
+ "format_version": 1,
+ "streams": {
+  "NSDF": {
+   "kind": "events",
+   "main_array": true,
+   "detector": {
+    "name": "NSDF",
+    "channels": [
+     {
+      "name": "Side2pC",
+      "role": "phonon",
+      "unit": "board0",
+      "input": "0"
+     },
+     {
+      "name": "Side2pF",
+      "role": "phonon",
+      "unit": "board0",
+      "input": "1"
+     },
+     {
+      "name": "Side2pE",
+      "role": "phonon",
+      "unit": "board0",
+      "input": "3"
+     },
+     {
+      "name": "Side2pB",
+      "role": "phonon",
+      "unit": "board1",
+      "input": "0"
+     },
+     {
+      "name": "Side2pA",
+      "role": "phonon",
+      "unit": "board1",
+      "input": "1"
+     },
+     {
+      "name": "Side2pD",
+      "role": "phonon",
+      "unit": "board1",
+      "input": "3"
+     }
+    ],
+    "segments": [
+     {
+      "name": "main",
+      "n_samples": 4096,
+      "pretrigger_samples": 1000,
+      "glitch_samples": 10,
+      "sample_period_s": 8e-07,
+      "start_s": -0.0007999999999999999
+     }
+    ]
+   },
+   "files": [
+    "NSDF/07221203_2025_F0001.parquet"
+   ]
+  }
+ }
+}

@@ -155,7 +155,18 @@ This is 81,992 events with three quantities for each of the six channels. `curre
 
 ## Cached reading of the quantities (under development)
 
-There is a second way to read the quantities, `goldpan.rqdata.load`, which reads RQ files (the format of the collaboration's processed files) as numpy arrays and keeps what it read in a cache, `~/.cache/goldpan/rqdata`. `goldsluice` can write its quantities as such files (`output_format = "root"` in the definition), or `goldpan.adapters.rq_root.write` can write the Parquet quantities of the previous section as RQ files, one per dump with a branch `<channel>_<quantity>` for each. The quantities are chosen with patterns, where `P*` stands for the six sensors:
+There is a second way to read the quantities, `goldpan.rqdata.load`, which reads RQ files (the format of the collaboration's processed files) as numpy arrays and keeps what it read in a cache, `~/.cache/goldpan/rqdata`. `goldsluice` can write its quantities as such files (`output_format = "root"` in the definition), or `goldpan.adapters.rq_root.write` can write the Parquet quantities of the previous section as RQ files, one per dump with a branch `<channel>_<quantity>` for each. The quantities are chosen with patterns, where `P*` stands for the six sensors (it is only a shorthand in the request, not part of a branch name). The files of the run so far (`peak` and `max_time`) have these 18 branches in the tree `rqDir/zip1`, and `rqDir/eventTree` has `SeriesNumber`, `DumpNumber` and `EventNumber`:
+
+| channel | `adc_max` | `current_max` | `max_time_s` |
+|---|---|---|---|
+| Side2pA | `Side2pA_adc_max` | `Side2pA_current_max` | `Side2pA_max_time_s` |
+| Side2pB | `Side2pB_adc_max` | `Side2pB_current_max` | `Side2pB_max_time_s` |
+| Side2pC | `Side2pC_adc_max` | `Side2pC_current_max` | `Side2pC_max_time_s` |
+| Side2pD | `Side2pD_adc_max` | `Side2pD_current_max` | `Side2pD_max_time_s` |
+| Side2pE | `Side2pE_adc_max` | `Side2pE_current_max` | `Side2pE_max_time_s` |
+| Side2pF | `Side2pF_adc_max` | `Side2pF_current_max` | `Side2pF_max_time_s` |
+
+A request is a list of such patterns:
 
 ```python
 from goldpan import rqdata
@@ -170,7 +181,7 @@ data["Side2pA_current_max"]                           # a numpy array, one numbe
 
 For the 30 files (81,992 events, 18 branches) the first read took 4.0 seconds and the second 0.1 seconds. Asking for fewer quantities than a cached read has (`["P*_current_max"]`) is also served from the cache, and a file that is rewritten is read again, never served stale. `rqdata.cache_info()` lists the entries (here 2 entries, 37 MB) and `rqdata.cache_clear()` removes them.
 
-This is not the same reader as `Dataset` and `ds.processed()`: it returns flat arrays and not an `Events`, it takes patterns for the quantities, which the other reader does not, and it reads ROOT files only. Whether there should be two ways of reading, and where the cache belongs, is an open question for the development ([issue 177](https://github.com/villano-lab/NSDF-Data/issues/177)). The raw traces are not cached by either.
+This is not the same reader as `Dataset` and `ds.processed()`: it returns flat arrays and not an `Events`, it takes patterns for the quantities, which the other reader does not, and it reads ROOT files only (the Parquet quantities are read by `ds.processed()`, which has no cache, so no reader at the moment both reads Parquet and caches). Whether there should be two ways of reading, and where the cache belongs, is an open question for the development ([issue 177](https://github.com/villano-lab/NSDF-Data/issues/177)). The raw traces are not cached by either.
 
 ## Appendix A: The detector registry
 

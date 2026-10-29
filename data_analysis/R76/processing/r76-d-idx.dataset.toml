@@ -8,7 +8,7 @@
 
 [dataset]
 name = "r76-d-idx"
-output = "D:/goldsluice-output/r76-d-idx"      # outside the repository; the raw data are on C:, the output goes to D:
+output = "C:/NSDF/goldsluice-output/r76-d-idx"  # outside the repository, next to the raw data in C:/NSDF/idx
 registry = ["../../../registry"]               # relative to this file
 
 [[sources]]

@@ -185,7 +185,7 @@ This is not the same reader as `Dataset` and `ds.processed()`: it returns flat a
 
 ## Appendix A: The detector registry
 
-The dataset definition file above does not say how the detector is wired or how its traces are sampled. That is data about the detector, not code, so it lives in the `registry/` folder of the repository, in TOML files read by `goldpan.registry`. Nothing in `goldpan` or `goldsluice` contains it. The folder is laid out so that it can later become a repository of its own, or a database behind the same interface (issue 150).
+The dataset definition file above does not say how the detector is wired or how its traces are sampled. That is data about the detector, not code, so it lives in the `registry/` folder of the repository, in TOML files read by `goldpan.registry`. Nothing in `goldpan` or `goldsluice` contains it. The folder is laid out so that it can later become a repository of its own, or a database behind the same interface ([issue 150](https://github.com/villano-lab/NSDF-Data/issues/150), "Readouts, detectors and channel maps in a registry, not in code").
 
 - A **detector** record (`run76.toml`) has the detector's name (`NAI-S2`), its number (the `N` of the `zip<N>` tree in ROOT output), the name of its readout, and, for each file format, where each named channel is wired and what role it has. For the idx dumps a channel is a pair `[board, input]`, so `Side2pC = [0, 0]` is input 0 of dump channel 0.
 - A **readout** record (`readouts.toml`) has what is needed to interpret a trace: the sample period, the number of samples before the trigger that are used as the baseline (`pretrigger_samples`) and the number of samples at the start of the trace that carry a glitch (`glitch_samples`).

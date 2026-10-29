@@ -12,11 +12,53 @@ description: "In doing some early data analysis--for example Notes 2, 7, and 9--
 
 ## Code repository
 
-The code is in the [`NSDF-Data`](https://github.com/villano-lab/NSDF-Data) repository: `python/` is `goldpan`, `goldsluice/` is `goldsluice`, `registry/` is the detector registry (Appendix A), and the notebooks are in `data_analysis/R76/notebooks/goldpan-goldsluice/`. Worked examples, each with one simple goal, are in the section *Examples*.
+The code is in the [`NSDF-Data`](https://github.com/villano-lab/NSDF-Data) repository: `python/` is `goldpan`, `goldsluice/` is `goldsluice`, `registry/` is the detector registry (Appendix A), and the notebooks are in `data_analysis/R76/notebooks/goldpan-goldsluice/`. The notebooks of the section *Examples* run on made-up data saved next to them, so they work on a fresh clone:
+
+- [`example-1-read-rqs-and-plot.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/3216890ab10f27a3085a048b7b826ecc6ffaff4f/data_analysis/R76/notebooks/goldpan-goldsluice/example-1-read-rqs-and-plot.ipynb): read RQ files (ROOT) and plot one quantity.
+- [`example-2-read-processed-quantities-and-plot.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/729c10eb4de82929d04275757edab15f6eebfde1/data_analysis/R76/notebooks/goldpan-goldsluice/example-2-read-processed-quantities-and-plot.ipynb): read the Parquet quantities of a `goldsluice` run and plot one.
+- [`example-3-trace-and-its-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/91a26cdbb55f053f7038212384a6b8d035c86f31/data_analysis/R76/notebooks/goldpan-goldsluice/example-3-trace-and-its-rqs.ipynb): a trace next to its quantities, computed with `goldsluice.run`, and the same after a low-pass filter.
+- [`example-4-trace-and-its-processed-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/33d8aab57abcdc12af0c86237e128e99b1439718/data_analysis/R76/notebooks/goldpan-goldsluice/example-4-trace-and-its-processed-rqs.ipynb): a trace next to its processed quantities, read from disk with `ds.read()`.
+
+Notebooks on the real Run 76 series `07221203_2025`; the processed files they read are the output of `python -m goldsluice run` in `goldsluice/examples/` (in `~/goldsluice-output/`) and are not in the repository:
+
+- [`rq-histogram-goldpan.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/22f308d7590971578a25c9051da242d9a7b8057d/data_analysis/R76/notebooks/goldpan-goldsluice/rq-histogram-goldpan.ipynb): reads the RQs from ROOT files, histograms one, and plots the RQs over the pulses (on synthetic files saved next to it, no raw data needed).
+- [`goldsluice-processed-plots.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/22f308d7590971578a25c9051da242d9a7b8057d/data_analysis/R76/notebooks/goldpan-goldsluice/goldsluice-processed-plots.ipynb): the Parquet dataset of the first `goldsluice` run (30 dumps, 81,992 events, six phonon channels): distributions, correlations between channels, and the trend from dump to dump.
+- [`goldsluice-root-rqs.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/6000af9835e48009074a238c383f9dff0be43feb/data_analysis/R76/notebooks/goldpan-goldsluice/goldsluice-root-rqs.ipynb): the same run written as ROOT files in the layout of the collaboration's RQ files, with the structure of the files drawn.
+- [`goldsluice-all-rqs-plots.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/fb44c2c19c1570b7991020c7507fa269373bbedb/data_analysis/R76/notebooks/goldpan-goldsluice/goldsluice-all-rqs-plots.ipynb): all nine quantities of the six-algorithm run, for the six channels.
+
+The links are pinned to the commit that produced each notebook: they show it as it was then, which may be older than the latest version, and the files may have moved since (see `data_analysis/README.md`).
 
 ## Data and setup
 
-Say which series, dump, detector and channel you used, and define every quantity.
+**Setup.** `goldpan` and `goldsluice` come with the repository: follow the [setup guide](https://villano-lab.github.io/NSDF-Data/students/setup.html) (it installs the packages with `pip install -r requirements.txt`) and the [first-analysis guide](https://villano-lab.github.io/NSDF-Data/students/first-analysis.html).
+
+**The datasets of this note.** One real series, `07221203_2025`, and what is made from it, and some made-up data that is saved in the repository so that the examples run on a fresh clone:
+
+| dataset | what it is | where | used in |
+|---|---|---|---|
+| Run 76 raw dumps | the series `07221203_2025` of Run 76: 30 dumps (idx format), 81,992 events, 1.9 GB; Side-2 readout, detector `NAI-S2`, six phonon channels `Side2pA` to `Side2pF` | `~/idx/07221203_2025_F0001` to `_F0030`, downloaded from NSDF (below) | [Reading data and doing a simple analysis](#reading-data-and-doing-a-simple-analysis-with-goldpan), [Processing the downloaded data](#processing-the-downloaded-data-with-goldsluice-and-reading-it-back-in-goldpan) |
+| `goldsluice` quantities, Parquet | the quantities that `goldsluice` made from the raw dumps (30 files, nine per channel); not in the repository | `~/goldsluice-output/r76-07221203/NAI-S2/`, made by `python -m goldsluice run r76-registry.dataset.toml` in `goldsluice/examples/` | [Processing the downloaded data](#processing-the-downloaded-data-with-goldsluice-and-reading-it-back-in-goldpan), [Example 2](#example-2-i-have-the-parquet-quantities-of-a-goldsluice-run-and-want-a-plot) |
+| `goldsluice` quantities, ROOT RQ files | the same series written as ROOT files in the layout of the collaboration's RQ files, from an earlier run with two algorithms (`peak` and `max_time`, three quantities per channel); not in the repository | `~/goldsluice-output/r76-07221203/` | [Cached reading of the quantities](#cached-reading-of-the-quantities-under-development) |
+| synthetic RQ files (ROOT) | two small files, 24 made-up events | `data_analysis/R76/notebooks/goldpan-goldsluice/synthetic-rq/` | [Example 1](#example-1-i-have-rq-files-and-want-a-plot) |
+| synthetic traces (`goldpan` Parquet) | the traces of 14 made-up events, six sensors, 4096 samples | `.../synthetic-goldpan/` | [Example 3](#example-3-i-have-a-raw-trace-and-want-to-see-it-next-to-its-rqs), [Example 4](#example-4-i-have-the-traces-and-their-processed-quantities-on-disk-and-want-them-side-by-side) |
+| synthetic quantities (Parquet) | what `goldsluice` made from the synthetic traces, with the definition file `synthetic.dataset.toml` that names both | `.../synthetic-quantities/` | [Example 2](#example-2-i-have-the-parquet-quantities-of-a-goldsluice-run-and-want-a-plot), [Example 4](#example-4-i-have-the-traces-and-their-processed-quantities-on-disk-and-want-them-side-by-side) |
+
+**Getting the raw data.** The raw dumps are not in the repository; they are fetched from the NSDF servers with `nsdf-cli`. Go to your home folder first: the download makes an `idx` folder in the folder you are in, and it must not sit inside `NSDF-Data`.
+
+```
+cd ~
+nsdf-cli download 07221203_2025_F0001
+```
+
+That is one dump (about 34 MB), enough for the first section. The whole series, 30 dumps and about 1.9 GB, is
+
+```
+nsdf-cli download 07221203_2025 --all
+```
+
+and `nsdf-cli config --output-global ~/idx` makes every later download go to `~/idx` whichever folder you are in. Both guides above say more.
+
+**The quantities.** Which series, dump, detector and channel is used is stated where it is used. The quantities are the outputs of the algorithms of `goldsluice`: `python -m goldsluice algorithms` lists them, and Example 3 shows what each one measures on a trace.
 
 ## The question
 

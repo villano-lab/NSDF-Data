@@ -202,7 +202,10 @@ def _flat_quantities(quantities: ak.Array) -> dict:
         for branch, values in ([(f"{name}_{k}", field[k]) for k in inner] if inner else [(name, field)]):
             if not _BRANCH_NAME.match(branch):
                 raise ValueError(f"{branch!r} is not a usable branch name: letters, digits and underscores, not starting with a digit")
-            columns[branch] = np.asarray(ak.to_numpy(values), dtype=np.float64)
+            values = np.asarray(ak.to_numpy(values))
+            if values.dtype.kind in "USO":                       # text (trigger_type): a TTree branch is a number, so text is only in Parquet
+                continue
+            columns[branch] = values.astype(np.float64)
     return columns
 
 

@@ -22,7 +22,7 @@ READOUT = PulseConfig(pretrigger_samples=1000, glitch_samples=10, sample_period_
 AMPS = 1.5e-9
 
 
-def make_raw(root, dumps=(("S1", "F0001", 7), ("S1", "F0002", 5)), seed=0):
+def make_raw(root, dumps=(("S1", "F0001", 7), ("S1", "F0002", 5)), seed=0, trigger_types=False):
     """A small raw dataset in the native format: one file per dump, three channels (two phonon, one charge)."""
     rng = np.random.default_rng(seed)
     det = Detector("TOY", (ChannelInfo("A", role="phonon"), ChannelInfo("B", role="phonon"), ChannelInfo("Q", role="charge")),
@@ -31,7 +31,8 @@ def make_raw(root, dumps=(("S1", "F0001", 7), ("S1", "F0002", 5)), seed=0):
     for series, dump, n in dumps:
         traces = {c: rng.normal(2000.0, 5.0, size=(n, N_SAMPLES)) for c in "ABQ"}
         traces["A"][:, 1200:1300] += 3000.0
-        ev = Events.from_arrays(det, traces, series=series, dump=dump)
+        labels = {"trigger_type": np.array(["Physics", "Unknown"] * n)[:n]} if trigger_types else None     # the label of the dump's .csv, as text
+        ev = Events.from_arrays(det, traces, series=series, dump=dump, quantities=labels)
         parquet.write(ev, root)
         files.append(root / "TOY" / f"{series}_{dump}.parquet")
     return files
@@ -255,6 +256,27 @@ def test_a_batch_run_can_write_rq_style_root_files_with_our_names(tmp_path):
     assert [f.skipped for f in batch.run(spec, progress=None).files] == [True, True]                 # the ledger works for ROOT too
     with pytest.raises(ValueError, match="rq_root.read"):
         Dataset.open(spec).processed()
+
+
+def test_what_the_adapter_knows_about_each_event_is_in_the_output_not_only_the_key(tmp_path):
+    files = make_raw(tmp_path / "raw", trigger_types=True)
+    spec = write_spec(tmp_path / "toy.dataset.toml", files)
+    batch.run(spec, progress=None)
+    q = Dataset.open(spec).processed().quantities
+    assert set(ak.fields(q)) == {"series", "dump", "event", "trigger_type", "A", "B"}
+    assert q["trigger_type"].to_list() == (["Physics", "Unknown"] * 7)[:7] + (["Physics", "Unknown"] * 5)[:5]     # verbatim, not interpreted
+
+
+def test_a_batch_run_to_root_leaves_out_the_text_quantities_because_a_branch_is_a_number(tmp_path):
+    pytest.importorskip("uproot")
+    from goldpan.adapters import rq_root
+    files = make_raw(tmp_path / "raw", dumps=(("24260424_145101", "F0001", 7),), trigger_types=True)
+    spec = write_spec(tmp_path / "toy.dataset.toml", files)
+    spec.write_text(spec.read_text(encoding="utf-8").replace('output = "out"', 'output = "out"\noutput_format = "root"\nroot_detector = 3'),
+                    encoding="utf-8")
+    batch.run(spec, progress=None)
+    t = rq_root.read(tmp_path / "out", detector=3)
+    assert len(t) == 7 and "A_adc_max" in t.fields and "trigger_type" not in t.fields
 
 
 # ---- the output must not land in a Git repository

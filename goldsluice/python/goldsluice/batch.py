@@ -23,6 +23,10 @@ two more files than there are workers; `readahead=0` turns it off). It reads onl
 
 `goldpan` does the reading and the definition, so batch mode needs it (`pip install goldsluice[batch]`).
 
+If the definition names run metadata (`[dataset] metadata`, a CSV keyed by series: high voltage, trigger setting, ...), its columns are written into
+every output as event columns, the values of the series of the file are recorded in the provenance (`run_metadata`) and the ledger
+(a hash, `metadata`), and a file is redone when the metadata of its series changed, not when another series' did.
+
 Processed data must not end up in a Git repository: `check` and `run` refuse an output folder that lies inside a Git working tree
 and whose data files that tree does not ignore (`check_output_location`; `allow_output_in_repo=True`, or `--allow-output-in-repo`
 on the command line, overrides it).
@@ -36,6 +40,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
+
+import numpy as np
 
 from . import __version__
 from .algorithms import ALGORITHMS, run as run_algorithm
@@ -91,6 +97,24 @@ def _recorded_revisions(entry: dict, formats):
     if "versions" in entry:
         return {"algorithms": {name: 1 for name in ALGORITHMS}, "reader": {name: 1 for name in formats}}
     return None
+
+
+def _entry_series(entry: dict) -> list:
+    """The series a ledger entry covers: recorded as `series`, or taken from `series_dumps` (``<series>_<dump>``) in older entries."""
+    if "series" in entry:
+        return list(entry["series"])
+    return sorted({sd.rsplit("_", 1)[0] for sd in entry.get("series_dumps", [])})
+
+
+def _metadata_digest(table, series) -> Optional[str]:
+    """The hash of the run metadata of `series` (None without a table; ``"missing"`` if the table lacks one of them, which `run` then reports)."""
+    if table is None:
+        return None
+    from goldpan import runmeta
+    try:
+        return runmeta.digest(table, series)
+    except KeyError:
+        return "missing"
 
 
 def _prefetch(paths, ahead: int, stop: threading.Event, slots: threading.Semaphore, ready=None) -> None:
@@ -228,8 +252,10 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
     if readahead is not None and (not isinstance(readahead, int) or isinstance(readahead, bool) or readahead < 0):
         raise ValueError("readahead must be a whole number of at least 0")
     ak, dataset, parquet, Events = _goldpan()
+    from goldpan import runmeta
     todo = check(spec_path, allow_output_in_repo=allow_output_in_repo)
     spec = dataset.load(spec_path)
+    table = spec.run_metadata()                                   # the run metadata (None if the definition names none)
     out = spec.output
     out.mkdir(parents=True, exist_ok=True)
     ledger = _load_ledger(out)
@@ -250,6 +276,8 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         if old and not force and old.get("fingerprint") == fp and old.get("stamp") == stamp:
             recorded = _recorded_revisions(old, adapters.available())
             changed = ["revisions not recorded"] if recorded is None else _what_changed(recorded, revisions)
+            if not changed and old.get("metadata") != _metadata_digest(table, _entry_series(old)):
+                changed = ["run metadata changed"]
             if not changed:
                 slots[index] = FileReport(str(path), skipped=True, n_events=old.get("n_events", 0))
                 say(f"unchanged  {path}")
@@ -281,6 +309,16 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
             fr.read_s += time.perf_counter() - t0
             keys = ("series", "dump", "event")                   # the key first, then what the adapter knows about each event (trigger_type, ...)
             columns = {k: ev.quantities[k] for k in keys + tuple(f for f in ak.fields(ev.quantities) if f not in keys)}
+            if table is not None:                                  # the run metadata of each event's series, as event columns
+                try:
+                    extra = runmeta.per_event(np.asarray(columns["series"].to_list()), table)
+                except KeyError as e:
+                    raise ValueError(f"{path}: {e.args[0]} ({spec.metadata})") from None
+                clash = sorted(set(extra) & set(columns))
+                if clash:
+                    raise ValueError(f"{path}: the run metadata ({spec.metadata}) has column(s) {clash} that the events already have; "
+                                     f"rename them in the table")
+                columns.update({k: ak.Array(v) for k, v in extra.items()})
             per_channel = {}
             for step in spec.steps:
                 params = step.resolve(ev.detector.readout.segment("main").config)
@@ -295,6 +333,8 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
                                              f"each quantity must come from one step")
                         record[name] = values
             for ch, record in per_channel.items():
+                if ch in columns:
+                    raise ValueError(f"{path}: the channel {ch!r} has the name of an event column (run metadata?); rename the column")
                 columns[ch] = ak.zip({k: ak.Array(v) for k, v in record.items()}, depth_limit=1)
             pieces.append(Events(ev.detector, {}, ak.Array(columns), {}))
             t0 = time.perf_counter()
@@ -303,10 +343,13 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
 
         events = Events.concatenate(*pieces)
         fr.n_events = events.n_events
+        file_series = sorted(set(events.quantities["series"].to_list()))
         provenance = {"version": __version__, "versions": versions, "revisions": revisions, "dataset": spec.name, "source": source.name, "raw": str(path),
                       "fingerprint": fp, "backend": backend,
                       "steps": [{"algorithm": s.algorithm, "channels": s.channels, "params": s.params} for s in spec.steps],
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
+        if table is not None:
+            provenance["run_metadata"] = {"file": str(spec.metadata), "rows": runmeta.rows(table, file_series)}
         events = Events(events.detector, {}, events.quantities, {"goldsluice": provenance})
         t2 = time.perf_counter()
         if spec.output_format == "root":
@@ -318,7 +361,8 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         series_dumps = sorted({f"{s}_{d}" for s, d in zip(events.quantities["series"].to_list(),
                                                           events.quantities["dump"].to_list())})
         entry = {"fingerprint": fp, "stamp": stamp, "n_events": fr.n_events, "version": __version__,
-                 "versions": versions, "revisions": revisions, "series_dumps": series_dumps,
+                 "versions": versions, "revisions": revisions, "series_dumps": series_dumps, "series": file_series,
+                 "metadata": _metadata_digest(table, file_series),
                  "seconds": {"read": fr.read_s, "write": fr.write_s, **fr.compute_s}}
         return job, fr, entry
 

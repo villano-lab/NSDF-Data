@@ -8,6 +8,7 @@ The file (`r76.dataset.toml`)::
     output = "r76-nai"                      # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
     # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
     # registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file
+    # metadata = "r76.series.csv"           # optional: run metadata per series (high voltage, trigger setting, ...), relative to this file
 
     [[sources]]                             # where the pulses come from; as many as you like
     name = "side2"
@@ -32,6 +33,14 @@ The file (`r76.dataset.toml`)::
 written. A *relative* `output` (`"r76-nai"`) is put under the folder named by the environment variable `GOLDSLUICE_OUTPUT` when it is set, so the
 definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the
 folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).
+
+**Run metadata.** `metadata` names a CSV with a `series` column and any other columns (`hv_v`, `trigger_value`, `trigger`, ...): facts about
+whole series that an analysis needs for every event, for example to analyse the data of different voltages separately. Every column
+is written into the output as an event column (next to `trigger_type`), the values of the series of each file are recorded in its
+provenance (`run_metadata`), and the ledger remembers a hash of them, so that a changed value redoes only the files of that series. A series
+of the raw data that the table does not list is an error that names it; a column named like a key (`series`, `dump`, `event`), a column the
+adapter already gives (`trigger_type`) or a channel is refused. Text columns are Parquet only (a ROOT branch is a number). The table is data
+and is read by `goldpan.runmeta`; this file only says where it is, so it can later come from a database instead.
 
 Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.
 With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the
@@ -63,6 +72,7 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping, Optional, Tuple
 
 from . import registry as _registry
+from . import runmeta as _runmeta
 from .adapters import _adapter
 from .adapters import parquet as _parquet
 from .adapters import rq as _rq
@@ -70,16 +80,16 @@ from .config import PulseConfig
 from .data import Events
 from .status import DONE, status
 
-FORMAT_VERSION = 4
+FORMAT_VERSION = 5
 """The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`
 (and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes
-under `$GOLDSLUICE_OUTPUT` when that is set."""
+under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata` (a CSV of run metadata per series, written into the output)."""
 
 ENV_OUTPUT = "GOLDSLUICE_OUTPUT"
 """The environment variable that holds the folder under which a relative `output` of a definition is placed."""
 
 _TOP = {"dataset", "sources", "processing"}
-_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry"}
+_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry", "metadata"}
 _OUTPUT_FORMATS = ("parquet", "root")
 _SOURCE = {"name", "format", "paths", "glob", "detector", "readout", "read"}
 _STEP = {"algorithm", "channels", "params"}
@@ -170,6 +180,12 @@ class DatasetSpec:
     `number` of the registry's record of the detector), otherwise `None`."""
     registry: Optional[_registry.Registry] = None
     """The registry the definition names (and the environment variable adds); empty if there is none."""
+    metadata: Optional[Path] = None
+    """The CSV of run metadata the definition names (`[dataset] metadata`), or `None`."""
+
+    def run_metadata(self):
+        """The run metadata table (`goldpan.runmeta.read_table`: ``{column: array}``), or `None` if the definition names none."""
+        return None if self.metadata is None else _runmeta.read_table(self.metadata)
 
     def source(self, name: Optional[str] = None) -> Source:
         if name is None:
@@ -253,6 +269,20 @@ def load(path) -> DatasetSpec:
     if output_format != "root" and root_detector is not None:
         raise ValueError(f"{path}: root_detector only applies with output_format = \"root\"")
 
+    metadata = None
+    if "metadata" in d:
+        if not isinstance(d["metadata"], str):
+            raise ValueError(f"{path}: [dataset] metadata must be the path of a CSV file")
+        metadata = Path(d["metadata"]).expanduser()
+        metadata = metadata if metadata.is_absolute() else base / metadata
+        try:
+            table = _runmeta.read_table(metadata)
+        except (OSError, ValueError) as e:
+            raise ValueError(f"{path}: [dataset] metadata: {e}") from None
+        reserved = sorted(set(table) & {"dump", "event"})
+        if reserved:
+            raise ValueError(f"{path}: [dataset] metadata {metadata}: a column may not be named {reserved} (they identify an event)")
+
     sources = []
     for i, s in enumerate(raw.get("sources", [])):
         where = f"{path}: sources[{i}]"
@@ -304,7 +334,7 @@ def load(path) -> DatasetSpec:
         elif not (channels == "all" or (isinstance(channels, str) and channels.startswith("role:") and len(channels) > 5)):
             raise ValueError(f"{where}: channels must be \"all\", \"role:<role>\" or a list of names, not {channels!r}")
         steps.append(Step(st["algorithm"], channels, dict(st.get("params", {}))))
-    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg)
+    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, metadata)
 
 
 @status(DONE)

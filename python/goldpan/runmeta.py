@@ -18,6 +18,8 @@ not decided here: every function takes the table as an argument. Numeric columns
 is NaN), the others as text. The `series` column is always text.
 """
 import csv
+import hashlib
+import json
 
 import numpy as np
 
@@ -81,3 +83,35 @@ def groups(series, table, by=("hv_v", "trigger_value")):
     for key in sorted(set(keys)):
         in_group = np.array([k == key for k in keys])
         yield key, np.flatnonzero(in_group[inverse])
+
+
+@status(DONE)
+def rows(table, series):
+    """The metadata of the given series as plain Python values, ``{series: {column: value}}``, for provenance (a number is a float,
+    NaN is ``None``, so that it is valid JSON). A series that is not in `table` is an error that names it."""
+    lookup = {str(s): i for i, s in enumerate(table["series"])}
+    names = sorted({str(s) for s in series})
+    missing = [s for s in names if s not in lookup]
+    if missing:
+        raise KeyError(f"series not in the metadata table: {', '.join(missing)}")
+    out = {}
+    for name in names:
+        record = {}
+        for column, values in table.items():
+            if column == "series":
+                continue
+            value = values[lookup[name]]
+            if isinstance(value, np.floating):
+                value = None if np.isnan(value) else float(value)
+            record[column] = value if value is None or isinstance(value, float) else str(value)
+        out[name] = record
+    return out
+
+
+@status(DONE)
+def digest(table, series):
+    """A short hash of the metadata of the given series (the rows of `rows`, the order of the series does not matter): it changes when
+    a value of one of those series changes and does not when another series is added or changed. A batch run stores it for each raw
+    file, to redo only the files whose metadata changed."""
+    blob = json.dumps(rows(table, series), sort_keys=True)
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]

@@ -55,3 +55,21 @@ def test_groups_split_the_events_by_the_chosen_columns(table):
     assert got == {(-34.0, 2.0): [0, 3], (-34.0, 100.0): [2, 4], (0.0, 2.0): [1]}
     only_hv = {key: list(idx) for key, idx in runmeta.groups(s, table, by=("hv_v",))}
     assert only_hv == {(-34.0,): [0, 2, 3, 4], (0.0,): [1]}
+
+
+def test_rows_are_plain_json_values_and_name_a_missing_series(table):
+    got = runmeta.rows(table, ["07221124_2331", "07221124_2331", "07221121_2214"])
+    assert got == {"07221121_2214": {"hv_v": 0.0, "trigger": "DCRC1pA 2", "trigger_value": 2.0, "duration_min": 779.0},
+                   "07221124_2331": {"hv_v": -34.0, "trigger": "DCRC1pA 100", "trigger_value": 100.0, "duration_min": None}}
+    with pytest.raises(KeyError, match="nope"):
+        runmeta.rows(table, ["nope"])
+
+
+def test_the_digest_follows_the_values_of_the_series_asked_for_and_nothing_else(table):
+    a = runmeta.digest(table, ["07221124_2022"])
+    assert a == runmeta.digest(table, ["07221124_2022", "07221124_2022"])
+    other = dict(table, hv_v=table["hv_v"].copy())
+    other["hv_v"][0] = 5.0                                                  # another series changed
+    assert runmeta.digest(other, ["07221124_2022"]) == a
+    other["hv_v"][1] = -35.0                                                # this one changed
+    assert runmeta.digest(other, ["07221124_2022"]) != a

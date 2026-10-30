@@ -74,6 +74,19 @@ def test_the_output_root_is_not_part_of_the_fingerprint(tmp_path, raw, monkeypat
     assert a.output != b.output and dataset.fingerprint(a, a.sources[0]) == dataset.fingerprint(b, b.sources[0])
 
 
+def test_the_metadata_key_names_a_csv_next_to_the_definition_and_is_checked_when_loaded(tmp_path, raw):
+    top = 'name = "toy"' + chr(10) + 'output = "out"' + chr(10) + 'metadata = "series.csv"'
+    with pytest.raises(ValueError, match="metadata"):                                       # the file does not exist
+        dataset.load(write(tmp_path, spec_text(raw, top=top)))
+    (tmp_path / "series.csv").write_text("series,hv_v" + chr(10) + "S1,-34.0" + chr(10), encoding="utf-8")
+    spec = dataset.load(write(tmp_path, spec_text(raw, top=top)))
+    assert spec.metadata == tmp_path.resolve() / "series.csv" and list(spec.run_metadata()["hv_v"]) == [-34.0]
+    assert dataset.load(write(tmp_path, spec_text(raw), "b.toml")).run_metadata() is None
+    (tmp_path / "series.csv").write_text("series,event" + chr(10) + "S1,1" + chr(10), encoding="utf-8")
+    with pytest.raises(ValueError, match="event"):                                          # a name that identifies an event
+        dataset.load(write(tmp_path, spec_text(raw, top=top), "c.toml"))
+
+
 def test_the_readout_is_a_preset_or_all_three_numbers_never_a_default(tmp_path, raw):
     assert dataset.load(write(tmp_path, spec_text(raw, 'readout = "Z7"'))).sources[0].readout == Z7
     inline = 'readout = { pretrigger_samples = 10, glitch_samples = 1, sample_period_s = 1e-6 }'

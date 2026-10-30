@@ -219,6 +219,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rqdata.html">goldpan.rqdata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.runmeta.html">goldpan.runmeta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -301,6 +302,7 @@ needed by the modules that use them):</p>
 <li><p><code class="code docutils literal notranslate"><span class="pre">goldpan.operations</span></code> pulse in, pulse out (baseline subtraction, glitch trimming)</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">goldpan.io</span></code>         loading traces of a dump into arrays</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">goldpan.rqdata</span></code>     the RQs of a list of series as numpy arrays, with an on-disk cache (<code class="code docutils literal notranslate"><span class="pre">load(dataset,</span> <span class="pre">rqs)</span></code>; needs <code class="code docutils literal notranslate"><span class="pre">uproot</span></code>)</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">goldpan.runmeta</span></code>   run metadata (high voltage, trigger setting) per event, joined by series, and chunks of events by it</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">goldpan.archive</span></code>    writing and reading HDF5 archives of selected pulses</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">goldpan.channels</span></code>   which physical channel is a dump’s (detector, channel); the map of the Run 76 readout</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">goldpan.status</span></code>     the <code class="code docutils literal notranslate"><span class="pre">&#64;status</span></code> tag of every public function</p></li>
@@ -356,10 +358,13 @@ modules with the Run 76 readout as the default <code class="code docutils litera
 <tr class="row-odd"><td><p><a class="reference internal" href="goldpan.rqdata.html#module-goldpan.rqdata" title="goldpan.rqdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rqdata</span></code></a></p></td>
 <td><p>The RQs of a whole list of series at once, as numpy arrays, with an on-disk cache: the second read is fast.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="goldpan.status.html#module-goldpan.status" title="goldpan.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="goldpan.runmeta.html#module-goldpan.runmeta" title="goldpan.runmeta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runmeta</span></code></a></p></td>
+<td><p>Run metadata (high voltage, trigger setting, ...) per event, from a table keyed by series.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="goldpan.status.html#module-goldpan.status" title="goldpan.status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">status</span></code></a></p></td>
 <td><p>Development-status tagging for functions in this library.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="goldpan.testing.html#module-goldpan.testing" title="goldpan.testing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">testing</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="goldpan.testing.html#module-goldpan.testing" title="goldpan.testing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">testing</span></code></a></p></td>
 <td><p>The conformance test of an adapter, for the people who write one (see the developer quick-sheet &quot;Writing an adapter&quot;).</p></td>
 </tr>
 </tbody>

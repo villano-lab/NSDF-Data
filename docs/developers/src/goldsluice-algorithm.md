@@ -161,6 +161,8 @@ cargo fmt
 
 When an algorithm is naturally array-shaped (an FFT, a fit), `PORTING.md` ends with what to do: ask before you choose that route.
 
+**An algorithm that returns a trace** (a filter, a baseline subtraction) sets `KIND = "trace"` and `OUTPUTS = ("trace",)` in its mirror. Its `kernel` returns a list of `n_samples` floats instead of a tuple; the Rust function returns a 1-tuple holding a 2-D `float64` array of the shape of `traces`; `run` gives `{"trace": array}`. An optional `ATOL` (default 0) is the absolute tolerance, beside the relative `1e-12`, of the parity test and of the comparison with goldpan: set it by measuring the largest disagreement on `cases()`. Examples: `subtract_line` (loops only) and `lowpass` (an FFT, so its mirror is a numpy reference). `PORTING.md` has the details.
+
 ```{=latex}
 \normalsize
 ```

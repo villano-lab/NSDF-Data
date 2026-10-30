@@ -5,12 +5,14 @@
 pub mod baseline;
 pub mod excursion;
 pub mod integral;
+pub mod lowpass;
 pub mod max_time;
 pub mod peak;
 pub mod rise_crossing;
 pub mod rise_time;
+pub mod subtract_line;
 
-use numpy::{IntoPyArray, PyArray1, PyReadonlyArray2, PyUntypedArrayMethods};
+use numpy::{IntoPyArray, PyArray1, PyArray2, PyArrayMethods, PyReadonlyArray2, PyUntypedArrayMethods};
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
@@ -231,6 +233,66 @@ fn max_time_py<'py>(
     Ok((out.into_pyarray(py),))
 }
 
+/// subtract_line(traces, *, glitch_samples, fit_end_samples) -> (trace,)
+///
+/// Every trace minus the straight line fitted by least squares to `traces[:, glitch_samples:fit_end_samples]`; the result has the shape of `traces`.
+#[pyfunction]
+#[pyo3(name = "subtract_line", signature = (traces, *, glitch_samples, fit_end_samples))]
+fn subtract_line_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    glitch_samples: usize,
+    fit_end_samples: usize,
+) -> PyResult<(Bound<'py, PyArray2<f64>>,)> {
+    let p = subtract_line::SubtractLineParams {
+        glitch_samples,
+        fit_end_samples,
+    };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = subtract_line::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut out = vec![0.0; n_events * n_samples];
+    py.detach(|| subtract_line::subtract_line_many(data, n_samples, &p, &mut out));
+    Ok((out.into_pyarray(py).reshape([n_events, n_samples])?,))
+}
+
+/// lowpass(traces, *, cutoff_hz, order, sample_period_s) -> (trace,)
+///
+/// A zero-phase Butterworth low-pass filter of every trace (FFT based, odd extension of both ends); the result has the shape of `traces`.
+#[pyfunction]
+#[pyo3(name = "lowpass", signature = (traces, *, cutoff_hz, order, sample_period_s))]
+fn lowpass_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    cutoff_hz: f64,
+    order: i64,
+    sample_period_s: f64,
+) -> PyResult<(Bound<'py, PyArray2<f64>>,)> {
+    let p = lowpass::LowpassParams {
+        cutoff_hz,
+        order,
+        sample_period_s,
+    };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = lowpass::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut out = vec![0.0; n_events * n_samples];
+    py.detach(|| lowpass::lowpass_many(data, n_samples, &p, &mut out));
+    Ok((out.into_pyarray(py).reshape([n_events, n_samples])?,))
+}
+
 #[pymodule(name = "_core")]
 fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(peak_py, m)?)?;
@@ -240,5 +302,7 @@ fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(excursion_py, m)?)?;
     m.add_function(wrap_pyfunction!(rise_time_py, m)?)?;
     m.add_function(wrap_pyfunction!(rise_crossing_py, m)?)?;
+    m.add_function(wrap_pyfunction!(subtract_line_py, m)?)?;
+    m.add_function(wrap_pyfunction!(lowpass_py, m)?)?;
     Ok(())
 }

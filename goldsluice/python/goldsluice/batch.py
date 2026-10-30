@@ -5,7 +5,7 @@
 
 or from Python, `goldsluice.batch.run("r76.dataset.toml")`. For every raw file the pulses are read in pieces by the source's
 adapter (`goldpan.adapters`), every step is applied to the channels it names with the Rust kernels, and the quantities (one record
-per channel, keyed by series, dump and event, **without** the pulses) are written into the output dataset of the definition, a
+per channel, keyed by series, dump and event, plus what the adapter knows about each event such as `trigger_type`, **without** the pulses) are written into the output dataset of the definition, a
 goldpan Parquet dataset that `goldpan.dataset.Dataset.processed()` reads (or, with `output_format = "root"`, RQ-style ROOT files
 under our names, written by `goldpan.adapters.rq_root.write` and read with `rq_root.read`; needs `goldsluice[root]`). A ledger, `_goldsluice.json` in the output folder, records
 for each raw file what was done, with what, and how long it took, so that a second run only does what changed: a file is skipped only
@@ -279,7 +279,8 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         t0 = time.perf_counter()
         for ev in dataset.read_raw(source, path, chunk=chunk):
             fr.read_s += time.perf_counter() - t0
-            columns = {k: ev.quantities[k] for k in ("series", "dump", "event")}
+            keys = ("series", "dump", "event")                   # the key first, then what the adapter knows about each event (trigger_type, ...)
+            columns = {k: ev.quantities[k] for k in keys + tuple(f for f in ak.fields(ev.quantities) if f not in keys)}
             per_channel = {}
             for step in spec.steps:
                 params = step.resolve(ev.detector.readout.segment("main").config)

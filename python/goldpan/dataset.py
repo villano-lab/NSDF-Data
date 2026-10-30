@@ -5,9 +5,10 @@ The file (`r76.dataset.toml`)::
 
     [dataset]
     name = "r76-nai"
-    output = "~/goldsluice-output/r76-nai"  # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
+    output = "r76-nai"                      # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
     # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
     # registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file
+    # metadata = "r76.series.csv"           # optional: run metadata per series (high voltage, trigger setting, ...), joined to the events when read
 
     [[sources]]                             # where the pulses come from; as many as you like
     name = "side2"
@@ -27,6 +28,19 @@ The file (`r76.dataset.toml`)::
     glitch_samples = "@readout.glitch_samples"        # "@readout.<field>": taken from the readout of the data
     pretrigger_samples = "@readout.pretrigger_samples"
     amps_per_adc = 1.5e-9
+
+**Where the output goes.** `output` may be a full path (`"C:/data/goldsluice-output/r76-nai"`, or `"~/goldsluice-output/r76-nai"`), which is used as
+written. A *relative* `output` (`"r76-nai"`) is put under the folder named by the environment variable `GOLDSLUICE_OUTPUT` when it is set, so the
+definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the
+folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).
+
+**Run metadata.** `metadata` is a reference to facts about whole series that an analysis needs for every event (high voltage, trigger setting,
+...): today a CSV file with a `series` column and any other columns (`hv_v`, `trigger_value`, `trigger`, ...), relative to this file, one row per series;
+later it may name a database instead, and nothing else in the file changes. The values are **joined at read time**: `Dataset.processed()` (and so
+`read()`) adds one column per column of the table to the events, taken from the row of their series, so a change of a value never needs the data to be
+processed again. Nothing is written into the output and the fingerprint does not change. A series that has events but is not listed is an error that
+names it, and so is a column named like a quantity or a channel (`processed(metadata=False)` skips the join). The table is also at
+`spec.run_metadata()`, and `goldpan.runmeta` joins and groups it for events you have already. ROOT output is not read by `processed()`, so it has no metadata.
 
 Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.
 With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the
@@ -50,6 +64,7 @@ import glob as _glob
 import hashlib
 import inspect
 import json
+import os
 import tomllib
 import warnings
 from dataclasses import asdict, dataclass
@@ -57,6 +72,7 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping, Optional, Tuple
 
 from . import registry as _registry
+from . import runmeta as _runmeta
 from .adapters import _adapter
 from .adapters import parquet as _parquet
 from .adapters import rq as _rq
@@ -64,12 +80,16 @@ from .config import PulseConfig
 from .data import Events
 from .status import DONE, status
 
-FORMAT_VERSION = 3
+FORMAT_VERSION = 5
 """The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`
-(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`)."""
+(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes
+under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read."""
+
+ENV_OUTPUT = "GOLDSLUICE_OUTPUT"
+"""The environment variable that holds the folder under which a relative `output` of a definition is placed."""
 
 _TOP = {"dataset", "sources", "processing"}
-_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry"}
+_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry", "metadata"}
 _OUTPUT_FORMATS = ("parquet", "root")
 _SOURCE = {"name", "format", "paths", "glob", "detector", "readout", "read"}
 _STEP = {"algorithm", "channels", "params"}
@@ -160,6 +180,18 @@ class DatasetSpec:
     `number` of the registry's record of the detector), otherwise `None`."""
     registry: Optional[_registry.Registry] = None
     """The registry the definition names (and the environment variable adds); empty if there is none."""
+    metadata: Optional[Path] = None
+    """The file the definition names as its run metadata (`[dataset] metadata`), or `None`. It is not opened until it is used."""
+
+    def run_metadata(self):
+        """The run metadata as a table (``{column: array}``, see `goldpan.runmeta.read_table`), or `None` if the definition names none.
+        The file is read now, not when the definition is loaded, so a run that does not need it works without it."""
+        if self.metadata is None:
+            return None
+        try:
+            return _runmeta.read_table(self.metadata)
+        except (OSError, ValueError) as e:
+            raise ValueError(f"{self.path}: [dataset] metadata: {e}") from None
 
     def source(self, name: Optional[str] = None) -> Source:
         if name is None:
@@ -195,6 +227,16 @@ def _readout(value, where: str, reg: _registry.Registry) -> Optional[PulseConfig
     raise ValueError(f"{where}: readout must be a preset name or a table, not {type(value).__name__}")
 
 
+def _output_path(written: str, base: Path) -> Path:
+    """Where `output = written` goes: a full path (or one that starts with ``~``) as written; a relative one under
+    ``$GOLDSLUICE_OUTPUT`` when that is set, otherwise relative to the folder `base` of the definition."""
+    path = Path(written).expanduser()
+    if path.is_absolute():
+        return path
+    root = os.environ.get(ENV_OUTPUT, "").strip()
+    return Path(root).expanduser() / path if root else base / path
+
+
 @status(DONE)
 def load(path) -> DatasetSpec:
     """Read and check a dataset definition file. Nothing is opened: the raw files need not exist yet."""
@@ -223,8 +265,7 @@ def load(path) -> DatasetSpec:
                                for f in folders])
     except ValueError as e:
         raise ValueError(f"{path}: {e}") from None
-    output = Path(d["output"]).expanduser()
-    output = output if output.is_absolute() else base / output
+    output = _output_path(d["output"], base)
     output_format = d.get("output_format", "parquet")
     if output_format not in _OUTPUT_FORMATS:
         raise ValueError(f"{path}: [dataset] output_format must be one of {list(_OUTPUT_FORMATS)}, not {output_format!r}")
@@ -233,6 +274,13 @@ def load(path) -> DatasetSpec:
         raise ValueError(f"{path}: root_detector must be a whole number, the N of the zip<N> tree (output_format = \"root\" needs root_detector = N)")
     if output_format != "root" and root_detector is not None:
         raise ValueError(f"{path}: root_detector only applies with output_format = \"root\"")
+
+    metadata = None
+    if "metadata" in d:
+        if not isinstance(d["metadata"], str) or not d["metadata"].strip():
+            raise ValueError(f"{path}: [dataset] metadata must be the path of a CSV file (relative to this file)")
+        metadata = Path(d["metadata"]).expanduser()
+        metadata = metadata if metadata.is_absolute() else base / metadata
 
     sources = []
     for i, s in enumerate(raw.get("sources", [])):
@@ -285,7 +333,7 @@ def load(path) -> DatasetSpec:
         elif not (channels == "all" or (isinstance(channels, str) and channels.startswith("role:") and len(channels) > 5)):
             raise ValueError(f"{where}: channels must be \"all\", \"role:<role>\" or a list of names, not {channels!r}")
         steps.append(Step(st["algorithm"], channels, dict(st.get("params", {}))))
-    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg)
+    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, metadata)
 
 
 @status(DONE)
@@ -344,15 +392,27 @@ class Dataset:
     def __repr__(self) -> str:
         return f"Dataset({self.spec.name!r}, sources={[s.name for s in self.spec.sources]}, output={str(self.spec.output)!r})"
 
-    def processed(self, *, detector: Optional[str] = None) -> Events:
-        """The processed quantities of a detector, without pulses (an `Events` with no traces): one record per event."""
+    def processed(self, *, detector: Optional[str] = None, metadata: bool = True) -> Events:
+        """The processed quantities of a detector, without pulses (an `Events` with no traces): one record per event. With the run metadata
+        of the definition (`metadata`) each event also gets its series' values as columns, joined now (`metadata=False` leaves them out)."""
         out = self.spec.output
         if self.spec.output_format == "root":
             raise ValueError(f"{self.spec.path}: the output is ROOT files ({out}); read them with "
                              f"goldpan.adapters.rq_root.read(path, detector={self.spec.root_detector}). processed() reads Parquet output only")
         if not (out / _parquet.MANIFEST).exists():
             raise FileNotFoundError(f"nothing processed yet in {out}: run `python -m goldsluice run {self.spec.path}`")
-        return _parquet.read(out, detector=detector if detector is not None else self._detector())
+        events = _parquet.read(out, detector=detector if detector is not None else self._detector())
+        table = self.spec.run_metadata() if metadata else None
+        if table is None:
+            return events
+        try:
+            columns = _runmeta.per_event(events.quantities["series"].to_list(), table)
+        except KeyError as e:
+            raise KeyError(f"{e.args[0]} (run metadata {self.spec.metadata})") from None
+        clash = sorted(set(columns) & set(events.quantities.fields))
+        if clash:
+            raise ValueError(f"{self.spec.path}: the run metadata column(s) {clash} have the name of a column of the processed data; rename them in the table")
+        return events.with_quantities(**columns)
 
     def _detector(self) -> Optional[str]:
         names = {s.detector for s in self.spec.sources}

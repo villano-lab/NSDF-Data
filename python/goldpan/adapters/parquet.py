@@ -33,6 +33,8 @@ only some columns.
 **Versioning.** An addition that old readers can ignore (a new quantity, a new metadata key) keeps the version; a change they
 cannot read raises `goldpan.format_version`. The sample dataset in `python/tests/data/sample_dataset/` is read by the tests of
 goldpan and is the file that goldsluice's tests read too.
+
+**Where the files go is not decided here.** `write(events, path)` writes exactly where it is told and does not check that the folder is outside a Git repository: that guard, and the single output root (`GOLDSLUICE_OUTPUT`, see `goldpan.dataset`), belong to batch mode (`goldsluice run`, `goldsluice.batch.check_output_location`). Called by hand, keep the output outside the repository yourself.
 """
 import json
 import re

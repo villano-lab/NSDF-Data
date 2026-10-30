@@ -55,25 +55,3 @@ def test_groups_split_the_events_by_the_chosen_columns(table):
     assert got == {(-34.0, 2.0): [0, 3], (-34.0, 100.0): [2, 4], (0.0, 2.0): [1]}
     only_hv = {key: list(idx) for key, idx in runmeta.groups(s, table, by=("hv_v",))}
     assert only_hv == {(-34.0,): [0, 2, 3, 4], (0.0,): [1]}
-
-
-def test_table_from_rows_makes_float_columns_of_numbers_and_text_of_the_rest():
-    t = runmeta.table_from_rows([{"series": "07221121_2214", "hv_v": 0, "trigger": "DCRC1pA 2", "n": 2.5},
-                                 {"series": "07221124_2022", "hv_v": -34.0, "trigger": "DCRC1pA 100", "n": 3}])
-    assert list(t["series"]) == ["07221121_2214", "07221124_2022"] and t["series"].dtype.kind == "U"      # underscores: still text
-    assert t["hv_v"].dtype == float and list(t["hv_v"]) == [0.0, -34.0] and list(t["n"]) == [2.5, 3.0]
-    assert t["trigger"].dtype.kind == "U"
-    assert list(runmeta.per_event(["07221124_2022", "07221121_2214"], t)["hv_v"]) == [-34.0, 0.0]
-
-
-@pytest.mark.parametrize("rows, message", [
-    ([], "no rows"),
-    ([{"hv_v": 1.0}], "series"),
-    ([{"series": "a", "hv_v": 1.0}, {"series": "b"}], "row 2"),
-    ([{"series": "a", "hv_v": 1.0}, {"series": "a", "hv_v": 2.0}], "twice"),
-    ([{"series": "a", "hv_v": True}], "hv_v"),
-    ([{"series": "a", "hv_v": [1, 2]}], "hv_v"),
-])
-def test_table_from_rows_refuses_a_table_it_cannot_make_sense_of(rows, message):
-    with pytest.raises(ValueError, match=message):
-        runmeta.table_from_rows(rows)

@@ -179,21 +179,18 @@ suffix = &quot;_lp&quot;                     # adc_max_lp, current_max_lp
 [processing.params]
 # glitch_samples, pretrigger_samples, amps_per_adc ...</code></pre>
 <p><strong>Run metadata.</strong> Facts about whole series (high
-voltage, trigger setting) that an analysis needs for every event are
-written in the definition, one <code>[[series]]</code> table per series
-with the same keys in each (see
-<code>examples/r76.dataset.toml</code>):</p>
-<pre class="toml"><code>[[series]]
-series = &quot;07221124_2022&quot;
-hv_v = -34.0
-trigger = &quot;DCRC1pA 2&quot;
-trigger_value = 2.0</code></pre>
-<p>They are <strong>joined when the data are read</strong>:
-<code>Dataset.processed()</code> adds one column per key to every event
-(<code>hv_v</code>, <code>trigger_value</code>, …), so a change of a
-value never redoes a file, and <code>goldsluice run</code> does not
-write them. A series with events that is not listed is an error that
-names it; so is a key named like a quantity or a channel;
+voltage, trigger setting) that an analysis needs for every event go in a
+small CSV, one row per series, with a <code>series</code> column and any
+others (<code>hv_v</code>, <code>trigger_value</code>, …; see
+<code>examples/r76.series.csv</code>). The definition only references
+it: <code>metadata = "r76.series.csv"</code> under
+<code>[dataset]</code> (relative to the definition file; later it may
+name a database instead). The values are <strong>joined when the data
+are read</strong>: <code>Dataset.processed()</code> adds one column per
+column of the table to every event, so a change of a value never redoes
+a file, and <code>goldsluice run</code> does not write them. A series
+with events that is not in the table is an error that names it; so is a
+column named like a quantity or a channel;
 <code>processed(metadata=False)</code> leaves them out. For events you
 already have, <code>goldpan.runmeta.per_event(series, table)</code>
 gives one value per event and

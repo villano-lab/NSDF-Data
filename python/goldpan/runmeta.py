@@ -52,33 +52,6 @@ def read_table(path):
 
 
 @status(DONE)
-def table_from_rows(rows):
-    """A metadata table from a list of dicts, one per series (the `[[series]]` tables of a dataset definition): each has a ``series`` and the
-    same other keys; a column whose every value is a number becomes a float array, any other stays text. A missing key, a key that is not
-    in the first row, a value that is not a number or a string, or a series listed twice is a `ValueError` that names it."""
-    rows = list(rows)
-    if not rows:
-        raise ValueError("no rows")
-    keys = list(rows[0])
-    if "series" not in keys:
-        raise ValueError("needs a 'series' key in every row")
-    table = {}
-    for i, row in enumerate(rows):
-        if list(sorted(row)) != sorted(keys):
-            raise ValueError(f"row {i + 1} (series {row.get('series')!r}) has keys {sorted(row)}, the first row has {sorted(keys)}")
-        for key, value in row.items():
-            if isinstance(value, bool) or not isinstance(value, (int, float, str)):
-                raise ValueError(f"row {i + 1}, key {key!r}: a number or a string, not {value!r}")
-    for key in keys:
-        values = [r[key] for r in rows]
-        numeric = key != "series" and all(isinstance(v, (int, float)) for v in values)
-        table[key] = np.array(values, dtype=float) if numeric else np.array([str(v) for v in values])
-    if len(set(table["series"])) != len(rows):
-        raise ValueError("a series is listed twice")
-    return table
-
-
-@status(DONE)
 def per_event(series, table, columns=None):
     """One value per event for each metadata column, as ``{column: array}`` in the order of `series`.
 

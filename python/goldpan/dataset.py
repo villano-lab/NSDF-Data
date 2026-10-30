@@ -8,6 +8,7 @@ The file (`r76.dataset.toml`)::
     output = "r76-nai"                      # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
     # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
     # registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file
+    # metadata = "r76.series.csv"           # optional: run metadata per series (high voltage, trigger setting, ...), joined to the events when read
 
     [[sources]]                             # where the pulses come from; as many as you like
     name = "side2"
@@ -56,20 +57,13 @@ still be written once: two steps giving the same name is an error. Steps run in 
     [processing.params]
     ...
 
-**Run metadata.** Facts about whole series that an analysis needs for every event (high voltage, trigger setting, ...) are written in the
-definition, one `[[series]]` table per series, with the same keys in each::
-
-    [[series]]
-    series = "07221124_2022"
-    hv_v = -34.0
-    trigger = "DCRC1pA 2"
-    trigger_value = 2.0
-
-They are **joined at read time**: `Dataset.processed()` (and so `read()`) adds one column per key to the events, taken from the table of their
-series, so a change of a value never needs the data to be processed again. Nothing is written into the output. A series that has events but is
-not listed is an error that names it, and so is a key named like a quantity or a channel (`processed(metadata=False)` skips the join). The table
-is also at `spec.run_metadata()` (`goldpan.runmeta` joins and groups it for events you have already), and a definition may later get it from a
-database instead of from these tables. Text values (`trigger`) come back as text; ROOT output is not read by `processed()`, so it has none.
+**Run metadata.** `metadata` is a reference to facts about whole series that an analysis needs for every event (high voltage, trigger setting,
+...): today a CSV file with a `series` column and any other columns (`hv_v`, `trigger_value`, `trigger`, ...), relative to this file, one row per series;
+later it may name a database instead, and nothing else in the file changes. The values are **joined at read time**: `Dataset.processed()` (and so
+`read()`) adds one column per column of the table to the events, taken from the row of their series, so a change of a value never needs the data to be
+processed again. Nothing is written into the output and the fingerprint does not change. A series that has events but is not listed is an error that
+names it, and so is a column named like a quantity or a channel (`processed(metadata=False)` skips the join). The table is also at
+`spec.run_metadata()`, and `goldpan.runmeta` joins and groups it for events you have already. ROOT output is not read by `processed()`, so it has no metadata.
 
 Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.
 With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the
@@ -113,14 +107,14 @@ from .status import DONE, status
 FORMAT_VERSION = 6
 """The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`
 (and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes
-under `$GOLDSLUICE_OUTPUT` when that is set. 5: `[[series]]` tables of run metadata, joined to the events when they are read. 6: steps may have a `name`,
-an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities."""
+under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read.
+6: steps may have a `name`, an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities."""
 
 ENV_OUTPUT = "GOLDSLUICE_OUTPUT"
 """The environment variable that holds the folder under which a relative `output` of a definition is placed."""
 
-_TOP = {"dataset", "sources", "processing", "series"}
-_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry"}
+_TOP = {"dataset", "sources", "processing"}
+_DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry", "metadata"}
 _OUTPUT_FORMATS = ("parquet", "root")
 _SOURCE = {"name", "format", "paths", "glob", "detector", "readout", "read"}
 _STEP = {"algorithm", "channels", "params", "name", "input", "suffix"}
@@ -219,12 +213,18 @@ class DatasetSpec:
     `number` of the registry's record of the detector), otherwise `None`."""
     registry: Optional[_registry.Registry] = None
     """The registry the definition names (and the environment variable adds); empty if there is none."""
-    series_rows: Tuple[Mapping[str, Any], ...] = ()
-    """The `[[series]]` tables of the definition, as written (run metadata per series)."""
+    metadata: Optional[Path] = None
+    """The file the definition names as its run metadata (`[dataset] metadata`), or `None`. It is not opened until it is used."""
 
     def run_metadata(self):
-        """The run metadata as a table (``{column: array}``, `goldpan.runmeta`), or `None` if the definition has no `[[series]]`."""
-        return _runmeta.table_from_rows(self.series_rows) if self.series_rows else None
+        """The run metadata as a table (``{column: array}``, see `goldpan.runmeta.read_table`), or `None` if the definition names none.
+        The file is read now, not when the definition is loaded, so a run that does not need it works without it."""
+        if self.metadata is None:
+            return None
+        try:
+            return _runmeta.read_table(self.metadata)
+        except (OSError, ValueError) as e:
+            raise ValueError(f"{self.path}: [dataset] metadata: {e}") from None
 
     def source(self, name: Optional[str] = None) -> Source:
         if name is None:
@@ -308,12 +308,12 @@ def load(path) -> DatasetSpec:
     if output_format != "root" and root_detector is not None:
         raise ValueError(f"{path}: root_detector only applies with output_format = \"root\"")
 
-    series_rows = tuple(dict(r) for r in raw.get("series", []))
-    if series_rows:
-        try:
-            _runmeta.table_from_rows(series_rows)
-        except ValueError as e:
-            raise ValueError(f"{path}: [[series]]: {e}") from None
+    metadata = None
+    if "metadata" in d:
+        if not isinstance(d["metadata"], str) or not d["metadata"].strip():
+            raise ValueError(f"{path}: [dataset] metadata must be the path of a CSV file (relative to this file)")
+        metadata = Path(d["metadata"]).expanduser()
+        metadata = metadata if metadata.is_absolute() else base / metadata
 
     sources = []
     for i, s in enumerate(raw.get("sources", [])):
@@ -375,7 +375,7 @@ def load(path) -> DatasetSpec:
         if not (isinstance(suffix, str) and _SUFFIX.match(suffix)):
             raise ValueError(f"{where}: suffix must be letters, digits and underscores, not {suffix!r}")
         steps.append(Step(st["algorithm"], channels, dict(st.get("params", {})), name, source, suffix))
-    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, series_rows)
+    return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, metadata)
 
 
 @status(DONE)
@@ -449,7 +449,7 @@ class Dataset:
 
     def processed(self, *, detector: Optional[str] = None, metadata: bool = True) -> Events:
         """The processed quantities of a detector, without pulses (an `Events` with no traces): one record per event. With the run metadata
-        of the definition (`[[series]]`) each event also gets its series' values as columns, joined now (`metadata=False` leaves them out)."""
+        of the definition (`metadata`) each event also gets its series' values as columns, joined now (`metadata=False` leaves them out)."""
         out = self.spec.output
         if self.spec.output_format == "root":
             raise ValueError(f"{self.spec.path}: the output is ROOT files ({out}); read them with "
@@ -463,10 +463,10 @@ class Dataset:
         try:
             columns = _runmeta.per_event(events.quantities["series"].to_list(), table)
         except KeyError as e:
-            raise KeyError(f"{e.args[0]} ([[series]] of {self.spec.path})") from None
+            raise KeyError(f"{e.args[0]} (run metadata {self.spec.metadata})") from None
         clash = sorted(set(columns) & set(events.quantities.fields))
         if clash:
-            raise ValueError(f"{self.spec.path}: the [[series]] key(s) {clash} have the name of a column of the processed data; rename them")
+            raise ValueError(f"{self.spec.path}: the run metadata column(s) {clash} have the name of a column of the processed data; rename them in the table")
         return events.with_quantities(**columns)
 
     def _detector(self) -> Optional[str]:

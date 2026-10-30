@@ -7,6 +7,7 @@ pub mod excursion;
 pub mod integral;
 pub mod max_time;
 pub mod peak;
+pub mod rise_crossing;
 pub mod rise_time;
 
 use numpy::{IntoPyArray, PyArray1, PyReadonlyArray2, PyUntypedArrayMethods};
@@ -173,6 +174,40 @@ fn rise_time_py<'py>(
     Ok((out.into_pyarray(py),))
 }
 
+/// rise_crossing(traces, *, glitch_samples, pretrigger_samples, sample_period_s, fraction) -> (crossing_time_s,)
+///
+/// The time, from the start of the trace, at which the rising edge of the largest pulse crosses `fraction` of its height, interpolated
+/// between samples (`nan` where there is no pulse or nothing below the level before the peak).
+#[pyfunction]
+#[pyo3(name = "rise_crossing", signature = (traces, *, glitch_samples, pretrigger_samples, sample_period_s, fraction))]
+fn rise_crossing_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    glitch_samples: usize,
+    pretrigger_samples: usize,
+    sample_period_s: f64,
+    fraction: f64,
+) -> PyResult<(Bound<'py, PyArray1<f64>>,)> {
+    let p = rise_crossing::RiseCrossingParams {
+        glitch_samples,
+        pretrigger_samples,
+        sample_period_s,
+        fraction,
+    };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = rise_crossing::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut out = vec![0.0; n_events];
+    py.detach(|| rise_crossing::rise_crossing_many(data, n_samples, &p, &mut out));
+    Ok((out.into_pyarray(py),))
+}
+
 /// max_time(traces, *, sample_period_s) -> (max_time_s,)
 #[pyfunction]
 #[pyo3(name = "max_time", signature = (traces, *, sample_period_s))]
@@ -204,5 +239,6 @@ fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(integral_py, m)?)?;
     m.add_function(wrap_pyfunction!(excursion_py, m)?)?;
     m.add_function(wrap_pyfunction!(rise_time_py, m)?)?;
+    m.add_function(wrap_pyfunction!(rise_crossing_py, m)?)?;
     Ok(())
 }

@@ -5,7 +5,7 @@ The file (`r76.dataset.toml`)::
 
     [dataset]
     name = "r76-nai"
-    output = "~/goldsluice-output/r76-nai"  # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
+    output = "r76-nai"                      # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
     # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
     # registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file
 
@@ -27,6 +27,11 @@ The file (`r76.dataset.toml`)::
     glitch_samples = "@readout.glitch_samples"        # "@readout.<field>": taken from the readout of the data
     pretrigger_samples = "@readout.pretrigger_samples"
     amps_per_adc = 1.5e-9
+
+**Where the output goes.** `output` may be a full path (`"C:/data/goldsluice-output/r76-nai"`, or `"~/goldsluice-output/r76-nai"`), which is used as
+written. A *relative* `output` (`"r76-nai"`) is put under the folder named by the environment variable `GOLDSLUICE_OUTPUT` when it is set, so the
+definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the
+folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).
 
 Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.
 With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the
@@ -50,6 +55,7 @@ import glob as _glob
 import hashlib
 import inspect
 import json
+import os
 import tomllib
 import warnings
 from dataclasses import asdict, dataclass
@@ -64,9 +70,13 @@ from .config import PulseConfig
 from .data import Events
 from .status import DONE, status
 
-FORMAT_VERSION = 3
+FORMAT_VERSION = 4
 """The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`
-(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`)."""
+(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes
+under `$GOLDSLUICE_OUTPUT` when that is set."""
+
+ENV_OUTPUT = "GOLDSLUICE_OUTPUT"
+"""The environment variable that holds the folder under which a relative `output` of a definition is placed."""
 
 _TOP = {"dataset", "sources", "processing"}
 _DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry"}
@@ -195,6 +205,16 @@ def _readout(value, where: str, reg: _registry.Registry) -> Optional[PulseConfig
     raise ValueError(f"{where}: readout must be a preset name or a table, not {type(value).__name__}")
 
 
+def _output_path(written: str, base: Path) -> Path:
+    """Where `output = written` goes: a full path (or one that starts with ``~``) as written; a relative one under
+    ``$GOLDSLUICE_OUTPUT`` when that is set, otherwise relative to the folder `base` of the definition."""
+    path = Path(written).expanduser()
+    if path.is_absolute():
+        return path
+    root = os.environ.get(ENV_OUTPUT, "").strip()
+    return Path(root).expanduser() / path if root else base / path
+
+
 @status(DONE)
 def load(path) -> DatasetSpec:
     """Read and check a dataset definition file. Nothing is opened: the raw files need not exist yet."""
@@ -223,8 +243,7 @@ def load(path) -> DatasetSpec:
                                for f in folders])
     except ValueError as e:
         raise ValueError(f"{path}: {e}") from None
-    output = Path(d["output"]).expanduser()
-    output = output if output.is_absolute() else base / output
+    output = _output_path(d["output"], base)
     output_format = d.get("output_format", "parquet")
     if output_format not in _OUTPUT_FORMATS:
         raise ValueError(f"{path}: [dataset] output_format must be one of {list(_OUTPUT_FORMATS)}, not {output_format!r}")

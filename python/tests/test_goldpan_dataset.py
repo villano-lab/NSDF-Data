@@ -27,6 +27,11 @@ def spec_text(raw, extra_source="", steps=None, top='name = "toy"\noutput = "out
             f"detector = \"TOY\"\n{extra_source}\n{steps}")
 
 
+@pytest.fixture(autouse=True)
+def no_output_root(monkeypatch):
+    monkeypatch.delenv(dataset.ENV_OUTPUT, raising=False)          # a developer's own GOLDSLUICE_OUTPUT must not change these tests
+
+
 @pytest.fixture
 def raw(tmp_path):
     parquet.write(toy_events(), tmp_path / "raw")
@@ -47,6 +52,26 @@ def test_load_reads_sources_steps_and_a_relative_output(tmp_path, raw):
     assert spec.source() is spec.sources[0] and spec.source("raw") is spec.sources[0]
     with pytest.raises(KeyError, match="no source 'x'"):
         spec.source("x")
+
+
+def test_a_relative_output_goes_under_goldsluice_output_when_it_is_set_and_a_full_path_never_does(tmp_path, raw, monkeypatch):
+    root = tmp_path / "root"
+    monkeypatch.setenv(dataset.ENV_OUTPUT, str(root))
+    assert dataset.load(write(tmp_path, spec_text(raw))).output == root / "out"                       # relative: under the root
+    full = tmp_path / "elsewhere"
+    top = f'name = "toy"' + chr(10) + f'output = {str(full)!r}'
+    assert dataset.load(write(tmp_path, spec_text(raw, top=top), "b.toml")).output == full             # full path: as written
+    monkeypatch.setenv(dataset.ENV_OUTPUT, "   ")
+    assert dataset.load(write(tmp_path, spec_text(raw))).output == tmp_path.resolve() / "out"          # blank = not set
+    monkeypatch.delenv(dataset.ENV_OUTPUT)
+    assert dataset.load(write(tmp_path, spec_text(raw))).output == tmp_path.resolve() / "out"          # not set: next to the file
+
+
+def test_the_output_root_is_not_part_of_the_fingerprint(tmp_path, raw, monkeypatch):
+    a = dataset.load(write(tmp_path, spec_text(raw)))
+    monkeypatch.setenv(dataset.ENV_OUTPUT, str(tmp_path / "root"))
+    b = dataset.load(write(tmp_path, spec_text(raw)))
+    assert a.output != b.output and dataset.fingerprint(a, a.sources[0]) == dataset.fingerprint(b, b.sources[0])
 
 
 def test_the_readout_is_a_preset_or_all_three_numbers_never_a_default(tmp_path, raw):

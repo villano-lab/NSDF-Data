@@ -5,6 +5,7 @@ use _core::excursion::{ExcursionParams, excursion_many, excursion_one};
 use _core::integral::{IntegralParams, integral_many, integral_one};
 use _core::max_time::{MaxTimeParams, max_time_many};
 use _core::peak::{PeakParams, peak_many, peak_one};
+use _core::rise_crossing::{RiseCrossingParams, rise_crossing_many, rise_crossing_one};
 use _core::rise_time::{RiseTimeParams, rise_time_many, rise_time_one};
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
@@ -124,6 +125,23 @@ fn bench_peak(c: &mut Criterion) {
     g.throughput(Throughput::Elements(n_events as u64));
     g.bench_function("10000 traces x 4096 samples", |bch| {
         bch.iter(|| rise_time_many(black_box(&pulses), n_samples, &r, &mut sd))
+    });
+    g.finish();
+
+    // the 20 % crossing time of the same traces (the same single pass as the rise time, with one level and an interpolation)
+    let c20 = RiseCrossingParams {
+        glitch_samples: 10,
+        pretrigger_samples: 500,
+        sample_period_s: 0.8e-6,
+        fraction: 0.2,
+    };
+    c.bench_function("rise_crossing_one, 4096 samples", |bch| {
+        bch.iter(|| rise_crossing_one(black_box(&pulses_one), &c20))
+    });
+    let mut g = c.benchmark_group("rise_crossing_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| rise_crossing_many(black_box(&pulses), n_samples, &c20, &mut sd))
     });
     g.finish();
 }

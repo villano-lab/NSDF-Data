@@ -1,0 +1,70 @@
+# The smallest series (07221203_1744, 64 dumps, 4.9 GiB) with all seven algorithms of goldsluice, including rise_crossing (the 20 % times
+# that the delay-based positions xdel and ydel are made of): a trial of the position notebook before the whole of r76-d-idx is redone.
+#   python -m goldsluice check r76-1744-position.dataset.toml     # lists the files, runs nothing
+#   python -m goldsluice run   r76-1744-position.dataset.toml     # a few minutes
+
+[dataset]
+name = "r76-1744-position"
+output = "C:/NSDF/goldsluice-output/r76-1744-position"
+registry = ["../../../registry"]
+
+[[sources]]
+name = "side2"
+format = "idx"
+glob = "C:/NSDF/idx/07221203_1744_F[0-9][0-9][0-9][0-9]"
+detector = "NAI-S2"
+
+[[processing]]
+algorithm = "peak"                             # adc_max: the largest sample; current_max: the largest sample above the baseline
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
+
+[[processing]]
+algorithm = "max_time"                         # max_time_s: when the largest sample happens, in seconds from the start of the trace
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "baseline"                         # baseline_mean, baseline_std: the mean and the deviation of the pretrigger window (ADC counts)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "integral"                         # integral: the sum of (x - baseline) over the whole trace, times the sample period (ADC counts x s)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "excursion"                        # max_deviation: the largest |x - baseline| after the window; excursion_ratio: that over baseline_std
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "rise_time"                        # rise_time_s: from lo to hi of the height of the largest pulse (nan if it has no rise)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+lo = 0.1                                       # the usual 10-90 % rise time: these two are part of the definition of the quantity
+hi = 0.9
+
+[[processing]]
+algorithm = "rise_crossing"                    # crossing_time_s: when the rise of the largest pulse crosses `fraction` of its height, from the start of the trace
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+fraction = 0.2                                 # the 20 % time

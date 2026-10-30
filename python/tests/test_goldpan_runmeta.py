@@ -57,19 +57,23 @@ def test_groups_split_the_events_by_the_chosen_columns(table):
     assert only_hv == {(-34.0,): [0, 2, 3, 4], (0.0,): [1]}
 
 
-def test_rows_are_plain_json_values_and_name_a_missing_series(table):
-    got = runmeta.rows(table, ["07221124_2331", "07221124_2331", "07221121_2214"])
-    assert got == {"07221121_2214": {"hv_v": 0.0, "trigger": "DCRC1pA 2", "trigger_value": 2.0, "duration_min": 779.0},
-                   "07221124_2331": {"hv_v": -34.0, "trigger": "DCRC1pA 100", "trigger_value": 100.0, "duration_min": None}}
-    with pytest.raises(KeyError, match="nope"):
-        runmeta.rows(table, ["nope"])
+def test_table_from_rows_makes_float_columns_of_numbers_and_text_of_the_rest():
+    t = runmeta.table_from_rows([{"series": "07221121_2214", "hv_v": 0, "trigger": "DCRC1pA 2", "n": 2.5},
+                                 {"series": "07221124_2022", "hv_v": -34.0, "trigger": "DCRC1pA 100", "n": 3}])
+    assert list(t["series"]) == ["07221121_2214", "07221124_2022"] and t["series"].dtype.kind == "U"      # underscores: still text
+    assert t["hv_v"].dtype == float and list(t["hv_v"]) == [0.0, -34.0] and list(t["n"]) == [2.5, 3.0]
+    assert t["trigger"].dtype.kind == "U"
+    assert list(runmeta.per_event(["07221124_2022", "07221121_2214"], t)["hv_v"]) == [-34.0, 0.0]
 
 
-def test_the_digest_follows_the_values_of_the_series_asked_for_and_nothing_else(table):
-    a = runmeta.digest(table, ["07221124_2022"])
-    assert a == runmeta.digest(table, ["07221124_2022", "07221124_2022"])
-    other = dict(table, hv_v=table["hv_v"].copy())
-    other["hv_v"][0] = 5.0                                                  # another series changed
-    assert runmeta.digest(other, ["07221124_2022"]) == a
-    other["hv_v"][1] = -35.0                                                # this one changed
-    assert runmeta.digest(other, ["07221124_2022"]) != a
+@pytest.mark.parametrize("rows, message", [
+    ([], "no rows"),
+    ([{"hv_v": 1.0}], "series"),
+    ([{"series": "a", "hv_v": 1.0}, {"series": "b"}], "row 2"),
+    ([{"series": "a", "hv_v": 1.0}, {"series": "a", "hv_v": 2.0}], "twice"),
+    ([{"series": "a", "hv_v": True}], "hv_v"),
+    ([{"series": "a", "hv_v": [1, 2]}], "hv_v"),
+])
+def test_table_from_rows_refuses_a_table_it_cannot_make_sense_of(rows, message):
+    with pytest.raises(ValueError, match=message):
+        runmeta.table_from_rows(rows)

@@ -55,7 +55,6 @@ def test_the_example_that_uses_the_registry_means_the_same_as_the_one_that_write
 def test_the_registry_example_gives_root_output_without_root_detector(tmp_path):
     text = (EXAMPLES / "r76-registry.dataset.toml").read_text(encoding="utf-8")
     text = text.replace('# output_format = "root"', 'output_format = "root"').replace('"../../registry"', repr(str(FOLDER)).replace("'", '"'))
-    (tmp_path / "r76.series.csv").write_text((EXAMPLES / "r76.series.csv").read_text(encoding="utf-8"), encoding="utf-8")   # the metadata file beside it
     p = tmp_path / "r76-root.dataset.toml"
     p.write_text(text, encoding="utf-8")
     spec = dataset.load(p)

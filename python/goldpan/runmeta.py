@@ -18,8 +18,6 @@ not decided here: every function takes the table as an argument. Numeric columns
 is NaN), the others as text. The `series` column is always text.
 """
 import csv
-import hashlib
-import json
 
 import numpy as np
 
@@ -54,6 +52,33 @@ def read_table(path):
 
 
 @status(DONE)
+def table_from_rows(rows):
+    """A metadata table from a list of dicts, one per series (the `[[series]]` tables of a dataset definition): each has a ``series`` and the
+    same other keys; a column whose every value is a number becomes a float array, any other stays text. A missing key, a key that is not
+    in the first row, a value that is not a number or a string, or a series listed twice is a `ValueError` that names it."""
+    rows = list(rows)
+    if not rows:
+        raise ValueError("no rows")
+    keys = list(rows[0])
+    if "series" not in keys:
+        raise ValueError("needs a 'series' key in every row")
+    table = {}
+    for i, row in enumerate(rows):
+        if list(sorted(row)) != sorted(keys):
+            raise ValueError(f"row {i + 1} (series {row.get('series')!r}) has keys {sorted(row)}, the first row has {sorted(keys)}")
+        for key, value in row.items():
+            if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+                raise ValueError(f"row {i + 1}, key {key!r}: a number or a string, not {value!r}")
+    for key in keys:
+        values = [r[key] for r in rows]
+        numeric = key != "series" and all(isinstance(v, (int, float)) for v in values)
+        table[key] = np.array(values, dtype=float) if numeric else np.array([str(v) for v in values])
+    if len(set(table["series"])) != len(rows):
+        raise ValueError("a series is listed twice")
+    return table
+
+
+@status(DONE)
 def per_event(series, table, columns=None):
     """One value per event for each metadata column, as ``{column: array}`` in the order of `series`.
 
@@ -83,35 +108,3 @@ def groups(series, table, by=("hv_v", "trigger_value")):
     for key in sorted(set(keys)):
         in_group = np.array([k == key for k in keys])
         yield key, np.flatnonzero(in_group[inverse])
-
-
-@status(DONE)
-def rows(table, series):
-    """The metadata of the given series as plain Python values, ``{series: {column: value}}``, for provenance (a number is a float,
-    NaN is ``None``, so that it is valid JSON). A series that is not in `table` is an error that names it."""
-    lookup = {str(s): i for i, s in enumerate(table["series"])}
-    names = sorted({str(s) for s in series})
-    missing = [s for s in names if s not in lookup]
-    if missing:
-        raise KeyError(f"series not in the metadata table: {', '.join(missing)}")
-    out = {}
-    for name in names:
-        record = {}
-        for column, values in table.items():
-            if column == "series":
-                continue
-            value = values[lookup[name]]
-            if isinstance(value, np.floating):
-                value = None if np.isnan(value) else float(value)
-            record[column] = value if value is None or isinstance(value, float) else str(value)
-        out[name] = record
-    return out
-
-
-@status(DONE)
-def digest(table, series):
-    """A short hash of the metadata of the given series (the rows of `rows`, the order of the series does not matter): it changes when
-    a value of one of those series changes and does not when another series is added or changed. A batch run stores it for each raw
-    file, to redo only the files whose metadata changed."""
-    blob = json.dumps(rows(table, series), sort_keys=True)
-    return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:16]

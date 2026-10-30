@@ -267,8 +267,8 @@ def test_what_the_adapter_knows_about_each_event_is_in_the_output_not_only_the_k
     assert q["trigger_type"].to_list() == (["Physics", "Unknown"] * 7)[:7] + (["Physics", "Unknown"] * 5)[:5]     # verbatim, not interpreted
 
 
-def test_a_batch_run_to_root_leaves_out_the_text_quantities_because_a_branch_is_a_number(tmp_path):
-    pytest.importorskip("uproot")
+def test_a_batch_run_to_root_writes_the_trigger_type_as_a_number_in_the_event_tree(tmp_path):
+    uproot = pytest.importorskip("uproot")
     from goldpan.adapters import rq_root
     files = make_raw(tmp_path / "raw", dumps=(("24260424_145101", "F0001", 7),), trigger_types=True)
     spec = write_spec(tmp_path / "toy.dataset.toml", files)
@@ -276,7 +276,10 @@ def test_a_batch_run_to_root_leaves_out_the_text_quantities_because_a_branch_is_
                     encoding="utf-8")
     batch.run(spec, progress=None)
     t = rq_root.read(tmp_path / "out", detector=3)
-    assert len(t) == 7 and "A_adc_max" in t.fields and "trigger_type" not in t.fields
+    assert len(t) == 7 and "A_adc_max" in t.fields
+    assert t["trigger_type"].to_list() == [{"Physics": 1, "Unknown": 0}[x] for x in (["Physics", "Unknown"] * 7)[:7]]
+    with uproot.open(tmp_path / "out" / "24260424_145101_F0001.root") as f:
+        assert json.loads(str(f["infoDir/trigger_types"]))["Physics"] == 1                       # the table travels with the file
 
 
 # ---- the output must not land in a Git repository

@@ -27,6 +27,11 @@ def spec_text(raw, extra_source="", steps=None, top='name = "toy"\noutput = "out
             f"detector = \"TOY\"\n{extra_source}\n{steps}")
 
 
+@pytest.fixture(autouse=True)
+def no_output_root(monkeypatch):
+    monkeypatch.delenv(dataset.ENV_OUTPUT, raising=False)          # a developer's own GOLDSLUICE_OUTPUT must not change these tests
+
+
 @pytest.fixture
 def raw(tmp_path):
     parquet.write(toy_events(), tmp_path / "raw")
@@ -47,6 +52,110 @@ def test_load_reads_sources_steps_and_a_relative_output(tmp_path, raw):
     assert spec.source() is spec.sources[0] and spec.source("raw") is spec.sources[0]
     with pytest.raises(KeyError, match="no source 'x'"):
         spec.source("x")
+
+
+def test_a_relative_output_goes_under_goldsluice_output_when_it_is_set_and_a_full_path_never_does(tmp_path, raw, monkeypatch):
+    root = tmp_path / "root"
+    monkeypatch.setenv(dataset.ENV_OUTPUT, str(root))
+    assert dataset.load(write(tmp_path, spec_text(raw))).output == root / "out"                       # relative: under the root
+    full = tmp_path / "elsewhere"
+    top = f'name = "toy"' + chr(10) + f'output = {str(full)!r}'
+    assert dataset.load(write(tmp_path, spec_text(raw, top=top), "b.toml")).output == full             # full path: as written
+    monkeypatch.setenv(dataset.ENV_OUTPUT, "   ")
+    assert dataset.load(write(tmp_path, spec_text(raw))).output == tmp_path.resolve() / "out"          # blank = not set
+    monkeypatch.delenv(dataset.ENV_OUTPUT)
+    assert dataset.load(write(tmp_path, spec_text(raw))).output == tmp_path.resolve() / "out"          # not set: next to the file
+
+
+def test_the_output_root_is_not_part_of_the_fingerprint(tmp_path, raw, monkeypatch):
+    a = dataset.load(write(tmp_path, spec_text(raw)))
+    monkeypatch.setenv(dataset.ENV_OUTPUT, str(tmp_path / "root"))
+    b = dataset.load(write(tmp_path, spec_text(raw)))
+    assert a.output != b.output and dataset.fingerprint(a, a.sources[0]) == dataset.fingerprint(b, b.sources[0])
+
+
+SERIES_CSV = "series,hv_v,trigger\nS1,-34.0,DCRC1pA 2\nS2,0.0,DCRC1pA 100\n"
+METADATA_TOP = 'name = "toy"\noutput = "out"\nmetadata = "series.csv"'
+
+
+def test_the_metadata_key_references_a_csv_next_to_the_definition_and_the_file_is_read_when_it_is_used(tmp_path, raw):
+    spec = dataset.load(write(tmp_path, spec_text(raw, top=METADATA_TOP)))                     # the file need not exist to load the definition
+    assert spec.metadata == tmp_path.resolve() / "series.csv"
+    with pytest.raises(ValueError, match="metadata"):
+        spec.run_metadata()
+    (tmp_path / "series.csv").write_text(SERIES_CSV, encoding="utf-8")
+    table = spec.run_metadata()
+    assert list(table["series"]) == ["S1", "S2"] and list(table["hv_v"]) == [-34.0, 0.0] and list(table["trigger"]) == ["DCRC1pA 2", "DCRC1pA 100"]
+    plain = dataset.load(write(tmp_path, spec_text(raw), "b.toml"))
+    assert plain.metadata is None and plain.run_metadata() is None
+    for bad in ('metadata = 3', 'metadata = ""'):
+        with pytest.raises(ValueError, match="metadata must be"):
+            dataset.load(write(tmp_path, spec_text(raw, top='name = "t"\noutput = "o"\n' + bad), "c.toml"))
+
+
+def test_the_metadata_does_not_change_the_fingerprint(tmp_path, raw):
+    a = dataset.load(write(tmp_path, spec_text(raw)))
+    b = dataset.load(write(tmp_path, spec_text(raw, top=METADATA_TOP), "b.toml"))
+    assert dataset.fingerprint(a, a.sources[0]) == dataset.fingerprint(b, b.sources[0])
+
+
+def test_processed_joins_the_series_values_to_the_events_when_it_reads_them(tmp_path, raw):
+    (tmp_path / "series.csv").write_text(SERIES_CSV.replace("S2", "S1_other"), encoding="utf-8")
+    ds_path = write(tmp_path, spec_text(raw, top=METADATA_TOP))
+    ds = Dataset.open(ds_path)
+    parquet.write(Events.concatenate(toy_events(3, series="S1"), toy_events(2, series="S1_other", dump="F0002")), ds.spec.output)
+    q = ds.processed().quantities
+    assert q["hv_v"].to_list() == [-34.0] * 3 + [0.0] * 2 and q["trigger"].to_list() == ["DCRC1pA 2"] * 3 + ["DCRC1pA 100"] * 2
+    assert "hv_v" not in ds.processed(metadata=False).quantities.fields                     # asked not to
+    (tmp_path / "series.csv").write_text(SERIES_CSV.replace("S2", "S1_other").replace("-34.0", "-36.0"), encoding="utf-8")
+    assert Dataset.open(ds_path).processed().quantities["hv_v"].to_list()[0] == -36.0       # a new value needs no reprocessing
+
+
+def test_processed_names_a_series_the_table_does_not_list_and_refuses_a_column_that_is_a_quantity(tmp_path, raw):
+    (tmp_path / "series.csv").write_text("series,hv_v\nS1,-34.0\n", encoding="utf-8")
+    ds = Dataset.open(write(tmp_path, spec_text(raw, top=METADATA_TOP)))
+    parquet.write(Events.concatenate(toy_events(2, series="S1"), toy_events(2, series="S9", dump="F0002")), ds.spec.output)
+    with pytest.raises(KeyError, match="S9"):
+        ds.processed()
+    parquet.write(toy_events(2, series="S1").with_quantities(hv_v=np.zeros(2)), tmp_path / "clash")
+    clash = write(tmp_path, spec_text(raw, top='name = "toy"\noutput = "clash"\nmetadata = "series.csv"'), "clash.toml")
+    with pytest.raises(ValueError, match="hv_v"):
+        Dataset.open(clash).processed()
+
+
+def _two_steps(raw, second):
+    first = '[[processing]]\nalgorithm = "lowpass"\nname = "lp"\nchannels = "role:phonon"\n[processing.params]\ncutoff_hz = 5e4\n\n'
+    return spec_text(raw, steps=first + second)
+
+
+def test_a_step_may_have_a_name_an_input_and_a_suffix_and_they_are_checked_when_loaded(tmp_path, raw):
+    second = '[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\ninput = "lp"\nsuffix = "_lp"\n'
+    steps = dataset.load(write(tmp_path, _two_steps(raw, second))).steps
+    assert (steps[0].name, steps[0].input, steps[0].suffix) == ("lp", None, "")
+    assert (steps[1].name, steps[1].input, steps[1].suffix) == (None, "lp", "_lp")
+    for bad, message in [('input = "nosuch"', "not the name of an earlier step"),
+                         ('input = "later"', "not the name of an earlier step"),
+                         ('suffix = "a b"', "suffix must be"),
+                         ('name = "1x"', "name must be"),
+                         ('name = "lp"', "two steps are named")]:
+        text = _two_steps(raw, '[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\n' + bad + "\n")
+        with pytest.raises(ValueError, match=message):
+            dataset.load(write(tmp_path, text, "bad.toml"))
+
+
+def test_an_input_must_be_a_step_above_it(tmp_path, raw):
+    text = spec_text(raw, steps='[[processing]]\nalgorithm = "peak"\nchannels = "all"\ninput = "lp"\n\n'
+                                '[[processing]]\nalgorithm = "lowpass"\nname = "lp"\nchannels = "all"\n')
+    with pytest.raises(ValueError, match="earlier step"):
+        dataset.load(write(tmp_path, text))
+
+
+def test_the_name_input_and_suffix_enter_the_fingerprint_only_when_written(tmp_path, raw):
+    plain = dataset.load(write(tmp_path, spec_text(raw)))
+    assert dataset.step_record(plain.steps[0]) == {"algorithm": "peak", "channels": "role:phonon", "params": dict(plain.steps[0].params)}
+    named = dataset.load(write(tmp_path, spec_text(raw).replace('algorithm = "peak"', 'algorithm = "peak"\nname = "p"\nsuffix = "_p"'), "n.toml"))
+    assert dataset.step_record(named.steps[0])["name"] == "p" and dataset.step_record(named.steps[0])["suffix"] == "_p"
+    assert dataset.fingerprint(plain, plain.sources[0]) != dataset.fingerprint(named, named.sources[0])
 
 
 def test_the_readout_is_a_preset_or_all_three_numbers_never_a_default(tmp_path, raw):

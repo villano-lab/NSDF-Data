@@ -89,17 +89,7 @@ That is 6000 events of 3 channels and 4096 samples from a Parquet source. **Read
 
 **One output root.** Set the environment variable `GOLDSLUICE_OUTPUT` to a folder (for example `C:/NSDF/goldsluice-output`) and a *relative* `output` in a definition (`output = "r76-nai"`) goes under it, so the file holds no path of your machine and runs unchanged on another computer. A full path (`output = "~/goldsluice-output/r76"`) is used as written; with the variable unset a relative `output` is relative to the definition file, as before. The goldpan writers (`parquet.write`, `rq_root.write`) write exactly where they are told and do not check the folder: the guard is batch mode's.
 
-**Run metadata.** Facts about whole series (high voltage, trigger setting) that an analysis needs for every event are written in the definition, one `[[series]]` table per series with the same keys in each (see `examples/r76.dataset.toml`):
-
-```toml
-[[series]]
-series = "07221124_2022"
-hv_v = -34.0
-trigger = "DCRC1pA 2"
-trigger_value = 2.0
-```
-
-They are **joined when the data are read**: `Dataset.processed()` adds one column per key to every event (`hv_v`, `trigger_value`, ...), so a change of a value never redoes a file, and `goldsluice run` does not write them. A series with events that is not listed is an error that names it; so is a key named like a quantity or a channel; `processed(metadata=False)` leaves them out. For events you already have, `goldpan.runmeta.per_event(series, table)` gives one value per event and `groups(series, table, by=("hv_v", "trigger_value"))` the events of each chunk.
+**Run metadata.** Facts about whole series (high voltage, trigger setting) that an analysis needs for every event go in a small CSV, one row per series, with a `series` column and any others (`hv_v`, `trigger_value`, ...; see `examples/r76.series.csv`). The definition only references it: `metadata = "r76.series.csv"` under `[dataset]` (relative to the definition file; later it may name a database instead). The values are **joined when the data are read**: `Dataset.processed()` adds one column per column of the table to every event, so a change of a value never redoes a file, and `goldsluice run` does not write them. A series with events that is not in the table is an error that names it; so is a column named like a quantity or a channel; `processed(metadata=False)` leaves them out. For events you already have, `goldpan.runmeta.per_event(series, table)` gives one value per event and `groups(series, table, by=("hv_v", "trigger_value"))` the events of each chunk.
 
 ## 3. Read it back with goldpan
 

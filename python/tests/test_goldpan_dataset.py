@@ -74,41 +74,51 @@ def test_the_output_root_is_not_part_of_the_fingerprint(tmp_path, raw, monkeypat
     assert a.output != b.output and dataset.fingerprint(a, a.sources[0]) == dataset.fingerprint(b, b.sources[0])
 
 
-SERIES_ROWS = ('[[series]]\nseries = "S1"\nhv_v = -34.0\ntrigger = "DCRC1pA 2"\n\n'
-               '[[series]]\nseries = "S2"\nhv_v = 0\ntrigger = "DCRC1pA 100"\n')
+SERIES_CSV = "series,hv_v,trigger\nS1,-34.0,DCRC1pA 2\nS2,0.0,DCRC1pA 100\n"
+METADATA_TOP = 'name = "toy"\noutput = "out"\nmetadata = "series.csv"'
 
 
-def test_the_series_tables_are_the_run_metadata_and_are_checked_when_loaded(tmp_path, raw):
-    spec = dataset.load(write(tmp_path, spec_text(raw) + "\n" + SERIES_ROWS))
+def test_the_metadata_key_references_a_csv_next_to_the_definition_and_the_file_is_read_when_it_is_used(tmp_path, raw):
+    spec = dataset.load(write(tmp_path, spec_text(raw, top=METADATA_TOP)))                     # the file need not exist to load the definition
+    assert spec.metadata == tmp_path.resolve() / "series.csv"
+    with pytest.raises(ValueError, match="metadata"):
+        spec.run_metadata()
+    (tmp_path / "series.csv").write_text(SERIES_CSV, encoding="utf-8")
     table = spec.run_metadata()
     assert list(table["series"]) == ["S1", "S2"] and list(table["hv_v"]) == [-34.0, 0.0] and list(table["trigger"]) == ["DCRC1pA 2", "DCRC1pA 100"]
-    assert dataset.load(write(tmp_path, spec_text(raw), "b.toml")).run_metadata() is None
-    for rows, message in [('[[series]]\nhv_v = 1.0\n', "series"),
-                          ('[[series]]\nseries = "S1"\nhv_v = 1.0\n[[series]]\nseries = "S2"\n', "row 2"),
-                          ('[[series]]\nseries = "S1"\n[[series]]\nseries = "S1"\n', "twice")]:
-        with pytest.raises(ValueError, match=message):
-            dataset.load(write(tmp_path, spec_text(raw) + "\n" + rows, "c.toml"))
+    plain = dataset.load(write(tmp_path, spec_text(raw), "b.toml"))
+    assert plain.metadata is None and plain.run_metadata() is None
+    for bad in ('metadata = 3', 'metadata = ""'):
+        with pytest.raises(ValueError, match="metadata must be"):
+            dataset.load(write(tmp_path, spec_text(raw, top='name = "t"\noutput = "o"\n' + bad), "c.toml"))
+
+
+def test_the_metadata_does_not_change_the_fingerprint(tmp_path, raw):
+    a = dataset.load(write(tmp_path, spec_text(raw)))
+    b = dataset.load(write(tmp_path, spec_text(raw, top=METADATA_TOP), "b.toml"))
+    assert dataset.fingerprint(a, a.sources[0]) == dataset.fingerprint(b, b.sources[0])
 
 
 def test_processed_joins_the_series_values_to_the_events_when_it_reads_them(tmp_path, raw):
-    ds_path = write(tmp_path, spec_text(raw) + "\n" + SERIES_ROWS.replace("S2", "S1_other"))
+    (tmp_path / "series.csv").write_text(SERIES_CSV.replace("S2", "S1_other"), encoding="utf-8")
+    ds_path = write(tmp_path, spec_text(raw, top=METADATA_TOP))
     ds = Dataset.open(ds_path)
     parquet.write(Events.concatenate(toy_events(3, series="S1"), toy_events(2, series="S1_other", dump="F0002")), ds.spec.output)
     q = ds.processed().quantities
     assert q["hv_v"].to_list() == [-34.0] * 3 + [0.0] * 2 and q["trigger"].to_list() == ["DCRC1pA 2"] * 3 + ["DCRC1pA 100"] * 2
     assert "hv_v" not in ds.processed(metadata=False).quantities.fields                     # asked not to
-    ds_path.write_text(ds_path.read_text(encoding="utf-8").replace("-34.0", "-36.0"), encoding="utf-8")
+    (tmp_path / "series.csv").write_text(SERIES_CSV.replace("S2", "S1_other").replace("-34.0", "-36.0"), encoding="utf-8")
     assert Dataset.open(ds_path).processed().quantities["hv_v"].to_list()[0] == -36.0       # a new value needs no reprocessing
 
 
-def test_processed_names_a_series_the_definition_does_not_list_and_refuses_a_key_that_is_a_quantity(tmp_path, raw):
-    only_s1 = write(tmp_path, spec_text(raw) + "\n" + SERIES_ROWS.split("\n\n")[0])
-    ds = Dataset.open(only_s1)
+def test_processed_names_a_series_the_table_does_not_list_and_refuses_a_column_that_is_a_quantity(tmp_path, raw):
+    (tmp_path / "series.csv").write_text("series,hv_v\nS1,-34.0\n", encoding="utf-8")
+    ds = Dataset.open(write(tmp_path, spec_text(raw, top=METADATA_TOP)))
     parquet.write(Events.concatenate(toy_events(2, series="S1"), toy_events(2, series="S9", dump="F0002")), ds.spec.output)
     with pytest.raises(KeyError, match="S9"):
         ds.processed()
     parquet.write(toy_events(2, series="S1").with_quantities(hv_v=np.zeros(2)), tmp_path / "clash")
-    clash = write(tmp_path, spec_text(raw, top='name = "toy"\noutput = "clash"') + "\n" + SERIES_ROWS.split("\n\n")[0], "clash.toml")
+    clash = write(tmp_path, spec_text(raw, top='name = "toy"\noutput = "clash"\nmetadata = "series.csv"'), "clash.toml")
     with pytest.raises(ValueError, match="hv_v"):
         Dataset.open(clash).processed()
 

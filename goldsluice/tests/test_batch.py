@@ -282,18 +282,19 @@ def test_a_batch_run_to_root_writes_the_trigger_type_as_a_number_in_the_event_tr
         assert json.loads(str(f["infoDir/trigger_types"]))["Physics"] == 1                       # the table travels with the file
 
 
-# ---- run metadata: [[series]] tables are joined when the data are read, not written by the batch run
+# ---- run metadata: a CSV named in the definition is joined when the data are read, not written by the batch run
 
 def test_the_run_metadata_is_joined_at_read_time_so_a_change_of_a_value_does_not_redo_a_file(tmp_path):
     files = make_raw(tmp_path / "raw", dumps=(("S1", "F0001", 4), ("S2", "F0001", 3)))
+    table = tmp_path / "series.csv"
+    table.write_text("series,hv_v,trigger\nS1,0.0,DCRC1pA 2\nS2,-34.0,DCRC1pA 100\n", encoding="utf-8")
     spec = write_spec(tmp_path / "toy.dataset.toml", files)
-    rows = '\n[[series]]\nseries = "S1"\nhv_v = 0.0\ntrigger = "DCRC1pA 2"\n\n[[series]]\nseries = "S2"\nhv_v = -34.0\ntrigger = "DCRC1pA 100"\n'
-    spec.write_text(spec.read_text(encoding="utf-8") + rows, encoding="utf-8")
+    spec.write_text(spec.read_text(encoding="utf-8").replace('output = "out"', 'output = "out"\nmetadata = "series.csv"'), encoding="utf-8")
     assert not any(f.skipped for f in batch.run(spec, progress=None).files)
     q = Dataset.open(spec).processed().quantities
     assert q["hv_v"].to_list() == [0.0] * 4 + [-34.0] * 3 and q["trigger"].to_list() == ["DCRC1pA 2"] * 4 + ["DCRC1pA 100"] * 3
     assert "hv_v" not in Dataset.open(spec).processed(metadata=False).quantities.fields            # nothing was written into the output
-    spec.write_text(spec.read_text(encoding="utf-8").replace("-34.0", "-36.0"), encoding="utf-8")
+    table.write_text(table.read_text(encoding="utf-8").replace("-34.0", "-36.0"), encoding="utf-8")
     assert all(f.skipped for f in batch.run(spec, progress=None).files)                              # the files are not redone ...
     assert Dataset.open(spec).processed().quantities["hv_v"].to_list() == [0.0] * 4 + [-36.0] * 3     # ... and the new value is there
 
@@ -385,6 +386,7 @@ def test_the_example_loads_and_its_commented_root_lines_work_when_uncommented(tm
     assert [s.algorithm for s in plain.steps] == ["peak", "max_time"]
     assert list(plain.run_metadata()["hv_v"]) == [-83.2]
     assert "# output_format = \"root\"" in text and "# root_detector = " in text
+    (tmp_path / "r76.series.csv").write_text((example.parent / "r76.series.csv").read_text(encoding="utf-8"), encoding="utf-8")   # the metadata file next to it
     root = tmp_path / "r76.dataset.toml"
     root.write_text(text.replace("# output_format = ", "output_format = ").replace("# root_detector = ", "root_detector = "), encoding="utf-8")
     spec = dataset.load(root)

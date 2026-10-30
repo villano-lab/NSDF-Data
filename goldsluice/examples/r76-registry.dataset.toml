@@ -64,3 +64,12 @@ pretrigger_samples = "@readout.pretrigger_samples"
 sample_period_s = "@readout.sample_period_s"
 lo = 0.1                                       # the usual 10-90 % rise time: these two are part of the definition of the quantity
 hi = 0.9
+
+[[processing]]
+algorithm = "rise_crossing"                    # crossing_time_s: when the rise of the largest pulse crosses `fraction` of its height, from the start of the trace
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+fraction = 0.2                                 # the 20 % time: the differences of these between channels give the delay-based positions

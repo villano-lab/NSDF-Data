@@ -3,8 +3,8 @@
 //! The Python mirror is `python/goldsluice/reference/lowpass.py` (a numpy *reference*, not in the kernel subset; see `PORTING.md`); the
 //! two agree to rounding (`ATOL` in the mirror). The recipe is that of `goldpan.algorithms.lowpass`. For one trace `x` of `n` samples
 //! and `dt = sample_period_s`:
-//! * `pad = min(n - 1, 3 * round(1 / (cutoff_hz * dt)) + 1)` with `round(v) = floor(v + 0.5)` (half up, as in the mirror: Python's own
-//!   `round` is half to even and Rust's is half away from zero);
+//! * `pad = min(n - 1, 3 * round(1 / (cutoff_hz * dt)) + 1)` with `round` rounding half to even, as Python's `round` does (`goldpan` uses it; the
+//!   tie is realistic: 1 / (100 kHz * 0.8 us) is 12.5);
 //! * both ends are extended by `pad` samples with odd symmetry about the end points, giving `N = n + 2 * pad` samples;
 //! * the spectrum of the extension is multiplied by `1 / (1 + (f / cutoff_hz)^(2 * order))`, `f = min(k, N - k) / (N * dt)` for bin
 //!   `k` (the response is symmetric, so the whole complex transform is multiplied, not only its half);
@@ -59,7 +59,7 @@ impl Plan {
     /// The parameters must already pass `problem` for `n_samples`.
     pub fn new(n_samples: usize, p: &LowpassParams) -> Plan {
         let n = n_samples;
-        let pad = (n - 1).min(3 * (1.0 / (p.cutoff_hz * p.sample_period_s) + 0.5).floor() as usize + 1);
+        let pad = (n - 1).min(3 * (1.0 / (p.cutoff_hz * p.sample_period_s)).round_ties_even() as usize + 1);
         let len = n + 2 * pad;
         let mut planner = FftPlanner::<f64>::new();
         let forward = planner.plan_fft_forward(len);

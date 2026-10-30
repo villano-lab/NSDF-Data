@@ -7,9 +7,8 @@ which is why `ATOL` is set.
 The recipe is the one of `goldpan.algorithms.lowpass` (the two must give the same numbers; goldsluice never imports goldpan, so it is
 written out here). For one trace `x` of `n` samples, with `dt = sample_period_s`:
 
-* `pad = min(n - 1, 3 * round(1 / (cutoff_hz * dt)) + 1)`, where `round` is `floor(v + 0.5)` (half up). Python's own `round` rounds half
-  to even and Rust's rounds half away from zero; the three agree except exactly at .5, which is not a realistic input, and this
-  definition is the same in both languages;
+* `pad = min(n - 1, 3 * round(1 / (cutoff_hz * dt)) + 1)`, where `round` rounds half to even (Python's own `round`, as in `goldpan`; Rust's `round_ties_even`).
+  A tie is realistic: `1 / (cutoff_hz * dt)` is 12.5 for 100 kHz and 0.8 us per sample;
 * both ends are extended by `pad` samples with odd symmetry about the end points (`2 * x[0] - x[pad .. 1]` in front,
   `2 * x[n-1] - x[n-2 .. n-1-pad]` behind), so that the edges do not ring, giving `N = n + 2 * pad` samples;
 * the spectrum of the extended trace is multiplied by `1 / (1 + (f / cutoff_hz) ** (2 * order))` (the magnitude response of a
@@ -63,7 +62,7 @@ def problem(n_samples, cutoff_hz, order, sample_period_s):
 def kernel(trace, cutoff_hz, order, sample_period_s):
     x = np.asarray(trace, dtype=np.float64)
     n = x.shape[0]
-    pad = min(n - 1, 3 * math.floor(1.0 / (cutoff_hz * sample_period_s) + 0.5) + 1)
+    pad = min(n - 1, 3 * round(1.0 / (cutoff_hz * sample_period_s)) + 1)
     left = 2.0 * x[0] - x[1:pad + 1][::-1]
     right = 2.0 * x[n - 1] - x[n - 1 - pad:n - 1][::-1]
     ext = np.concatenate([left, x, right])
@@ -87,6 +86,8 @@ def cases():
     return [
         (pulses, dict(cutoff_hz=95e3, order=4, sample_period_s=dt)),
         (pulses[:4], dict(cutoff_hz=30e3, order=1, sample_period_s=dt)),
+        (pulses[:4], dict(cutoff_hz=100e3, order=4, sample_period_s=dt)),     # a tie in the pad: 1 / (100 kHz * 0.8 us) = 12.5
+        (pulses[:4], dict(cutoff_hz=20e3, order=4, sample_period_s=dt)),      # and 62.5
         (flat, dict(cutoff_hz=50e3, order=2, sample_period_s=dt)),
         (short, dict(cutoff_hz=95e3, order=4, sample_period_s=dt)),
         (small, dict(cutoff_hz=30e3, order=3, sample_period_s=dt)),

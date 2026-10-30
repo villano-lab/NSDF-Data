@@ -198,3 +198,27 @@ def test_write_refuses_what_it_cannot_name_or_number(tmp_path):
         rq_root.write(Events(ev.detector, {}, bad, {}), tmp_path, detector=7)
     with pytest.raises(ValueError, match="no quantities"):
         rq_root.write(Events(ev.detector, {}, ak.Array(keys), {}), tmp_path, detector=7)
+
+
+def _with_trigger_types(labels):
+    from goldpan.data import Events
+    ev = _quantities(n=len(labels))
+    q = ak.Array({**{k: ev.quantities[k] for k in ak.fields(ev.quantities)}, "trigger_type": labels})
+    return Events(ev.detector, {}, q, ev.meta)
+
+
+def test_write_gives_the_trigger_type_as_a_number_in_the_event_tree_and_stores_the_table(tmp_path):
+    import json
+    import uproot
+    files = rq_root.write(_with_trigger_types(["Physics", "Unknown", "Physics"]), tmp_path, detector=7)
+    with uproot.open(files[0]) as f:
+        assert sorted(f["rqDir/eventTree"].keys()) == ["DumpNumber", "EventNumber", "SeriesNumber", "trigger_type"]
+        assert f["rqDir/eventTree"]["trigger_type"].array(library="np").tolist() == [1.0, 0.0, 1.0]
+        table = json.loads(str(f["infoDir/trigger_types"]))
+    assert table["Unknown"] == 0 and table["Physics"] == 1 and table == rq_root.TRIGGER_CODES
+    assert rq_root.read(tmp_path, detector=7)["trigger_type"].to_list() == [1.0, 0.0, 1.0]            # read gives the number back, not the label
+
+
+def test_write_refuses_a_trigger_type_that_has_no_number(tmp_path):
+    with pytest.raises(ValueError, match="TRIGGER_CODES"):
+        rq_root.write(_with_trigger_types(["Physics", "Mystery", "Physics"]), tmp_path, detector=7)

@@ -7,12 +7,26 @@
 
 `traces` is an array of shape `(n_events, n_samples)` (one channel); it is converted to C-contiguous float64. Every parameter is
 keyword-only and has no default.
+
+Most algorithms reduce a trace to numbers (`KIND = "quantities"`: one value per trace for each name in `OUTPUTS`). A few **transform** a
+trace into another trace (`KIND = "trace"`, `OUTPUTS = ("trace",)`): a filter, a baseline subtraction. Their result is an array of
+the shape of `traces`, and a batch run can hand it to the steps that name it as their `input` (`goldpan.dataset`).
 """
 import numpy as np
 
 from . import reference
 
 ALGORITHMS = {m.NAME: m for m in reference.ALL}
+
+QUANTITIES, TRACE = "quantities", "trace"
+
+
+def kind(name) -> str:
+    """`"quantities"` (the algorithm reduces a trace to numbers) or `"trace"` (it returns a trace of the same length)."""
+    try:
+        return getattr(ALGORITHMS[name], "KIND", QUANTITIES)
+    except KeyError:
+        raise ValueError(f"no algorithm {name!r}; known: {sorted(ALGORITHMS)}") from None
 
 
 def _traces(traces):
@@ -37,8 +51,12 @@ def run(name, traces, *, backend="rust", **params):
         if why:
             raise ValueError(why)
         rows = [algorithm.kernel(row, **params) for row in traces.tolist()]
-        result = tuple(np.array(column, dtype=np.float64) for column in zip(*rows)) if rows else \
-            tuple(np.empty(0) for _ in algorithm.OUTPUTS)
+        if kind(name) == TRACE:
+            result = (np.array(rows, dtype=np.float64).reshape(traces.shape),)
+        elif rows:
+            result = tuple(np.array(column, dtype=np.float64) for column in zip(*rows))
+        else:
+            result = tuple(np.empty(0) for _ in algorithm.OUTPUTS)
     else:
         raise ValueError(f"backend must be 'rust' or 'python', not {backend!r}")
     return dict(zip(algorithm.OUTPUTS, result))

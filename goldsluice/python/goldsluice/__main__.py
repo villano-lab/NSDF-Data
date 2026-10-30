@@ -24,7 +24,8 @@ def main(argv=None) -> int:
     try:
         if args.command == "algorithms":
             for name, module in sorted(ALGORITHMS.items()):
-                print(f"{name}: outputs {list(module.OUTPUTS)}")
+                what = "transforms the trace (a filter or a baseline subtraction)" if getattr(module, "KIND", "quantities") == "trace" else f"outputs {list(module.OUTPUTS)}"
+                print(f"{name}: {what}")
         elif args.command == "check":
             files = batch.check(args.dataset, allow_output_in_repo=args.allow_output_in_repo)
             for source, path in files:

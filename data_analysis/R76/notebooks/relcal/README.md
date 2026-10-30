@@ -21,6 +21,7 @@ The face (Side 2) is drawn as in the Note 9 channel figure and the wiki: `A` the
 | notebook | what it does |
 |---|---|
 | `integral-on-the-face.ipynb` | reads the processed data set, and maps the `integral` of the six channels onto the face with the detector drawn under the plot |
+| `positions-by-voltage.ipynb` | groups the series by high voltage (`series.csv`) and draws the event density in the plane of the delays `xdel`, `ydel` for each group, with the detector underneath; needs a `rise_crossing` step in the processing |
 
 ## Rules of the folder
 

@@ -236,6 +236,7 @@
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
 </ul>
 </li>
@@ -296,7 +297,7 @@ python -m goldsluice check r76.dataset.toml          # read the definition and l
 </div></blockquote>
 <p>or from Python, <code class="code docutils literal notranslate"><span class="pre">goldsluice.batch.run(&quot;r76.dataset.toml&quot;)</span></code>. For every raw file the pulses are read in pieces by the source’s
 adapter (<code class="code docutils literal notranslate"><span class="pre">goldpan.adapters</span></code>), every step is applied to the channels it names with the Rust kernels, and the quantities (one record
-per channel, keyed by series, dump and event, <strong>without</strong> the pulses) are written into the output dataset of the definition, a
+per channel, keyed by series, dump and event, plus what the adapter knows about each event such as <code class="code docutils literal notranslate"><span class="pre">trigger_type</span></code>, <strong>without</strong> the pulses) are written into the output dataset of the definition, a
 goldpan Parquet dataset that <code class="code docutils literal notranslate"><span class="pre">goldpan.dataset.Dataset.processed()</span></code> reads (or, with <code class="code docutils literal notranslate"><span class="pre">output_format</span> <span class="pre">=</span> <span class="pre">&quot;root&quot;</span></code>, RQ-style ROOT files
 under our names, written by <code class="code docutils literal notranslate"><span class="pre">goldpan.adapters.rq_root.write</span></code> and read with <code class="code docutils literal notranslate"><span class="pre">rq_root.read</span></code>; needs <code class="code docutils literal notranslate"><span class="pre">goldsluice[root]</span></code>). A ledger, <code class="code docutils literal notranslate"><span class="pre">_goldsluice.json</span></code> in the output folder, records
 for each raw file what was done, with what, and how long it took, so that a second run only does what changed: a file is skipped only

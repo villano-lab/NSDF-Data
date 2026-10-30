@@ -282,6 +282,85 @@ def test_a_batch_run_to_root_writes_the_trigger_type_as_a_number_in_the_event_tr
         assert json.loads(str(f["infoDir/trigger_types"]))["Physics"] == 1                       # the table travels with the file
 
 
+# ---- steps that build on each other: a transform (a trace out) feeds the steps that name it as their input
+
+class _Offset:
+    """A stand-in transform, written in the kernel subset, so that these tests do not depend on the compiled kernels of a filter."""
+    NAME, KIND, OUTPUTS, REVISION = "offset", "trace", ("trace",), 1
+
+    @staticmethod
+    def problem(n_samples, offset):
+        return None
+
+    @staticmethod
+    def kernel(trace, offset):
+        return [v + offset for v in trace]
+
+
+WINDOW = 'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = "@readout.pretrigger_samples"\n'
+RAW_PEAK = '[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\n[processing.params]\n' + WINDOW + "amps_per_adc = 1.0\n"
+SHIFT = '[[processing]]\nalgorithm = "offset"\nname = "shifted"\nchannels = "role:phonon"\n[processing.params]\noffset = 100.0\n'
+SHIFTED_PEAK = ('[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\ninput = "shifted"\nsuffix = "_shifted"\n'
+                '[processing.params]\n' + WINDOW + "amps_per_adc = 1.0\n")
+
+
+@pytest.fixture
+def offset_algorithm(monkeypatch):
+    monkeypatch.setitem(ALGORITHMS, "offset", _Offset)
+
+
+def test_a_step_reads_the_trace_an_earlier_step_gave_and_the_suffix_keeps_the_names_apart(tmp_path, offset_algorithm):
+    files = make_raw(tmp_path / "raw")
+    spec = write_spec(tmp_path / "toy.dataset.toml", files, steps="\n".join([RAW_PEAK, SHIFT, SHIFTED_PEAK]))
+    batch.run(spec, backend="python", progress=None)
+    q = Dataset.open(spec).processed().quantities
+    assert set(ak.fields(q["A"])) == {"adc_max", "current_max", "adc_max_shifted", "current_max_shifted"}
+    np.testing.assert_allclose(q["A"]["adc_max_shifted"], q["A"]["adc_max"] + 100.0, rtol=1e-12)
+    np.testing.assert_allclose(q["A"]["current_max_shifted"], q["A"]["current_max"], rtol=1e-9)        # the baseline moved with it
+    assert "shifted" not in ak.fields(q["A"]) and "trace" not in ak.fields(q["A"])                     # a transform writes no quantity
+
+
+def test_the_name_input_and_suffix_of_a_step_are_in_the_provenance_and_change_the_fingerprint(tmp_path, offset_algorithm):
+    import pyarrow.parquet as pq
+    from goldpan import dataset
+    files = make_raw(tmp_path / "raw")
+    spec = write_spec(tmp_path / "toy.dataset.toml", files, steps="\n".join([RAW_PEAK, SHIFT, SHIFTED_PEAK]))
+    batch.run(spec, backend="python", progress=None)
+    meta = json.loads(pq.read_metadata(tmp_path / "out" / "TOY" / "S1_F0001.parquet").metadata[b"goldpan.meta"])["goldsluice"]
+    assert [s.get("name") for s in meta["steps"]] == [None, "shifted", None]
+    assert meta["steps"][2]["input"] == "shifted" and meta["steps"][2]["suffix"] == "_shifted"
+    other = write_spec(tmp_path / "other.dataset.toml", files,
+                       steps="\n".join([RAW_PEAK, SHIFT, SHIFTED_PEAK.replace("_shifted", "_x")]))
+    a, b = dataset.load(spec), dataset.load(other)
+    assert dataset.fingerprint(a, a.sources[0]) != dataset.fingerprint(b, b.sources[0])
+
+
+def test_a_transform_without_a_name_and_an_input_that_is_not_a_transform_are_refused_by_check(tmp_path, offset_algorithm):
+    files = make_raw(tmp_path / "raw")
+    nameless = SHIFT.replace('name = "shifted"\n', "")
+    with pytest.raises(ValueError, match="give it a name"):
+        batch.check(write_spec(tmp_path / "a.dataset.toml", files, steps="\n".join([nameless, RAW_PEAK])))
+    named_peak = RAW_PEAK.replace('algorithm = "peak"\n', 'algorithm = "peak"\nname = "p"\n')
+    reads_peak = SHIFTED_PEAK.replace('input = "shifted"', 'input = "p"')
+    with pytest.raises(ValueError, match="gives quantities, not a trace"):
+        batch.check(write_spec(tmp_path / "b.dataset.toml", files, steps="\n".join([named_peak, reads_peak])))
+
+
+def test_a_step_on_a_channel_its_input_did_not_transform_is_an_error_that_names_the_channel(tmp_path, offset_algorithm):
+    files = make_raw(tmp_path / "raw")
+    only_a = SHIFT.replace('channels = "role:phonon"', 'channels = ["A"]')
+    spec = write_spec(tmp_path / "toy.dataset.toml", files, steps="\n".join([only_a, SHIFTED_PEAK]))
+    with pytest.raises(ValueError, match="'B'"):
+        batch.run(spec, backend="python", progress=None)
+
+
+def test_two_steps_writing_the_same_quantity_are_still_refused_without_a_suffix(tmp_path, offset_algorithm):
+    files = make_raw(tmp_path / "raw")
+    spec = write_spec(tmp_path / "toy.dataset.toml", files, steps="\n".join([RAW_PEAK, SHIFT, SHIFTED_PEAK.replace('suffix = "_shifted"\n', "")]))
+    with pytest.raises(ValueError, match="adc_max"):
+        batch.run(spec, backend="python", progress=None)
+
+
 # ---- run metadata: a CSV keyed by series, written into the output
 
 SERIES_CSV = "series,hv_v,trigger,trigger_value,duration_min\nS1,0.0,DCRC1pA 2,2.0,30\nS2,-34.0,DCRC1pA 100,100.0,\n"

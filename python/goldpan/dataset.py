@@ -34,6 +34,29 @@ written. A *relative* `output` (`"r76-nai"`) is put under the folder named by th
 definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the
 folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).
 
+**Steps that build on each other.** A step reads the raw trace unless it has an `input`. A step whose algorithm gives a trace (a filter or a
+baseline subtraction: `goldsluice algorithms` lists them) has a `name`, writes no quantities, and a later step with `input = "<name>"`
+reads its result instead of the raw trace, for the channels the two steps share. A `suffix` is appended to the names of the quantities
+of a step, so that the same algorithm can run on both (`adc_max`, and `adc_max_lp` from the filtered trace). The quantities of a step must
+still be written once: two steps giving the same name is an error. Steps run in the order written, and an `input` is a step above::
+
+    [[processing]]
+    algorithm = "lowpass"                   # a filter: gives a trace, so it has a name
+    name = "lp"
+    channels = "role:phonon"
+    [processing.params]
+    cutoff_hz = 50e3
+    order = 4
+    sample_period_s = "@readout.sample_period_s"
+
+    [[processing]]
+    algorithm = "peak"
+    channels = "role:phonon"
+    input = "lp"                            # the peak of the filtered trace
+    suffix = "_lp"                          # adc_max_lp, current_max_lp
+    [processing.params]
+    ...
+
 **Run metadata.** `metadata` names a CSV with a `series` column and any other columns (`hv_v`, `trigger_value`, `trigger`, ...): facts about
 whole series that an analysis needs for every event, for example to analyse the data of different voltages separately. Every column
 is written into the output as an event column (next to `trigger_type`), the values of the series of each file are recorded in its
@@ -65,6 +88,7 @@ import hashlib
 import inspect
 import json
 import os
+import re
 import tomllib
 import warnings
 from dataclasses import asdict, dataclass
@@ -80,10 +104,11 @@ from .config import PulseConfig
 from .data import Events
 from .status import DONE, status
 
-FORMAT_VERSION = 5
+FORMAT_VERSION = 6
 """The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`
 (and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes
-under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata` (a CSV of run metadata per series, written into the output)."""
+under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata` (a CSV of run metadata per series, written into the output). 6: steps may have a `name`, an `input` (the
+`name` of an earlier step whose result they read) and a `suffix` for their quantities."""
 
 ENV_OUTPUT = "GOLDSLUICE_OUTPUT"
 """The environment variable that holds the folder under which a relative `output` of a definition is placed."""
@@ -92,7 +117,9 @@ _TOP = {"dataset", "sources", "processing"}
 _DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry", "metadata"}
 _OUTPUT_FORMATS = ("parquet", "root")
 _SOURCE = {"name", "format", "paths", "glob", "detector", "readout", "read"}
-_STEP = {"algorithm", "channels", "params"}
+_STEP = {"algorithm", "channels", "params", "name", "input", "suffix"}
+_STEP_NAME = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
+_SUFFIX = re.compile(r"^[A-Za-z0-9_]*$")
 _READOUT = {"pretrigger_samples", "glitch_samples", "sample_period_s"}
 
 
@@ -133,6 +160,12 @@ class Step:
     channels: Any
     """``"all"``, ``"role:<role>"`` or a tuple of channel names."""
     params: Mapping[str, Any]
+    name: Optional[str] = None
+    """What later steps call this one (`input = "<name>"`); needed by a step whose algorithm gives a trace (a filter)."""
+    input: Optional[str] = None
+    """The `name` of an earlier step whose resulting trace this step reads instead of the raw trace, or `None`."""
+    suffix: str = ""
+    """Appended to the names of the quantities this step writes (`adc_max` becomes `adc_max_lp`), so that the same algorithm can run on the raw trace and on a filtered one."""
 
     def channel_names(self, detector) -> list:
         """The channels of `detector` this step applies to."""
@@ -333,8 +366,30 @@ def load(path) -> DatasetSpec:
             channels = tuple(channels)
         elif not (channels == "all" or (isinstance(channels, str) and channels.startswith("role:") and len(channels) > 5)):
             raise ValueError(f"{where}: channels must be \"all\", \"role:<role>\" or a list of names, not {channels!r}")
-        steps.append(Step(st["algorithm"], channels, dict(st.get("params", {}))))
+        name, source, suffix = st.get("name"), st.get("input"), st.get("suffix", "")
+        if name is not None and not (isinstance(name, str) and _STEP_NAME.match(name)):
+            raise ValueError(f"{where}: name must be letters, digits and underscores, starting with a letter, not {name!r}")
+        if name is not None and name in {x.name for x in steps}:
+            raise ValueError(f"{where}: two steps are named {name!r}")
+        if source is not None and source not in {x.name for x in steps if x.name is not None}:
+            raise ValueError(f"{where}: input {source!r} is not the name of an earlier step (steps run in order; an input is a step above this one)")
+        if not (isinstance(suffix, str) and _SUFFIX.match(suffix)):
+            raise ValueError(f"{where}: suffix must be letters, digits and underscores, not {suffix!r}")
+        steps.append(Step(st["algorithm"], channels, dict(st.get("params", {})), name, source, suffix))
     return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, metadata)
+
+
+@status(DONE)
+def step_record(step: Step) -> dict:
+    """A step as it is hashed and recorded in the provenance: `name`, `input` and `suffix` appear only when the step has them, so a
+    definition without them keeps the fingerprint it had before the keys existed."""
+    out = {"algorithm": step.algorithm, "channels": step.channels, "params": step.params}
+    for key in ("name", "input"):
+        if getattr(step, key) is not None:
+            out[key] = getattr(step, key)
+    if step.suffix:
+        out["suffix"] = step.suffix
+    return out
 
 
 @status(DONE)
@@ -344,7 +399,7 @@ def fingerprint(spec: DatasetSpec, source: Source) -> str:
     payload = {"source": {"format": source.format, "detector": source.detector,
                           "readout": None if source.readout is None else asdict(source.readout),
                           "read": source.read},
-               "steps": [{"algorithm": s.algorithm, "channels": s.channels, "params": s.params} for s in spec.steps]}
+               "steps": [step_record(s) for s in spec.steps]}
     if spec.output_format != "parquet":                    # a Parquet definition keeps the fingerprint it had before the key existed
         payload["output"] = {"format": spec.output_format, "root_detector": spec.root_detector}
     blob = json.dumps(payload, sort_keys=True, default=str)

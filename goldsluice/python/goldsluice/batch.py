@@ -23,6 +23,10 @@ two more files than there are workers; `readahead=0` turns it off). It reads onl
 
 `goldpan` does the reading and the definition, so batch mode needs it (`pip install goldsluice[batch]`).
 
+A step may build on an earlier one (`name`, `input`, `suffix` in `goldpan.dataset`): a step whose algorithm gives a trace (`KIND = "trace"`, a
+filter or a baseline subtraction) keeps its result for the channels it names, in memory for the chunk being processed, and a step with `input = "<name>"` reads that
+trace instead of the raw one. The ledger fingerprint and the provenance include `name`, `input` and `suffix` only where they are written.
+
 If the definition names run metadata (`[dataset] metadata`, a CSV keyed by series: high voltage, trigger setting, ...), its columns are written into
 every output as event columns, the values of the series of the file are recorded in the provenance (`run_metadata`) and the ledger
 (a hash, `metadata`), and a file is redone when the metadata of its series changed, not when another series' did.
@@ -44,7 +48,7 @@ from typing import Callable, Optional
 import numpy as np
 
 from . import __version__
-from .algorithms import ALGORITHMS, run as run_algorithm
+from .algorithms import ALGORITHMS, TRACE, kind, run as run_algorithm
 
 LEDGER = "_goldsluice.json"
 
@@ -235,6 +239,14 @@ def check(spec_path, *, allow_output_in_repo: bool = False) -> list:
     for step in spec.steps:
         if step.algorithm not in ALGORITHMS:
             raise ValueError(f"unknown algorithm {step.algorithm!r}; goldsluice has {sorted(ALGORITHMS)}")
+        if kind(step.algorithm) == TRACE and step.name is None:
+            raise ValueError(f"{spec.path}: the step with algorithm {step.algorithm!r} gives a trace, not quantities: give it a name "
+                             f"(name = \"...\") so that later steps can read it with input = \"...\"")
+        if step.input is not None:
+            producer = next(x for x in spec.steps if x.name == step.input)            # load() guarantees an earlier step of that name
+            if kind(producer.algorithm) != TRACE:
+                raise ValueError(f"{spec.path}: the step with algorithm {step.algorithm!r} reads input {step.input!r}, but that step "
+                                 f"({producer.algorithm!r}) gives quantities, not a trace; an input must be a filter or a baseline subtraction")
     if not allow_output_in_repo:
         check_output_location(spec.output, spec.output_format)
     return [(s.name, f) for s in spec.sources for f in s.files()]
@@ -320,14 +332,26 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
                                      f"rename them in the table")
                 columns.update({k: ak.Array(v) for k, v in extra.items()})
             per_channel = {}
+            traces = {}                                          # (step name, channel) -> the trace a transform gave, for this chunk
             for step in spec.steps:
                 params = step.resolve(ev.detector.readout.segment("main").config)
                 for ch in step.channel_names(ev.detector):
+                    if step.input is None:
+                        data = ev.trace(ch)
+                    elif (step.input, ch) in traces:
+                        data = traces[(step.input, ch)]
+                    else:
+                        raise ValueError(f"{path}: the step with algorithm {step.algorithm!r} reads {step.input!r} for channel {ch!r}, "
+                                         f"but that step does not give a trace for it (check the channels of both steps)")
                     t1 = time.perf_counter()
-                    result = run_algorithm(step.algorithm, ev.trace(ch), backend=backend, **params)
+                    result = run_algorithm(step.algorithm, data, backend=backend, **params)
                     fr.compute_s[step.algorithm] = fr.compute_s.get(step.algorithm, 0.0) + time.perf_counter() - t1
+                    if kind(step.algorithm) == TRACE:
+                        traces[(step.name, ch)] = result["trace"]
+                        continue
                     record = per_channel.setdefault(ch, {})
                     for name, values in result.items():
+                        name = name + step.suffix
                         if name in record:
                             raise ValueError(f"{path}: channel {ch!r} gets {name!r} from two steps; "
                                              f"each quantity must come from one step")
@@ -346,7 +370,7 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         file_series = sorted(set(events.quantities["series"].to_list()))
         provenance = {"version": __version__, "versions": versions, "revisions": revisions, "dataset": spec.name, "source": source.name, "raw": str(path),
                       "fingerprint": fp, "backend": backend,
-                      "steps": [{"algorithm": s.algorithm, "channels": s.channels, "params": s.params} for s in spec.steps],
+                      "steps": [dataset.step_record(s) for s in spec.steps],
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
         if table is not None:
             provenance["run_metadata"] = {"file": str(spec.metadata), "rows": runmeta.rows(table, file_series)}

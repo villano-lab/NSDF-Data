@@ -87,6 +87,41 @@ def test_the_metadata_key_names_a_csv_next_to_the_definition_and_is_checked_when
         dataset.load(write(tmp_path, spec_text(raw, top=top), "c.toml"))
 
 
+def _two_steps(raw, second):
+    first = '[[processing]]\nalgorithm = "lowpass"\nname = "lp"\nchannels = "role:phonon"\n[processing.params]\ncutoff_hz = 5e4\n\n'
+    return spec_text(raw, steps=first + second)
+
+
+def test_a_step_may_have_a_name_an_input_and_a_suffix_and_they_are_checked_when_loaded(tmp_path, raw):
+    second = '[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\ninput = "lp"\nsuffix = "_lp"\n'
+    steps = dataset.load(write(tmp_path, _two_steps(raw, second))).steps
+    assert (steps[0].name, steps[0].input, steps[0].suffix) == ("lp", None, "")
+    assert (steps[1].name, steps[1].input, steps[1].suffix) == (None, "lp", "_lp")
+    for bad, message in [('input = "nosuch"', "not the name of an earlier step"),
+                         ('input = "later"', "not the name of an earlier step"),
+                         ('suffix = "a b"', "suffix must be"),
+                         ('name = "1x"', "name must be"),
+                         ('name = "lp"', "two steps are named")]:
+        text = _two_steps(raw, '[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\n' + bad + "\n")
+        with pytest.raises(ValueError, match=message):
+            dataset.load(write(tmp_path, text, "bad.toml"))
+
+
+def test_an_input_must_be_a_step_above_it(tmp_path, raw):
+    text = spec_text(raw, steps='[[processing]]\nalgorithm = "peak"\nchannels = "all"\ninput = "lp"\n\n'
+                                '[[processing]]\nalgorithm = "lowpass"\nname = "lp"\nchannels = "all"\n')
+    with pytest.raises(ValueError, match="earlier step"):
+        dataset.load(write(tmp_path, text))
+
+
+def test_the_name_input_and_suffix_enter_the_fingerprint_only_when_written(tmp_path, raw):
+    plain = dataset.load(write(tmp_path, spec_text(raw)))
+    assert dataset.step_record(plain.steps[0]) == {"algorithm": "peak", "channels": "role:phonon", "params": dict(plain.steps[0].params)}
+    named = dataset.load(write(tmp_path, spec_text(raw).replace('algorithm = "peak"', 'algorithm = "peak"\nname = "p"\nsuffix = "_p"'), "n.toml"))
+    assert dataset.step_record(named.steps[0])["name"] == "p" and dataset.step_record(named.steps[0])["suffix"] == "_p"
+    assert dataset.fingerprint(plain, plain.sources[0]) != dataset.fingerprint(named, named.sources[0])
+
+
 def test_the_readout_is_a_preset_or_all_three_numbers_never_a_default(tmp_path, raw):
     assert dataset.load(write(tmp_path, spec_text(raw, 'readout = "Z7"'))).sources[0].readout == Z7
     inline = 'readout = { pretrigger_samples = 10, glitch_samples = 1, sample_period_s = 1e-6 }'

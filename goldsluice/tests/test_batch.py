@@ -361,79 +361,20 @@ def test_two_steps_writing_the_same_quantity_are_still_refused_without_a_suffix(
         batch.run(spec, backend="python", progress=None)
 
 
-# ---- run metadata: a CSV keyed by series, written into the output
+# ---- run metadata: [[series]] tables are joined when the data are read, not written by the batch run
 
-SERIES_CSV = "series,hv_v,trigger,trigger_value,duration_min\nS1,0.0,DCRC1pA 2,2.0,30\nS2,-34.0,DCRC1pA 100,100.0,\n"
-WITH_METADATA = 'output = "out"\nmetadata = "series.csv"'
-
-
-def _with_metadata(tmp_path, table=SERIES_CSV, trigger_types=False):
-    files = make_raw(tmp_path / "raw", dumps=(("S1", "F0001", 4), ("S2", "F0001", 3)), trigger_types=trigger_types)
-    (tmp_path / "series.csv").write_text(table, encoding="utf-8")
+def test_the_run_metadata_is_joined_at_read_time_so_a_change_of_a_value_does_not_redo_a_file(tmp_path):
+    files = make_raw(tmp_path / "raw", dumps=(("S1", "F0001", 4), ("S2", "F0001", 3)))
     spec = write_spec(tmp_path / "toy.dataset.toml", files)
-    spec.write_text(spec.read_text(encoding="utf-8").replace('output = "out"', WITH_METADATA), encoding="utf-8")
-    return spec
-
-
-def test_the_run_metadata_is_written_into_the_output_for_every_event_and_into_the_provenance(tmp_path):
-    import pyarrow.parquet as pq
-    spec = _with_metadata(tmp_path)
-    batch.run(spec, progress=None)
+    rows = '\n[[series]]\nseries = "S1"\nhv_v = 0.0\ntrigger = "DCRC1pA 2"\n\n[[series]]\nseries = "S2"\nhv_v = -34.0\ntrigger = "DCRC1pA 100"\n'
+    spec.write_text(spec.read_text(encoding="utf-8") + rows, encoding="utf-8")
+    assert not any(f.skipped for f in batch.run(spec, progress=None).files)
     q = Dataset.open(spec).processed().quantities
-    assert q["series"].to_list() == ["S1"] * 4 + ["S2"] * 3
-    assert q["hv_v"].to_list() == [0.0] * 4 + [-34.0] * 3
-    assert q["trigger"].to_list() == ["DCRC1pA 2"] * 4 + ["DCRC1pA 100"] * 3
-    assert q["trigger_value"].to_list() == [2.0] * 4 + [100.0] * 3
-    meta = json.loads(pq.read_metadata(tmp_path / "out" / "TOY" / "S2_F0001.parquet").metadata[b"goldpan.meta"])["goldsluice"]
-    assert meta["run_metadata"]["rows"] == {"S2": {"hv_v": -34.0, "trigger": "DCRC1pA 100", "trigger_value": 100.0, "duration_min": None}}
-
-
-def test_a_file_is_redone_when_the_metadata_of_its_series_changes_and_not_when_another_series_does(tmp_path):
-    spec = _with_metadata(tmp_path)
-    assert not any(f.skipped for f in batch.run(spec, progress=None).files)
-    assert all(f.skipped for f in batch.run(spec, progress=None).files)
-    table = tmp_path / "series.csv"
-    table.write_text(SERIES_CSV + "S9,-1.0,DCRC1pA 2,2.0,5\n", encoding="utf-8")                      # a series that no file has: nothing to redo
-    assert all(f.skipped for f in batch.run(spec, progress=None).files)
-    table.write_text(SERIES_CSV.replace("-34.0", "-36.0") + "S9,-1.0,DCRC1pA 2,2.0,5\n", encoding="utf-8")
-    report = batch.run(spec, progress=None)
-    assert [f.skipped for f in report.files] == [True, False]                                          # only S2's file
-    assert Dataset.open(spec).processed().quantities["hv_v"].to_list() == [0.0] * 4 + [-36.0] * 3
-
-
-def test_adding_the_metadata_to_a_finished_dataset_redoes_the_files_once(tmp_path):
-    spec = _with_metadata(tmp_path)
-    with_metadata = spec.read_text(encoding="utf-8")
-    spec.write_text(with_metadata.replace(WITH_METADATA, 'output = "out"'), encoding="utf-8")
-    batch.run(spec, progress=None)
-    spec.write_text(with_metadata, encoding="utf-8")
-    assert not any(f.skipped for f in batch.run(spec, progress=None).files)
-    assert all(f.skipped for f in batch.run(spec, progress=None).files)
-
-
-def test_a_series_the_metadata_does_not_list_is_an_error_that_names_it(tmp_path):
-    spec = _with_metadata(tmp_path, table="series,hv_v\nS1,0.0\n")
-    with pytest.raises(ValueError, match="S2"):
-        batch.run(spec, progress=None)
-
-
-def test_a_metadata_column_named_like_a_column_of_the_events_is_refused(tmp_path):
-    spec = _with_metadata(tmp_path, table="series,trigger_type\nS1,x\nS2,y\n", trigger_types=True)
-    with pytest.raises(ValueError, match="trigger_type"):
-        batch.run(spec, progress=None)
-
-
-def test_a_root_output_gets_the_numeric_metadata_and_leaves_the_text_out(tmp_path):
-    pytest.importorskip("uproot")
-    from goldpan.adapters import rq_root
-    files = make_raw(tmp_path / "raw", dumps=(("24260424_145101", "F0001", 4),))                     # ROOT series names are numbers
-    (tmp_path / "series.csv").write_text("series,hv_v,trigger\n24260424_145101,-8.3,DCRC1pA 2\n", encoding="utf-8")
-    spec = write_spec(tmp_path / "r.dataset.toml", files)
-    spec.write_text(spec.read_text(encoding="utf-8").replace(
-        'output = "out"', 'output = "outroot"\nmetadata = "series.csv"\noutput_format = "root"\nroot_detector = 3'), encoding="utf-8")
-    batch.run(spec, progress=None)
-    t = rq_root.read(tmp_path / "outroot", detector=3)
-    assert t["hv_v"].to_list() == [-8.3] * 4 and "trigger" not in t.fields
+    assert q["hv_v"].to_list() == [0.0] * 4 + [-34.0] * 3 and q["trigger"].to_list() == ["DCRC1pA 2"] * 4 + ["DCRC1pA 100"] * 3
+    assert "hv_v" not in Dataset.open(spec).processed(metadata=False).quantities.fields            # nothing was written into the output
+    spec.write_text(spec.read_text(encoding="utf-8").replace("-34.0", "-36.0"), encoding="utf-8")
+    assert all(f.skipped for f in batch.run(spec, progress=None).files)                              # the files are not redone ...
+    assert Dataset.open(spec).processed().quantities["hv_v"].to_list() == [0.0] * 4 + [-36.0] * 3     # ... and the new value is there
 
 
 # ---- the output must not land in a Git repository
@@ -523,7 +464,6 @@ def test_the_example_loads_and_its_commented_root_lines_work_when_uncommented(tm
     assert [s.algorithm for s in plain.steps] == ["peak", "max_time"]
     assert list(plain.run_metadata()["hv_v"]) == [-83.2]
     assert "# output_format = \"root\"" in text and "# root_detector = " in text
-    (tmp_path / "r76.series.csv").write_text((example.parent / "r76.series.csv").read_text(encoding="utf-8"), encoding="utf-8")   # the metadata file next to it
     root = tmp_path / "r76.dataset.toml"
     root.write_text(text.replace("# output_format = ", "output_format = ").replace("# root_detector = ", "root_detector = "), encoding="utf-8")
     spec = dataset.load(root)

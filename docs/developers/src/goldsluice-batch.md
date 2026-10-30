@@ -110,7 +110,17 @@ suffix = "_lp"                     # adc_max_lp, current_max_lp
 # glitch_samples, pretrigger_samples, amps_per_adc ...
 ```
 
-**Run metadata.** Facts about whole series (high voltage, trigger setting) that an analysis needs for every event go in a small CSV with a `series` column, named in the definition: `metadata = "r76.series.csv"` under `[dataset]` (relative to the definition file; see `examples/r76.series.csv`). Every other column is written into the output as an event column (`hv_v`, `trigger_value`, ...), the values of the series of each file are in its provenance (`run_metadata`), and a changed value redoes only the files of that series. A series of the raw data that the table does not list is an error that names it. Text columns are Parquet only. To use the same table on data processed without it: `goldpan.runmeta.per_event(series, table)` gives one value per event and `groups(series, table, by=("hv_v", "trigger_value"))` the events of each chunk.
+**Run metadata.** Facts about whole series (high voltage, trigger setting) that an analysis needs for every event are written in the definition, one `[[series]]` table per series with the same keys in each (see `examples/r76.dataset.toml`):
+
+```toml
+[[series]]
+series = "07221124_2022"
+hv_v = -34.0
+trigger = "DCRC1pA 2"
+trigger_value = 2.0
+```
+
+They are **joined when the data are read**: `Dataset.processed()` adds one column per key to every event (`hv_v`, `trigger_value`, ...), so a change of a value never redoes a file, and `goldsluice run` does not write them. A series with events that is not listed is an error that names it; so is a key named like a quantity or a channel; `processed(metadata=False)` leaves them out. For events you already have, `goldpan.runmeta.per_event(series, table)` gives one value per event and `groups(series, table, by=("hv_v", "trigger_value"))` the events of each chunk.
 
 ## 3. Read it back with goldpan
 

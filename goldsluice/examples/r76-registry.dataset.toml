@@ -7,7 +7,6 @@
 [dataset]
 name = "r76-07221203"
 output = "~/goldsluice-output/r76-07221203"
-metadata = "r76.series.csv"                       # run metadata per series (high voltage, trigger setting), from the run log; its columns are written into the output
 registry = ["../../registry"]                  # folders of detector records, relative to this file (goldpan.registry); also GOLDPAN_REGISTRY
 # output_format = "root"                       # for ROOT output the zip<N> number is the record's `number`: no root_detector needed
 
@@ -115,3 +114,12 @@ glitch_samples = "@readout.glitch_samples"
 pretrigger_samples = "@readout.pretrigger_samples"
 sample_period_s = "@readout.sample_period_s"
 fraction = 0.2
+
+# Run metadata of the series, joined to the events when they are read (Dataset.processed()): one [[series]] per series, the same keys in each.
+# From the run log data_analysis/R76/series_lists/nsdf_r76_series.csv.
+[[series]]
+series = "07221203_2025"
+hv_v = -83.2
+trigger = "DCRC1pA 2"
+trigger_value = 2.0
+source_shield = "PuBe / Pb&poly, lead stack, borax"

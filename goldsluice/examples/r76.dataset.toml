@@ -8,7 +8,6 @@
 [dataset]
 name = "r76-07221203"
 output = "~/goldsluice-output/r76-07221203"   # the processed quantities, a goldpan Parquet dataset; outside the repository on purpose
-metadata = "r76.series.csv"                       # run metadata per series (high voltage, trigger setting), from the run log; its columns are written into the output
 # For RQ-style ROOT files (our names, `Side2pC_adc_max`) instead of Parquet, uncomment the next two lines (needs goldsluice[root]):
 # output_format = "root"
 # root_detector = 1                           # the N of the zip<N> tree: our choice for the NaI detector of Run 76. Read: goldpan.adapters.rq_root.read
@@ -37,3 +36,12 @@ algorithm = "max_time"                         # when the largest sample happens
 channels = "role:phonon"
 [processing.params]
 sample_period_s = "@readout.sample_period_s"   # from the readout as well: 0.8 us for DCRC_RUN76
+
+# Run metadata of the series, joined to the events when they are read (Dataset.processed()): one [[series]] per series, the same keys in each.
+# From the run log data_analysis/R76/series_lists/nsdf_r76_series.csv.
+[[series]]
+series = "07221203_2025"
+hv_v = -83.2
+trigger = "DCRC1pA 2"
+trigger_value = 2.0
+source_shield = "PuBe / Pb&poly, lead stack, borax"

@@ -179,19 +179,24 @@ suffix = &quot;_lp&quot;                     # adc_max_lp, current_max_lp
 [processing.params]
 # glitch_samples, pretrigger_samples, amps_per_adc ...</code></pre>
 <p><strong>Run metadata.</strong> Facts about whole series (high
-voltage, trigger setting) that an analysis needs for every event go in a
-small CSV with a <code>series</code> column, named in the definition:
-<code>metadata = "r76.series.csv"</code> under <code>[dataset]</code>
-(relative to the definition file; see
-<code>examples/r76.series.csv</code>). Every other column is written
-into the output as an event column (<code>hv_v</code>,
-<code>trigger_value</code>, …), the values of the series of each file
-are in its provenance (<code>run_metadata</code>), and a changed value
-redoes only the files of that series. A series of the raw data that the
-table does not list is an error that names it. Text columns are Parquet
-only. To use the same table on data processed without it:
-<code>goldpan.runmeta.per_event(series, table)</code> gives one value
-per event and
+voltage, trigger setting) that an analysis needs for every event are
+written in the definition, one <code>[[series]]</code> table per series
+with the same keys in each (see
+<code>examples/r76.dataset.toml</code>):</p>
+<pre class="toml"><code>[[series]]
+series = &quot;07221124_2022&quot;
+hv_v = -34.0
+trigger = &quot;DCRC1pA 2&quot;
+trigger_value = 2.0</code></pre>
+<p>They are <strong>joined when the data are read</strong>:
+<code>Dataset.processed()</code> adds one column per key to every event
+(<code>hv_v</code>, <code>trigger_value</code>, …), so a change of a
+value never redoes a file, and <code>goldsluice run</code> does not
+write them. A series with events that is not listed is an error that
+names it; so is a key named like a quantity or a channel;
+<code>processed(metadata=False)</code> leaves them out. For events you
+already have, <code>goldpan.runmeta.per_event(series, table)</code>
+gives one value per event and
 <code>groups(series, table, by=("hv_v", "trigger_value"))</code> the
 events of each chunk.</p>
 <h2 id="read-it-back-with-goldpan">3. Read it back with goldpan</h2>

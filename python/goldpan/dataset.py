@@ -56,6 +56,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Iterator, Mapping, Optional, Tuple
 
+import awkward as ak
+
 from . import registry as _registry
 from .adapters import _adapter
 from .adapters import parquet as _parquet
@@ -365,8 +367,10 @@ class Dataset:
         for path in src.files():
             for ev in read_raw(src, path):
                 if table is not None:
+                    have = set(ak.fields(ev.quantities))                  # what the adapter already gives (trigger_type, ...) is not attached again
+                    extra = [f for f in ak.fields(table.quantities) if f in _rq.KEY_COLUMNS or f not in have]
                     try:
-                        ev = _rq.attach(ev, table.quantities)
+                        ev = _rq.attach(ev, table.quantities[extra])
                     except ValueError as e:
                         raise ValueError(f"{path}: {e}; has the batch run covered this file? "
                                          f"`python -m goldsluice run {self.spec.path}`") from None

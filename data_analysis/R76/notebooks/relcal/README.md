@@ -25,6 +25,7 @@ The face (Side 2) is drawn as in the Note 9 channel figure and the wiki: `A` the
 | `positions-82v-dcrc1pb.ipynb` | the position distribution in the plane of the 20 % delays (`xdel`, `ydel`), the azimuth `phidel` and the radius `afdel`, for the eight DCRC1pB-triggered series near -82 V; reads the output of `r76-82v-dcrc1pb.dataset.toml` (branch `feature/processing`) from `~/goldsluice-output/r76-82v-dcrc1pb`; also draws the cuts that select the two high-activity spots over `C` and `F` |
 | `spots-82v-energy.ipynb` | the energy distributions (the uncalibrated sum of the six `integral`s) of the events in those two spots, against their surroundings, the excess of each spot, series by series, and the channels' shares |
 | `spot-f-tight-energy.ipynb` | the energy distribution of spot F with a tight cut (within 0.5 us of its centre, about 95 % spot events), against the events outside both spots |
+| `spot-f-tight-traces.ipynb` | randomly chosen events of that tight cut in all channels, one tiled figure per event (boards x inputs, as in the earlier notes) with the baseline and integration windows of `integral` drawn on every trace, and all of them overlaid; reads the raw dumps from `~/idx` |
 | `spots_82v.py` | shared by the two notebooks above: reads the -82 V output, makes the delays and the selection, and defines the spot circles (`SPOTS`) and the rings around them |
 
 ## Rules of the folder

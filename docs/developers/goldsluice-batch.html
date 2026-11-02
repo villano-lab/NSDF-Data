@@ -178,6 +178,21 @@ input = &quot;lp&quot;
 suffix = &quot;_lp&quot;                     # adc_max_lp, current_max_lp
 [processing.params]
 # glitch_samples, pretrigger_samples, amps_per_adc ...</code></pre>
+<p><strong>Several sources, and different steps for each.</strong> A
+definition can have several <code>[[sources]]</code>, each with its own
+files, format and <code>detector</code> (from the registry), so raw data
+from detectors that are wired differently go through one definition.
+Every step runs on every source, and
+<code>channels = "role:phonon"</code> means each detector’s own phonon
+channels. When the detectors need different processing, a step names the
+sources it runs on: <code>sources = ["ge"]</code>. A step without
+<code>sources</code> runs on all of them. A step that reads a filter
+(<code>input</code>) must run on a subset of the filter’s sources, and
+every source needs at least one step. A source’s files are redone only
+when the steps that run on it change. The sources’ different quantities
+read back together as records with different fields, so pick a source’s
+rows by <code>series</code> first. <code>output_format = "root"</code>
+is for one detector only.</p>
 <p><strong>Run metadata.</strong> Facts about whole series (high
 voltage, trigger setting) that an analysis needs for every event go in a
 small CSV, one row per series, with a <code>series</code> column and any

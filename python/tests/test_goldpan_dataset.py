@@ -1,5 +1,6 @@
 """goldpan.dataset: the dataset definition file, and reading pulses with their processed quantities."""
 import tomllib
+import warnings
 from pathlib import Path
 
 import awkward as ak
@@ -400,3 +401,39 @@ def test_floats_and_special_strings_survive_the_round_trip(tmp_path, raw):
     assert out["processing"][0]["params"] == params
     nan = tomllib.loads(dataset.dumps({**good, "processing": [{"algorithm": "peak", "channels": "all", "params": {"n": float("nan")}}]}, base=tmp_path))
     assert nan["processing"][0]["params"]["n"] != nan["processing"][0]["params"]["n"]
+
+
+# ---- the detector of a stream, and the status file of an output folder -----------------------------------------------------------
+
+def test_stream_matches_says_whether_a_dataset_has_this_detector(tmp_path):
+    ev = toy_events()
+    assert parquet.stream_matches(tmp_path / "none", ev.detector) is None                  # no dataset yet: nothing to disagree with
+    parquet.write(ev, tmp_path / "ds")
+    assert parquet.stream_matches(tmp_path / "ds", ev.detector) is True
+    other = Detector("TOY", ev.detector.channels, Readout.single(N_SAMPLES, PulseConfig(450, 10, 0.8e-6)))         # another pretrigger window
+    assert parquet.stream_matches(tmp_path / "ds", other) is False
+    assert parquet.stream_matches(tmp_path / "ds", Detector("OTHER", ev.detector.channels, ev.detector.readout)) is None   # no such stream
+    with pytest.raises(ValueError, match="different detector"):
+        parquet.write(Events.from_arrays(other, {c: np.zeros((1, N_SAMPLES)) for c in "ABQ"}, series="S1", dump="F0009"), tmp_path / "ds")
+
+
+def test_output_status_is_read_from_the_status_file_and_an_unfinished_run_is_warned_about(tmp_path):
+    parquet.write(toy_events(), tmp_path / "rawds")
+    spec = tmp_path / "toy.dataset.toml"
+    spec.write_text(spec_text(tmp_path / "rawds" / "TOY" / "S1_F0001.parquet"), encoding="utf-8")
+    out = tmp_path / "out"
+    parquet.write(toy_events(), out)
+    ds = Dataset.open(spec)
+    assert dataset.output_status(out) is None
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ds.processed()                                                                     # no status file: no warning
+    (out / dataset.STATUS_FILE).write_text('{"state": "running", "started": "2026-11-02T12:00:00"}', encoding="utf-8")
+    assert dataset.output_status(out)["state"] == "running"
+    with pytest.warns(UserWarning, match="did not finish"):
+        ds.processed()
+    (out / dataset.STATUS_FILE).write_text('{"state": "complete"}', encoding="utf-8")
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        ds.processed()
+

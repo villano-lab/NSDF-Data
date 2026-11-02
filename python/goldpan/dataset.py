@@ -34,6 +34,11 @@ written. A *relative* `output` (`"r76-nai"`) is put under the folder named by th
 definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the
 folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).
 
+**An unfinished run.** `goldsluice run` writes `_goldsluice_status.json` into the output folder (`STATUS_FILE`): ``{"state": "running", ...}``
+when it starts and ``{"state": "complete", "started": ..., "finished": ..., "files": N, ...}`` when every raw file of the definition has been processed.
+If a run stops (an error, Ctrl-C, a crash) the state stays `running`, and `Dataset.processed()` warns that the output may be incomplete. An output
+folder made before this file existed has none and is read without a warning.
+
 **Steps that build on each other.** A step reads the raw trace unless it has an `input`. A step whose algorithm gives a trace (a filter or a
 baseline subtraction: `goldsluice algorithms` lists them) has a `name`, writes no quantities, and a later step with `input = "<name>"`
 reads its result instead of the raw trace, for the channels the two steps share. A `suffix` is appended to the names of the quantities
@@ -55,6 +60,30 @@ still be written once: two steps giving the same name is an error. Steps run in 
     input = "lp"                            # the peak of the filtered trace
     suffix = "_lp"                          # adc_max_lp, current_max_lp
     [processing.params]
+    ...
+
+**Different steps for different sources.** Every step runs on every source unless it has `sources`, a list of source names. Use it when the
+detectors need different processing; a step on `role:phonon` already adapts to each detector's own channels, so name sources only when the steps differ.
+A step that reads a filter (`input`) must run on a subset of the sources the filter runs on, and every source needs at least one step. A source's output is
+redone only when the steps that run on it change. Read back together, the sources show their different quantities as records of different
+fields (an awkward union), so pick one source's rows by `series` before you use its fields::
+
+    [[sources]]
+    name = "nai"
+    detector = "NAI-S2"
+    ...
+    [[sources]]
+    name = "ge"
+    detector = "GE-1"
+    ...
+    [[processing]]
+    algorithm = "peak"
+    channels = "role:phonon"                # no `sources`: runs on both
+    ...
+    [[processing]]
+    algorithm = "rise_crossing"
+    channels = "role:phonon"
+    sources = ["ge"]                        # only the raw files of the source "ge"
     ...
 
 **Run metadata.** `metadata` is a reference to facts about whole series that an analysis needs for every event (high voltage, trigger setting,
@@ -112,11 +141,15 @@ from .data import Events
 from ._toml import _key, _value
 from .status import DONE, status
 
-FORMAT_VERSION = 6
+FORMAT_VERSION = 7
 """The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`
 (and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes
 under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read.
-6: steps may have a `name`, an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities."""
+6: steps may have a `name`, an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities.
+7: a step may have `sources`, the names of the sources it applies to (without it a step applies to all of them)."""
+
+STATUS_FILE = "_goldsluice_status.json"
+"""The file in an output folder that says whether the last `goldsluice run` finished (see `output_status`)."""
 
 ENV_OUTPUT = "GOLDSLUICE_OUTPUT"
 """The environment variable that holds the folder under which a relative `output` of a definition is placed."""
@@ -125,7 +158,7 @@ _TOP = {"dataset", "sources", "processing"}
 _DATASET = {"name", "output", "description", "format_version", "output_format", "root_detector", "registry", "metadata"}
 _OUTPUT_FORMATS = ("parquet", "root")
 _SOURCE = {"name", "format", "paths", "glob", "detector", "readout", "read"}
-_STEP = {"algorithm", "channels", "params", "name", "input", "suffix"}
+_STEP = {"algorithm", "channels", "params", "name", "input", "suffix", "sources"}
 _STEP_NAME = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
 _SUFFIX = re.compile(r"^[A-Za-z0-9_]*$")
 _READOUT = {"pretrigger_samples", "glitch_samples", "sample_period_s"}
@@ -174,6 +207,12 @@ class Step:
     """The `name` of an earlier step whose resulting trace this step reads instead of the raw trace, or `None`."""
     suffix: str = ""
     """Appended to the names of the quantities this step writes (`adc_max` becomes `adc_max_lp`), so that the same algorithm can run on the raw trace and on a filtered one."""
+    sources: Optional[Tuple[str, ...]] = None
+    """The names of the sources this step applies to, or `None` for all of them."""
+
+    def applies_to(self, source_name: str) -> bool:
+        """Does this step run on the raw files of the source called `source_name`? (Always, unless the step names its `sources`.)"""
+        return self.sources is None or source_name in self.sources
 
     def channel_names(self, detector) -> list:
         """The channels of `detector` this step applies to."""
@@ -387,7 +426,23 @@ def _spec(raw: Mapping, path: Path) -> DatasetSpec:
             raise ValueError(f"{where}: input {source!r} is not the name of an earlier step (steps run in order; an input is a step above this one)")
         if not (isinstance(suffix, str) and _SUFFIX.match(suffix)):
             raise ValueError(f"{where}: suffix must be letters, digits and underscores, not {suffix!r}")
-        steps.append(Step(st["algorithm"], channels, dict(st.get("params", {})), name, source, suffix))
+        only = st.get("sources")
+        if only is not None:
+            names = [s.name for s in sources]
+            if not (isinstance(only, list) and only and all(isinstance(n, str) for n in only)):
+                raise ValueError(f"{where}: sources must be a non-empty list of source names (the sources of this file are {names})")
+            if len(set(only)) != len(only):
+                raise ValueError(f"{where}: sources names a source twice: {only}")
+            unknown = sorted(set(only) - set(names))
+            if unknown:
+                raise ValueError(f"{where}: sources {unknown} are not sources of this file (they are {names})")
+            only = tuple(only)
+        if source is not None:                                   # a step that reads a filter must run where the filter runs
+            producer = next(x for x in steps if x.name == source)
+            mine, theirs = set(only or [s.name for s in sources]), set(producer.sources or [s.name for s in sources])
+            if not mine <= theirs:
+                raise ValueError(f"{where}: runs on the sources {sorted(mine)} but the step {source!r} that it reads runs only on {sorted(theirs)}")
+        steps.append(Step(st["algorithm"], channels, dict(st.get("params", {})), name, source, suffix, only))
     return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, metadata)
 
 
@@ -442,7 +497,7 @@ def dump(definition, path, *, header: str = "") -> DatasetSpec:
 
 @status(DONE)
 def step_record(step: Step) -> dict:
-    """A step as it is hashed and recorded in the provenance: `name`, `input` and `suffix` appear only when the step has them, so a
+    """A step as it is hashed and recorded in the provenance: `name`, `input`, `suffix` and `sources` appear only when the step has them, so a
     definition without them keeps the fingerprint it had before the keys existed."""
     out = {"algorithm": step.algorithm, "channels": step.channels, "params": step.params}
     for key in ("name", "input"):
@@ -450,17 +505,19 @@ def step_record(step: Step) -> dict:
             out[key] = getattr(step, key)
     if step.suffix:
         out["suffix"] = step.suffix
+    if step.sources is not None:
+        out["sources"] = sorted(step.sources)
     return out
 
 
 @status(DONE)
 def fingerprint(spec: DatasetSpec, source: Source) -> str:
-    """A short hash of what determines the processed quantities of `source`: how it is read and the processing steps. The
-    batch run stores it in every output file and skips a file whose fingerprint has not changed."""
+    """A short hash of what determines the processed quantities of `source`: how it is read and the processing steps that run on it (a step
+    that names other `sources` does not count). The batch run stores it in every output file and skips a file whose fingerprint has not changed."""
     payload = {"source": {"format": source.format, "detector": source.detector,
                           "readout": None if source.readout is None else asdict(source.readout),
                           "read": source.read},
-               "steps": [step_record(s) for s in spec.steps]}
+               "steps": [step_record(s) for s in spec.steps if s.applies_to(source.name)]}      # only the steps that run on this source
     if spec.output_format != "parquet":                    # a Parquet definition keeps the fingerprint it had before the key existed
         payload["output"] = {"format": spec.output_format, "root_detector": spec.root_detector}
     blob = json.dumps(payload, sort_keys=True, default=str)
@@ -496,6 +553,14 @@ def read_raw(source: Source, path, *, chunk: Optional[int] = None) -> Iterator[E
         yield module.read(path, **kwargs)
 
 
+@status(DONE)
+def output_status(out) -> Optional[dict]:
+    """The contents of `_goldsluice_status.json` in the output folder `out` (`{"state": "running" | "complete", ...}`), or `None` if the
+    folder has no such file (it was made before the file existed, or is not a goldsluice output)."""
+    path = Path(out) / STATUS_FILE
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
 class Dataset:
     """A dataset definition opened for reading: the pulses from its sources and the quantities processed from them."""
 
@@ -518,6 +583,10 @@ class Dataset:
                              f"goldpan.adapters.rq_root.read(path, detector={self.spec.root_detector}). processed() reads Parquet output only")
         if not (out / _parquet.MANIFEST).exists():
             raise FileNotFoundError(f"nothing processed yet in {out}: run `python -m goldsluice run {self.spec.path}`")
+        state = output_status(out)
+        if state is not None and state.get("state") != "complete":
+            warnings.warn(f"{out}: the last `goldsluice run` did not finish (state {state.get('state')!r}, started {state.get('started')}): "
+                          f"the output may be incomplete. Run `python -m goldsluice run {self.spec.path}` again to finish it", stacklevel=2)
         events = _parquet.read(out, detector=detector if detector is not None else self._detector())
         table = self.spec.run_metadata() if metadata else None
         if table is None:

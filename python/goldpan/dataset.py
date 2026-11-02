@@ -109,6 +109,7 @@ from .adapters import parquet as _parquet
 from .adapters import rq as _rq
 from .config import PulseConfig
 from .data import Events
+from ._toml import _key, _value
 from .status import DONE, status
 
 FORMAT_VERSION = 6
@@ -390,32 +391,7 @@ def _spec(raw: Mapping, path: Path) -> DatasetSpec:
     return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, metadata)
 
 
-_BARE_KEY = re.compile(r"^[A-Za-z0-9_-]+$")
-
-
-def _toml_key(key) -> str:
-    if not isinstance(key, str) or not key:
-        raise ValueError(f"a key of a definition must be a non-empty string, not {key!r}")
-    return key if _BARE_KEY.match(key) else _toml_value(key)
-
-
-def _toml_value(value) -> str:
-    """One TOML value; tables inside a value are written inline. `ValueError` for anything TOML has no value for (`None`, a `Path`, ...)."""
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    if isinstance(value, int):
-        return str(value)
-    if isinstance(value, float):
-        if value != value:
-            return "nan"
-        return ("inf" if value > 0 else "-inf") if value in (float("inf"), float("-inf")) else repr(value)
-    if isinstance(value, str):
-        return json.dumps(value, ensure_ascii=False).replace("\x7f", "\\u007f")
-    if isinstance(value, (list, tuple)):
-        return "[" + ", ".join(_toml_value(v) for v in value) + "]"
-    if isinstance(value, Mapping):
-        return "{ " + ", ".join(f"{_toml_key(k)} = {_toml_value(v)}" for k, v in value.items()) + " }" if value else "{}"
-    raise ValueError(f"cannot write {value!r} ({type(value).__name__}) in a definition: use text, numbers, true/false, lists and tables")
+_toml_key, _toml_value = _key, _value                                      # the writers of values live in `_toml`
 
 
 def _toml_table(header: str, table: Mapping, sub: Optional[str] = None) -> list:

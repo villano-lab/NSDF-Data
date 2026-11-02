@@ -334,6 +334,11 @@ integer <code class="code docutils literal notranslate"><span class="pre">format
 <span class="n">channels</span> <span class="o">=</span> <span class="p">{</span> <span class="n">Side2pC</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="p">}</span>
 </pre></div>
 </div>
+<p><strong>Adding a record.</strong> <code class="code docutils literal notranslate"><span class="pre">add_record(folder,</span> <span class="pre">&quot;detectors&quot;,</span> <span class="pre">name,</span> <span class="pre">table)</span></code> (or <code class="code docutils literal notranslate"><span class="pre">&quot;readouts&quot;</span></code>) checks a record as the reader does and appends it to a file
+of <code class="code docutils literal notranslate"><span class="pre">folder</span></code> (default <code class="code docutils literal notranslate"><span class="pre">detectors.toml</span></code> or <code class="code docutils literal notranslate"><span class="pre">readouts.toml</span></code>, made with <code class="code docutils literal notranslate"><span class="pre">format_version</span></code> if it is new), leaving everything else in the file, comments
+included, as it was; <code class="code docutils literal notranslate"><span class="pre">record_text</span></code> gives the text it would add. A name that the folder already defines is refused, as are a missing <code class="code docutils literal notranslate"><span class="pre">status</span></code> or
+<code class="code docutils literal notranslate"><span class="pre">evidence</span></code> and a readout that is neither in the registry nor a preset. Write <code class="code docutils literal notranslate"><span class="pre">status</span> <span class="pre">=</span> <span class="pre">&quot;confirmed&quot;</span></code> only for what a file or a document says: a
+guess is <code class="code docutils literal notranslate"><span class="pre">&quot;inferred&quot;</span></code>, and the evidence says what it rests on.</p>
 <p>Readouts take <code class="code docutils literal notranslate"><span class="pre">pretrigger_samples</span></code>, <code class="code docutils literal notranslate"><span class="pre">glitch_samples</span></code>, <code class="code docutils literal notranslate"><span class="pre">sample_period_s</span></code> (all three: nothing is assumed), <code class="code docutils literal notranslate"><span class="pre">status</span></code>, <code class="code docutils literal notranslate"><span class="pre">evidence</span></code>,
 <code class="code docutils literal notranslate"><span class="pre">description</span></code> and <code class="code docutils literal notranslate"><span class="pre">series</span></code>; detectors take <code class="code docutils literal notranslate"><span class="pre">number</span></code>, <code class="code docutils literal notranslate"><span class="pre">type_code</span></code>, <code class="code docutils literal notranslate"><span class="pre">tower</span></code>, <code class="code docutils literal notranslate"><span class="pre">plane</span></code>, <code class="code docutils literal notranslate"><span class="pre">odb_name</span></code>, <code class="code docutils literal notranslate"><span class="pre">readout</span></code>, <code class="code docutils literal notranslate"><span class="pre">status</span></code>,
 <code class="code docutils literal notranslate"><span class="pre">evidence</span></code>, <code class="code docutils literal notranslate"><span class="pre">description</span></code> and <code class="code docutils literal notranslate"><span class="pre">series</span></code>, plus one table per file format. Unknown keys are errors, as in the dataset definition
@@ -355,11 +360,17 @@ file, and a name defined twice (in two files or two sources) is an error, so two
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.registry.compare" title="goldpan.registry.compare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare</span></code></a>(record, found)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.registry.add_record" title="goldpan.registry.add_record"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_record</span></code></a>(folder, kind, name, table, *[, file])</p></td>
+<td><p>Add a detector or a readout to the registry folder <code class="code docutils literal notranslate"><span class="pre">folder</span></code>: check it (<code class="code docutils literal notranslate"><span class="pre">record_text</span></code>), refuse a name the folder already defines and a detector whose <code class="code docutils literal notranslate"><span class="pre">readout</span></code> is neither in the folder nor a preset of <code class="code docutils literal notranslate"><span class="pre">goldpan.config</span></code>, append it to <code class="code docutils literal notranslate"><span class="pre">file</span></code> (default <code class="docutils literal notranslate"><span class="pre">&lt;kind&gt;.toml</span></code>; a new file starts with <code class="code docutils literal notranslate"><span class="pre">format_version</span></code>) and read the folder again to make sure it still loads, restoring the file if it does not.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.registry.compare" title="goldpan.registry.compare"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare</span></code></a>(record, found)</p></td>
 <td><p>What a detector record and another description of the same detector disagree on, as messages (empty if they agree).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.registry.load" title="goldpan.registry.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(*folders[, use_environment])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.registry.load" title="goldpan.registry.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(*folders[, use_environment])</p></td>
 <td><p>A <code class="code docutils literal notranslate"><span class="pre">Registry</span></code> of the TOML files in <code class="code docutils literal notranslate"><span class="pre">folders</span></code> (and of the folders of the environment variable <code class="code docutils literal notranslate"><span class="pre">GOLDPAN_REGISTRY</span></code>, unless <code class="code docutils literal notranslate"><span class="pre">use_environment</span></code> is false).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.registry.record_text" title="goldpan.registry.record_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">record_text</span></code></a>(kind, name, table)</p></td>
+<td><p>The TOML text of one record, as <code class="code docutils literal notranslate"><span class="pre">add_record</span></code> appends it: <code class="code docutils literal notranslate"><span class="pre">kind</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;detectors&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;readouts&quot;</span></code>, <code class="code docutils literal notranslate"><span class="pre">name</span></code> the record's name and <code class="code docutils literal notranslate"><span class="pre">table</span></code> its keys (for a detector, a key whose value is a table, such as <code class="docutils literal notranslate"><span class="pre">idx</span></code>, is the defaults for that file format).</p></td>
 </tr>
 </tbody>
 </table>
@@ -717,6 +728,47 @@ is anything with the attributes <code class="code docutils literal notranslate">
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.registry.record_text">
+<span class="sig-prename descclassname"><span class="pre">goldpan.registry.</span></span><span class="sig-name descname"><span class="pre">record_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/registry.html#record_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.registry.record_text" title="Link to this definition">¶</a></dt>
+<dd><p>The TOML text of one record, as <code class="code docutils literal notranslate"><span class="pre">add_record</span></code> appends it: <code class="code docutils literal notranslate"><span class="pre">kind</span></code> is <code class="docutils literal notranslate"><span class="pre">&quot;detectors&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;readouts&quot;</span></code>, <code class="code docutils literal notranslate"><span class="pre">name</span></code> the record’s name and <code class="code docutils literal notranslate"><span class="pre">table</span></code> its keys
+(for a detector, a key whose value is a table, such as <code class="docutils literal notranslate"><span class="pre">idx</span></code>, is the defaults for that file format). Keys come in the order of the registry
+documentation, the file formats last. The record is checked as the reader checks it: <code class="code docutils literal notranslate"><span class="pre">ValueError</span></code> says what is wrong.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>table</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.registry.add_record">
+<span class="sig-prename descclassname"><span class="pre">goldpan.registry.</span></span><span class="sig-name descname"><span class="pre">add_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/registry.html#add_record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.registry.add_record" title="Link to this definition">¶</a></dt>
+<dd><p>Add a detector or a readout to the registry folder <code class="code docutils literal notranslate"><span class="pre">folder</span></code>: check it (<code class="code docutils literal notranslate"><span class="pre">record_text</span></code>), refuse a name the folder already defines and a detector whose
+<code class="code docutils literal notranslate"><span class="pre">readout</span></code> is neither in the folder nor a preset of <code class="code docutils literal notranslate"><span class="pre">goldpan.config</span></code>, append it to <code class="code docutils literal notranslate"><span class="pre">file</span></code> (default <code class="docutils literal notranslate"><span class="pre">&lt;kind&gt;.toml</span></code>; a new file starts with
+<code class="code docutils literal notranslate"><span class="pre">format_version</span></code>) and read the folder again to make sure it still loads, restoring the file if it does not. Returns the path of the file written.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>table</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a>)</p></li>
+<li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.15)"><em>Path</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
         </article>
@@ -820,6 +872,8 @@ is anything with the attributes <code class="code docutils literal notranslate">
 </li>
 <li><a class="reference internal" href="#goldpan.registry.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.registry.compare"><code class="docutils literal notranslate"><span class="pre">compare()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.registry.record_text"><code class="docutils literal notranslate"><span class="pre">record_text()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.registry.add_record"><code class="docutils literal notranslate"><span class="pre">add_record()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -235,10 +235,12 @@
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.baseline.html">goldsluice.reference.baseline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.excursion.html">goldsluice.reference.excursion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.lowpass.html">goldsluice.reference.lowpass</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.subtract_line.html">goldsluice.reference.subtract_line</a></li>
 </ul>
 </li>
 </ul>
@@ -325,6 +327,29 @@ packages: <code class="code docutils literal notranslate"><span class="pre">gold
 written. A <em>relative</em> <code class="code docutils literal notranslate"><span class="pre">output</span></code> (<code class="code docutils literal notranslate"><span class="pre">&quot;r76-nai&quot;</span></code>) is put under the folder named by the environment variable <code class="code docutils literal notranslate"><span class="pre">GOLDSLUICE_OUTPUT</span></code> when it is set, so the
 definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative <code class="code docutils literal notranslate"><span class="pre">output</span></code> is relative to the
 folder of the definition file, as before (and <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> refuses it if that is inside a repository that does not ignore it).</p>
+<p><strong>Steps that build on each other.</strong> A step reads the raw trace unless it has an <code class="code docutils literal notranslate"><span class="pre">input</span></code>. A step whose algorithm gives a trace (a filter or a
+baseline subtraction: <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">algorithms</span></code> lists them) has a <code class="code docutils literal notranslate"><span class="pre">name</span></code>, writes no quantities, and a later step with <code class="code docutils literal notranslate"><span class="pre">input</span> <span class="pre">=</span> <span class="pre">&quot;&lt;name&gt;&quot;</span></code>
+reads its result instead of the raw trace, for the channels the two steps share. A <code class="code docutils literal notranslate"><span class="pre">suffix</span></code> is appended to the names of the quantities
+of a step, so that the same algorithm can run on both (<code class="code docutils literal notranslate"><span class="pre">adc_max</span></code>, and <code class="code docutils literal notranslate"><span class="pre">adc_max_lp</span></code> from the filtered trace). The quantities of a step must
+still be written once: two steps giving the same name is an error. Steps run in the order written, and an <code class="code docutils literal notranslate"><span class="pre">input</span></code> is a step above:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="n">processing</span><span class="p">]]</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="s2">"lowpass"</span>                   <span class="c1"># a filter: gives a trace, so it has a name</span>
+<span class="n">name</span> <span class="o">=</span> <span class="s2">"lp"</span>
+<span class="n">channels</span> <span class="o">=</span> <span class="s2">"role:phonon"</span>
+<span class="p">[</span><span class="n">processing</span><span class="o">.</span><span class="n">params</span><span class="p">]</span>
+<span class="n">cutoff_hz</span> <span class="o">=</span> <span class="mf">50e3</span>
+<span class="n">order</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">sample_period_s</span> <span class="o">=</span> <span class="s2">"@readout.sample_period_s"</span>
+
+<span class="p">[[</span><span class="n">processing</span><span class="p">]]</span>
+<span class="n">algorithm</span> <span class="o">=</span> <span class="s2">"peak"</span>
+<span class="n">channels</span> <span class="o">=</span> <span class="s2">"role:phonon"</span>
+<span class="nb">input</span> <span class="o">=</span> <span class="s2">"lp"</span>                            <span class="c1"># the peak of the filtered trace</span>
+<span class="n">suffix</span> <span class="o">=</span> <span class="s2">"_lp"</span>                          <span class="c1"># adc_max_lp, current_max_lp</span>
+<span class="p">[</span><span class="n">processing</span><span class="o">.</span><span class="n">params</span><span class="p">]</span>
+<span class="o">...</span>
+</pre></div>
+</div>
 <p><strong>Run metadata.</strong> <code class="code docutils literal notranslate"><span class="pre">metadata</span></code> is a reference to facts about whole series that an analysis needs for every event (high voltage, trigger setting,
 …): today a CSV file with a <code class="code docutils literal notranslate"><span class="pre">series</span></code> column and any other columns (<code class="code docutils literal notranslate"><span class="pre">hv_v</span></code>, <code class="code docutils literal notranslate"><span class="pre">trigger_value</span></code>, <code class="code docutils literal notranslate"><span class="pre">trigger</span></code>, …), relative to this file, one row per series;
 later it may name a database instead, and nothing else in the file changes. The values are <strong>joined at read time</strong>: <code class="code docutils literal notranslate"><span class="pre">Dataset.processed()</span></code> (and so
@@ -374,6 +399,9 @@ and <code class="code docutils literal notranslate"><span class="pre">rqDir/zip&
 <tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.dataset.read_raw" title="goldpan.dataset.read_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_raw</span></code></a>(source, path, *[, chunk])</p></td>
 <td><p>The pulses of one raw file of <code class="code docutils literal notranslate"><span class="pre">source</span></code> as <code class="code docutils literal notranslate"><span class="pre">Events</span></code> read by its adapter: one <code class="code docutils literal notranslate"><span class="pre">Events</span></code>, or with <code class="code docutils literal notranslate"><span class="pre">chunk</span></code> pieces of at most that many events when the adapter can (<code class="code docutils literal notranslate"><span class="pre">iter_chunks</span></code>; otherwise the whole file is one piece).</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.step_record" title="goldpan.dataset.step_record"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_record</span></code></a>(step)</p></td>
+<td><p>A step as it is hashed and recorded in the provenance: <code class="code docutils literal notranslate"><span class="pre">name</span></code>, <code class="code docutils literal notranslate"><span class="pre">input</span></code> and <code class="code docutils literal notranslate"><span class="pre">suffix</span></code> appear only when the step has them, so a definition without them keeps the fingerprint it had before the keys existed.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -390,7 +418,7 @@ and <code class="code docutils literal notranslate"><span class="pre">rqDir/zip&
 <tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.dataset.Source" title="goldpan.dataset.Source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Source</span></code></a>(name, format, patterns, detector, ...)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.Step" title="goldpan.dataset.Step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Step</span></code></a>(algorithm, channels, params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.Step" title="goldpan.dataset.Step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Step</span></code></a>(algorithm, channels, params[, name, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -398,10 +426,11 @@ and <code class="code docutils literal notranslate"><span class="pre">rqDir/zip&
 </div>
 <dl class="py data">
 <dt class="sig sig-object py" id="goldpan.dataset.FORMAT_VERSION">
-<span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">FORMAT_VERSION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></span><a class="headerlink" href="#goldpan.dataset.FORMAT_VERSION" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">FORMAT_VERSION</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></span><a class="headerlink" href="#goldpan.dataset.FORMAT_VERSION" title="Link to this definition">¶</a></dt>
 <dd><p><code class="code docutils literal notranslate"><span class="pre">registry</span></code>
 (and a detector named in a registry supplies readout, <code class="code docutils literal notranslate"><span class="pre">[sources.read]</span></code> defaults and <code class="code docutils literal notranslate"><span class="pre">root_detector</span></code>). 4: a relative <code class="code docutils literal notranslate"><span class="pre">output</span></code> goes
-under <code class="code docutils literal notranslate"><span class="pre">$GOLDSLUICE_OUTPUT</span></code> when that is set. 5: <code class="code docutils literal notranslate"><span class="pre">metadata</span></code>, a reference (a CSV file) to run metadata per series, joined to the events when they are read.</p>
+under <code class="code docutils literal notranslate"><span class="pre">$GOLDSLUICE_OUTPUT</span></code> when that is set. 5: <code class="code docutils literal notranslate"><span class="pre">metadata</span></code>, a reference (a CSV file) to run metadata per series, joined to the events when they are read.
+6: steps may have a <code class="code docutils literal notranslate"><span class="pre">name</span></code>, an <code class="code docutils literal notranslate"><span class="pre">input</span></code> (the <code class="code docutils literal notranslate"><span class="pre">name</span></code> of an earlier step whose result they read) and a <code class="code docutils literal notranslate"><span class="pre">suffix</span></code> for their quantities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The version of the dataset definition file; a reader refuses a newer one. 2</p>
@@ -495,7 +524,7 @@ under <code class="code docutils literal notranslate"><span class="pre">$GOLDSLU
 
 <dl class="py class">
 <dt class="sig sig-object py" id="goldpan.dataset.Step">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">Step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/dataset.html#Step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.dataset.Step" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">Step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/dataset.html#Step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.dataset.Step" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -503,6 +532,9 @@ under <code class="code docutils literal notranslate"><span class="pre">$GOLDSLU
 <li><p><strong>algorithm</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
 <li><p><strong>channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a>)</p></li>
 <li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><em>Mapping</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><em>Any</em></a><em>]</em>)</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>input</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
 </ul>
 </dd>
 </dl>
@@ -521,6 +553,24 @@ under <code class="code docutils literal notranslate"><span class="pre">$GOLDSLU
 <dt class="sig sig-object py" id="goldpan.dataset.Step.params">
 <span class="sig-name descname"><span class="pre">params</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.15)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.15)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#goldpan.dataset.Step.params" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.dataset.Step.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#goldpan.dataset.Step.name" title="Link to this definition">¶</a></dt>
+<dd><p>What later steps call this one (<code class="code docutils literal notranslate"><span class="pre">input</span> <span class="pre">=</span> <span class="pre">&quot;&lt;name&gt;&quot;</span></code>); needed by a step whose algorithm gives a trace (a filter).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.dataset.Step.input">
+<span class="sig-name descname"><span class="pre">input</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#goldpan.dataset.Step.input" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="code docutils literal notranslate"><span class="pre">name</span></code> of an earlier step whose resulting trace this step reads instead of the raw trace, or <code class="code docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="goldpan.dataset.Step.suffix">
+<span class="sig-name descname"><span class="pre">suffix</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></span><a class="headerlink" href="#goldpan.dataset.Step.suffix" title="Link to this definition">¶</a></dt>
+<dd><p>Appended to the names of the quantities this step writes (<code class="code docutils literal notranslate"><span class="pre">adc_max</span></code> becomes <code class="code docutils literal notranslate"><span class="pre">adc_max_lp</span></code>), so that the same algorithm can run on the raw trace and on a filtered one.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="goldpan.dataset.Step.channel_names">
@@ -655,6 +705,21 @@ The file is read now, not when the definition is loaded, so a run that does not 
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#goldpan.dataset.DatasetSpec" title="goldpan.dataset.DatasetSpec"><em>DatasetSpec</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.dataset.step_record">
+<span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">step_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/dataset.html#step_record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.dataset.step_record" title="Link to this definition">¶</a></dt>
+<dd><p>A step as it is hashed and recorded in the provenance: <code class="code docutils literal notranslate"><span class="pre">name</span></code>, <code class="code docutils literal notranslate"><span class="pre">input</span></code> and <code class="code docutils literal notranslate"><span class="pre">suffix</span></code> appear only when the step has them, so a
+definition without them keeps the fingerprint it had before the keys existed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>step</strong> (<a class="reference internal" href="#goldpan.dataset.Step" title="goldpan.dataset.Step"><em>Step</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -845,6 +910,9 @@ of the definition (<code class="code docutils literal notranslate"><span class="
 <li><a class="reference internal" href="#goldpan.dataset.Step.algorithm"><code class="docutils literal notranslate"><span class="pre">Step.algorithm</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Step.channels"><code class="docutils literal notranslate"><span class="pre">Step.channels</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Step.params"><code class="docutils literal notranslate"><span class="pre">Step.params</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.dataset.Step.name"><code class="docutils literal notranslate"><span class="pre">Step.name</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.dataset.Step.input"><code class="docutils literal notranslate"><span class="pre">Step.input</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.dataset.Step.suffix"><code class="docutils literal notranslate"><span class="pre">Step.suffix</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Step.channel_names"><code class="docutils literal notranslate"><span class="pre">Step.channel_names()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Step.resolve"><code class="docutils literal notranslate"><span class="pre">Step.resolve()</span></code></a></li>
 </ul>
@@ -865,6 +933,7 @@ of the definition (<code class="code docutils literal notranslate"><span class="
 </ul>
 </li>
 <li><a class="reference internal" href="#goldpan.dataset.load"><code class="docutils literal notranslate"><span class="pre">load()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.dataset.step_record"><code class="docutils literal notranslate"><span class="pre">step_record()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.fingerprint"><code class="docutils literal notranslate"><span class="pre">fingerprint()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.read_raw"><code class="docutils literal notranslate"><span class="pre">read_raw()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><ul>

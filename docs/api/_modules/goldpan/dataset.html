@@ -234,10 +234,12 @@
 <li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.baseline.html">goldsluice.reference.baseline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.excursion.html">goldsluice.reference.excursion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.lowpass.html">goldsluice.reference.lowpass</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.subtract_line.html">goldsluice.reference.subtract_line</a></li>
 </ul>
 </li>
 </ul>
@@ -315,6 +317,29 @@
 <span class="sd">definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the</span>
 <span class="sd">folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).</span>
 
+<span class="sd">**Steps that build on each other.** A step reads the raw trace unless it has an `input`. A step whose algorithm gives a trace (a filter or a</span>
+<span class="sd">baseline subtraction: `goldsluice algorithms` lists them) has a `name`, writes no quantities, and a later step with `input = "&lt;name&gt;"`</span>
+<span class="sd">reads its result instead of the raw trace, for the channels the two steps share. A `suffix` is appended to the names of the quantities</span>
+<span class="sd">of a step, so that the same algorithm can run on both (`adc_max`, and `adc_max_lp` from the filtered trace). The quantities of a step must</span>
+<span class="sd">still be written once: two steps giving the same name is an error. Steps run in the order written, and an `input` is a step above::</span>
+
+<span class="sd">    [[processing]]</span>
+<span class="sd">    algorithm = "lowpass"                   # a filter: gives a trace, so it has a name</span>
+<span class="sd">    name = "lp"</span>
+<span class="sd">    channels = "role:phonon"</span>
+<span class="sd">    [processing.params]</span>
+<span class="sd">    cutoff_hz = 50e3</span>
+<span class="sd">    order = 4</span>
+<span class="sd">    sample_period_s = "@readout.sample_period_s"</span>
+
+<span class="sd">    [[processing]]</span>
+<span class="sd">    algorithm = "peak"</span>
+<span class="sd">    channels = "role:phonon"</span>
+<span class="sd">    input = "lp"                            # the peak of the filtered trace</span>
+<span class="sd">    suffix = "_lp"                          # adc_max_lp, current_max_lp</span>
+<span class="sd">    [processing.params]</span>
+<span class="sd">    ...</span>
+
 <span class="sd">**Run metadata.** `metadata` is a reference to facts about whole series that an analysis needs for every event (high voltage, trigger setting,</span>
 <span class="sd">...): today a CSV file with a `series` column and any other columns (`hv_v`, `trigger_value`, `trigger`, ...), relative to this file, one row per series;</span>
 <span class="sd">later it may name a database instead, and nothing else in the file changes. The values are **joined at read time**: `Dataset.processed()` (and so</span>
@@ -346,6 +371,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
@@ -361,10 +387,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Events</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">DONE</span><span class="p">,</span> <span class="n">status</span>
 
-<span class="n">FORMAT_VERSION</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">FORMAT_VERSION</span> <span class="o">=</span> <span class="mi">6</span>
 <span class="sd">"""The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`</span>
 <span class="sd">(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes</span>
-<span class="sd">under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read."""</span>
+<span class="sd">under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read.</span>
+<span class="sd">6: steps may have a `name`, an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities."""</span>
 
 <span class="n">ENV_OUTPUT</span> <span class="o">=</span> <span class="s2">"GOLDSLUICE_OUTPUT"</span>
 <span class="sd">"""The environment variable that holds the folder under which a relative `output` of a definition is placed."""</span>
@@ -373,7 +400,9 @@
 <span class="n">_DATASET</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">,</span> <span class="s2">"format_version"</span><span class="p">,</span> <span class="s2">"output_format"</span><span class="p">,</span> <span class="s2">"root_detector"</span><span class="p">,</span> <span class="s2">"registry"</span><span class="p">,</span> <span class="s2">"metadata"</span><span class="p">}</span>
 <span class="n">_OUTPUT_FORMATS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"parquet"</span><span class="p">,</span> <span class="s2">"root"</span><span class="p">)</span>
 <span class="n">_SOURCE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">,</span> <span class="s2">"paths"</span><span class="p">,</span> <span class="s2">"glob"</span><span class="p">,</span> <span class="s2">"detector"</span><span class="p">,</span> <span class="s2">"readout"</span><span class="p">,</span> <span class="s2">"read"</span><span class="p">}</span>
-<span class="n">_STEP</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">}</span>
+<span class="n">_STEP</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">,</span> <span class="s2">"suffix"</span><span class="p">}</span>
+<span class="n">_STEP_NAME</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^[A-Za-z][A-Za-z0-9_]*$"</span><span class="p">)</span>
+<span class="n">_SUFFIX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^[A-Za-z0-9_]*$"</span><span class="p">)</span>
 <span class="n">_READOUT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pretrigger_samples"</span><span class="p">,</span> <span class="s2">"glitch_samples"</span><span class="p">,</span> <span class="s2">"sample_period_s"</span><span class="p">}</span>
 
 
@@ -422,6 +451,12 @@
     <span class="n">channels</span><span class="p">:</span> <span class="n">Any</span>
 <span class="w">    </span><span class="sd">"""``"all"``, ``"role:&lt;role&gt;"`` or a tuple of channel names."""</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""What later steps call this one (`input = "&lt;name&gt;"`); needed by a step whose algorithm gives a trace (a filter)."""</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""The `name` of an earlier step whose resulting trace this step reads instead of the raw trace, or `None`."""</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="w">    </span><span class="sd">"""Appended to the names of the quantities this step writes (`adc_max` becomes `adc_max_lp`), so that the same algorithm can run on the raw trace and on a filtered one."""</span>
 
 <div class="viewcode-block" id="Step.channel_names">
 <a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Step.channel_names">[docs]</a>
@@ -639,8 +674,33 @@
             <span class="n">channels</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">channels</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="n">channels</span> <span class="o">==</span> <span class="s2">"all"</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">channels</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"role:"</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">channels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: channels must be </span><span class="se">\"</span><span class="s2">all</span><span class="se">\"</span><span class="s2">, </span><span class="se">\"</span><span class="s2">role:&lt;role&gt;</span><span class="se">\"</span><span class="s2"> or a list of names, not </span><span class="si">{</span><span class="n">channels</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Step</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="s2">"algorithm"</span><span class="p">],</span> <span class="n">channels</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"params"</span><span class="p">,</span> <span class="p">{}))))</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span> <span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"input"</span><span class="p">),</span> <span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"suffix"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_STEP_NAME</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: name must be letters, digits and underscores, starting with a letter, not </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: two steps are named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">steps</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: input </span><span class="si">{</span><span class="n">source</span><span class="si">!r}</span><span class="s2"> is not the name of an earlier step (steps run in order; an input is a step above this one)"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_SUFFIX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">suffix</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: suffix must be letters, digits and underscores, not </span><span class="si">{</span><span class="n">suffix</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Step</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="s2">"algorithm"</span><span class="p">],</span> <span class="n">channels</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"params"</span><span class="p">,</span> <span class="p">{})),</span> <span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">suffix</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">DatasetSpec</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sources</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">steps</span><span class="p">),</span> <span class="n">path</span><span class="p">,</span> <span class="n">raw</span><span class="p">,</span> <span class="n">output_format</span><span class="p">,</span> <span class="n">root_detector</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="step_record">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.step_record">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">step_record</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">Step</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A step as it is hashed and recorded in the provenance: `name`, `input` and `suffix` appear only when the step has them, so a</span>
+<span class="sd">    definition without them keeps the fingerprint it had before the keys existed."""</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"algorithm"</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">algorithm</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">params</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">suffix</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"suffix"</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">suffix</span>
+    <span class="k">return</span> <span class="n">out</span></div>
 
 
 
@@ -653,7 +713,7 @@
     <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"format"</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="s2">"detector"</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">detector</span><span class="p">,</span>
                           <span class="s2">"readout"</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">readout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">asdict</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">readout</span><span class="p">),</span>
                           <span class="s2">"read"</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">},</span>
-               <span class="s2">"steps"</span><span class="p">:</span> <span class="p">[{</span><span class="s2">"algorithm"</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">algorithm</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">params</span><span class="p">}</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">steps</span><span class="p">]}</span>
+               <span class="s2">"steps"</span><span class="p">:</span> <span class="p">[</span><span class="n">step_record</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">steps</span><span class="p">]}</span>
     <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_format</span> <span class="o">!=</span> <span class="s2">"parquet"</span><span class="p">:</span>                    <span class="c1"># a Parquet definition keeps the fingerprint it had before the key existed</span>
         <span class="n">payload</span><span class="p">[</span><span class="s2">"output"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"format"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_format</span><span class="p">,</span> <span class="s2">"root_detector"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">root_detector</span><span class="p">}</span>
     <span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>

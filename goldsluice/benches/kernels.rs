@@ -3,10 +3,12 @@
 use _core::baseline::{BaselineParams, baseline_many, baseline_one};
 use _core::excursion::{ExcursionParams, excursion_many, excursion_one};
 use _core::integral::{IntegralParams, integral_many, integral_one};
+use _core::lowpass::{LowpassParams, lowpass_many, lowpass_one};
 use _core::max_time::{MaxTimeParams, max_time_many};
 use _core::peak::{PeakParams, peak_many, peak_one};
 use _core::rise_crossing::{RiseCrossingParams, rise_crossing_many, rise_crossing_one};
 use _core::rise_time::{RiseTimeParams, rise_time_many, rise_time_one};
+use _core::subtract_line::{SubtractLineParams, subtract_line_many, subtract_line_one};
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
@@ -142,6 +144,39 @@ fn bench_peak(c: &mut Criterion) {
     g.throughput(Throughput::Elements(n_events as u64));
     g.bench_function("10000 traces x 4096 samples", |bch| {
         bch.iter(|| rise_crossing_many(black_box(&pulses), n_samples, &c20, &mut sd))
+    });
+    g.finish();
+
+    // the line fitted to the pretrigger samples (Run 76: 10 glitch samples, a fit that stops 94 samples before the window ends), subtracted
+    let sl = SubtractLineParams {
+        glitch_samples: 10,
+        fit_end_samples: 406,
+    };
+    let mut line_out = vec![0.0; pulses.len()];
+    let mut line_one = vec![0.0; n_samples];
+    c.bench_function("subtract_line_one, 4096 samples", |bch| {
+        bch.iter(|| subtract_line_one(black_box(&pulses_one), &sl, &mut line_one))
+    });
+    let mut g = c.benchmark_group("subtract_line_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| subtract_line_many(black_box(&pulses), n_samples, &sl, &mut line_out))
+    });
+    g.finish();
+
+    // the zero-phase low-pass filter (100 kHz, order 4, 0.8 us per sample): transforms of 4096 + 2 * 121 samples
+    let lp = LowpassParams {
+        cutoff_hz: 100e3,
+        order: 4,
+        sample_period_s: 0.8e-6,
+    };
+    c.bench_function("lowpass_one, 4096 samples", |bch| {
+        bch.iter(|| lowpass_one(black_box(&pulses_one), &lp, &mut line_one))
+    });
+    let mut g = c.benchmark_group("lowpass_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| lowpass_many(black_box(&pulses), n_samples, &lp, &mut line_out))
     });
     g.finish();
 }

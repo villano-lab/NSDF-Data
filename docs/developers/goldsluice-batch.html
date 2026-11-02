@@ -137,6 +137,65 @@ is written. The repository ignores <code>processed/</code> and
 <code>_goldsluice.json</code>, and the example writes to
 <code>~/goldsluice-output/</code>, so the common cases pass. If you
 really mean it, add <code>--allow-output-in-repo</code>.</p>
+<p><strong>One output root.</strong> Set the environment variable
+<code>GOLDSLUICE_OUTPUT</code> to a folder (for example
+<code>C:/NSDF/goldsluice-output</code>) and a <em>relative</em>
+<code>output</code> in a definition (<code>output = "r76-nai"</code>)
+goes under it, so the file holds no path of your machine and runs
+unchanged on another computer. A full path
+(<code>output = "~/goldsluice-output/r76"</code>) is used as written;
+with the variable unset a relative <code>output</code> is relative to
+the definition file, as before. The goldpan writers
+(<code>parquet.write</code>, <code>rq_root.write</code>) write exactly
+where they are told and do not check the folder: the guard is batch
+mode’s.</p>
+<p><strong>Steps that build on each other.</strong> A step reads the raw
+trace unless it has an <code>input</code>. An algorithm that gives a
+<em>trace</em> instead of numbers (a filter or a baseline subtraction:
+<code>python -m goldsluice algorithms</code> says which:
+<code>lowpass</code>, <code>subtract_line</code>) needs a
+<code>name</code> and writes no quantity; a later step with
+<code>input = "&lt;name&gt;"</code> reads its result instead of the raw
+trace. A <code>suffix</code> is added to the names of the quantities of
+a step, so the same algorithm can run on both (<code>adc_max</code> and
+<code>adc_max_lp</code>). An input is a step <em>above</em> the one that
+reads it, and its channels must include the channels of the reader. The
+example <code>examples/r76-registry.dataset.toml</code> has two
+chains:</p>
+<pre class="toml"><code>[[processing]]
+algorithm = &quot;lowpass&quot;              # gives a trace: it has a name
+name = &quot;lp&quot;
+channels = &quot;role:phonon&quot;
+[processing.params]
+cutoff_hz = 95e3
+order = 4
+sample_period_s = &quot;@readout.sample_period_s&quot;
+
+[[processing]]
+algorithm = &quot;peak&quot;                 # reads the filtered trace
+channels = &quot;role:phonon&quot;
+input = &quot;lp&quot;
+suffix = &quot;_lp&quot;                     # adc_max_lp, current_max_lp
+[processing.params]
+# glitch_samples, pretrigger_samples, amps_per_adc ...</code></pre>
+<p><strong>Run metadata.</strong> Facts about whole series (high
+voltage, trigger setting) that an analysis needs for every event go in a
+small CSV, one row per series, with a <code>series</code> column and any
+others (<code>hv_v</code>, <code>trigger_value</code>, …; see
+<code>examples/r76.series.csv</code>). The definition only references
+it: <code>metadata = "r76.series.csv"</code> under
+<code>[dataset]</code> (relative to the definition file; later it may
+name a database instead). The values are <strong>joined when the data
+are read</strong>: <code>Dataset.processed()</code> adds one column per
+column of the table to every event, so a change of a value never redoes
+a file, and <code>goldsluice run</code> does not write them. A series
+with events that is not in the table is an error that names it; so is a
+column named like a quantity or a channel;
+<code>processed(metadata=False)</code> leaves them out. For events you
+already have, <code>goldpan.runmeta.per_event(series, table)</code>
+gives one value per event and
+<code>groups(series, table, by=("hv_v", "trigger_value"))</code> the
+events of each chunk.</p>
 <h2 id="read-it-back-with-goldpan">3. Read it back with goldpan</h2>
 <pre class="python"><code>from goldpan.dataset import Dataset
 

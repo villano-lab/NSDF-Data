@@ -27,6 +27,9 @@ SPOTS = {                          # name -> (xdel, ydel, radius), microseconds
     "C": (4.45, 4.80, 1.5),        # the spot over the sector C
     "F": (1.60, 0.70, 1.5),        # the spot over the centre disc F
 }
+TIGHT_F = 0.5                      # microseconds: a tight radius around the centre of spot F (about one spot width). With the ring as the
+                                   # estimate of the ordinary events, about 95 % of the events inside it belong to the spot, and a smaller
+                                   # radius is no purer (0.3 us: 95.5 %); it keeps about a third of the spot's excess
 
 
 def load(out=OUT):

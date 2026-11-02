@@ -322,6 +322,7 @@ only some columns.</p>
 <p><strong>Versioning.</strong> An addition that old readers can ignore (a new quantity, a new metadata key) keeps the version; a change they
 cannot read raises <code class="code docutils literal notranslate"><span class="pre">goldpan.format_version</span></code>. The sample dataset in <code class="code docutils literal notranslate"><span class="pre">python/tests/data/sample_dataset/</span></code> is read by the tests of
 goldpan and is the file that goldsluice’s tests read too.</p>
+<p><strong>Where the files go is not decided here.</strong> <code class="code docutils literal notranslate"><span class="pre">write(events,</span> <span class="pre">path)</span></code> writes exactly where it is told and does not check that the folder is outside a Git repository: that guard, and the single output root (<code class="code docutils literal notranslate"><span class="pre">GOLDSLUICE_OUTPUT</span></code>, see <code class="code docutils literal notranslate"><span class="pre">goldpan.dataset</span></code>), belong to batch mode (<code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code>, <code class="code docutils literal notranslate"><span class="pre">goldsluice.batch.check_output_location</span></code>). Called by hand, keep the output outside the repository yourself.</p>
 <p class="rubric">Module Attributes</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">

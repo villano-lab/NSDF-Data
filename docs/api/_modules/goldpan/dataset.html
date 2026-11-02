@@ -286,7 +286,7 @@
 
 <span class="sd">    [dataset]</span>
 <span class="sd">    name = "r76-nai"</span>
-<span class="sd">    output = "~/goldsluice-output/r76-nai"  # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository</span>
+<span class="sd">    output = "r76-nai"                      # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository</span>
 <span class="sd">    # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)</span>
 <span class="sd">    # registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file</span>
 
@@ -308,6 +308,11 @@
 <span class="sd">    glitch_samples = "@readout.glitch_samples"        # "@readout.&lt;field&gt;": taken from the readout of the data</span>
 <span class="sd">    pretrigger_samples = "@readout.pretrigger_samples"</span>
 <span class="sd">    amps_per_adc = 1.5e-9</span>
+
+<span class="sd">**Where the output goes.** `output` may be a full path (`"C:/data/goldsluice-output/r76-nai"`, or `"~/goldsluice-output/r76-nai"`), which is used as</span>
+<span class="sd">written. A *relative* `output` (`"r76-nai"`) is put under the folder named by the environment variable `GOLDSLUICE_OUTPUT` when it is set, so the</span>
+<span class="sd">definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the</span>
+<span class="sd">folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).</span>
 
 <span class="sd">Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.</span>
 <span class="sd">With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the</span>
@@ -331,6 +336,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
@@ -345,9 +351,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Events</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">DONE</span><span class="p">,</span> <span class="n">status</span>
 
-<span class="n">FORMAT_VERSION</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">FORMAT_VERSION</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="sd">"""The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`</span>
-<span class="sd">(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`)."""</span>
+<span class="sd">(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes</span>
+<span class="sd">under `$GOLDSLUICE_OUTPUT` when that is set."""</span>
+
+<span class="n">ENV_OUTPUT</span> <span class="o">=</span> <span class="s2">"GOLDSLUICE_OUTPUT"</span>
+<span class="sd">"""The environment variable that holds the folder under which a relative `output` of a definition is placed."""</span>
 
 <span class="n">_TOP</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"sources"</span><span class="p">,</span> <span class="s2">"processing"</span><span class="p">}</span>
 <span class="n">_DATASET</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">,</span> <span class="s2">"format_version"</span><span class="p">,</span> <span class="s2">"output_format"</span><span class="p">,</span> <span class="s2">"root_detector"</span><span class="p">,</span> <span class="s2">"registry"</span><span class="p">}</span>
@@ -497,6 +507,16 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: readout must be a preset name or a table, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_output_path</span><span class="p">(</span><span class="n">written</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Where `output = written` goes: a full path (or one that starts with ``~``) as written; a relative one under</span>
+<span class="sd">    ``$GOLDSLUICE_OUTPUT`` when that is set, otherwise relative to the folder `base` of the definition."""</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">written</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">path</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ENV_OUTPUT</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span> <span class="o">/</span> <span class="n">path</span> <span class="k">if</span> <span class="n">root</span> <span class="k">else</span> <span class="n">base</span> <span class="o">/</span> <span class="n">path</span>
+
+
 <div class="viewcode-block" id="load">
 <a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.load">[docs]</a>
 <span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
@@ -527,8 +547,7 @@
                                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">])</span>
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"output"</span><span class="p">])</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">output</span> <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="n">base</span> <span class="o">/</span> <span class="n">output</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">_output_path</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"output"</span><span class="p">],</span> <span class="n">base</span><span class="p">)</span>
     <span class="n">output_format</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"output_format"</span><span class="p">,</span> <span class="s2">"parquet"</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">output_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_OUTPUT_FORMATS</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: [dataset] output_format must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_OUTPUT_FORMATS</span><span class="p">)</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">output_format</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>

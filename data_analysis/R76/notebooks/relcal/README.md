@@ -22,7 +22,9 @@ The face (Side 2) is drawn as in the Note 9 channel figure and the wiki: `A` the
 |---|---|
 | `integral-on-the-face.ipynb` | reads the processed data set, and maps the `integral` of the six channels onto the face with the detector drawn under the plot |
 | `positions-by-voltage.ipynb` | groups the series by high voltage (`series.csv`) and draws the event density in the plane of the delays `xdel`, `ydel` for each group, with the detector underneath; needs a `rise_crossing` step in the processing |
-| `positions-82v-dcrc1pb.ipynb` | the position distribution in the plane of the 20 % delays (`xdel`, `ydel`), the azimuth `phidel` and the radius `afdel`, for the eight DCRC1pB-triggered series near -82 V; reads the output of `r76-82v-dcrc1pb.dataset.toml` (branch `feature/processing`) from `~/goldsluice-output/r76-82v-dcrc1pb` |
+| `positions-82v-dcrc1pb.ipynb` | the position distribution in the plane of the 20 % delays (`xdel`, `ydel`), the azimuth `phidel` and the radius `afdel`, for the eight DCRC1pB-triggered series near -82 V; reads the output of `r76-82v-dcrc1pb.dataset.toml` (branch `feature/processing`) from `~/goldsluice-output/r76-82v-dcrc1pb`; also draws the cuts that select the two high-activity spots over `C` and `F` |
+| `spots-82v-energy.ipynb` | the energy distributions (the uncalibrated sum of the six `integral`s) of the events in those two spots, against their surroundings, the excess of each spot, series by series, and the channels' shares |
+| `spots_82v.py` | shared by the two notebooks above: reads the -82 V output, makes the delays and the selection, and defines the spot circles (`SPOTS`) and the rings around them |
 
 ## Rules of the folder
 

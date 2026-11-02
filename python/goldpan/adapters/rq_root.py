@@ -28,6 +28,8 @@ The trigger type of an event (the quantity `trigger_type`, a text such as `Physi
 gives it, because a branch is a number: `Unknown` is 0 and the names of the DAQ's trigger types keep their numbers (`Physics` is 1,
 `BeginOfRunRandom` 2, ...). The table is also stored in every file as the string `infoDir/trigger_types` (JSON, name to number), and a
 label that is not in it is an error, never a guess. `read` returns the number; the labels are only recorded, not interpreted.
+
+**Where the files go is not decided here.** `write(events, path)` writes exactly where it is told and does not check that the folder is outside a Git repository: that guard, and the single output root (`GOLDSLUICE_OUTPUT`, see `goldpan.dataset`), belong to batch mode (`goldsluice run`, `goldsluice.batch.check_output_location`). Called by hand, keep the output outside the repository yourself.
 """
 import fnmatch
 import json

@@ -235,10 +235,12 @@
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.baseline.html">goldsluice.reference.baseline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.excursion.html">goldsluice.reference.excursion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.lowpass.html">goldsluice.reference.lowpass</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.subtract_line.html">goldsluice.reference.subtract_line</a></li>
 </ul>
 </li>
 </ul>
@@ -319,6 +321,7 @@ not the collaboration’s <code class="code docutils literal notranslate"><span 
 gives it, because a branch is a number: <code class="code docutils literal notranslate"><span class="pre">Unknown</span></code> is 0 and the names of the DAQ’s trigger types keep their numbers (<code class="code docutils literal notranslate"><span class="pre">Physics</span></code> is 1,
 <code class="code docutils literal notranslate"><span class="pre">BeginOfRunRandom</span></code> 2, …). The table is also stored in every file as the string <code class="code docutils literal notranslate"><span class="pre">infoDir/trigger_types</span></code> (JSON, name to number), and a
 label that is not in it is an error, never a guess. <code class="code docutils literal notranslate"><span class="pre">read</span></code> returns the number; the labels are only recorded, not interpreted.</p>
+<p><strong>Where the files go is not decided here.</strong> <code class="code docutils literal notranslate"><span class="pre">write(events,</span> <span class="pre">path)</span></code> writes exactly where it is told and does not check that the folder is outside a Git repository: that guard, and the single output root (<code class="code docutils literal notranslate"><span class="pre">GOLDSLUICE_OUTPUT</span></code>, see <code class="code docutils literal notranslate"><span class="pre">goldpan.dataset</span></code>), belong to batch mode (<code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code>, <code class="code docutils literal notranslate"><span class="pre">goldsluice.batch.check_output_location</span></code>). Called by hand, keep the output outside the repository yourself.</p>
 <p class="rubric">Module Attributes</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">

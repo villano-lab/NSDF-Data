@@ -54,6 +54,18 @@ def test_load_reads_sources_steps_and_a_relative_output(tmp_path, raw):
         spec.source("x")
 
 
+def test_read_attaches_the_processed_quantities_to_events_that_already_have_the_trigger_type(tmp_path):
+    """goldsluice writes what the adapter knows about each event (trigger_type) into the output, so the raw events and the table both have it."""
+    labels = np.array(["Physics", "Unknown", "Physics", "Unknown"])
+    parquet.write(toy_events().with_quantities(trigger_type=labels), tmp_path / "raw")
+    raw_file = tmp_path / "raw" / "TOY" / "S1_F0001.parquet"
+    ds = Dataset.open(write(tmp_path, spec_text(raw_file)))
+    processed = toy_events().with_quantities(trigger_type=labels, A=ak.zip({"adc_max": np.arange(4.0)}))
+    parquet.write(processed, ds.spec.output)
+    ev = ds.read()
+    assert ev.quantities["trigger_type"].to_list() == labels.tolist() and ev.quantities["A"]["adc_max"].to_list() == [0.0, 1.0, 2.0, 3.0]
+
+
 def test_a_relative_output_goes_under_goldsluice_output_when_it_is_set_and_a_full_path_never_does(tmp_path, raw, monkeypatch):
     root = tmp_path / "root"
     monkeypatch.setenv(dataset.ENV_OUTPUT, str(root))

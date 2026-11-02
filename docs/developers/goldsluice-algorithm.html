@@ -239,6 +239,19 @@ times slower or more.</td>
 <p>When an algorithm is naturally array-shaped (an FFT, a fit),
 <code>PORTING.md</code> ends with what to do: ask before you choose that
 route.</p>
+<p><strong>An algorithm that returns a trace</strong> (a filter, a
+baseline subtraction) sets <code>KIND = "trace"</code> and
+<code>OUTPUTS = ("trace",)</code> in its mirror. Its <code>kernel</code>
+returns a list of <code>n_samples</code> floats instead of a tuple; the
+Rust function returns a 1-tuple holding a 2-D <code>float64</code> array
+of the shape of <code>traces</code>; <code>run</code> gives
+<code>{"trace": array}</code>. An optional <code>ATOL</code> (default 0)
+is the absolute tolerance, beside the relative <code>1e-12</code>, of
+the parity test and of the comparison with goldpan: set it by measuring
+the largest disagreement on <code>cases()</code>. Examples:
+<code>subtract_line</code> (loops only) and <code>lowpass</code> (an
+FFT, so its mirror is a numpy reference). <code>PORTING.md</code> has
+the details.</p>
 
 <footer>This guide is also available as a <a href="goldsluice-algorithm.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
 

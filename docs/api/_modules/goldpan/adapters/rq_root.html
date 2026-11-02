@@ -218,6 +218,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.rqdata.html">goldpan.rqdata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.runmeta.html">goldpan.runmeta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../../reference/generated/goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -233,10 +234,12 @@
 <li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.baseline.html">goldsluice.reference.baseline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.excursion.html">goldsluice.reference.excursion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.lowpass.html">goldsluice.reference.lowpass</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../reference/generated/goldsluice.reference.subtract_line.html">goldsluice.reference.subtract_line</a></li>
 </ul>
 </li>
 </ul>
@@ -308,6 +311,8 @@
 <span class="sd">gives it, because a branch is a number: `Unknown` is 0 and the names of the DAQ's trigger types keep their numbers (`Physics` is 1,</span>
 <span class="sd">`BeginOfRunRandom` 2, ...). The table is also stored in every file as the string `infoDir/trigger_types` (JSON, name to number), and a</span>
 <span class="sd">label that is not in it is an error, never a guess. `read` returns the number; the labels are only recorded, not interpreted.</span>
+
+<span class="sd">**Where the files go is not decided here.** `write(events, path)` writes exactly where it is told and does not check that the folder is outside a Git repository: that guard, and the single output root (`GOLDSLUICE_OUTPUT`, see `goldpan.dataset`), belong to batch mode (`goldsluice run`, `goldsluice.batch.check_output_location`). Called by hand, keep the output outside the repository yourself.</span>
 <span class="sd">"""</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>

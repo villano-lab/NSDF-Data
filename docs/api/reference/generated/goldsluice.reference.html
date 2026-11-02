@@ -219,6 +219,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rqdata.html">goldpan.rqdata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.runmeta.html">goldpan.runmeta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -234,10 +235,12 @@
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.baseline.html">goldsluice.reference.baseline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.excursion.html">goldsluice.reference.excursion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.lowpass.html">goldsluice.reference.lowpass</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.subtract_line.html">goldsluice.reference.subtract_line</a></li>
 </ul>
 </li>
 </ul>
@@ -291,7 +294,8 @@
           <section id="module-goldsluice.reference">
 <span id="goldsluice-reference"></span><h1>goldsluice.reference<a class="headerlink" href="#module-goldsluice.reference" title="Link to this heading">¶</a></h1>
 <p>The Python mirror of every algorithm: one module per algorithm, listed in <code class="code docutils literal notranslate"><span class="pre">ALL</span></code>.</p>
-<p>A module defines <code class="code docutils literal notranslate"><span class="pre">NAME</span></code>, <code class="code docutils literal notranslate"><span class="pre">OUTPUTS</span></code>, <code class="code docutils literal notranslate"><span class="pre">problem(n_samples,</span> <span class="pre">**params)</span></code>, <code class="code docutils literal notranslate"><span class="pre">kernel(trace,</span> <span class="pre">**params)</span></code> (one trace as a plain list of floats, a
+<p>A module defines <code class="code docutils literal notranslate"><span class="pre">NAME</span></code>, <code class="code docutils literal notranslate"><span class="pre">OUTPUTS</span></code> (a transform that returns a trace sets <code class="code docutils literal notranslate"><span class="pre">KIND</span> <span class="pre">=</span> <span class="pre">&quot;trace&quot;</span></code> and <code class="code docutils literal notranslate"><span class="pre">OUTPUTS</span> <span class="pre">=</span> <span class="pre">(&quot;trace&quot;,)</span></code>, and its <code class="code docutils literal notranslate"><span class="pre">kernel</span></code> returns
+a list of floats; an optional <code class="code docutils literal notranslate"><span class="pre">ATOL</span></code> is the absolute tolerance of the parity test), <code class="code docutils literal notranslate"><span class="pre">problem(n_samples,</span> <span class="pre">**params)</span></code>, <code class="code docutils literal notranslate"><span class="pre">kernel(trace,</span> <span class="pre">**params)</span></code> (one trace as a plain list of floats, a
 tuple of numbers back), <code class="code docutils literal notranslate"><span class="pre">cases()</span></code> (the standard inputs of the parity test), <code class="code docutils literal notranslate"><span class="pre">bad_cases()</span></code> (inputs both versions must refuse) and either
 <code class="code docutils literal notranslate"><span class="pre">goldpan_expected(traces,</span> <span class="pre">params)</span></code> (the same numbers from goldpan’s own functions) or <code class="code docutils literal notranslate"><span class="pre">NO_GOLDPAN</span></code>, a string that says why goldpan has none. The Rust function of the same <code class="code docutils literal notranslate"><span class="pre">NAME</span></code> and keyword
 arguments lives in <code class="code docutils literal notranslate"><span class="pre">src/</span></code>; <code class="code docutils literal notranslate"><span class="pre">PORTING.md</span></code> explains how to port one to the other.</p>
@@ -308,17 +312,23 @@ arguments lives in <code class="code docutils literal notranslate"><span class="
 <tr class="row-odd"><td><p><a class="reference internal" href="goldsluice.reference.integral.html#module-goldsluice.reference.integral" title="goldsluice.reference.integral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integral</span></code></a></p></td>
 <td><p>Python mirror of <code class="code docutils literal notranslate"><span class="pre">src/integral.rs</span></code>: the integral of the baseline-subtracted trace over the whole trace.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="goldsluice.reference.max_time.html#module-goldsluice.reference.max_time" title="goldsluice.reference.max_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_time</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="goldsluice.reference.lowpass.html#module-goldsluice.reference.lowpass" title="goldsluice.reference.lowpass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lowpass</span></code></a></p></td>
+<td><p>Python mirror of <code class="code docutils literal notranslate"><span class="pre">src/lowpass.rs</span></code>: a zero-phase Butterworth low-pass filter of a trace (a transform: it returns a trace).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="goldsluice.reference.max_time.html#module-goldsluice.reference.max_time" title="goldsluice.reference.max_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max_time</span></code></a></p></td>
 <td><p>Python mirror of <code class="code docutils literal notranslate"><span class="pre">src/max_time.rs</span></code>: the time of the largest sample of each trace, from the start of the trace (s).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="goldsluice.reference.peak.html#module-goldsluice.reference.peak" title="goldsluice.reference.peak"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peak</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="goldsluice.reference.peak.html#module-goldsluice.reference.peak" title="goldsluice.reference.peak"><code class="xref py py-obj docutils literal notranslate"><span class="pre">peak</span></code></a></p></td>
 <td><p>Python mirror of <code class="code docutils literal notranslate"><span class="pre">src/peak.rs</span></code>: the largest ADC value and the largest current above the pretrigger baseline of a trace.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="goldsluice.reference.rise_crossing.html#module-goldsluice.reference.rise_crossing" title="goldsluice.reference.rise_crossing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rise_crossing</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="goldsluice.reference.rise_crossing.html#module-goldsluice.reference.rise_crossing" title="goldsluice.reference.rise_crossing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rise_crossing</span></code></a></p></td>
 <td><p>Python mirror of <code class="code docutils literal notranslate"><span class="pre">src/rise_crossing.rs</span></code>: the time at which the rising edge of the largest pulse of a trace crosses <code class="code docutils literal notranslate"><span class="pre">fraction</span></code> of its height (s).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="goldsluice.reference.rise_time.html#module-goldsluice.reference.rise_time" title="goldsluice.reference.rise_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rise_time</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="goldsluice.reference.rise_time.html#module-goldsluice.reference.rise_time" title="goldsluice.reference.rise_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rise_time</span></code></a></p></td>
 <td><p>Python mirror of <code class="code docutils literal notranslate"><span class="pre">src/rise_time.rs</span></code>: the 10-90 % rise time of the largest pulse of a trace (s), as <code class="code docutils literal notranslate"><span class="pre">goldpan.algorithms.rise_time</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="goldsluice.reference.subtract_line.html#module-goldsluice.reference.subtract_line" title="goldsluice.reference.subtract_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subtract_line</span></code></a></p></td>
+<td><p>Python mirror of <code class="code docutils literal notranslate"><span class="pre">src/subtract_line.rs</span></code>: a trace minus the straight line fitted to its pretrigger samples (a transform: it returns a trace).</p></td>
 </tr>
 </tbody>
 </table>

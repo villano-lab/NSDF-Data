@@ -10,6 +10,7 @@ needed by the modules that use them):
 * `goldpan.operations` pulse in, pulse out (baseline subtraction, glitch trimming)
 * `goldpan.io`         loading traces of a dump into arrays
 * `goldpan.rqdata`     the RQs of a list of series as numpy arrays, with an on-disk cache (`load(dataset, rqs)`; needs `uproot`)
+* `goldpan.runmeta`   run metadata (high voltage, trigger setting) per event, joined by series, and chunks of events by it
 * `goldpan.archive`    writing and reading HDF5 archives of selected pulses
 * `goldpan.channels`   which physical channel is a dump's (detector, channel); the map of the Run 76 readout
 * `goldpan.status`     the `@status` tag of every public function

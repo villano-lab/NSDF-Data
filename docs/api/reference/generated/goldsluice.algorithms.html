@@ -219,6 +219,7 @@
 <li class="toctree-l4"><a class="reference internal" href="goldpan.registry.html">goldpan.registry</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.rqdata.html">goldpan.rqdata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="goldpan.runmeta.html">goldpan.runmeta</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.status.html">goldpan.status</a></li>
 <li class="toctree-l4"><a class="reference internal" href="goldpan.testing.html">goldpan.testing</a></li>
 </ul>
@@ -234,10 +235,12 @@
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.baseline.html">goldsluice.reference.baseline</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.excursion.html">goldsluice.reference.excursion</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.lowpass.html">goldsluice.reference.lowpass</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
 <li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="goldsluice.reference.subtract_line.html">goldsluice.reference.subtract_line</a></li>
 </ul>
 </li>
 </ul>
@@ -299,16 +302,33 @@ run(“peak”, traces, backend=”python”, …)           # the mirror: slow,
 </div></blockquote>
 <p><code class="code docutils literal notranslate"><span class="pre">traces</span></code> is an array of shape <code class="code docutils literal notranslate"><span class="pre">(n_events,</span> <span class="pre">n_samples)</span></code> (one channel); it is converted to C-contiguous float64. Every parameter is
 keyword-only and has no default.</p>
+<p>Most algorithms reduce a trace to numbers (<code class="code docutils literal notranslate"><span class="pre">KIND</span> <span class="pre">=</span> <span class="pre">&quot;quantities&quot;</span></code>: one value per trace for each name in <code class="code docutils literal notranslate"><span class="pre">OUTPUTS</span></code>). A few <strong>transform</strong> a
+trace into another trace (<code class="code docutils literal notranslate"><span class="pre">KIND</span> <span class="pre">=</span> <span class="pre">&quot;trace&quot;</span></code>, <code class="code docutils literal notranslate"><span class="pre">OUTPUTS</span> <span class="pre">=</span> <span class="pre">(&quot;trace&quot;,)</span></code>): a filter, a baseline subtraction. Their result is an array of
+the shape of <code class="code docutils literal notranslate"><span class="pre">traces</span></code>, and a batch run can hand it to the steps that name it as their <code class="code docutils literal notranslate"><span class="pre">input</span></code> (<code class="code docutils literal notranslate"><span class="pre">goldpan.dataset</span></code>).</p>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldsluice.algorithms.run" title="goldsluice.algorithms.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(name, traces, *[, backend])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldsluice.algorithms.kind" title="goldsluice.algorithms.kind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kind</span></code></a>(name)</p></td>
+<td><p><code class="code docutils literal notranslate"><span class="pre">&quot;quantities&quot;</span></code> (the algorithm reduces a trace to numbers) or <code class="code docutils literal notranslate"><span class="pre">&quot;trace&quot;</span></code> (it returns a trace of the same length).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldsluice.algorithms.run" title="goldsluice.algorithms.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>(name, traces, *[, backend])</p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">{output</span> <span class="pre">name:</span> <span class="pre">array</span> <span class="pre">of</span> <span class="pre">one</span> <span class="pre">value</span> <span class="pre">per</span> <span class="pre">trace}</span></code> of algorithm <code class="code docutils literal notranslate"><span class="pre">name</span></code>; <code class="code docutils literal notranslate"><span class="pre">backend</span></code> is <code class="code docutils literal notranslate"><span class="pre">&quot;rust&quot;</span></code> or <code class="code docutils literal notranslate"><span class="pre">&quot;python&quot;</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="goldsluice.algorithms.kind">
+<span class="sig-prename descclassname"><span class="pre">goldsluice.algorithms.</span></span><span class="sig-name descname"><span class="pre">kind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldsluice/algorithms.html#kind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldsluice.algorithms.kind" title="Link to this definition">¶</a></dt>
+<dd><p><code class="code docutils literal notranslate"><span class="pre">&quot;quantities&quot;</span></code> (the algorithm reduces a trace to numbers) or <code class="code docutils literal notranslate"><span class="pre">&quot;trace&quot;</span></code> (it returns a trace of the same length).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="goldsluice.algorithms.run">
 <span class="sig-prename descclassname"><span class="pre">goldsluice.algorithms.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traces</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rust'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldsluice/algorithms.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldsluice.algorithms.run" title="Link to this definition">¶</a></dt>
@@ -373,6 +393,7 @@ keyword-only and has no default.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">goldsluice.algorithms</a><ul>
+<li><a class="reference internal" href="#goldsluice.algorithms.kind"><code class="docutils literal notranslate"><span class="pre">kind()</span></code></a></li>
 <li><a class="reference internal" href="#goldsluice.algorithms.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
 </ul>
 </li>

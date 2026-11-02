@@ -237,7 +237,8 @@ ev2 = compute(ev, {"max": pulse_max, "tmax": max_time}, channels=["A"])      # a
 name = "r76-nai"
 output = "r76-nai"                      # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository
 # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)
-# registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file</pre>
+# registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file
+# metadata = "r76.series.csv"           # optional: run metadata per series (high voltage, trigger setting, ...), joined to the events when read</pre>
 <pre>[[sources]]                             # where the pulses come from; as many as you like
 name = "side2"
 format = "idx"                          # any adapter: idx, midas, parquet, or one you registered
@@ -256,6 +257,7 @@ glitch_samples = "@readout.glitch_samples"        # "@readout.&lt;field&gt;": ta
 pretrigger_samples = "@readout.pretrigger_samples"
 amps_per_adc = 1.5e-9</pre>
 <p><strong>Where the output goes.</strong> <code>output</code> may be a full path (<code>"C:/data/goldsluice-output/r76-nai"</code>, or <code>"~/goldsluice-output/r76-nai"</code>), which is used as written. A <em>relative</em> <code>output</code> (<code>"r76-nai"</code>) is put under the folder named by the environment variable <code>GOLDSLUICE_OUTPUT</code> when it is set, so the definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative <code>output</code> is relative to the folder of the definition file, as before (and <code>goldsluice run</code> refuses it if that is inside a repository that does not ignore it).</p>
+<p><strong>Run metadata.</strong> <code>metadata</code> is a reference to facts about whole series that an analysis needs for every event (high voltage, trigger setting, ...): today a CSV file with a <code>series</code> column and any other columns (<code>hv_v</code>, <code>trigger_value</code>, <code>trigger</code>, ...), relative to this file, one row per series; later it may name a database instead, and nothing else in the file changes. The values are <strong>joined at read time</strong>: <code>Dataset.processed()</code> (and so <code>read()</code>) adds one column per column of the table to the events, taken from the row of their series, so a change of a value never needs the data to be processed again. Nothing is written into the output and the fingerprint does not change. A series that has events but is not listed is an error that names it, and so is a column named like a quantity or a channel (<code>processed(metadata=False)</code> skips the join). The table is also at <code>spec.run_metadata()</code>, and <code>goldpan.runmeta</code> joins and groups it for events you have already. ROOT output is not read by <code>processed()</code>, so it has no metadata.</p>
 <p>Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names. With <code>registry</code> (and/or the environment variable <code>GOLDPAN_REGISTRY</code>), a source whose <code>detector</code> is a name in the registry takes the readout, the <code>[sources.read]</code> defaults of its file format and, for ROOT output, <code>root_detector</code> from the detector's record (<code>goldpan.registry</code>); whatever the file itself states wins, key by key, and a readout that disagrees with the registry's is a warning. A detector name that is not in any registry is only a label, as before. <code>Dataset.open(path)</code> gives the same file to both packages:</p>
 <pre>ds = Dataset.open("r76.dataset.toml")
 ev = ds.read()                          # the pulses, with the processed quantities attached (one Events)
@@ -265,13 +267,14 @@ ev.quantities["Side2pA"]["current_max"]</pre>
 <p>The processed quantities are stored one record per channel (<code>quantities["Side2pA"]["adc_max"]</code>), keyed by <code>series</code>, <code>dump</code>, <code>event</code>. <code>python -m goldsluice run &lt;file&gt;</code> produces them; reading them before that raises an error that says so.</p>
 <h3><code>Dataset(spec: DatasetSpec)</code></h3>
 <p>A dataset definition opened for reading: the pulses from its sources and the quantities processed from them.</p>
-<h3><code>DatasetSpec(name: str, output: pathlib.Path, sources: Tuple[Source, ...], steps: Tuple[Step, ...], path: pathlib.Path, raw: Mapping[str, Any], output_format: str = 'parquet', root_detector: Optional[int] = None, registry: Optional[Registry] = None) -&gt; None</code></h3>
+<h3><code>DatasetSpec(name: str, output: pathlib.Path, sources: Tuple[Source, ...], steps: Tuple[Step, ...], path: pathlib.Path, raw: Mapping[str, Any], output_format: str = 'parquet', root_detector: Optional[int] = None, registry: Optional[Registry] = None, metadata: Optional[pathlib.Path] = None) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>
 <tr><td><code>path</code></td><td>The definition file.</td></tr>
 <tr><td><code>raw</code></td><td>The parsed TOML, kept for provenance.</td></tr>
 <tr><td><code>output_format</code></td><td><code>"parquet"</code> (a goldpan dataset) or <code>"root"</code> (RQ-style ROOT files, <code>goldpan.adapters.rq_root.write</code>).</td></tr>
 <tr><td><code>root_detector</code></td><td>The number <code>N</code> of the <code>zip&lt;N&gt;</code> tree of the ROOT output; required with <code>output_format = "root"</code> (written in the file, or the <code>number</code> of the registry's record of the detector), otherwise <code>None</code>.</td></tr>
 <tr><td><code>registry</code></td><td>The registry the definition names (and the environment variable adds); empty if there is none.</td></tr>
+<tr><td><code>metadata</code></td><td>The file the definition names as its run metadata (<code>[dataset] metadata</code>), or <code>None</code>. It is not opened until it is used.</td></tr>
 </tbody></table></div>
 <h3><code>Source(name: str, format: str, patterns: Tuple[str, ...], detector: str, readout: Optional[PulseConfig], read: Mapping[str, Any], base: pathlib.Path, detector_record: Optional[DetectorRecord] = None) -&gt; None</code></h3>
 <div class="table-scroll"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody>

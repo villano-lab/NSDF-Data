@@ -103,5 +103,21 @@ the arithmetic as `f64` or check the cases by hand.
 
 Some algorithms are naturally array-shaped (an FFT, a filter, a fit). Do the port in two steps: write the mirror with numpy
 (it is then a *reference*, not in the kernel subset), say so at the top of the file, port to Rust using a crate (for example
-`rustfft`) and keep the parity test at a tolerance that fits the algorithm (`cases()` can return it). Ask before choosing this: it
-makes the port a judgment, not a rewrite.
+`rustfft`) and keep the parity test at a tolerance that fits the algorithm (the module's `ATOL`, below). Ask before choosing this: it
+makes the port a judgment, not a rewrite. `lowpass` is the example (`reference/lowpass.py`, `src/lowpass.rs`): its mirror says at the top
+that it is a reference, and its Rust kernel builds the FFT plans and the response once per call, not once per trace.
+
+## Algorithms that return a trace
+
+Most algorithms reduce a trace to numbers. A **transform** (a filter, a baseline subtraction) returns a trace instead, and a batch run
+can hand it to the steps that name it as their `input`. Everything above holds, with these differences:
+
+| Name | What |
+|---|---|
+| `KIND = "trace"` | in the mirror module (the default is `"quantities"`). `OUTPUTS` must then be `("trace",)` |
+| `kernel(trace, **params)` | returns a **list of `n_samples` floats**, not a tuple of numbers |
+| the Rust function | returns a 1-tuple holding a 2-D `float64` array of the shape of `traces`: `(Bound<PyArray2<f64>>,)`, made from a `Vec` with `into_pyarray(py).reshape([n_events, n_samples])?`. The kernel writes into an output slice with `par_chunks_mut` next to `par_chunks` |
+| `run(name, traces, ...)` | gives `{"trace": array of shape (n_events, n_samples)}` |
+| `ATOL = 1e-9` (optional, default 0) | the absolute tolerance, with `rtol = 1e-12`, of the parity test and of the comparison with goldpan. A sample near zero (a residual, a filtered baseline) has no meaningful relative error, and an FFT differs from numpy's in the last digits. Choose it by measuring the largest disagreement on `cases()`, and say how in a comment |
+
+`subtract_line` (a loop-only mirror) and `lowpass` (an FFT reference) are the two examples.

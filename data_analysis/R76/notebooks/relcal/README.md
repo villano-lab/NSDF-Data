@@ -32,7 +32,8 @@ The face (Side 2) is drawn as in the Note 9 channel figure and the wiki: `A` the
 | `low-integral-traces.ipynb` | randomly chosen real triggers whose `integral` is between 0 and 0.75 in all six channels (no position cut), drawn as tiled figures with the baseline and integration windows, and overlaid |
 | `integral-vs-height.ipynb` | for each channel, the `integral` of every real trigger against its pulse height (`current_max`, ADC counts above the baseline), and the ratio of the two (the effective pulse length) against the height, with the saturated height and the largest integral it allows marked |
 | `spots-integral-vs-height.ipynb` | the other way round: events cut on the position first (spot F and spot C, tight), then the integral against the height of all six channels, and their ratio, against the events outside both spots, with the three Side2pF bands drawn as lines of constant integral/height; then random traces from the bulk (25-75 %) of each spot's energy spectrum, all channels, with the saturated height and the flat-top time of every channel |
-| `spots_82v.py` | shared by the two notebooks above: reads the -82 V output, makes the delays and the selection, and defines the spot circles (`SPOTS`) and the rings around them |
+| `saturation-over-time.ipynb` | the pulse height of each channel (99th percentile of the real triggers of every dump, and the maximum) along the eight -82 V series, in a long plot with one row per channel, and the saturated height (99.99th percentile) of each series; shows that the series `07221113_1159` is low in every channel |
+| `spots_82v.py` | shared by the notebooks that use the -82 V output: reads it, makes the delays and the selection, and defines the spot circles (`SPOTS`) and the rings around them; leaves out the series `EXCLUDE_SERIES` (`07221113_1159`, low pulse heights in every channel) |
 
 ## Rules of the folder
 

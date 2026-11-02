@@ -30,16 +30,21 @@ SPOTS = {                          # name -> (xdel, ydel, radius), microseconds
 TIGHT_F = 0.5                      # microseconds: a tight radius around the centre of spot F (about one spot width). With the ring as the
                                    # estimate of the ordinary events, about 95 % of the events inside it belong to the spot, and a smaller
                                    # radius is no purer (0.3 us: 95.5 %); it keeps about a third of the spot's excess
+EXCLUDE_SERIES = {"07221113_1159"}  # the series whose pulse heights are far low in every channel (58 to 82 % of the other series at the
+                                   # 99.99th percentile, dipping to 30 % within the series; see saturation-over-time.ipynb): not used
 TIGHT_C = 0.5                      # microseconds: the same for spot C (about 95 % spot events, 15,567 events)
 
 
-def load(out=OUT):
+def load(out=OUT, exclude=EXCLUDE_SERIES):
     """The quantities of the output as a dict of numpy arrays, with the delays and the selection of positions-from-delays.ipynb.
 
     Keys: series, dump, event, trigger, t (dict letter -> 20 % time, us), integral (events x 6, ADC counts x s, in LETTERS order),
     S (integral minus its median within the series), total (sum of the positive S), xdel, ydel, afdel, phidel (degrees), use
-    (real trigger, total > THRESH, six times, all six within WINDOW of their median)."""
+    (real trigger, total > THRESH, six times, all six within WINDOW of their median). The events of the series in `exclude`
+    (`EXCLUDE_SERIES`; pass `exclude=()` to keep them) are left out of every array."""
     q = parquet.read(out, detector="NAI-S2").quantities
+    keep = ~np.isin(np.asarray(q["series"]).astype(str), list(exclude))
+    q = q[keep]
     d = {k: np.asarray(q[k]).astype(str) for k in ("series", "dump")}
     d["event"] = np.asarray(q["event"])
     d["trigger"] = np.asarray(q["trigger_type"]).astype(str)

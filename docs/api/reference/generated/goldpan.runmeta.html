@@ -309,7 +309,8 @@ picks the table row of each event, so there is no string comparison per event an
 </div>
 <p><strong>The table is data and is not in this library.</strong> Where it lives (a file next to the outputs, or the detector registry) is
 not decided here: every function takes the table as an argument. Numeric columns come back as float arrays (an empty cell
-is NaN), the others as text. The <code class="code docutils literal notranslate"><span class="pre">series</span></code> column is always text.</p>
+is NaN), the others as text. The <code class="code docutils literal notranslate"><span class="pre">series</span></code> column is always text. <code class="code docutils literal notranslate"><span class="pre">write_table</span></code> writes such a table (a program that makes the
+file, such as a form in a browser, builds the columns and calls it); <code class="code docutils literal notranslate"><span class="pre">read_table</span></code> of the file gives the same table back.</p>
 <p class="rubric">Functions</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -323,6 +324,9 @@ is NaN), the others as text. The <code class="code docutils literal notranslate"
 <tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.runmeta.read_table" title="goldpan.runmeta.read_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_table</span></code></a>(path)</p></td>
 <td><p>Read a CSV with a <code class="code docutils literal notranslate"><span class="pre">series</span></code> column into <code class="docutils literal notranslate"><span class="pre">{column:</span> <span class="pre">numpy</span> <span class="pre">array}</span></code>.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.runmeta.write_table" title="goldpan.runmeta.write_table"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write_table</span></code></a>(path, table)</p></td>
+<td><p>Write a table (<code class="docutils literal notranslate"><span class="pre">{column:</span> <span class="pre">sequence}</span></code>, as <code class="code docutils literal notranslate"><span class="pre">read_table</span></code> gives it) to the CSV file <code class="code docutils literal notranslate"><span class="pre">path</span></code> and return what <code class="code docutils literal notranslate"><span class="pre">read_table</span></code> gives for that file.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -333,6 +337,16 @@ is NaN), the others as text. The <code class="code docutils literal notranslate"
 <p>A column whose every cell is a number becomes a float array (an empty cell is NaN), any other column stays text.
 <code class="code docutils literal notranslate"><span class="pre">series</span></code> always stays text: names such as <code class="docutils literal notranslate"><span class="pre">07221121_2214</span></code> are numbers to <code class="docutils literal notranslate"><span class="pre">float</span></code> (it accepts underscores).
 A series listed twice is an error.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.runmeta.write_table">
+<span class="sig-prename descclassname"><span class="pre">goldpan.runmeta.</span></span><span class="sig-name descname"><span class="pre">write_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/runmeta.html#write_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.runmeta.write_table" title="Link to this definition">¶</a></dt>
+<dd><p>Write a table (<code class="docutils literal notranslate"><span class="pre">{column:</span> <span class="pre">sequence}</span></code>, as <code class="code docutils literal notranslate"><span class="pre">read_table</span></code> gives it) to the CSV file <code class="code docutils literal notranslate"><span class="pre">path</span></code> and return what <code class="code docutils literal notranslate"><span class="pre">read_table</span></code> gives for that file.</p>
+<p><code class="code docutils literal notranslate"><span class="pre">table</span></code> needs a <code class="docutils literal notranslate"><span class="pre">series</span></code> column (text, every series once), written first; the other columns follow in the order of the mapping and have
+as many values as <code class="code docutils literal notranslate"><span class="pre">series</span></code>. A column is all numbers (<code class="code docutils literal notranslate"><span class="pre">None</span></code> or NaN is an empty cell) or all text (<code class="code docutils literal notranslate"><span class="pre">None</span></code> is an empty cell), so the
+file reads back the same: a text column whose every cell looks like a number, or that mixes the two, is an error that names the column,
+and so are true/false values and a table without rows. Nothing is written when the table is refused.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -409,6 +423,7 @@ A series listed twice is an error.</p>
             <ul>
 <li><a class="reference internal" href="#">goldpan.runmeta</a><ul>
 <li><a class="reference internal" href="#goldpan.runmeta.read_table"><code class="docutils literal notranslate"><span class="pre">read_table()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.runmeta.write_table"><code class="docutils literal notranslate"><span class="pre">write_table()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.runmeta.per_event"><code class="docutils literal notranslate"><span class="pre">per_event()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.runmeta.groups"><code class="docutils literal notranslate"><span class="pre">groups()</span></code></a></li>
 </ul>

@@ -9,6 +9,7 @@
 [dataset]
 name = "r76-d-idx"
 output = "C:/NSDF/goldsluice-output/r76-d-idx"  # outside the repository, next to the raw data in C:/NSDF/idx
+metadata = "series.csv"                  # run metadata (HV, trigger), joined to the events when they are read; next to this file
 registry = ["../../../registry"]               # relative to this file
 
 [[sources]]

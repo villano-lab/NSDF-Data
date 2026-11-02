@@ -10,6 +10,7 @@
 [dataset]
 name = "r76-82v-dcrc1pb"
 output = "~/goldsluice-output/r76-82v-dcrc1pb"  # outside the repository
+metadata = "series.csv"                  # run metadata (HV, trigger), joined to the events when they are read; next to this file
 registry = ["../../../registry"]               # relative to this file
 
 [[sources]]

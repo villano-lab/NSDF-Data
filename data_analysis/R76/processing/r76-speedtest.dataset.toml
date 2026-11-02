@@ -6,6 +6,7 @@
 [dataset]
 name = "r76-speedtest"
 output = "~/goldsluice-output/r76-speedtest"
+metadata = "series.csv"                  # run metadata (HV, trigger), joined to the events when they are read; next to this file
 registry = ["../../../registry"]
 
 [[sources]]

@@ -40,9 +40,9 @@ class PulseConfig:
         return 1.0 / self.sample_period_s
 
 
-DCRC_RUN76 = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=0.8e-6)
-"""The DCRC readout of the Run 76 series (UMN): 500-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of
-4096 samples is 3.2768 ms. The pulses of the trigger-locked events start at about sample 500, not at 1000 (value until 2026-10-28;
+DCRC_RUN76 = PulseConfig(pretrigger_samples=450, glitch_samples=10, sample_period_s=0.8e-6)
+"""The DCRC readout of the Run 76 series (UMN): 450-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of
+4096 samples is 3.2768 ms. The pulses of the trigger-locked events start at about sample 470 to 500, and the baseline window ends at 450 so that the rising edge is not in it (500 until 2026-11-02, 1000 until 2026-10-28;
 issue 154). The record with the evidence is `[readouts.DCRC_RUN76]` in `registry/readouts.toml` (`goldpan.registry`); this preset is
 kept for existing code and a test checks that the two agree."""
 

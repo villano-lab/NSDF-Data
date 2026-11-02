@@ -37,7 +37,7 @@ def test_pulse_config_has_no_defaults():
 
 
 def test_presets_name_their_readouts():
-    assert (gc.DCRC_RUN76.pretrigger_samples, gc.DCRC_RUN76.sample_period_s) == (500, 0.8e-6)
+    assert (gc.DCRC_RUN76.pretrigger_samples, gc.DCRC_RUN76.sample_period_s) == (450, 0.8e-6)
     assert (gc.Z7.pretrigger_samples, gc.Z7.sample_period_s) == (6250, 1.6e-6)
     assert gc.DCRC_RUN76.sample_rate_hz == pytest.approx(1.25e6)
     assert gc.Z7.sample_rate_hz == pytest.approx(625e3)
@@ -68,7 +68,7 @@ def test_package_functions_require_a_config():
 
 def test_the_readout_changes_the_numbers_it_should():
     p = pulses()
-    np.testing.assert_allclose(gq.pretrigger_mean(p, gc.DCRC_RUN76), p[:, 10:500].mean(axis=-1))
+    np.testing.assert_allclose(gq.pretrigger_mean(p, gc.DCRC_RUN76), p[:, 10:450].mean(axis=-1))
     np.testing.assert_allclose(gq.pretrigger_mean(p, gc.Z7), p[:, 10:2000].mean(axis=-1))   # the trace is shorter than 6250
     f_run76 = gq.frequencies_hz(100, gc.DCRC_RUN76)
     f_z7 = gq.frequencies_hz(100, gc.Z7)

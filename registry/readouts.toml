@@ -4,7 +4,7 @@
 format_version = 1
 
 [readouts.DCRC_RUN76]
-pretrigger_samples = 500           # the end of the baseline window, and the sample where the trigger-locked pulses start: see evidence
+pretrigger_samples = 450           # the end of the baseline window; the trigger-locked pulses start at about sample 470 to 500: see evidence
 glitch_samples = 10
 sample_period_s = 0.8e-6
 status = "inferred"
@@ -17,7 +17,12 @@ evidence = """sample_period_s: the first-pulse analysis of the Run 76 phonon cha
 about sample 500, not at the 1000 that this entry had until 2026-10-28. With 1000, the baseline of `peak` (the mean of samples \
 10 to 1000) was about half pulse and `current_max` came out at 0.52 of its value; a baseline over samples 10 to 500 gives 0.999 \
 of it. Note 2 compares the two windows and uses 500. The events labelled 'Physics' have pulses at random times. The numbers are \
-the same on Side2pA, B and F. glitch_samples: see goldpan.config."""
+the same on Side2pA, B and F. glitch_samples: see goldpan.config. 2026-11-02: the window was shortened from 500 to 450 samples. The \
+real triggers of the six channels (one dump of each of seven -82 V series, relcal/baseline-window-onset.ipynb) start their pulse at \
+a median sample of 483 to 486 (94 to 100 % before sample 500, by a smoothed 5-sigma onset), so the last 15 samples of a window of \
+10 to 500 hold the rising edge: the median standard deviation of that window in Side2pF was 7.9 counts against 1.8 for samples 10 \
+to 400, and 10 to 13 against 2 to 3 in A, B and D. A window ending at 450 stays clear of the edge. Outputs made with 500 differ \
+from those made with 450 (baseline_mean, baseline_std, current_max, integral): reprocess."""
 
 [readouts.Z7]
 pretrigger_samples = 6250

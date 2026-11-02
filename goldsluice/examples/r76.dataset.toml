@@ -27,6 +27,8 @@ roles = { Side2pC = "phonon", Side2pF = "phonon", Side2pE = "phonon", Side2pB = 
 [[processing]]
 algorithm = "peak"                             # the largest ADC value, and the largest current above the baseline
 channels = "role:phonon"
+# sources = ["side2"]                          # optional: the names of the sources a step runs on (all of them when it is not written);
+#                                              # with several [[sources]] it gives each detector its own processing
 [processing.params]
 glitch_samples = "@readout.glitch_samples"     # taken from the readout above, so the two cannot disagree
 pretrigger_samples = "@readout.pretrigger_samples"

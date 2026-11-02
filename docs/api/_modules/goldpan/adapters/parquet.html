@@ -402,6 +402,24 @@
 <span class="sd">write different dumps into one dataset at the same time: the data files are written outside it."""</span>
 
 
+<div class="viewcode-block" id="stream_matches">
+<a class="viewcode-back" href="../../../reference/generated/goldpan.adapters.parquet.html#goldpan.adapters.parquet.stream_matches">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stream_matches</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">detector</span><span class="p">:</span> <span class="n">Detector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Whether the stream of `detector.name` in the dataset at `path` was written with this detector (its channels and its readout).</span>
+
+<span class="sd">    `None` when there is nothing to disagree with: the dataset does not exist yet, or has no stream of that name. `False` is the case in</span>
+<span class="sd">    which `write` refuses to extend the stream (a different channel map, or a different readout such as another `pretrigger_samples`)."""</span>
+    <span class="n">manifest</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">/</span> <span class="n">MANIFEST</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">manifest</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"streams"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_safe_name</span><span class="p">(</span><span class="s2">"detector name"</span><span class="p">,</span> <span class="n">detector</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">stream</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">stream</span><span class="p">[</span><span class="s2">"detector"</span><span class="p">]</span> <span class="o">==</span> <span class="n">_detector_to_json</span><span class="p">(</span><span class="n">detector</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="write">
 <a class="viewcode-back" href="../../../reference/generated/goldpan.adapters.parquet.html#goldpan.adapters.parquet.write">[docs]</a>
 <span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>

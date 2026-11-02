@@ -1,0 +1,85 @@
+# Every algorithm of goldsluice on the eight DCRC1pB-triggered Side-2 series near -82 V (HV -82.2 to -81.6 V; 436 dumps, about 36 GiB),
+# downloaded to ~/idx with series_lists/r76_82V_dumps.txt. Same seven steps and the same detector record ("NAI-S2") as r76-d-idx.dataset.toml.
+#   python -m goldsluice check r76-82v-dcrc1pb.dataset.toml     # lists the files, runs nothing
+#   python -m goldsluice run   r76-82v-dcrc1pb.dataset.toml     # expect about 3 s of reading per dump
+# These series trigger on the phonon channel DCRC1pB (threshold 10), not on the NaI; the channel map is the same Side-2 one (DCRC4 pA, the NaI
+# input, is not a channel of the detector either way). The trigger, HV and Side-2 type are from series_lists/nsdf_r76_series.csv. The readout is
+# assumed to be the same as for 07221203_2025 (DCRC_RUN76): check one dump of each series for the pulse position (pretrigger_samples) before
+# you trust the numbers.
+
+[dataset]
+name = "r76-82v-dcrc1pb"
+output = "~/goldsluice-output/r76-82v-dcrc1pb"  # outside the repository
+registry = ["../../../registry"]               # relative to this file
+
+[[sources]]
+name = "side2"
+format = "idx"
+paths = [                                      # one pattern per series: ~/idx holds other series too; every pattern must match a dump
+    "~/idx/07221111_2153_F[0-9][0-9][0-9][0-9]",
+    "~/idx/07221112_0943_F[0-9][0-9][0-9][0-9]",
+    "~/idx/07221112_2249_F[0-9][0-9][0-9][0-9]",
+    "~/idx/07221113_1159_F[0-9][0-9][0-9][0-9]",
+    "~/idx/07221114_2141_F[0-9][0-9][0-9][0-9]",
+    "~/idx/07221115_0845_F[0-9][0-9][0-9][0-9]",
+    "~/idx/07221115_2109_F[0-9][0-9][0-9][0-9]",
+    "~/idx/07221116_1003_F[0-9][0-9][0-9][0-9]",
+]
+detector = "NAI-S2"
+
+# Every step names the channels it applies to and takes its numbers from the readout (see r76-registry.dataset.toml).
+
+[[processing]]
+algorithm = "peak"                             # adc_max: the largest sample; current_max: the largest sample above the baseline
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
+
+[[processing]]
+algorithm = "max_time"                         # max_time_s: when the largest sample happens, in seconds from the start of the trace
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "baseline"                         # baseline_mean, baseline_std: the mean and the deviation of the pretrigger window (ADC counts)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "integral"                         # integral: the sum of (x - baseline) over the whole trace, times the sample period (ADC counts x s)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "excursion"                        # max_deviation: the largest |x - baseline| after the window; excursion_ratio: that over baseline_std
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "rise_time"                        # rise_time_s: from lo to hi of the height of the largest pulse (nan if it has no rise)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+lo = 0.1                                       # the usual 10-90 % rise time: these two are part of the definition of the quantity
+hi = 0.9
+
+[[processing]]
+algorithm = "rise_crossing"                    # crossing_time_s: when the rise of the largest pulse crosses `fraction` of its height (the delays xdel, ydel are made of it)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+fraction = 0.2                                 # the 20 % time of the collaboration's position quantities

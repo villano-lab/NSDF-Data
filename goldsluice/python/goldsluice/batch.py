@@ -72,7 +72,7 @@ def _versions() -> dict:
 def _revisions(spec, source, adapters) -> dict:
     """The revision of every algorithm that the steps of the definition use and of the reader of `source`: what must be unchanged for an
     output to be still current. A new algorithm, or the fix of one the definition does not use, changes nothing here."""
-    algorithms = {name: ALGORITHMS[name].REVISION for name in sorted({s.algorithm for s in spec.steps})}
+    algorithms = {name: ALGORITHMS[name].REVISION for name in sorted({s.algorithm for s in spec.steps if s.applies_to(source.name)})}
     return {"algorithms": algorithms, "reader": {source.format: adapters.revision(source.format)}}
 
 
@@ -223,6 +223,9 @@ def check(spec_path, *, allow_output_in_repo: bool = False) -> list:
             if kind(producer.algorithm) != TRACE:
                 raise ValueError(f"{spec.path}: the step with algorithm {step.algorithm!r} reads input {step.input!r}, but that step "
                                  f"({producer.algorithm!r}) gives quantities, not a trace; an input must be a filter or a baseline subtraction")
+    for source in spec.sources:
+        if not any(step.applies_to(source.name) for step in spec.steps):
+            raise ValueError(f"{spec.path}: no step runs on the source {source.name!r} (a step with `sources` names the ones it runs on)")
     if not allow_output_in_repo:
         check_output_location(spec.output, spec.output_format)
     return [(s.name, f) for s in spec.sources for f in s.files()]
@@ -296,6 +299,8 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
             per_channel = {}
             traces = {}                                          # (step name, channel) -> the trace a transform gave, for this chunk
             for step in spec.steps:
+                if not step.applies_to(source.name):
+                    continue
                 params = step.resolve(ev.detector.readout.segment("main").config)
                 for ch in step.channel_names(ev.detector):
                     if step.input is None:
@@ -329,7 +334,7 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
         fr.n_events = events.n_events
         provenance = {"version": __version__, "versions": versions, "revisions": revisions, "dataset": spec.name, "source": source.name, "raw": str(path),
                       "fingerprint": fp, "backend": backend,
-                      "steps": [dataset.step_record(s) for s in spec.steps],
+                      "steps": [dataset.step_record(s) for s in spec.steps if s.applies_to(source.name)],
                       "timing_s": {"read": fr.read_s, **{f"compute.{k}": v for k, v in fr.compute_s.items()}}}
         events = Events(events.detector, {}, events.quantities, {"goldsluice": provenance})
         t2 = time.perf_counter()

@@ -41,6 +41,12 @@ integer `format_version` (1)::
     [detectors."NAI-S2".idx]                           # defaults for [sources.read] of a source of this format
     channels = { Side2pC = [0, 0] }
 
+**Adding a record.** `add_record(folder, "detectors", name, table)` (or `"readouts"`) checks a record as the reader does and appends it to a file
+of `folder` (default `detectors.toml` or `readouts.toml`, made with `format_version` if it is new), leaving everything else in the file, comments
+included, as it was; `record_text` gives the text it would add. A name that the folder already defines is refused, as are a missing `status` or
+`evidence` and a readout that is neither in the registry nor a preset. Write `status = "confirmed"` only for what a file or a document says: a
+guess is `"inferred"`, and the evidence says what it rests on.
+
 Readouts take `pretrigger_samples`, `glitch_samples`, `sample_period_s` (all three: nothing is assumed), `status`, `evidence`,
 `description` and `series`; detectors take `number`, `type_code`, `tower`, `plane`, `odb_name`, `readout`, `status`,
 `evidence`, `description` and `series`, plus one table per file format. Unknown keys are errors, as in the dataset definition
@@ -52,6 +58,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Optional, Tuple
 
+from ._toml import _key, _value
 from .status import DONE, status
 
 FORMAT_VERSION = 1
@@ -282,3 +289,69 @@ def compare(record: DetectorRecord, found: Any) -> list:
     if record.odb_name is not None and got_name is not None and want_name != got_name:
         out.append(f"detector {record.name!r}: the registry has odb_name {want_name!r}, the file has {got_name!r}")
     return out
+
+
+_ORDER = {"detectors": ("number", "type_code", "tower", "plane", "odb_name", "readout", "status", "evidence", "description", "series"),
+          "readouts": ("pretrigger_samples", "glitch_samples", "sample_period_s", "status", "evidence", "description", "series")}
+
+
+_NL = chr(10)
+
+
+def _check_kind(kind: str) -> None:
+    if kind not in _ORDER:
+        raise ValueError(f"kind must be 'detectors' or 'readouts', not {kind!r}")
+
+
+@status(DONE)
+def record_text(kind: str, name: str, table: Mapping) -> str:
+    """The TOML text of one record, as `add_record` appends it: `kind` is ``"detectors"`` or ``"readouts"``, `name` the record's name and `table` its keys
+    (for a detector, a key whose value is a table, such as ``idx``, is the defaults for that file format). Keys come in the order of the registry
+    documentation, the file formats last. The record is checked as the reader checks it: `ValueError` says what is wrong."""
+    _check_kind(kind)
+    (_detector if kind == "detectors" else _readout)(name, table, "the new record")             # the reader's own checks
+    scalars = {k: v for k, v in table.items() if not isinstance(v, Mapping)}
+    formats = {k: v for k, v in table.items() if isinstance(v, Mapping)}
+    ordered = [k for k in _ORDER[kind] if k in scalars] + [k for k in scalars if k not in _ORDER[kind]]
+    lines = [f"[{kind}.{_key(name)}]"] + [f"{_key(k)} = {_value(scalars[k])}" for k in ordered]
+    for fmt, defaults in formats.items():
+        lines += ["", f"[{kind}.{_key(name)}.{_key(fmt)}]"] + [f"{_key(k)} = {_value(v)}" for k, v in defaults.items()]
+    return _NL.join(lines) + _NL
+
+
+@status(DONE)
+def add_record(folder, kind: str, name: str, table: Mapping, *, file: Optional[str] = None) -> Path:
+    """Add a detector or a readout to the registry folder `folder`: check it (`record_text`), refuse a name the folder already defines and a detector whose
+    `readout` is neither in the folder nor a preset of `goldpan.config`, append it to `file` (default ``<kind>.toml``; a new file starts with
+    `format_version`) and read the folder again to make sure it still loads, restoring the file if it does not. Returns the path of the file written."""
+    _check_kind(kind)
+    folder = Path(folder).expanduser()
+    reg = load(folder, use_environment=False) if folder.is_dir() else Registry()
+    existing = reg.detectors() if kind == "detectors" else reg.readouts()
+    if name in existing:
+        raise ValueError(f"{kind}.{name} is already defined in {existing[name].origin}; a name may be defined once")
+    text = record_text(kind, name, table)
+    if kind == "detectors" and table.get("readout") is not None:
+        try:
+            reg.readout_config(table["readout"])
+        except KeyError as e:
+            raise ValueError(f"detectors.{name}: readout {e.args[0]}") from None
+    path = folder / (file or f"{kind}.toml")
+    if path.suffix != ".toml" or path.parent != folder:
+        raise ValueError(f"file must be the name of a .toml file in the registry folder, not {file!r}")
+    folder.mkdir(parents=True, exist_ok=True)
+    before = path.read_text(encoding="utf-8") if path.exists() else None
+    if before is None:
+        head = f"format_version = {FORMAT_VERSION}" + _NL * 2
+    else:
+        head = "" if before.endswith(_NL * 2) else (_NL if before.endswith(_NL) else _NL * 2)       # one blank line between records
+    path.write_text((before or "") + head + text, encoding="utf-8", newline=_NL)
+    try:
+        load(folder, use_environment=False)
+    except ValueError:
+        if before is None:
+            path.unlink()
+        else:
+            path.write_text(before, encoding="utf-8", newline=_NL)
+        raise
+    return path

@@ -317,6 +317,11 @@
 <span class="sd">definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the</span>
 <span class="sd">folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).</span>
 
+<span class="sd">**An unfinished run.** `goldsluice run` writes `_goldsluice_status.json` into the output folder (`STATUS_FILE`): ``{"state": "running", ...}``</span>
+<span class="sd">when it starts and ``{"state": "complete", "started": ..., "finished": ..., "files": N, ...}`` when every raw file of the definition has been processed.</span>
+<span class="sd">If a run stops (an error, Ctrl-C, a crash) the state stays `running`, and `Dataset.processed()` warns that the output may be incomplete. An output</span>
+<span class="sd">folder made before this file existed has none and is read without a warning.</span>
+
 <span class="sd">**Steps that build on each other.** A step reads the raw trace unless it has an `input`. A step whose algorithm gives a trace (a filter or a</span>
 <span class="sd">baseline subtraction: `goldsluice algorithms` lists them) has a `name`, writes no quantities, and a later step with `input = "&lt;name&gt;"`</span>
 <span class="sd">reads its result instead of the raw trace, for the channels the two steps share. A `suffix` is appended to the names of the quantities</span>
@@ -425,6 +430,9 @@
 <span class="sd">under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read.</span>
 <span class="sd">6: steps may have a `name`, an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities.</span>
 <span class="sd">7: a step may have `sources`, the names of the sources it applies to (without it a step applies to all of them)."""</span>
+
+<span class="n">STATUS_FILE</span> <span class="o">=</span> <span class="s2">"_goldsluice_status.json"</span>
+<span class="sd">"""The file in an output folder that says whether the last `goldsluice run` finished (see `output_status`)."""</span>
 
 <span class="n">ENV_OUTPUT</span> <span class="o">=</span> <span class="s2">"GOLDSLUICE_OUTPUT"</span>
 <span class="sd">"""The environment variable that holds the folder under which a relative `output` of a definition is placed."""</span>
@@ -873,6 +881,17 @@
 
 
 
+<div class="viewcode-block" id="output_status">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.output_status">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">output_status</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The contents of `_goldsluice_status.json` in the output folder `out` (`{"state": "running" | "complete", ...}`), or `None` if the</span>
+<span class="sd">    folder has no such file (it was made before the file existed, or is not a goldsluice output)."""</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">/</span> <span class="n">STATUS_FILE</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
 <div class="viewcode-block" id="Dataset">
 <a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">:</span>
@@ -902,6 +921,10 @@
                              <span class="sa">f</span><span class="s2">"goldpan.adapters.rq_root.read(path, detector=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">root_detector</span><span class="si">}</span><span class="s2">). processed() reads Parquet output only"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="n">_parquet</span><span class="o">.</span><span class="n">MANIFEST</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nothing processed yet in </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">: run `python -m goldsluice run </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">`"</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">output_status</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"state"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"complete"</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">: the last `goldsluice run` did not finish (state </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)</span><span class="si">!r}</span><span class="s2">, started </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'started'</span><span class="p">)</span><span class="si">}</span><span class="s2">): "</span>
+                          <span class="sa">f</span><span class="s2">"the output may be incomplete. Run `python -m goldsluice run </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">` again to finish it"</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="n">events</span> <span class="o">=</span> <span class="n">_parquet</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">detector</span><span class="o">=</span><span class="n">detector</span> <span class="k">if</span> <span class="n">detector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="p">())</span>
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">run_metadata</span><span class="p">()</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

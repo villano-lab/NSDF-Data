@@ -327,6 +327,10 @@ packages: <code class="code docutils literal notranslate"><span class="pre">gold
 written. A <em>relative</em> <code class="code docutils literal notranslate"><span class="pre">output</span></code> (<code class="code docutils literal notranslate"><span class="pre">&quot;r76-nai&quot;</span></code>) is put under the folder named by the environment variable <code class="code docutils literal notranslate"><span class="pre">GOLDSLUICE_OUTPUT</span></code> when it is set, so the
 definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative <code class="code docutils literal notranslate"><span class="pre">output</span></code> is relative to the
 folder of the definition file, as before (and <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> refuses it if that is inside a repository that does not ignore it).</p>
+<p><strong>An unfinished run.</strong> <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> writes <code class="code docutils literal notranslate"><span class="pre">_goldsluice_status.json</span></code> into the output folder (<code class="code docutils literal notranslate"><span class="pre">STATUS_FILE</span></code>): <code class="docutils literal notranslate"><span class="pre">{&quot;state&quot;:</span> <span class="pre">&quot;running&quot;,</span> <span class="pre">...}</span></code>
+when it starts and <code class="docutils literal notranslate"><span class="pre">{&quot;state&quot;:</span> <span class="pre">&quot;complete&quot;,</span> <span class="pre">&quot;started&quot;:</span> <span class="pre">...,</span> <span class="pre">&quot;finished&quot;:</span> <span class="pre">...,</span> <span class="pre">&quot;files&quot;:</span> <span class="pre">N,</span> <span class="pre">...}</span></code> when every raw file of the definition has been processed.
+If a run stops (an error, Ctrl-C, a crash) the state stays <code class="code docutils literal notranslate"><span class="pre">running</span></code>, and <code class="code docutils literal notranslate"><span class="pre">Dataset.processed()</span></code> warns that the output may be incomplete. An output
+folder made before this file existed has none and is read without a warning.</p>
 <p><strong>Steps that build on each other.</strong> A step reads the raw trace unless it has an <code class="code docutils literal notranslate"><span class="pre">input</span></code>. A step whose algorithm gives a trace (a filter or a
 baseline subtraction: <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">algorithms</span></code> lists them) has a <code class="code docutils literal notranslate"><span class="pre">name</span></code>, writes no quantities, and a later step with <code class="code docutils literal notranslate"><span class="pre">input</span> <span class="pre">=</span> <span class="pre">&quot;&lt;name&gt;&quot;</span></code>
 reads its result instead of the raw trace, for the channels the two steps share. A <code class="code docutils literal notranslate"><span class="pre">suffix</span></code> is appended to the names of the quantities
@@ -408,7 +412,10 @@ and <code class="code docutils literal notranslate"><span class="pre">rqDir/zip&
 <tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.dataset.FORMAT_VERSION" title="goldpan.dataset.FORMAT_VERSION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FORMAT_VERSION</span></code></a></p></td>
 <td><p><code class="code docutils literal notranslate"><span class="pre">registry</span></code> (and a detector named in a registry supplies readout, <code class="code docutils literal notranslate"><span class="pre">[sources.read]</span></code> defaults and <code class="code docutils literal notranslate"><span class="pre">root_detector</span></code>).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.ENV_OUTPUT" title="goldpan.dataset.ENV_OUTPUT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ENV_OUTPUT</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.STATUS_FILE" title="goldpan.dataset.STATUS_FILE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">STATUS_FILE</span></code></a></p></td>
+<td><p>The file in an output folder that says whether the last <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> finished (see <code class="code docutils literal notranslate"><span class="pre">output_status</span></code>).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.dataset.ENV_OUTPUT" title="goldpan.dataset.ENV_OUTPUT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ENV_OUTPUT</span></code></a></p></td>
 <td><p>The environment variable that holds the folder under which a relative <code class="code docutils literal notranslate"><span class="pre">output</span></code> of a definition is placed.</p></td>
 </tr>
 </tbody>
@@ -430,10 +437,13 @@ and <code class="code docutils literal notranslate"><span class="pre">rqDir/zip&
 <tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.load" title="goldpan.dataset.load"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load</span></code></a>(path)</p></td>
 <td><p>Read and check a dataset definition file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.dataset.read_raw" title="goldpan.dataset.read_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_raw</span></code></a>(source, path, *[, chunk])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.dataset.output_status" title="goldpan.dataset.output_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_status</span></code></a>(out)</p></td>
+<td><p>The contents of <code class="code docutils literal notranslate"><span class="pre">_goldsluice_status.json</span></code> in the output folder <code class="code docutils literal notranslate"><span class="pre">out</span></code> (<code class="code docutils literal notranslate"><span class="pre">{&quot;state&quot;:</span> <span class="pre">&quot;running&quot;</span> <span class="pre">|</span> <span class="pre">&quot;complete&quot;,</span> <span class="pre">...}</span></code>), or <code class="code docutils literal notranslate"><span class="pre">None</span></code> if the folder has no such file (it was made before the file existed, or is not a goldsluice output).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.read_raw" title="goldpan.dataset.read_raw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_raw</span></code></a>(source, path, *[, chunk])</p></td>
 <td><p>The pulses of one raw file of <code class="code docutils literal notranslate"><span class="pre">source</span></code> as <code class="code docutils literal notranslate"><span class="pre">Events</span></code> read by its adapter: one <code class="code docutils literal notranslate"><span class="pre">Events</span></code>, or with <code class="code docutils literal notranslate"><span class="pre">chunk</span></code> pieces of at most that many events when the adapter can (<code class="code docutils literal notranslate"><span class="pre">iter_chunks</span></code>; otherwise the whole file is one piece).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#goldpan.dataset.step_record" title="goldpan.dataset.step_record"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_record</span></code></a>(step)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#goldpan.dataset.step_record" title="goldpan.dataset.step_record"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_record</span></code></a>(step)</p></td>
 <td><p>A step as it is hashed and recorded in the provenance: <code class="code docutils literal notranslate"><span class="pre">name</span></code>, <code class="code docutils literal notranslate"><span class="pre">input</span></code>, <code class="code docutils literal notranslate"><span class="pre">suffix</span></code> and <code class="code docutils literal notranslate"><span class="pre">sources</span></code> appear only when the step has them, so a definition without them keeps the fingerprint it had before the keys existed.</p></td>
 </tr>
 </tbody>
@@ -474,6 +484,12 @@ under <code class="code docutils literal notranslate"><span class="pre">$GOLDSLU
 <dd class="field-even"><p><code class="code docutils literal notranslate"><span class="pre">output_format</span></code> and <code class="code docutils literal notranslate"><span class="pre">root_detector</span></code>. 3</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="goldpan.dataset.STATUS_FILE">
+<span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">STATUS_FILE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'_goldsluice_status.json'</span></span><a class="headerlink" href="#goldpan.dataset.STATUS_FILE" title="Link to this definition">¶</a></dt>
+<dd><p>The file in an output folder that says whether the last <code class="code docutils literal notranslate"><span class="pre">goldsluice</span> <span class="pre">run</span></code> finished (see <code class="code docutils literal notranslate"><span class="pre">output_status</span></code>).</p>
 </dd></dl>
 
 <dl class="py data">
@@ -851,6 +867,18 @@ that many events when the adapter can (<code class="code docutils literal notran
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="goldpan.dataset.output_status">
+<span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">output_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/dataset.html#output_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.dataset.output_status" title="Link to this definition">¶</a></dt>
+<dd><p>The contents of <code class="code docutils literal notranslate"><span class="pre">_goldsluice_status.json</span></code> in the output folder <code class="code docutils literal notranslate"><span class="pre">out</span></code> (<code class="code docutils literal notranslate"><span class="pre">{&quot;state&quot;:</span> <span class="pre">&quot;running&quot;</span> <span class="pre">|</span> <span class="pre">&quot;complete&quot;,</span> <span class="pre">...}</span></code>), or <code class="code docutils literal notranslate"><span class="pre">None</span></code> if the
+folder has no such file (it was made before the file existed, or is not a goldsluice output).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)">dict</a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="goldpan.dataset.Dataset">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">goldpan.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/goldpan/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#goldpan.dataset.Dataset" title="Link to this definition">¶</a></dt>
@@ -984,6 +1012,7 @@ of the definition (<code class="code docutils literal notranslate"><span class="
             <ul>
 <li><a class="reference internal" href="#">goldpan.dataset</a><ul>
 <li><a class="reference internal" href="#goldpan.dataset.FORMAT_VERSION"><code class="docutils literal notranslate"><span class="pre">FORMAT_VERSION</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.dataset.STATUS_FILE"><code class="docutils literal notranslate"><span class="pre">STATUS_FILE</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.ENV_OUTPUT"><code class="docutils literal notranslate"><span class="pre">ENV_OUTPUT</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Source"><code class="docutils literal notranslate"><span class="pre">Source</span></code></a><ul>
 <li><a class="reference internal" href="#goldpan.dataset.Source.name"><code class="docutils literal notranslate"><span class="pre">Source.name</span></code></a></li>
@@ -1031,6 +1060,7 @@ of the definition (<code class="code docutils literal notranslate"><span class="
 <li><a class="reference internal" href="#goldpan.dataset.step_record"><code class="docutils literal notranslate"><span class="pre">step_record()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.fingerprint"><code class="docutils literal notranslate"><span class="pre">fingerprint()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.read_raw"><code class="docutils literal notranslate"><span class="pre">read_raw()</span></code></a></li>
+<li><a class="reference internal" href="#goldpan.dataset.output_status"><code class="docutils literal notranslate"><span class="pre">output_status()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><ul>
 <li><a class="reference internal" href="#goldpan.dataset.Dataset.open"><code class="docutils literal notranslate"><span class="pre">Dataset.open()</span></code></a></li>
 <li><a class="reference internal" href="#goldpan.dataset.Dataset.processed"><code class="docutils literal notranslate"><span class="pre">Dataset.processed()</span></code></a></li>

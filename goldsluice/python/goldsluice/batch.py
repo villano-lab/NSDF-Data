@@ -27,6 +27,14 @@ A step may build on an earlier one (`name`, `input`, `suffix` in `goldpan.datase
 filter or a baseline subtraction) keeps its result for the channels it names, in memory for the chunk being processed, and a step with `input = "<name>"` reads that
 trace instead of the raw one. The ledger fingerprint and the provenance include `name`, `input` and `suffix` only where they are written.
 
+**A changed detector, and a run that did not finish.** An output folder keeps the detector it was made with (the channels and the readout,
+`pretrigger_samples` among them) and will not take files made with another one, so that two readouts never share a folder. `run` says so before
+it processes anything. `replace=True` (`--replace`) is the way on: it moves the whole old output folder aside, to `<output>.old-<date>-<time>`
+(nothing is deleted), and starts a clean one, so a stopped run leaves a folder that has only files of the new detector, and the next run
+carries on in it. It does nothing when the detector is the same. Every run writes `_goldsluice_status.json` into the output folder:
+`{"state": "running", ...}` when it starts and `{"state": "complete", ...}` when every raw file has been processed; if the run stops the state
+stays `running`, and `goldpan.dataset.Dataset.processed()` warns that the output may be incomplete.
+
 Processed data must not end up in a Git repository: `check` and `run` refuse an output folder that lies inside a Git working tree
 and whose data files that tree does not ignore (`check_output_location`; `allow_output_in_repo=True`, or `--allow-output-in-repo`
 on the command line, overrides it).
@@ -232,12 +240,16 @@ def check(spec_path, *, allow_output_in_repo: bool = False) -> list:
 
 
 def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "rust", allow_output_in_repo: bool = False,
-        workers: int = 1, readahead: Optional[int] = None, progress: Optional[Callable[[str], None]] = print) -> Report:
+        workers: int = 1, readahead: Optional[int] = None, replace: bool = False,
+        progress: Optional[Callable[[str], None]] = print) -> Report:
     """Process the dataset defined in `spec_path`; returns the `Report` (what was done and the timing). `chunk` is the number of
     events read at once (it bounds the memory used by the pulses); `backend="python"` runs the mirrors, for comparison. `workers` is the
     number of raw files processed at the same time (default 1, one after the other): the results are the same, only faster, and every
     file in flight holds its dump in memory (see the module documentation). `readahead` is how many raw files ahead of the workers a thread
-    reads from the disk into the cache of the operating system (default `workers + 2`; 0 turns it off): it matters on a hard disk."""
+    reads from the disk into the cache of the operating system (default `workers + 2`; 0 turns it off): it matters on a hard disk.
+    An existing Parquet output made with a different detector (channels or readout) is refused before anything is processed; with
+    `replace=True` it is moved aside to `<output>.old-<date>-<time>` (kept, not deleted) and a clean output is started. The run writes its
+    state (`running`, then `complete`) to `_goldsluice_status.json` in the output folder."""
     if not isinstance(workers, int) or isinstance(workers, bool) or workers < 1:
         raise ValueError("workers must be a whole number of at least 1")
     if readahead is not None and (not isinstance(readahead, int) or isinstance(readahead, bool) or readahead < 0):
@@ -246,12 +258,38 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
     todo = check(spec_path, allow_output_in_repo=allow_output_in_repo)
     spec = dataset.load(spec_path)
     out = spec.output
+    say = progress or (lambda _msg: None)
+    if spec.output_format != "root" and (out / parquet.MANIFEST).exists():
+        for source in spec.sources:                              # the detector each source builds, from its first raw file
+            first = next((f for name, f in todo if name == source.name), None)
+            if first is None:
+                continue
+            detector = next(iter(dataset.read_raw(source, first, chunk=1))).detector
+            if parquet.stream_matches(out, detector) is not False:
+                continue
+            if not replace:
+                raise ValueError(f"the output {out} was made with a different detector (channels or readout) than the one the definition "
+                                 f"gives for {source.name!r}, so it cannot be extended. Use --replace (replace=True) to set it aside "
+                                 f"and start a clean output, or choose another output folder")
+            aside = out.with_name(f"{out.name}.old-{time.strftime('%Y%m%d-%H%M%S')}")
+            try:
+                out.rename(aside)
+            except OSError as e:
+                raise ValueError(f"cannot set {out} aside to {aside}: {e}") from None
+            say(f"replacing  {out}: made with a different detector; the old output is kept as {aside}")
+            break
     out.mkdir(parents=True, exist_ok=True)
+    started = time.strftime("%Y-%m-%dT%H:%M:%S")
+
+    def write_status(state, **extra):
+        (out / dataset.STATUS_FILE).write_text(json.dumps({"state": state, "started": started, "dataset": spec.name, "version": __version__,
+                                                           "files": len(todo), **extra}, indent=1), encoding="utf-8")
+
+    write_status("running")
     ledger = _load_ledger(out)
     versions = _versions()
     adapters = importlib.import_module("goldpan.adapters")
     report = Report(spec.name, workers=workers)
-    say = progress or (lambda _msg: None)
     t_all = time.perf_counter()
 
     slots = [None] * len(todo)                                   # the FileReport of each file, in the order of `todo`
@@ -381,4 +419,5 @@ def run(spec_path, *, chunk: int = 1000, force: bool = False, backend: str = "ru
 
     report.files = [slot for slot in slots if slot is not None]
     report.total_s = time.perf_counter() - t_all
+    write_status("complete", finished=time.strftime("%Y-%m-%dT%H:%M:%S"), processed=sum(1 for f in report.files if not f.skipped))
     return report

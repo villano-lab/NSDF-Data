@@ -34,6 +34,11 @@ written. A *relative* `output` (`"r76-nai"`) is put under the folder named by th
 definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the
 folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).
 
+**An unfinished run.** `goldsluice run` writes `_goldsluice_status.json` into the output folder (`STATUS_FILE`): ``{"state": "running", ...}``
+when it starts and ``{"state": "complete", "started": ..., "finished": ..., "files": N, ...}`` when every raw file of the definition has been processed.
+If a run stops (an error, Ctrl-C, a crash) the state stays `running`, and `Dataset.processed()` warns that the output may be incomplete. An output
+folder made before this file existed has none and is read without a warning.
+
 **Steps that build on each other.** A step reads the raw trace unless it has an `input`. A step whose algorithm gives a trace (a filter or a
 baseline subtraction: `goldsluice algorithms` lists them) has a `name`, writes no quantities, and a later step with `input = "<name>"`
 reads its result instead of the raw trace, for the channels the two steps share. A `suffix` is appended to the names of the quantities
@@ -142,6 +147,9 @@ FORMAT_VERSION = 7
 under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read.
 6: steps may have a `name`, an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities.
 7: a step may have `sources`, the names of the sources it applies to (without it a step applies to all of them)."""
+
+STATUS_FILE = "_goldsluice_status.json"
+"""The file in an output folder that says whether the last `goldsluice run` finished (see `output_status`)."""
 
 ENV_OUTPUT = "GOLDSLUICE_OUTPUT"
 """The environment variable that holds the folder under which a relative `output` of a definition is placed."""
@@ -545,6 +553,14 @@ def read_raw(source: Source, path, *, chunk: Optional[int] = None) -> Iterator[E
         yield module.read(path, **kwargs)
 
 
+@status(DONE)
+def output_status(out) -> Optional[dict]:
+    """The contents of `_goldsluice_status.json` in the output folder `out` (`{"state": "running" | "complete", ...}`), or `None` if the
+    folder has no such file (it was made before the file existed, or is not a goldsluice output)."""
+    path = Path(out) / STATUS_FILE
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
 class Dataset:
     """A dataset definition opened for reading: the pulses from its sources and the quantities processed from them."""
 
@@ -567,6 +583,10 @@ class Dataset:
                              f"goldpan.adapters.rq_root.read(path, detector={self.spec.root_detector}). processed() reads Parquet output only")
         if not (out / _parquet.MANIFEST).exists():
             raise FileNotFoundError(f"nothing processed yet in {out}: run `python -m goldsluice run {self.spec.path}`")
+        state = output_status(out)
+        if state is not None and state.get("state") != "complete":
+            warnings.warn(f"{out}: the last `goldsluice run` did not finish (state {state.get('state')!r}, started {state.get('started')}): "
+                          f"the output may be incomplete. Run `python -m goldsluice run {self.spec.path}` again to finish it", stacklevel=2)
         events = _parquet.read(out, detector=detector if detector is not None else self._detector())
         table = self.spec.run_metadata() if metadata else None
         if table is None:

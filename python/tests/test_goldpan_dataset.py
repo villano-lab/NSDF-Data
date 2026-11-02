@@ -1,4 +1,7 @@
 """goldpan.dataset: the dataset definition file, and reading pulses with their processed quantities."""
+import tomllib
+from pathlib import Path
+
 import awkward as ak
 import numpy as np
 import pytest
@@ -333,3 +336,67 @@ def test_processed_says_where_root_output_is_read_instead_of_failing_obscurely(t
     spec = write(tmp_path, spec_text(raw, top='name = "t"\noutput = "o"\noutput_format = "root"\nroot_detector = 7'))
     with pytest.raises(ValueError, match="rq_root.read"):
         Dataset.open(spec).processed()
+
+
+# ---- writing a definition: dump and dumps
+
+REPO = Path(__file__).resolve().parents[2]
+DEFINITIONS = sorted(p for p in (REPO / "goldsluice" / "examples").glob("*.dataset.toml")) + sorted((REPO / "data_analysis").rglob("*.dataset.toml"))
+
+
+@pytest.mark.parametrize("path", DEFINITIONS, ids=lambda p: p.name)
+def test_every_definition_in_the_repository_is_written_back_as_the_same_definition(path):
+    raw = tomllib.loads(path.read_text(encoding="utf-8"))
+    assert tomllib.loads(dataset.dumps(raw, base=path.parent)) == raw
+
+
+def test_dump_writes_a_file_that_loads_as_the_same_definition(tmp_path, raw):
+    definition = {
+        "dataset": {"name": "toy", "output": "out", "description": 'a "quoted" C:\\path, unicode: é, 日本', "format_version": dataset.FORMAT_VERSION,
+                    "metadata": "series.csv"},
+        "sources": [{"name": "raw", "format": "parquet", "paths": [str(raw), "~/idx/a b"], "glob": "~/idx/S*_F[0-9][0-9][0-9][0-9]",
+                     "detector": "TOY", "readout": {"pretrigger_samples": 500, "glitch_samples": 10, "sample_period_s": 0.8e-6},
+                     "read": {"channels": {"A": [0, 0], "B": [0, 1]}, "roles": {"A": "phonon", "B": "phonon"}, "flag": True}}],
+        "processing": [{"algorithm": "lowpass", "channels": ["A", "B"], "name": "lp",
+                        "params": {"cutoff_hz": 50e3, "order": 4, "sample_period_s": "@readout.sample_period_s"}},
+                       {"algorithm": "peak", "channels": "role:phonon", "input": "lp", "suffix": "_lp",
+                        "params": {"glitch_samples": "@readout.glitch_samples", "amps_per_adc": 1.5e-9}}],
+    }
+    path = tmp_path / "sub" / "toy.dataset.toml"
+    spec = dataset.dump(definition, path, header="Written by a test.\nSecond line.")
+    text = path.read_text(encoding="utf-8")
+    assert text.startswith("# Written by a test.\n# Second line.\n\n[dataset]\n") and "[sources.read]" in text and "[processing.params]" in text
+    assert tomllib.loads(text) == definition                                    # the same definition, in the same order of tables
+    assert spec.raw == definition and spec.path == path.resolve() and [s.name for s in spec.steps] == ["lp", None]
+    assert spec.steps[1].input == "lp" and spec.steps[1].suffix == "_lp" and spec.metadata == path.parent.resolve() / "series.csv"
+    assert dataset.dumps(spec) == text.split("\n\n", 1)[1]                      # a spec gives the same text (without the header)
+
+
+def test_dump_checks_the_definition_first_and_writes_nothing_when_it_fails(tmp_path, raw):
+    good = tomllib.loads(spec_text(raw))
+    target = write(tmp_path, "keep me", "toy.dataset.toml")
+    for bad, match in (({**good, "extra": {}}, "unknown key"),
+                       ({**good, "dataset": {**good["dataset"], "oops": 1}}, "oops"),
+                       ({**good, "processing": [{"algorithm": "peak", "channels": "role:phonon", "input": "nobody"}]}, "not the name of an earlier step"),
+                       ({**good, "sources": []}, "at least one"),
+                       ({**good, "dataset": {**good["dataset"], "metadata": ""}}, "metadata must be")):
+        with pytest.raises(ValueError, match=match):
+            dataset.dump(bad, target)
+    assert target.read_text(encoding="utf-8") == "keep me"
+
+
+def test_dumps_refuses_what_toml_has_no_value_for(tmp_path, raw):
+    good = tomllib.loads(spec_text(raw))
+    for value in (None, Path("a"), {1: 2}, object()):
+        bad = {**good, "processing": [{"algorithm": "peak", "channels": "role:phonon", "params": {"x": value}}]}
+        with pytest.raises(ValueError):
+            dataset.dumps(bad, base=tmp_path)
+
+
+def test_floats_and_special_strings_survive_the_round_trip(tmp_path, raw):
+    good = tomllib.loads(spec_text(raw))
+    params = {"a": 1e-9, "b": -2.5e20, "c": float("inf"), "d": float("-inf"), "e": 3.0, "f": "tab\there \\ \"q\" \x7f", "g": [1, 2.5, "x"], "h": {"n key": 1, "k": {"z": [1]}}}
+    out = tomllib.loads(dataset.dumps({**good, "processing": [{"algorithm": "peak", "channels": "all", "params": params}]}, base=tmp_path))
+    assert out["processing"][0]["params"] == params
+    nan = tomllib.loads(dataset.dumps({**good, "processing": [{"algorithm": "peak", "channels": "all", "params": {"n": float("nan")}}]}, base=tmp_path))
+    assert nan["processing"][0]["params"]["n"] != nan["processing"][0]["params"]["n"]

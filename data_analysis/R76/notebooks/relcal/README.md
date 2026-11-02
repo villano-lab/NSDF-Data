@@ -26,7 +26,7 @@ The face (Side 2) is drawn as in the Note 9 channel figure and the wiki: `A` the
 | `spots-82v-energy.ipynb` | the energy distributions (the uncalibrated sum of the six `integral`s) of the events in those two spots, against their surroundings, the excess of each spot, series by series, and the channels' shares |
 | `spot-f-tight-energy.ipynb` | the energy distribution of spot F with a tight cut (within 0.5 us of its centre, about 95 % spot events), against the events outside both spots |
 | `spot-f-tight-traces.ipynb` | randomly chosen events of that tight cut in all channels, one tiled figure per event (boards x inputs, as in the earlier notes) with the baseline and integration windows of `integral` drawn on every trace, and all of them overlaid; reads the raw dumps from `~/idx` |
-| `spectrum-82v-total.ipynb` | the total spectrum of the -82 V DCRC1pB series with no position selection; so far the `integral` of Side2pF alone, real and random triggers |
+| `spectrum-82v-total.ipynb` | the total spectrum of the -82 V DCRC1pB series with no position selection; the `integral` of Side2pF, then of all six channels with the ceiling each reaches when it stays saturated to the end of the trace, real and random triggers |
 | `spots_82v.py` | shared by the two notebooks above: reads the -82 V output, makes the delays and the selection, and defines the spot circles (`SPOTS`) and the rings around them |
 
 ## Rules of the folder

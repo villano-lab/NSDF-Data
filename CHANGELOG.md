@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Added
+
+- **`goldsluice run --replace`, and a status file that says whether a run finished.** An output folder keeps the detector it was made with (channels and readout) and refuses files made with another one, for example after the `pretrigger_samples` of a readout changed: `goldpan.adapters.parquet.write` raised only when the first new file was written. `run` now says so before it processes anything. `--replace` (`replace=True`) moves the whole old output folder aside to `<output>.old-<date>-<time>` (nothing is deleted) and starts a clean one, so a stopped run never leaves files of two readouts under one manifest, and the next run carries on in the new folder; it does nothing when the detector is the same. Every run writes `_goldsluice_status.json` into the output folder, `running` when it starts and `complete` when every raw file has been processed; if a run stops the state stays `running`, and `Dataset.processed()` warns that the output may be incomplete (an output without the file, made before this, is read without a warning). New `goldpan.adapters.parquet.stream_matches(path, detector)` and `goldpan.dataset.output_status(out)`. The dataset definition format is unchanged (`FORMAT_VERSION` stays 6): the status file is in the output folder, not in the definition.
+
 ### Fixed
 
 - **`Dataset.read()` works again on outputs that carry the trigger type.** Since the batch run writes what the adapter knows about each event (`trigger_type`, PR 187), `Dataset.read()` / `iter_events()` stopped with "the events already have ['trigger_type']" for an idx or MIDAS source, because the raw events and the processed table both had it. The columns the raw events already have are now not attached a second time (the adapter's own values stay).

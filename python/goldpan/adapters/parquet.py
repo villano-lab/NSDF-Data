@@ -120,6 +120,21 @@ write different dumps into one dataset at the same time: the data files are writ
 
 
 @status(DONE)
+def stream_matches(path, detector: Detector) -> Optional[bool]:
+    """Whether the stream of `detector.name` in the dataset at `path` was written with this detector (its channels and its readout).
+
+    `None` when there is nothing to disagree with: the dataset does not exist yet, or has no stream of that name. `False` is the case in
+    which `write` refuses to extend the stream (a different channel map, or a different readout such as another `pretrigger_samples`)."""
+    manifest = Path(path) / MANIFEST
+    if not manifest.exists():
+        return None
+    stream = json.loads(manifest.read_text(encoding="utf-8")).get("streams", {}).get(_safe_name("detector name", detector.name))
+    if stream is None:
+        return None
+    return stream["detector"] == _detector_to_json(detector)
+
+
+@status(DONE)
 def write(events: Events, path, *, row_group_size: int = 256) -> None:
     """Write `events` into the dataset directory `path` (created if needed), one file per (series, dump).
 

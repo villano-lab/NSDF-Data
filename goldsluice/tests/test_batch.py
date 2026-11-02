@@ -11,7 +11,7 @@ import awkward as ak
 from goldpan.adapters import parquet
 from goldpan.config import PulseConfig
 from goldpan.data import ChannelInfo, Detector, Events, Readout
-from goldpan.dataset import Dataset
+from goldpan.dataset import Dataset, output_status as dataset_status
 
 from goldsluice import batch
 from goldsluice.algorithms import ALGORITHMS
@@ -611,3 +611,78 @@ def test_the_prefetcher_reads_in_order_stays_ahead_by_the_places_it_has_and_alwa
     ready = [threading.Event() for _ in range(2)]
     batch._prefetch([tmp_path / "missing", paths[0]], 2, threading.Event(), threading.Semaphore(2), ready)
     assert all(e.is_set() for e in ready)
+
+
+# ---- a different detector in the output folder, --replace, and the status file ---------------------------------------------------
+
+def other_raw(root, series="S1", dumps=(("S1", "F0001", 7), ("S1", "F0002", 5))):
+    """The same toy dump, but with the channel B a charge channel: another detector of the same name, so the output cannot be extended."""
+    rng = np.random.default_rng(0)
+    det = Detector("TOY", (ChannelInfo("A", role="phonon"), ChannelInfo("B", role="charge"), ChannelInfo("Q", role="charge")),
+                   Readout.single(N_SAMPLES, READOUT))
+    files = []
+    for s, dump, n in dumps:
+        traces = {c: rng.normal(2000.0, 5.0, size=(n, N_SAMPLES)) for c in "ABQ"}
+        traces["A"][:, 1200:1300] += 3000.0
+        parquet.write(Events.from_arrays(det, traces, series=s, dump=dump), root)
+        files.append(root / "TOY" / f"{s}_{dump}.parquet")
+    return files
+
+
+def test_a_different_detector_is_refused_before_anything_is_processed(setup, capsys):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    before = sorted(p.name for p in (tmp / "out").rglob("*"))
+    write_spec(spec, other_raw(tmp / "raw2"))
+    with pytest.raises(ValueError, match="different detector.*--replace"):
+        batch.run(spec, progress=None)
+    assert sorted(p.name for p in (tmp / "out").rglob("*")) == before and not list(tmp.glob("out.old-*"))     # nothing moved or written
+    assert main(["run", str(spec)]) == 1 and "--replace" in capsys.readouterr().err
+
+
+def test_replace_sets_the_old_output_aside_and_starts_a_clean_one(setup, capsys):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    old = parquet.read(tmp / "out").quantities
+    write_spec(spec, other_raw(tmp / "raw2"))
+    report = batch.run(spec, replace=True)
+    assert "replacing" in capsys.readouterr().out
+    (aside,) = tmp.glob("out.old-*")
+    assert (aside / "_goldpan.json").exists() and len(parquet.read(aside).quantities) == len(old)       # the old output is kept, whole
+    new = parquet.read(tmp / "out")
+    assert parquet.stream_matches(tmp / "out", new.detector) is True and parquet.stream_matches(aside, new.detector) is False
+    assert len(report.files) == 2 and not any(f.skipped for f in report.files)                            # everything was done again
+    assert dataset_status(tmp / "out")["state"] == "complete"
+
+
+def test_replace_does_nothing_when_the_detector_is_the_same(setup):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    report = batch.run(spec, replace=True, progress=None)
+    assert not list(tmp.glob("out.old-*")) and all(f.skipped for f in report.files)
+    assert main(["run", str(spec), "--replace"]) == 0
+
+
+def test_the_status_file_says_running_until_the_run_has_finished(setup):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    done = dataset_status(tmp / "out")
+    assert done["state"] == "complete" and done["files"] == 2 and done["processed"] == 2 and done["finished"] >= done["started"]
+    assert batch.run(spec, progress=None).files and dataset_status(tmp / "out")["processed"] == 0       # a run with nothing to do is complete too
+    # a run that stops leaves the state at "running", and goldpan warns when the output is read
+    steps = ('[[processing]]\nalgorithm = "peak"\nchannels = "role:phonon"\n[processing.params]\n'
+             'glitch_samples = "@readout.glitch_samples"\npretrigger_samples = 99999\namps_per_adc = 1.0\n')
+    write_spec(spec, files, steps=steps)
+    with pytest.raises(ValueError, match="longer than the trace"):
+        batch.run(spec, progress=None)
+    assert dataset_status(tmp / "out")["state"] == "running"
+    with pytest.warns(UserWarning, match="did not finish"):
+        Dataset.open(spec).processed()
+
+
+def test_an_output_without_a_status_file_is_read_without_a_warning(setup, recwarn):
+    tmp, files, spec = setup
+    batch.run(spec, progress=None)
+    (tmp / "out" / "_goldsluice_status.json").unlink()                 # an output made before the file existed
+    Dataset.open(spec).processed()
+    assert not [w for w in recwarn if "did not finish" in str(w.message)]

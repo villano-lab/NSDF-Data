@@ -29,6 +29,7 @@ The face (Side 2) is drawn as in the Note 9 channel figure and the wiki: `A` the
 | `spectrum-82v-total.ipynb` | the total spectrum of the -82 V DCRC1pB series with no position selection; the `integral` of Side2pF, then of all six channels with the ceiling each reaches when it stays saturated to the end of the trace, real and random triggers |
 | `low-integral-traces.ipynb` | randomly chosen real triggers whose `integral` is between 0 and 0.75 in all six channels (no position cut), drawn as tiled figures with the baseline and integration windows, and overlaid |
 | `integral-vs-height.ipynb` | for each channel, the `integral` of every real trigger against its pulse height (`current_max`, ADC counts above the baseline), and the ratio of the two (the effective pulse length) against the height, with the saturated height and the largest integral it allows marked |
+| `spot-f-integral-vs-height.ipynb` | the other way round: events cut on the position first (spot F, tight), then the integral against the height of all six channels, and their ratio, against the events outside both spots |
 | `spots_82v.py` | shared by the two notebooks above: reads the -82 V output, makes the delays and the selection, and defines the spot circles (`SPOTS`) and the rings around them |
 
 ## Rules of the folder

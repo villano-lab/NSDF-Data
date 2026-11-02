@@ -6,7 +6,7 @@ import pytest
 
 import goldsluice
 from goldsluice import _core, reference
-from goldsluice.algorithms import ALGORITHMS, run
+from goldsluice.algorithms import ALGORITHMS, kind, run
 
 NAMES = sorted(ALGORITHMS)
 
@@ -33,9 +33,10 @@ def test_rust_and_python_agree_on_the_standard_inputs(name):
     for traces, params in cases:
         rust, py = run(name, traces, **params), run(name, traces, backend="python", **params)
         assert list(rust) == list(py) == list(ALGORITHMS[name].OUTPUTS)
+        shape = np.shape(traces) if kind(name) == "trace" else (len(traces),)         # a transform gives a trace for every trace
         for out in rust:
-            assert rust[out].shape == py[out].shape == (len(traces),)
-            np.testing.assert_allclose(rust[out], py[out], rtol=1e-12, atol=0, err_msg=f"{name}.{out}")
+            assert rust[out].shape == py[out].shape == shape
+            np.testing.assert_allclose(rust[out], py[out], rtol=1e-12, atol=getattr(ALGORITHMS[name], "ATOL", 0.0), err_msg=f"{name}.{out}")
 
 
 @pytest.mark.parametrize("name", NAMES)
@@ -56,6 +57,14 @@ def test_every_algorithm_has_a_revision(name):
     """`REVISION` is what the ledger of `goldsluice run` compares: a whole number, 1 for a new algorithm, raised when its results change."""
     revision = ALGORITHMS[name].REVISION
     assert isinstance(revision, int) and not isinstance(revision, bool) and revision >= 1
+
+
+@pytest.mark.parametrize("name", NAMES)
+def test_every_algorithm_reduces_a_trace_to_numbers_or_gives_a_trace(name):
+    """`KIND` is "quantities" (the default) or "trace" (a filter or a baseline subtraction, whose single output is the trace)."""
+    assert kind(name) in ("quantities", "trace")
+    if kind(name) == "trace":
+        assert tuple(ALGORITHMS[name].OUTPUTS) == ("trace",), f"{name}: a transform has the single output 'trace'"
 
 
 def test_parameters_have_no_defaults():
@@ -105,7 +114,7 @@ def test_every_algorithm_agrees_with_goldpan_or_says_why_it_cannot(name):
         ours, theirs = run(name, traces, **params), expected(traces, params)
         assert sorted(theirs) == sorted(module.OUTPUTS), f"{name}: goldpan_expected must give {list(module.OUTPUTS)}"
         for out in module.OUTPUTS:
-            np.testing.assert_allclose(ours[out], theirs[out], rtol=1e-12, atol=0, err_msg=f"{name}.{out} against goldpan")
+            np.testing.assert_allclose(ours[out], theirs[out], rtol=1e-12, atol=getattr(module, "ATOL", 0.0), err_msg=f"{name}.{out} against goldpan")
 
 
 def test_compare_times_both_backends():

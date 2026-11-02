@@ -1,7 +1,7 @@
 # The dataset of r76.dataset.toml, with the detector described in the registry (../../registry) instead of in this file: the readout, the
 # channel map and the roles come from the record of "NAI-S2", and root_detector from its `number`. Unlike r76.dataset.toml, which keeps the
-# two steps of the guides, this one uses **every algorithm of goldsluice** (python -m goldsluice algorithms): six steps, nine quantities
-# for each of the six channels.
+# two steps of the guides, this one uses **every algorithm of goldsluice** (python -m goldsluice algorithms), including steps that build on each
+# other (the last four steps): nine steps that give quantities and two filters that give a trace.
 # Everything written here wins over the registry, key by key. `python -m goldsluice check r76-registry.dataset.toml` lists the files.
 
 [dataset]
@@ -74,3 +74,44 @@ glitch_samples = "@readout.glitch_samples"
 pretrigger_samples = "@readout.pretrigger_samples"
 sample_period_s = "@readout.sample_period_s"
 fraction = 0.2                                 # the 20 % time: the differences of these between channels give the delay-based positions
+
+# ---- Steps that build on each other: a filter gives a trace, and a later step with `input = "<name>"` reads it instead of the raw trace.
+# `suffix` keeps the quantity names apart (adc_max, and adc_max_lp from the filtered trace); a step that gives a trace has a name and writes no quantity.
+
+[[processing]]
+algorithm = "lowpass"                          # zero-phase Butterworth low-pass filter (the same numbers as goldpan.algorithms.lowpass)
+name = "lp"
+channels = "role:phonon"
+[processing.params]
+cutoff_hz = 95e3                               # PLACEHOLDER: choose it for the pulses you study (Example 3 of the goldpan/goldsluice note)
+order = 4
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "peak"                             # the peak of the filtered trace: adc_max_lp, current_max_lp
+channels = "role:phonon"
+input = "lp"
+suffix = "_lp"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0
+
+[[processing]]
+algorithm = "subtract_line"                    # the pretrigger line (a slope, not just the mean) subtracted over the whole trace
+name = "flat"
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+fit_end_samples = 406                          # the line is fitted up to 94 samples (75 us) before the trigger at sample 500: the pulses start to rise up to ~40 us before it
+
+[[processing]]
+algorithm = "rise_crossing"                    # the 20 % time of the line-subtracted trace: a drifting baseline no longer shifts it
+channels = "role:phonon"
+input = "flat"
+suffix = "_flat"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+fraction = 0.2

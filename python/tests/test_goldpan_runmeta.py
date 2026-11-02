@@ -55,3 +55,47 @@ def test_groups_split_the_events_by_the_chosen_columns(table):
     assert got == {(-34.0, 2.0): [0, 3], (-34.0, 100.0): [2, 4], (0.0, 2.0): [1]}
     only_hv = {key: list(idx) for key, idx in runmeta.groups(s, table, by=("hv_v",))}
     assert only_hv == {(-34.0,): [0, 2, 3, 4], (0.0,): [1]}
+
+
+# ---- write_table
+
+def test_write_table_reads_back_the_same_table(tmp_path):
+    table = {"series": ["07221121_2214", "07221124_2022", "07221124_2331"], "hv_v": np.array([0.0, -34.0, -8.3]),
+             "trigger": ["DCRC1pA 2", 'say "hi", ok', "DCRC1pA 100"], "duration_min": [779, 97, None], "ratio": [1e-9, float("nan"), 2.5e20]}
+    back = runmeta.write_table(tmp_path / "sub" / "series.csv", table)
+    assert list(back) == ["series", "hv_v", "trigger", "duration_min", "ratio"]
+    assert list(back["series"]) == table["series"] and list(back["trigger"]) == table["trigger"]       # the names stay text
+    assert list(back["hv_v"]) == [0.0, -34.0, -8.3] and back["hv_v"].dtype == float
+    assert back["duration_min"][:2].tolist() == [779.0, 97.0] and np.isnan(back["duration_min"][2])
+    assert back["ratio"][0] == 1e-9 and np.isnan(back["ratio"][1]) and back["ratio"][2] == 2.5e20
+    again = runmeta.read_table(tmp_path / "sub" / "series.csv")
+    assert all(np.array_equal(again[c], back[c], equal_nan=again[c].dtype == float) for c in back)
+
+
+def test_write_table_writes_the_series_first_and_a_table_that_per_event_can_use(tmp_path):
+    back = runmeta.write_table(tmp_path / "series.csv", {"hv_v": [-34.0, 0.0], "series": np.array(["S2", "S1"]), "trigger_value": [2, 100]})
+    assert (tmp_path / "series.csv").read_text(encoding="utf-8").splitlines()[0] == "series,hv_v,trigger_value"
+    cols = runmeta.per_event(np.array(["S1", "S1", "S2"]), back)
+    assert cols["hv_v"].tolist() == [0.0, 0.0, -34.0] and cols["trigger_value"].tolist() == [100.0, 100.0, 2.0]
+
+
+def test_write_table_refuses_a_table_a_reader_would_not_give_back_and_writes_nothing(tmp_path):
+    path = tmp_path / "series.csv"
+    path.write_text("keep me", encoding="utf-8")
+    good = {"series": ["S1", "S2"], "hv_v": [0.0, -34.0]}
+    for bad, match in (({"hv_v": [0.0]}, "'series' column"),
+                       ({"series": [], "hv_v": []}, "no rows"),
+                       ({"series": ["S1", "S1"], "hv_v": [0.0, 1.0]}, "twice"),
+                       ({"series": ["S1", ""], "hv_v": [0.0, 1.0]}, "non-empty text"),
+                       ({"series": ["S1", "S2"], "hv_v": [0.0]}, "has 1 values"),
+                       ({**good, "mixed": [1.0, "x"]}, "mixes numbers and text"),
+                       ({**good, "flag": [True, False]}, "true/false"),
+                       ({**good, "looks_numeric": ["2", "100"]}, "take it for numbers"),
+                       ({**good, "also": ["2", ""]}, "take it for numbers"),
+                       ({**good, "nothing": [None, None]}, "take it for numbers"),
+                       ({**good, "odd": [object(), object()]}, "neither")):
+        with pytest.raises(ValueError, match=match):
+            runmeta.write_table(path, bad)
+    assert path.read_text(encoding="utf-8") == "keep me"
+    mixed = runmeta.write_table(path, {**good, "tag": ["2", "x"]})                  # one cell that is not a number keeps the column text
+    assert list(mixed["tag"]) == ["2", "x"]

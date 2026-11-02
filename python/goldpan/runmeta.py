@@ -15,9 +15,13 @@ picks the table row of each event, so there is no string comparison per event an
 
 **The table is data and is not in this library.** Where it lives (a file next to the outputs, or the detector registry) is
 not decided here: every function takes the table as an argument. Numeric columns come back as float arrays (an empty cell
-is NaN), the others as text. The `series` column is always text.
+is NaN), the others as text. The `series` column is always text. `write_table` writes such a table (a program that makes the
+file, such as a form in a browser, builds the columns and calls it); `read_table` of the file gives the same table back.
 """
 import csv
+import math
+from numbers import Real
+from pathlib import Path
 
 import numpy as np
 
@@ -49,6 +53,64 @@ def read_table(path):
     if len(set(table["series"])) != len(rows):
         raise ValueError(f"{path}: a series is listed twice")
     return table
+
+
+def _cells(name, values):
+    """The cells of one column as text, such that `read_table` gives the column back as it is (numbers or text). `None` is an empty cell."""
+    values = [v.item() if isinstance(v, np.generic) else v for v in values]
+    present = [v for v in values if v is not None]
+    if any(isinstance(v, bool) for v in present):
+        raise ValueError(f"column {name!r}: true/false are not run metadata; write numbers or text")
+    numbers = [isinstance(v, Real) for v in present]
+    if present and all(numbers):
+        return [("" if v is None or (isinstance(v, float) and math.isnan(v)) else repr(v)) for v in values]
+    if any(numbers) or not all(isinstance(v, str) for v in present):
+        raise ValueError(f"column {name!r} mixes numbers and text (or has values that are neither): a column is all numbers or all text")
+    cells = ["" if v is None else v for v in values]
+    for c in cells:
+        try:
+            float(c) if c != "" else None
+        except ValueError:
+            return cells                                                    # one cell that is not a number: read_table keeps the column as text
+    raise ValueError(f"column {name!r} is text, but every cell is a number or empty, so a reader would take it for numbers: write numbers, "
+                     "or make at least one cell text")
+
+
+@status(DONE)
+def write_table(path, table):
+    """Write a table (``{column: sequence}``, as `read_table` gives it) to the CSV file `path` and return what `read_table` gives for that file.
+
+    `table` needs a ``series`` column (text, every series once), written first; the other columns follow in the order of the mapping and have
+    as many values as `series`. A column is all numbers (`None` or NaN is an empty cell) or all text (`None` is an empty cell), so the
+    file reads back the same: a text column whose every cell looks like a number, or that mixes the two, is an error that names the column,
+    and so are true/false values and a table without rows. Nothing is written when the table is refused."""
+    if "series" not in table:
+        raise ValueError("the table needs a 'series' column")
+    columns = {name: list(values) for name, values in table.items()}
+    n = len(columns["series"])
+    if n == 0:
+        raise ValueError("the table has no rows")
+    for name, values in columns.items():
+        if not isinstance(name, str) or not name:
+            raise ValueError(f"a column name must be non-empty text, not {name!r}")
+        if len(values) != n:
+            raise ValueError(f"column {name!r} has {len(values)} values, 'series' has {n}")
+    series = [v.item() if isinstance(v, np.generic) else v for v in columns["series"]]
+    if not all(isinstance(v, str) and v for v in series):
+        raise ValueError("every series must be non-empty text, such as '07221121_2214'")
+    if len(set(series)) != n:
+        raise ValueError("a series is listed twice")
+    cells = {"series": series}
+    for name, values in columns.items():
+        if name != "series":
+            cells[name] = _cells(name, values)
+    path = Path(path).expanduser()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f, lineterminator="\n")
+        w.writerow(cells)
+        w.writerows(zip(*cells.values()))
+    return read_table(path)
 
 
 @status(DONE)

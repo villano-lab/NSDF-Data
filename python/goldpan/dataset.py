@@ -65,6 +65,11 @@ processed again. Nothing is written into the output and the fingerprint does not
 names it, and so is a column named like a quantity or a channel (`processed(metadata=False)` skips the join). The table is also at
 `spec.run_metadata()`, and `goldpan.runmeta` joins and groups it for events you have already. ROOT output is not read by `processed()`, so it has no metadata.
 
+**Writing a definition.** `dump(definition, path)` writes a definition file from a mapping with the layout of the file (the same thing `tomllib` gives
+for it, so a program, such as a form in a browser, can build it from what the user chose) or from a `DatasetSpec`; `dumps` gives the text. It
+checks the definition the way `load` does before it writes anything, so a file it writes always loads, and `load` of it gives back the same
+definition. Comments are not kept and nothing is added, so write `format_version` yourself if the file should say which format it uses.
+
 Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.
 With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the
 readout, the `[sources.read]` defaults of its file format and, for ROOT output, `root_detector` from the detector's record
@@ -280,6 +285,11 @@ def load(path) -> DatasetSpec:
         raw = tomllib.loads(path.read_text(encoding="utf-8"))
     except tomllib.TOMLDecodeError as e:
         raise ValueError(f"{path}: not valid TOML: {e}") from None
+    return _spec(raw, path)
+
+
+def _spec(raw: Mapping, path: Path) -> DatasetSpec:
+    """Check a parsed definition (`raw`) as if it were the file `path` (which need not exist: only its folder is used) and make the spec."""
     _unknown(str(path), raw, _TOP)
     d = raw.get("dataset")
     if d is None:
@@ -378,6 +388,80 @@ def load(path) -> DatasetSpec:
             raise ValueError(f"{where}: suffix must be letters, digits and underscores, not {suffix!r}")
         steps.append(Step(st["algorithm"], channels, dict(st.get("params", {})), name, source, suffix))
     return DatasetSpec(d["name"], output, tuple(sources), tuple(steps), path, raw, output_format, root_detector, reg, metadata)
+
+
+_BARE_KEY = re.compile(r"^[A-Za-z0-9_-]+$")
+
+
+def _toml_key(key) -> str:
+    if not isinstance(key, str) or not key:
+        raise ValueError(f"a key of a definition must be a non-empty string, not {key!r}")
+    return key if _BARE_KEY.match(key) else _toml_value(key)
+
+
+def _toml_value(value) -> str:
+    """One TOML value; tables inside a value are written inline. `ValueError` for anything TOML has no value for (`None`, a `Path`, ...)."""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float):
+        if value != value:
+            return "nan"
+        return ("inf" if value > 0 else "-inf") if value in (float("inf"), float("-inf")) else repr(value)
+    if isinstance(value, str):
+        return json.dumps(value, ensure_ascii=False).replace("\x7f", "\\u007f")
+    if isinstance(value, (list, tuple)):
+        return "[" + ", ".join(_toml_value(v) for v in value) + "]"
+    if isinstance(value, Mapping):
+        return "{ " + ", ".join(f"{_toml_key(k)} = {_toml_value(v)}" for k, v in value.items()) + " }" if value else "{}"
+    raise ValueError(f"cannot write {value!r} ({type(value).__name__}) in a definition: use text, numbers, true/false, lists and tables")
+
+
+def _toml_table(header: str, table: Mapping, sub: Optional[str] = None) -> list:
+    """The lines of one table: `header` (``[dataset]``, ``[[sources]]``), its keys, and the sub-table `sub` (``read``, ``params``) after them."""
+    lines = [header]
+    lines += [f"{_toml_key(k)} = {_toml_value(v)}" for k, v in table.items() if k != sub]
+    if table.get(sub):
+        lines += [f"[{header.strip('[]')}.{sub}]"] + [f"{_toml_key(k)} = {_toml_value(v)}" for k, v in table[sub].items()]
+    return lines
+
+
+def _toml_text(raw: Mapping, header: str) -> str:
+    blocks = [_toml_table("[dataset]", raw["dataset"])]
+    blocks += [_toml_table("[[sources]]", s, "read") for s in raw.get("sources", [])]
+    blocks += [_toml_table("[[processing]]", st, "params") for st in raw.get("processing", [])]
+    comment = "".join(f"# {line}".rstrip() + "\n" for line in header.splitlines()) + ("\n" if header else "")
+    return comment + "\n\n".join("\n".join(b) for b in blocks) + "\n"
+
+
+def _raw_of(definition) -> Mapping:
+    return definition.raw if isinstance(definition, DatasetSpec) else definition
+
+
+@status(DONE)
+def dumps(definition, *, base=".", header: str = "") -> str:
+    """The text of a dataset definition file, for `definition`: a mapping with the same layout as the file (``{"dataset": {...}, "sources": [...],
+    "processing": [...]}``, what `tomllib` gives for it) or a `DatasetSpec` (its `raw`). The definition is checked first, exactly as
+    `load` checks a file, as if the file were in the folder `base` (relative `registry` and `metadata` are looked for there), so text that
+    `load` would refuse is never produced, and `load(dump(...))` gives back the same definition. `header` is written as comment lines at the
+    top. Keys are written as given and nothing is added, not even `format_version`. Tables go in the order dataset, sources, steps, with
+    `read` and `params` as sub-tables; comments of an earlier file are not kept."""
+    raw = _raw_of(definition)
+    _spec(raw, Path(base).expanduser().resolve() / "definition.dataset.toml")
+    return _toml_text(raw, header)
+
+
+@status(DONE)
+def dump(definition, path, *, header: str = "") -> DatasetSpec:
+    """Write a dataset definition to the file `path` (see `dumps` for what `definition` is and how it is checked; the check looks at the folder of
+    `path`) and return it loaded from there, so the caller has what `load(path)` gives. A definition that does not pass the check is not written,
+    and an existing file at `path` is left alone."""
+    path = Path(path).expanduser().resolve()
+    text = dumps(definition, base=path.parent, header=header)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8", newline="\n")
+    return load(path)
 
 
 @status(DONE)

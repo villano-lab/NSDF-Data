@@ -37,6 +37,7 @@ The face (Side 2) is drawn as in the Note 9 channel figure and the wiki: `A` the
 | `baseline-window-onset.ipynb` | where the pulse starts in every channel, from the raw traces: the rising edge (median onset sample 483 to 486) is inside a baseline window of samples 10 to 500, which is why `bstd` grew with the height; traces from the ridge and from above it |
 | `bstd-distribution-450.ipynb` | `bstd` of every channel after the reprocessing with the 450-sample window (the real-trigger median equals the random-trigger one), the old window against the new, and the pulse evolution from the threshold to 5 % of the saturated height with a `bstd` cut, filtered with `subtract_line` (`figures/pulse-evolution-450.gif`) |
 | `positions-small-quiet-82v.ipynb` | the delay position (`xdel`, `ydel`, `phidel`, `afdel`) of the events that pass the `bstd` cut in all channels and have no channel above 5 % of its saturated height, with the effect of each cut |
+| `window-integral-small-quiet-82v.ipynb` | the same cuts as `positions-small-quiet-82v.ipynb`, with the `window_integral` (samples 450 to 950, line subtracted) of `r76-82V-window-integral.dataset.toml` summed over all six channels: the blob, the rest and the random triggers, inner and Side2pF against the sum |
 | `spots_82v.py` | shared by the notebooks that use the -82 V output: reads it, makes the delays and the selection, and defines the spot circles (`SPOTS`) and the rings around them; leaves out the series `EXCLUDE_SERIES` (`07221113_1159`, low pulse heights in every channel) |
 
 ## Rules of the folder

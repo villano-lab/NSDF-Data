@@ -9,13 +9,13 @@
 [dataset]
 name = "r76-82V-window-integral-tail"
 output = "~/goldsluice-output/r76-82V-window-integral-tail"
-registry = ["C:/Users/Anthony/Research/NSDF-Data/registry"]
+registry = ["../../../registry"]               # relative to this file
 metadata = "series.csv"
 
 [[sources]]
 name = "raw"
 format = "idx"
-paths = ["C:/Users/Anthony/idx/07221111_2153_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221112_0943_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221112_2249_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221113_1159_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221114_2141_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221115_0845_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221115_2109_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221116_1003_F[0-9][0-9][0-9][0-9]"]
+paths = ["~/idx/07221111_2153_F[0-9][0-9][0-9][0-9]", "~/idx/07221112_0943_F[0-9][0-9][0-9][0-9]", "~/idx/07221112_2249_F[0-9][0-9][0-9][0-9]", "~/idx/07221113_1159_F[0-9][0-9][0-9][0-9]", "~/idx/07221114_2141_F[0-9][0-9][0-9][0-9]", "~/idx/07221115_0845_F[0-9][0-9][0-9][0-9]", "~/idx/07221115_2109_F[0-9][0-9][0-9][0-9]", "~/idx/07221116_1003_F[0-9][0-9][0-9][0-9]"]
 detector = "NAI-S2"
 
 [[processing]]

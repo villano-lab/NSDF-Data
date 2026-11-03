@@ -9,6 +9,7 @@ use _core::peak::{PeakParams, peak_many, peak_one};
 use _core::rise_crossing::{RiseCrossingParams, rise_crossing_many, rise_crossing_one};
 use _core::rise_time::{RiseTimeParams, rise_time_many, rise_time_one};
 use _core::subtract_line::{SubtractLineParams, subtract_line_many, subtract_line_one};
+use _core::window_integral::{WindowIntegralParams, window_integral_many, window_integral_one};
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
@@ -93,6 +94,24 @@ fn bench_peak(c: &mut Criterion) {
     g.throughput(Throughput::Elements(n_events as u64));
     g.bench_function("10000 traces x 4096 samples", |bch| {
         bch.iter(|| integral_many(black_box(&many), n_samples, &i, &mut sd))
+    });
+    g.finish();
+
+    // the integral of the pulse alone: samples 500 to 999 of the same traces
+    let w = WindowIntegralParams {
+        glitch_samples: 10,
+        pretrigger_samples: 500,
+        sample_period_s: 0.8e-6,
+        start_sample: 500,
+        stop_sample: 1000,
+    };
+    c.bench_function("window_integral_one, 4096 samples", |bch| {
+        bch.iter(|| window_integral_one(black_box(&one), &w))
+    });
+    let mut g = c.benchmark_group("window_integral_many");
+    g.throughput(Throughput::Elements(n_events as u64));
+    g.bench_function("10000 traces x 4096 samples", |bch| {
+        bch.iter(|| window_integral_many(black_box(&many), n_samples, &w, &mut sd))
     });
     g.finish();
 

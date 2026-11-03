@@ -11,6 +11,7 @@ pub mod peak;
 pub mod rise_crossing;
 pub mod rise_time;
 pub mod subtract_line;
+pub mod window_integral;
 
 use numpy::{IntoPyArray, PyArray1, PyArray2, PyArrayMethods, PyReadonlyArray2, PyUntypedArrayMethods};
 use pyo3::exceptions::PyValueError;
@@ -108,6 +109,44 @@ fn integral_py<'py>(
         .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
     let mut out = vec![0.0; n_events];
     py.detach(|| integral::integral_many(data, n_samples, &p, &mut out));
+    Ok((out.into_pyarray(py),))
+}
+
+/// window_integral(traces, *, glitch_samples, pretrigger_samples, sample_period_s, start_sample, stop_sample) -> (window_integral,)
+///
+/// The sum of `traces[i] - baseline` for `i` from `start_sample` to `stop_sample - 1`, times `sample_period_s`.
+#[pyfunction]
+#[pyo3(
+    name = "window_integral",
+    signature = (traces, *, glitch_samples, pretrigger_samples, sample_period_s, start_sample, stop_sample)
+)]
+fn window_integral_py<'py>(
+    py: Python<'py>,
+    traces: PyReadonlyArray2<'py, f64>,
+    glitch_samples: usize,
+    pretrigger_samples: usize,
+    sample_period_s: f64,
+    start_sample: usize,
+    stop_sample: usize,
+) -> PyResult<(Bound<'py, PyArray1<f64>>,)> {
+    let p = window_integral::WindowIntegralParams {
+        glitch_samples,
+        pretrigger_samples,
+        sample_period_s,
+        start_sample,
+        stop_sample,
+    };
+    let [n_events, n_samples] = *traces.shape() else {
+        unreachable!("a 2-D array has two axes")
+    };
+    if let Some(why) = window_integral::problem(n_samples, &p) {
+        return Err(PyValueError::new_err(why));
+    }
+    let data = traces
+        .as_slice()
+        .map_err(|_| PyValueError::new_err("traces must be C-contiguous (use numpy.ascontiguousarray)"))?;
+    let mut out = vec![0.0; n_events];
+    py.detach(|| window_integral::window_integral_many(data, n_samples, &p, &mut out));
     Ok((out.into_pyarray(py),))
 }
 
@@ -299,6 +338,7 @@ fn init(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(max_time_py, m)?)?;
     m.add_function(wrap_pyfunction!(baseline_py, m)?)?;
     m.add_function(wrap_pyfunction!(integral_py, m)?)?;
+    m.add_function(wrap_pyfunction!(window_integral_py, m)?)?;
     m.add_function(wrap_pyfunction!(excursion_py, m)?)?;
     m.add_function(wrap_pyfunction!(rise_time_py, m)?)?;
     m.add_function(wrap_pyfunction!(rise_crossing_py, m)?)?;

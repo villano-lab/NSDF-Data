@@ -50,7 +50,17 @@ pretrigger_samples = "@readout.pretrigger_samples"
 sample_period_s = "@readout.sample_period_s"
 
 [[processing]]
-algorithm = "excursion"                        # max_deviation: the largest |x - baseline| after the window; excursion_ratio: that over baseline_std
+algorithm = "window_integral"                  # window_integral: the same sum over samples start_sample to stop_sample - 1 only (ADC counts x s)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+start_sample = 500                             # the pulse: from the end of the baseline window, 0.4 ms at 0.8 us per sample
+stop_sample = 1000
+
+[[processing]]
+algorithm = "excursion"                       # max_deviation: the largest |x - baseline| after the window; excursion_ratio: that over baseline_std
 channels = "role:phonon"
 [processing.params]
 glitch_samples = "@readout.glitch_samples"

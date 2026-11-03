@@ -7,7 +7,7 @@ The library `goldpan` (python/) has a version of its own (RELEASING.md, "The lib
 
 * it has the form `goldpan-vX.Y.Z`;
 * `python/pyproject.toml` has version `X.Y.Z`;
-* CHANGELOG.md says `goldpan X.Y.Z` in a released section (not under `[Unreleased]`), as RELEASING.md asks for every release
+* CHANGELOG.md says `goldpan X.Y.Z` (or ``goldpan`` X.Y.Z, with the backticks of Markdown) in a released section (not under `[Unreleased]`), as RELEASING.md asks for every release
   that changes the library.
 
 Prints the problems and exits 1 if there are any; prints the version and exits 0 if not. `--version-only TAG` prints just the
@@ -44,7 +44,7 @@ def problems(tag: str, root: Path = None) -> list:
     if declared != version:
         found.append(f"python/pyproject.toml says version {declared}, the tag says {version}")
     changelog = (root / "CHANGELOG.md").read_text(encoding="utf-8")
-    if not re.search(rf"\bgoldpan {re.escape(version)}\b", released_changelog(changelog)):
+    if not re.search(rf"\bgoldpan`? {re.escape(version)}\b", released_changelog(changelog)):      # `goldpan` 0.2.0 too
         found.append(f"CHANGELOG.md has no line 'goldpan {version}' in a released section (RELEASING.md, \"The library's own version\")")
     return found
 

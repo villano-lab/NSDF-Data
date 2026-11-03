@@ -77,7 +77,7 @@ def bline_1000(pulses, config: PulseConfig):
 
 @status(DONE)
 def max_deviation(pulses, config: PulseConfig):
-    """Max |post-pretrigger sample - pretrigger mean| per pulse ("dev" in the notebooks).
+    """Largest absolute deviation of a post-pretrigger sample from the pretrigger mean, per pulse ("dev" in the notebooks).
 
     Measured only in the post-pretrigger region (samples `pretrigger_samples:`).
     Measuring it over the whole trace instead (including the samples used to
@@ -176,7 +176,7 @@ def half_max_time_us(pulses, config: PulseConfig):
     reaches 50% of its own `max_deviation`: `rise_sample(fraction=0.5) * sample_period_s`.
 
     Only samples after `config.pretrigger_samples` are searched, so the window must
-    end before the pulse starts: with the default 1000-sample window a pulse rising
+    end before the pulse starts: with a 1000-sample window a pulse rising
     at sample 505 is not seen. Use `replace(config, pretrigger_samples=500)` for
     triggers near sample 500. Raises if `config.sample_period_s` is unset.
     """
@@ -187,7 +187,7 @@ def half_max_time_us(pulses, config: PulseConfig):
 
 @status(DONE)
 def power_spectrum(pulses, config: PulseConfig):
-    """Real part of `rfft(pulse) * conj(rfft(pulse))` ("complex square"/|FFT|^2) per pulse.
+    """Real part of `rfft(pulse) * conj(rfft(pulse))` (the squared magnitude of the FFT, "complex square") per pulse.
 
     Does *not* baseline-subtract for you -- pass already-baseline-subtracted
     pulses (see `goldpan.operations.baseline_subtract`) or the DC bin will

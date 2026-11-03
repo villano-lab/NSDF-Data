@@ -37,7 +37,7 @@ def test_pulse_config_has_no_defaults():
 
 
 def test_presets_name_their_readouts():
-    assert (gc.DCRC_RUN76.pretrigger_samples, gc.DCRC_RUN76.sample_period_s) == (1000, 0.8e-6)
+    assert (gc.DCRC_RUN76.pretrigger_samples, gc.DCRC_RUN76.sample_period_s) == (500, 0.8e-6)
     assert (gc.Z7.pretrigger_samples, gc.Z7.sample_period_s) == (6250, 1.6e-6)
     assert gc.DCRC_RUN76.sample_rate_hz == pytest.approx(1.25e6)
     assert gc.Z7.sample_rate_hz == pytest.approx(625e3)
@@ -68,7 +68,7 @@ def test_package_functions_require_a_config():
 
 def test_the_readout_changes_the_numbers_it_should():
     p = pulses()
-    np.testing.assert_allclose(gq.pretrigger_mean(p, gc.DCRC_RUN76), p[:, 10:1000].mean(axis=-1))
+    np.testing.assert_allclose(gq.pretrigger_mean(p, gc.DCRC_RUN76), p[:, 10:500].mean(axis=-1))
     np.testing.assert_allclose(gq.pretrigger_mean(p, gc.Z7), p[:, 10:2000].mean(axis=-1))   # the trace is shorter than 6250
     f_run76 = gq.frequencies_hz(100, gc.DCRC_RUN76)
     f_z7 = gq.frequencies_hz(100, gc.Z7)
@@ -77,13 +77,16 @@ def test_the_readout_changes_the_numbers_it_should():
 
 # ---- the flat names are aliases ---------------------------------------------------------------------------------
 
-def test_flat_functions_default_to_the_run76_readout_and_equal_the_package():
+FLAT_DEFAULT = gc.PulseConfig(1000, 10, 0.8e-6)      # the flat names keep the values the existing notebooks were run with (goldpan.legacy)
+
+
+def test_flat_functions_default_to_the_frozen_run76_readout_and_equal_the_package():
     p = pulses()
-    np.testing.assert_array_equal(flat_quantities.pretrigger_std(p), gq.pretrigger_std(p, gc.DCRC_RUN76))
-    np.testing.assert_array_equal(flat_quantities.excursion_ratio(p), gq.excursion_ratio(p, gc.DCRC_RUN76))
-    np.testing.assert_array_equal(flat_cuts.dead_channel(p), gcuts.dead_channel(p, gc.DCRC_RUN76))
-    np.testing.assert_array_equal(flat_operations.baseline_subtract(p), gop.baseline_subtract(p, gc.DCRC_RUN76))
-    np.testing.assert_array_equal(flat_quantities.frequencies_hz(100), gq.frequencies_hz(100, gc.DCRC_RUN76))
+    np.testing.assert_array_equal(flat_quantities.pretrigger_std(p), gq.pretrigger_std(p, FLAT_DEFAULT))
+    np.testing.assert_array_equal(flat_quantities.excursion_ratio(p), gq.excursion_ratio(p, FLAT_DEFAULT))
+    np.testing.assert_array_equal(flat_cuts.dead_channel(p), gcuts.dead_channel(p, FLAT_DEFAULT))
+    np.testing.assert_array_equal(flat_operations.baseline_subtract(p), gop.baseline_subtract(p, FLAT_DEFAULT))
+    np.testing.assert_array_equal(flat_quantities.frequencies_hz(100), gq.frequencies_hz(100, FLAT_DEFAULT))
 
 
 def test_a_config_given_positionally_or_by_name_still_wins():

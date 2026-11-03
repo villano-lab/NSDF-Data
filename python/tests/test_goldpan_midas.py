@@ -199,3 +199,70 @@ def test_real_end_of_run_odb_has_the_run_information():
             assert info["stop_time"] == 1777063870 and info["stop_time"] > info["start_time"]
             return
     pytest.fail("no end-of-run event at the end of the tail")
+
+
+# ---- the detectors of the ODB ----------------------------------------------------------------------------------------
+
+def _odb_with_detectors():
+    def det(n, name, code, tower, plane, on_ms, on_samp, pre_ms, hybrid_pre=0):
+        return (f'<dir name="Det{n:02d}"><key name="InitialUpdateMode" type="INT32" handle="1">1</key>'
+                f'<dir name="DCRCInfo"><key name="DetectorType Comment" type="STRING" handle="2" size="200">Ge,Si HV: 710,711</key>'
+                f'<key name="DetectorType" type="INT32" handle="3">{code}</key><key name="Tower" type="INT32" handle="4">{tower}</key>'
+                f'<key name="Plane" type="INT32" handle="5">{plane}</key><key name="DetectorName" type="STRING" handle="6" size="200">{name}</key></dir>'
+                f'<dir name="ReadoutControl"><key name="Phonon on-pulse length (ms)" type="FLOAT" handle="7">{on_ms}</key>'
+                f'<key name="Phonon on-pulse length (samp)" type="INT32" handle="8">{on_samp}</key>'
+                f'<key name="Phonon pre-trigger offset (samp" type="INT32" handle="9">{pre_ms}</key>'
+                f'<key name="Phonon pre-pulse length (samp)" type="INT32" handle="10">{hybrid_pre}</key></dir></dir>')
+    return ('<odb><dir name="Runinfo"><key name="Run number" type="INT32" handle="0">5</key></dir><dir name="Detectors">'
+            + det(1, "G135", 700, 1, 1, 11.008, 6880, 4375) + det(7, "G149", 710, 2, 1, 52.4288, 32768, 16383, 2048)
+            + '<dir name="Det24"></dir></dir><dir name="Other"><dir name="Det01"><dir name="DCRCInfo">'
+            + '<key name="DetectorName" type="STRING" handle="11" size="200">NOT-A-DETECTOR</key></dir></dir></dir></odb>')
+
+
+def test_parse_odb_detectors_reads_the_detector_blocks_and_stops_at_the_end_of_the_detectors_directory():
+    found = midas.parse_odb_detectors(_odb_with_detectors().encode("latin-1"))
+    assert [d.number for d in found] == [1, 7, 24]
+    g149 = found[1]
+    assert (g149.name, g149.type_code, g149.tower, g149.plane) == ("G149", 710, 2, 1)
+    assert g149.readout == {"phonon_on_pulse_ms": 52.4288, "phonon_on_pulse_samples": 32768.0,
+                            "phonon_pre_trigger_offset_samples": 16383.0, "phonon_pre_pulse_samples": 2048.0}
+    assert found[2] == midas.OdbDetector(24, None, None, None, None, {})                  # a block without the keys: nothing invented
+    assert midas.parse_odb_detectors(b"<odb><dir name=\"Runinfo\"></dir></odb>") == []
+
+
+def test_detectors_reads_the_odb_of_a_file_and_refuses_a_file_without_one(tmp_path, folder):
+    found = midas.detectors(folder / "07221203_2025_F0001.mid.gz")                   # the synthetic file's ODB has three detector blocks
+    assert [d.number for d in found] == [1, 2, 3] and found[0].type_code == ss.DETECTOR_TYPE and found[0].name is None
+    empty = tmp_path / "empty.mid"
+    empty.write_bytes(b"")
+    with pytest.raises(ValueError, match="begin-of-run"):
+        midas.detectors(empty)
+
+
+def test_registry_entry_states_what_the_odb_gives_and_leaves_the_rest_to_the_reader():
+    from goldpan import registry
+    det = midas.parse_odb_detectors(_odb_with_detectors())[1]
+    text = midas.registry_entry(det, origin="a test ODB")
+    import tomllib
+    table = tomllib.loads("format_version = 1\n" + text)["detectors"]["G149"]
+    assert (table["number"], table["odb_name"], table["type_code"], table["tower"], table["plane"], table["status"]) == \
+        (7, "G149", 710, 2, 1, "confirmed") and "Det07/DCRCInfo in a test ODB" in table["evidence"]
+    assert "# readout =" in text and "readout" not in table                              # the readout is for the reader to add
+    assert registry.Registry([_Text(text)]).detector("G149").number == 7                    # and the entry is a valid record as it is
+
+
+class _Text:
+    def __init__(self, text):
+        import tomllib
+        self.tables = tomllib.loads("format_version = 1\n" + text)
+
+    def load(self):
+        yield "text", self.tables
+
+
+@pytest.mark.skipif(not SAMPLE or not os.path.exists(SAMPLE or ""), reason="GOLDPAN_MIDAS_SAMPLE not set")
+def test_real_file_odb_names_the_detectors_and_z7_is_det07():
+    pytest.importorskip("lz4.frame")
+    found = {d.number: d for d in midas.detectors(SAMPLE)}
+    assert len(found) == 24 and found[7].name == "G149" and found[7].type_code == 710 and (found[7].tower, found[7].plane) == (2, 1)
+    assert found[7].readout["phonon_on_pulse_samples"] == 32768.0 and found[7].readout["phonon_pre_pulse_samples"] == 0.0

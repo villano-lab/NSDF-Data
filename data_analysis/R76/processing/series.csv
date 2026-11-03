@@ -1,0 +1,21 @@
+series,hv_v,trigger,trigger_value,type,source_shield,duration_min,dumps_in_output,from
+07221121_2214,0.0,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",779,779,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221124_1408,-8.3,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",67,67,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221124_1603,-16.3,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",84,84,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221124_1748,-24.0,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",118,118,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221124_2022,-34.0,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",97,97,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221124_2331,-34.0,DCRC1pA 100,100.0,Side2,"PuBe / Pb&poly, lead stack, borax",361,361,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221125_0547,0.0,DCRC1pA 100,100.0,Side2,"PuBe / Pb&poly, lead stack, borax",532,532,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221201_0118,0.0,DCRC1pA 100,100.0,Side2,"PuBe / Pb&poly, lead stack, borax",,647,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221203_1255,-46.6,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",68,68,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221203_1418,-53.5,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",108,108,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221203_1622,-63.4,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",68,68,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221203_1744,-73.0,DCRC1pA 2,2.0,Side2,"PuBe / Pb&poly, lead stack, borax",64,64,data_analysis/R76/series_lists/nsdf_r76_series.csv@d480707
+07221111_2153,-82.2,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",55,55,data_analysis/R76/series_lists/nsdf_r76_series.csv
+07221112_0943,-82.2,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",101,101,data_analysis/R76/series_lists/nsdf_r76_series.csv
+07221112_2249,-82.1,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",69,69,data_analysis/R76/series_lists/nsdf_r76_series.csv
+07221113_1159,-82,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",45,45,data_analysis/R76/series_lists/nsdf_r76_series.csv
+07221114_2141,-81.8,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",37,37,data_analysis/R76/series_lists/nsdf_r76_series.csv
+07221115_0845,-81.7,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",33,33,data_analysis/R76/series_lists/nsdf_r76_series.csv
+07221115_2109,-81.7,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",51,51,data_analysis/R76/series_lists/nsdf_r76_series.csv
+07221116_1003,-81.6,DCRC1pB 10,10.0,Side2,"PuBe / Pb&poly, lead stack, borax",45,45,data_analysis/R76/series_lists/nsdf_r76_series.csv

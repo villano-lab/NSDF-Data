@@ -1,7 +1,7 @@
 ---
 title: "Git in VS Code"
 subtitle: "NSDF-Data student guide 9 — Linux edition, optional"
-date: "Version 5 · 20 October 2026"
+date: "Version 6 · 28 October 2026"
 ---
 
 ::: tip
@@ -35,6 +35,16 @@ sudo apt install ./code_*.deb
 ```
 
 If you have downloaded more than one such file, use the exact file name instead of the `*`.
+
+**If you cannot use `sudo`** (a computer you do not administer): use the `.tar.gz` file. It needs no password and no installer. Go to [code.visualstudio.com/Download](https://code.visualstudio.com/Download) and download the **.tar.gz** for your computer (x64 for most PCs, Arm64 for an ARM computer). In a terminal, go to the folder with the file (usually `cd ~/Downloads`) and run:
+
+```
+mkdir -p ~/apps
+tar -xzf code-stable-*.tar.gz -C ~/apps
+ls ~/apps
+```
+
+The last line shows the folder it made, normally `VSCode-linux-x64`. Start VS Code with `~/apps/VSCode-linux-x64/code`{.cmd} (use the folder name you see). If you downloaded more than one such file, use the exact file name instead of the `*`.
 
 ::: checkpoint
 VS Code starts and shows a **Welcome** page.
@@ -186,7 +196,7 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 
 ## Session Info
 
-Guide version 5, 20 October 2026, Linux edition. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
+Guide version 6, 28 October 2026, Linux edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

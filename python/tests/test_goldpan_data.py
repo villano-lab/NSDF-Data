@@ -5,13 +5,14 @@ import numpy as np
 import pytest
 
 from goldpan import quantities as gq
-from goldpan.config import DCRC_RUN76, PulseConfig, Z7
+from goldpan.config import PulseConfig, Z7
 from goldpan.data import (KEY_COLUMNS, MAIN, ChannelInfo, Detector, Events, Readout, Segment)
 
 N_SAMPLES = 1200
+READOUT = PulseConfig(pretrigger_samples=1000, glitch_samples=10, sample_period_s=0.8e-6)     # a 1000-sample window, 0.8 us: what these tests were written for
 
 
-def detector(config=DCRC_RUN76, n_samples=N_SAMPLES, name="S104"):
+def detector(config=READOUT, n_samples=N_SAMPLES, name="S104"):
     return Detector(
         name,
         (ChannelInfo("A", role="phonon", unit="DCRC1", input="pA"),
@@ -33,14 +34,14 @@ def events(n=5, **kw):
 # ---- the pieces -----------------------------------------------------------------------------------------------
 
 def test_readout_single_has_the_main_segment_and_its_config():
-    r = Readout.single(N_SAMPLES, DCRC_RUN76)
+    r = Readout.single(N_SAMPLES, READOUT)
     assert [s.name for s in r.segments] == [MAIN]
-    assert r.config() is DCRC_RUN76
+    assert r.config() is READOUT
     assert r.segment().n_samples == N_SAMPLES
 
 
 def test_time_axis_is_seconds_relative_to_the_trigger():
-    r = Readout.single(N_SAMPLES, DCRC_RUN76)
+    r = Readout.single(N_SAMPLES, READOUT)
     t = r.time_axis()
     assert t[0] == pytest.approx(-1000 * 0.8e-6)
     assert t[1000] == pytest.approx(0.0, abs=1e-12)
@@ -58,11 +59,11 @@ def test_time_axis_needs_the_sample_period():
 def test_readout_rejects_no_segments_duplicates_and_unknown_names():
     with pytest.raises(ValueError):
         Readout(())
-    seg = Segment.main(10, DCRC_RUN76)
+    seg = Segment.main(10, READOUT)
     with pytest.raises(ValueError, match="unique"):
         Readout((seg, seg))
     with pytest.raises(KeyError, match="no segment"):
-        Readout.single(10, DCRC_RUN76).segment("fine")
+        Readout.single(10, READOUT).segment("fine")
 
 
 def test_hybrid_readout_has_two_segments_with_their_own_periods():
@@ -85,7 +86,7 @@ def test_detector_channels_and_roles():
 
 def test_detector_rejects_duplicate_channel_names():
     with pytest.raises(ValueError, match="unique"):
-        Detector("X", (ChannelInfo("A"), ChannelInfo("A")), Readout.single(10, DCRC_RUN76))
+        Detector("X", (ChannelInfo("A"), ChannelInfo("A")), Readout.single(10, READOUT))
 
 
 # ---- Events ----------------------------------------------------------------------------------------------------

@@ -33,9 +33,12 @@ only some columns.
 **Versioning.** An addition that old readers can ignore (a new quantity, a new metadata key) keeps the version; a change they
 cannot read raises `goldpan.format_version`. The sample dataset in `python/tests/data/sample_dataset/` is read by the tests of
 goldpan and is the file that goldsluice's tests read too.
+
+**Where the files go is not decided here.** `write(events, path)` writes exactly where it is told and does not check that the folder is outside a Git repository: that guard, and the single output root (`GOLDSLUICE_OUTPUT`, see `goldpan.dataset`), belong to batch mode (`goldsluice run`, `goldsluice.batch.check_output_location`). Called by hand, keep the output outside the repository yourself.
 """
 import json
 import re
+import threading
 from dataclasses import replace
 from pathlib import Path
 from typing import Iterator, Optional
@@ -48,6 +51,10 @@ import pyarrow.parquet as pq
 from ..config import PulseConfig
 from ..data import ChannelInfo, Detector, Events, Readout, Segment
 from ..status import DONE, status
+
+REVISION = 1
+"""Raised by one when a change of this reader changes what it returns for the same file (a fix), so that `goldsluice run` redoes the outputs
+made with the old one (`goldpan.adapters.revision`). Not for a change that leaves the results alone."""
 
 FORMAT_VERSION = 1
 MANIFEST = "_goldpan.json"
@@ -107,12 +114,34 @@ def _table(events: Events, meta_json: str) -> pa.Table:
     })
 
 
+_MANIFEST_LOCK = threading.Lock()
+"""Held while the manifest of a dataset is read and written, so that several threads of one process (`goldsluice run --workers N`) can
+write different dumps into one dataset at the same time: the data files are written outside it."""
+
+
+@status(DONE)
+def stream_matches(path, detector: Detector) -> Optional[bool]:
+    """Whether the stream of `detector.name` in the dataset at `path` was written with this detector (its channels and its readout).
+
+    `None` when there is nothing to disagree with: the dataset does not exist yet, or has no stream of that name. `False` is the case in
+    which `write` refuses to extend the stream (a different channel map, or a different readout such as another `pretrigger_samples`)."""
+    manifest = Path(path) / MANIFEST
+    if not manifest.exists():
+        return None
+    stream = json.loads(manifest.read_text(encoding="utf-8")).get("streams", {}).get(_safe_name("detector name", detector.name))
+    if stream is None:
+        return None
+    return stream["detector"] == _detector_to_json(detector)
+
+
 @status(DONE)
 def write(events: Events, path, *, row_group_size: int = 256) -> None:
     """Write `events` into the dataset directory `path` (created if needed), one file per (series, dump).
 
     A file of the same series dump is replaced; the manifest gets the stream of this detector. Events added to an existing
-    stream must have the same detector (channels and readout). `events.meta` must be JSON-serializable."""
+    stream must have the same detector (channels and readout). `events.meta` must be JSON-serializable. Safe to call from several
+    threads of one process for different dumps (the manifest is updated under a lock, the data files are written outside it); two
+    processes writing into one dataset at the same time are not protected."""
     _check_names(events)
     try:
         meta_json = json.dumps(dict(events.meta))
@@ -122,25 +151,36 @@ def write(events: Events, path, *, row_group_size: int = 256) -> None:
     name = _safe_name("detector name", events.detector.name)
     detector_json = _detector_to_json(events.detector)
 
-    manifest = {"format": "goldpan-dataset", "format_version": FORMAT_VERSION, "streams": {}}
-    if (root / MANIFEST).exists():
-        manifest = json.loads((root / MANIFEST).read_text(encoding="utf-8"))
-        if manifest.get("format_version", 0) > FORMAT_VERSION:
-            raise ValueError(f"{root} has format version {manifest['format_version']}, newer than this goldpan ({FORMAT_VERSION})")
-    stream = manifest["streams"].setdefault(name, {"kind": "events", "main_array": True, "detector": detector_json, "files": []})
-    if stream["detector"] != detector_json:
-        raise ValueError(f"the stream {name!r} of {root} has a different detector (channels or readout); it cannot be extended")
+    def load_manifest():
+        manifest = {"format": "goldpan-dataset", "format_version": FORMAT_VERSION, "streams": {}}
+        if (root / MANIFEST).exists():
+            manifest = json.loads((root / MANIFEST).read_text(encoding="utf-8"))
+            if manifest.get("format_version", 0) > FORMAT_VERSION:
+                raise ValueError(f"{root} has format version {manifest['format_version']}, newer than this goldpan ({FORMAT_VERSION})")
+        stream = manifest["streams"].setdefault(name, {"kind": "events", "main_array": True, "detector": detector_json, "files": []})
+        if stream["detector"] != detector_json:
+            raise ValueError(f"the stream {name!r} of {root} has a different detector (channels or readout); it cannot be extended")
+        return manifest, stream
+
+    with _MANIFEST_LOCK:
+        load_manifest()                                       # refuse a different detector before anything is written
 
     (root / name).mkdir(parents=True, exist_ok=True)
     series, dump = events.quantities["series"].to_list(), events.quantities["dump"].to_list()
+    written = []
     for s, d in sorted(set(zip(series, dump))):
         relative = f"{name}/{_safe_name('series', s)}_{_safe_name('dump', d)}.parquet"
         mask = np.array([a == s and b == d for a, b in zip(series, dump)])
         pq.write_table(_table(events.select(mask), meta_json), root / relative, compression="zstd", row_group_size=row_group_size)
-        if relative not in stream["files"]:
-            stream["files"].append(relative)
-    stream["files"].sort()
-    (root / MANIFEST).write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+        written.append(relative)
+
+    with _MANIFEST_LOCK:                                       # read again: another thread may have added its files meanwhile
+        manifest, stream = load_manifest()
+        for relative in written:
+            if relative not in stream["files"]:
+                stream["files"].append(relative)
+        stream["files"].sort()
+        (root / MANIFEST).write_text(json.dumps(manifest, indent=1), encoding="utf-8")
 
 
 # ---- reading ----------------------------------------------------------------------------------------------------

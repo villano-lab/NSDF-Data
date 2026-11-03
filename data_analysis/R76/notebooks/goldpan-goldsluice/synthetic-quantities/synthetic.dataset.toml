@@ -1,0 +1,60 @@
+# The dataset definition of the synthetic example (example-2-*.ipynb): the six algorithms of goldsluice on the made-up traces of
+# ../synthetic-goldpan. The quantities it produced are saved next to it (out/), so the notebook needs no run. To make them again:
+#   python -m goldsluice run synthetic.dataset.toml --allow-output-in-repo
+# (the override is for this toy output only: results of real data never go in the repository)
+
+[dataset]
+name = "synthetic"
+output = "out"
+
+[[sources]]
+name = "synthetic"
+format = "parquet"
+glob = "../synthetic-goldpan/NSDF/*.parquet"
+detector = "NSDF"
+
+[[processing]]
+algorithm = "peak"                             # adc_max: the largest sample; current_max: the largest sample above the baseline
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+amps_per_adc = 1.0                             # PLACEHOLDER: current_max is in ADC counts until the ADC-to-amps scale is known
+
+[[processing]]
+algorithm = "max_time"                         # max_time_s: when the largest sample happens, in seconds from the start of the trace
+channels = "role:phonon"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "baseline"                         # baseline_mean, baseline_std: the mean and the deviation of the pretrigger window (ADC counts)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "integral"                         # integral: the sum of (x - baseline) over the whole trace, times the sample period (ADC counts x s)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "excursion"                        # max_deviation: the largest |x - baseline| after the window; excursion_ratio: that over baseline_std
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "rise_time"                        # rise_time_s: from lo to hi of the height of the largest pulse (nan if it has no rise)
+channels = "role:phonon"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+lo = 0.1                                       # the usual 10-90 % rise time: these two are part of the definition of the quantity
+hi = 0.9

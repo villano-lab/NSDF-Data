@@ -1,0 +1,1013 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
+
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>goldpan.dataset - goldpan and goldsluice</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">goldpan and goldsluice</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">goldpan and goldsluice</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">How the pieces fit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guides.html">Guides</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/index.html">Reference</a><input aria-label="Toggle navigation of Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/goldpan.html">goldpan</a><input aria-label="Toggle navigation of goldpan" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/generated/goldpan.html">goldpan</a><input aria-label="Toggle navigation of goldpan" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../reference/generated/goldpan.adapters.html">goldpan.adapters</a><input aria-label="Toggle navigation of goldpan.adapters" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldpan.adapters.idx.html">goldpan.adapters.idx</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldpan.adapters.midas.html">goldpan.adapters.midas</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldpan.adapters.parquet.html">goldpan.adapters.parquet</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldpan.adapters.rq.html">goldpan.adapters.rq</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldpan.adapters.rq_root.html">goldpan.adapters.rq_root</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.algorithms.html">goldpan.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.archive.html">goldpan.archive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.channels.html">goldpan.channels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.config.html">goldpan.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.cuts.html">goldpan.cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.data.html">goldpan.data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.dataset.html">goldpan.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.io.html">goldpan.io</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.legacy.html">goldpan.legacy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.operations.html">goldpan.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.quantities.html">goldpan.quantities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.registry.html">goldpan.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.rq_cuts.html">goldpan.rq_cuts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.rqdata.html">goldpan.rqdata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.runmeta.html">goldpan.runmeta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.status.html">goldpan.status</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldpan.testing.html">goldpan.testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/goldsluice.html">goldsluice</a><input aria-label="Toggle navigation of goldsluice" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/generated/goldsluice.html">goldsluice</a><input aria-label="Toggle navigation of goldsluice" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldsluice.algorithms.html">goldsluice.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldsluice.batch.html">goldsluice.batch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/generated/goldsluice.profile.html">goldsluice.profile</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../reference/generated/goldsluice.reference.html">goldsluice.reference</a><input aria-label="Toggle navigation of goldsluice.reference" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.baseline.html">goldsluice.reference.baseline</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.excursion.html">goldsluice.reference.excursion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.integral.html">goldsluice.reference.integral</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.lowpass.html">goldsluice.reference.lowpass</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.max_time.html">goldsluice.reference.max_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.peak.html">goldsluice.reference.peak</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.rise_crossing.html">goldsluice.reference.rise_crossing</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.rise_time.html">goldsluice.reference.rise_time</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.subtract_line.html">goldsluice.reference.subtract_line</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../reference/generated/goldsluice.reference.window_integral.html">goldsluice.reference.window_integral</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for goldpan.dataset</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""A dataset definition: which raw files, how to read them, and which processing to run on them. One TOML file, read by both</span>
+<span class="sd">packages: `goldsluice` runs the processing in batch, `goldpan` reads the pulses and the processed quantities back.</span>
+
+<span class="sd">The file (`r76.dataset.toml`)::</span>
+
+<span class="sd">    [dataset]</span>
+<span class="sd">    name = "r76-nai"</span>
+<span class="sd">    output = "r76-nai"                      # the processed quantities: a goldpan Parquet dataset (directory), keep it outside the repository</span>
+<span class="sd">    # output_format = "root"                # optional: RQ-style ROOT files instead, with our names (needs root_detector = N too)</span>
+<span class="sd">    # registry = ["../registry"]            # optional: folders of detector records (goldpan.registry), relative to this file</span>
+<span class="sd">    # metadata = "r76.series.csv"           # optional: run metadata per series (high voltage, trigger setting, ...), joined to the events when read</span>
+
+<span class="sd">    [[sources]]                             # where the pulses come from; as many as you like</span>
+<span class="sd">    name = "side2"</span>
+<span class="sd">    format = "idx"                          # any adapter: idx, midas, parquet, or one you registered</span>
+<span class="sd">    paths = ["~/idx/07221203_2025_F0001"]   # raw files or dump folders ...</span>
+<span class="sd">    glob = "~/idx/07221203_2025_F*"         # ... and/or a pattern (sorted)</span>
+<span class="sd">    detector = "NAI-S2"                     # the detector name (the adapter's detector_name)</span>
+<span class="sd">    readout = "DCRC_RUN76"                  # a preset of goldpan.config, or { pretrigger_samples = 1000, glitch_samples = 10, sample_period_s = 0.8e-6 }</span>
+<span class="sd">    [sources.read]                          # the other keyword arguments of the adapter's read(), verbatim</span>
+<span class="sd">    channels = { Side2pA = [0, 0], Side2pB = [0, 1] }</span>
+<span class="sd">    roles = { Side2pA = "phonon", Side2pB = "phonon" }</span>
+
+<span class="sd">    [[processing]]                          # the steps, in order; each adds quantities to the channels it names</span>
+<span class="sd">    algorithm = "peak"                      # a goldsluice algorithm</span>
+<span class="sd">    channels = "role:phonon"                # "all", "role:&lt;role&gt;", or a list of channel names</span>
+<span class="sd">    [processing.params]</span>
+<span class="sd">    glitch_samples = "@readout.glitch_samples"        # "@readout.&lt;field&gt;": taken from the readout of the data</span>
+<span class="sd">    pretrigger_samples = "@readout.pretrigger_samples"</span>
+<span class="sd">    amps_per_adc = 1.5e-9</span>
+
+<span class="sd">**Where the output goes.** `output` may be a full path (`"C:/data/goldsluice-output/r76-nai"`, or `"~/goldsluice-output/r76-nai"`), which is used as</span>
+<span class="sd">written. A *relative* `output` (`"r76-nai"`) is put under the folder named by the environment variable `GOLDSLUICE_OUTPUT` when it is set, so the</span>
+<span class="sd">definition holds no path of your machine and the same file runs on every computer; when it is not set, a relative `output` is relative to the</span>
+<span class="sd">folder of the definition file, as before (and `goldsluice run` refuses it if that is inside a repository that does not ignore it).</span>
+
+<span class="sd">**An unfinished run.** `goldsluice run` writes `_goldsluice_status.json` into the output folder (`STATUS_FILE`): ``{"state": "running", ...}``</span>
+<span class="sd">when it starts and ``{"state": "complete", "started": ..., "finished": ..., "files": N, ...}`` when every raw file of the definition has been processed.</span>
+<span class="sd">If a run stops (an error, Ctrl-C, a crash) the state stays `running`, and `Dataset.processed()` warns that the output may be incomplete. An output</span>
+<span class="sd">folder made before this file existed has none and is read without a warning.</span>
+
+<span class="sd">**Steps that build on each other.** A step reads the raw trace unless it has an `input`. A step whose algorithm gives a trace (a filter or a</span>
+<span class="sd">baseline subtraction: `goldsluice algorithms` lists them) has a `name`, writes no quantities, and a later step with `input = "&lt;name&gt;"`</span>
+<span class="sd">reads its result instead of the raw trace, for the channels the two steps share. A `suffix` is appended to the names of the quantities</span>
+<span class="sd">of a step, so that the same algorithm can run on both (`adc_max`, and `adc_max_lp` from the filtered trace). The quantities of a step must</span>
+<span class="sd">still be written once: two steps giving the same name is an error. Steps run in the order written, and an `input` is a step above::</span>
+
+<span class="sd">    [[processing]]</span>
+<span class="sd">    algorithm = "lowpass"                   # a filter: gives a trace, so it has a name</span>
+<span class="sd">    name = "lp"</span>
+<span class="sd">    channels = "role:phonon"</span>
+<span class="sd">    [processing.params]</span>
+<span class="sd">    cutoff_hz = 50e3</span>
+<span class="sd">    order = 4</span>
+<span class="sd">    sample_period_s = "@readout.sample_period_s"</span>
+
+<span class="sd">    [[processing]]</span>
+<span class="sd">    algorithm = "peak"</span>
+<span class="sd">    channels = "role:phonon"</span>
+<span class="sd">    input = "lp"                            # the peak of the filtered trace</span>
+<span class="sd">    suffix = "_lp"                          # adc_max_lp, current_max_lp</span>
+<span class="sd">    [processing.params]</span>
+<span class="sd">    ...</span>
+
+<span class="sd">**Different steps for different sources.** Every step runs on every source unless it has `sources`, a list of source names. Use it when the</span>
+<span class="sd">detectors need different processing; a step on `role:phonon` already adapts to each detector's own channels, so name sources only when the steps differ.</span>
+<span class="sd">A step that reads a filter (`input`) must run on a subset of the sources the filter runs on, and every source needs at least one step. A source's output is</span>
+<span class="sd">redone only when the steps that run on it change. Read back together, the sources show their different quantities as records of different</span>
+<span class="sd">fields (an awkward union), so pick one source's rows by `series` before you use its fields::</span>
+
+<span class="sd">    [[sources]]</span>
+<span class="sd">    name = "nai"</span>
+<span class="sd">    detector = "NAI-S2"</span>
+<span class="sd">    ...</span>
+<span class="sd">    [[sources]]</span>
+<span class="sd">    name = "ge"</span>
+<span class="sd">    detector = "GE-1"</span>
+<span class="sd">    ...</span>
+<span class="sd">    [[processing]]</span>
+<span class="sd">    algorithm = "peak"</span>
+<span class="sd">    channels = "role:phonon"                # no `sources`: runs on both</span>
+<span class="sd">    ...</span>
+<span class="sd">    [[processing]]</span>
+<span class="sd">    algorithm = "rise_crossing"</span>
+<span class="sd">    channels = "role:phonon"</span>
+<span class="sd">    sources = ["ge"]                        # only the raw files of the source "ge"</span>
+<span class="sd">    ...</span>
+
+<span class="sd">**Run metadata.** `metadata` is a reference to facts about whole series that an analysis needs for every event (high voltage, trigger setting,</span>
+<span class="sd">...): today a CSV file with a `series` column and any other columns (`hv_v`, `trigger_value`, `trigger`, ...), relative to this file, one row per series;</span>
+<span class="sd">later it may name a database instead, and nothing else in the file changes. The values are **joined at read time**: `Dataset.processed()` (and so</span>
+<span class="sd">`read()`) adds one column per column of the table to the events, taken from the row of their series, so a change of a value never needs the data to be</span>
+<span class="sd">processed again. Nothing is written into the output and the fingerprint does not change. A series that has events but is not listed is an error that</span>
+<span class="sd">names it, and so is a column named like a quantity or a channel (`processed(metadata=False)` skips the join). The table is also at</span>
+<span class="sd">`spec.run_metadata()`, and `goldpan.runmeta` joins and groups it for events you have already. ROOT output is not read by `processed()`, so it has no metadata.</span>
+
+<span class="sd">**Writing a definition.** `dump(definition, path)` writes a definition file from a mapping with the layout of the file (the same thing `tomllib` gives</span>
+<span class="sd">for it, so a program, such as a form in a browser, can build it from what the user chose) or from a `DatasetSpec`; `dumps` gives the text. It</span>
+<span class="sd">checks the definition the way `load` does before it writes anything, so a file it writes always loads, and `load` of it gives back the same</span>
+<span class="sd">definition. Comments are not kept and nothing is added, so write `format_version` yourself if the file should say which format it uses.</span>
+
+<span class="sd">Nothing is assumed: the readout, the channels and every algorithm parameter are written down, in the file or in a registry it names.</span>
+<span class="sd">With `registry` (and/or the environment variable `GOLDPAN_REGISTRY`), a source whose `detector` is a name in the registry takes the</span>
+<span class="sd">readout, the `[sources.read]` defaults of its file format and, for ROOT output, `root_detector` from the detector's record</span>
+<span class="sd">(`goldpan.registry`); whatever the file itself states wins, key by key, and a readout that disagrees with the registry's is a warning.</span>
+<span class="sd">A detector name that is not in any registry is only a label, as before. `Dataset.open(path)` gives the same file to both packages::</span>
+
+<span class="sd">    ds = Dataset.open("r76.dataset.toml")</span>
+<span class="sd">    ev = ds.read()                          # the pulses, with the processed quantities attached (one Events)</span>
+<span class="sd">    q = ds.processed()                      # only the processed quantities, no pulses: small and fast</span>
+<span class="sd">    ev.quantities["Side2pA"]["current_max"]</span>
+
+<span class="sd">With `output_format = "root"` the quantities are written as ROOT files in the layout of the collaboration's RQ files (`rqDir/eventTree`</span>
+<span class="sd">and `rqDir/zip&lt;N&gt;`, see `goldpan.adapters.rq_root.write`), under our names (`Side2pA_adc_max`); `root_detector` is that `N`. Read them with</span>
+<span class="sd">`goldpan.adapters.rq_root.read`: `Dataset.processed()` reads the Parquet output only.</span>
+
+<span class="sd">The processed quantities are stored one record per channel (`quantities["Side2pA"]["adc_max"]`), keyed by `series`, `dump`,</span>
+<span class="sd">`event`. `python -m goldsluice run &lt;file&gt;` produces them; reading them before that raises an error that says so.</span>
+<span class="sd">"""</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tomllib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span><span class="p">,</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">awkward</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ak</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">registry</span> <span class="k">as</span> <span class="n">_registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">runmeta</span> <span class="k">as</span> <span class="n">_runmeta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">_adapter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">parquet</span> <span class="k">as</span> <span class="n">_parquet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">rq</span> <span class="k">as</span> <span class="n">_rq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PulseConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Events</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">._toml</span><span class="w"> </span><span class="kn">import</span> <span class="n">_key</span><span class="p">,</span> <span class="n">_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.status</span><span class="w"> </span><span class="kn">import</span> <span class="n">DONE</span><span class="p">,</span> <span class="n">status</span>
+
+<span class="n">FORMAT_VERSION</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="sd">"""The version of the dataset definition file; a reader refuses a newer one. 2: `output_format` and `root_detector`. 3: `registry`</span>
+<span class="sd">(and a detector named in a registry supplies readout, `[sources.read]` defaults and `root_detector`). 4: a relative `output` goes</span>
+<span class="sd">under `$GOLDSLUICE_OUTPUT` when that is set. 5: `metadata`, a reference (a CSV file) to run metadata per series, joined to the events when they are read.</span>
+<span class="sd">6: steps may have a `name`, an `input` (the `name` of an earlier step whose result they read) and a `suffix` for their quantities.</span>
+<span class="sd">7: a step may have `sources`, the names of the sources it applies to (without it a step applies to all of them)."""</span>
+
+<span class="n">STATUS_FILE</span> <span class="o">=</span> <span class="s2">"_goldsluice_status.json"</span>
+<span class="sd">"""The file in an output folder that says whether the last `goldsluice run` finished (see `output_status`)."""</span>
+
+<span class="n">ENV_OUTPUT</span> <span class="o">=</span> <span class="s2">"GOLDSLUICE_OUTPUT"</span>
+<span class="sd">"""The environment variable that holds the folder under which a relative `output` of a definition is placed."""</span>
+
+<span class="n">_TOP</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"dataset"</span><span class="p">,</span> <span class="s2">"sources"</span><span class="p">,</span> <span class="s2">"processing"</span><span class="p">}</span>
+<span class="n">_DATASET</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">,</span> <span class="s2">"description"</span><span class="p">,</span> <span class="s2">"format_version"</span><span class="p">,</span> <span class="s2">"output_format"</span><span class="p">,</span> <span class="s2">"root_detector"</span><span class="p">,</span> <span class="s2">"registry"</span><span class="p">,</span> <span class="s2">"metadata"</span><span class="p">}</span>
+<span class="n">_OUTPUT_FORMATS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"parquet"</span><span class="p">,</span> <span class="s2">"root"</span><span class="p">)</span>
+<span class="n">_SOURCE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"format"</span><span class="p">,</span> <span class="s2">"paths"</span><span class="p">,</span> <span class="s2">"glob"</span><span class="p">,</span> <span class="s2">"detector"</span><span class="p">,</span> <span class="s2">"readout"</span><span class="p">,</span> <span class="s2">"read"</span><span class="p">}</span>
+<span class="n">_STEP</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">,</span> <span class="s2">"suffix"</span><span class="p">,</span> <span class="s2">"sources"</span><span class="p">}</span>
+<span class="n">_STEP_NAME</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^[A-Za-z][A-Za-z0-9_]*$"</span><span class="p">)</span>
+<span class="n">_SUFFIX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^[A-Za-z0-9_]*$"</span><span class="p">)</span>
+<span class="n">_READOUT</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"pretrigger_samples"</span><span class="p">,</span> <span class="s2">"glitch_samples"</span><span class="p">,</span> <span class="s2">"sample_period_s"</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="Source">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Source">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Source</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">patterns</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">"""The `paths` and `glob` entries as written (with `~` and relative to the folder of the definition file when used)."""</span>
+    <span class="n">detector</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">readout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PulseConfig</span><span class="p">]</span>
+    <span class="n">read</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">"""Keyword arguments of the adapter's `read`, as written in the file."""</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">Path</span>
+<span class="w">    </span><span class="sd">"""The folder of the definition file, for relative paths."""</span>
+    <span class="n">detector_record</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_registry</span><span class="o">.</span><span class="n">DetectorRecord</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""The registry's record of `detector`, if a registry has one; `read` and `readout` already include what it supplies."""</span>
+
+<div class="viewcode-block" id="Source.files">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Source.files">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The raw files or dump folders of the source, in order. `ValueError` if a pattern or path matches nothing."""</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+            <span class="n">expanded</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+            <span class="n">expanded</span> <span class="o">=</span> <span class="n">expanded</span> <span class="k">if</span> <span class="n">expanded</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">/</span> <span class="n">expanded</span>
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">ch</span> <span class="ow">in</span> <span class="n">pattern</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="s2">"*?["</span><span class="p">):</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">expanded</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">found</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">expanded</span><span class="p">)]</span> <span class="k">if</span> <span class="n">expanded</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"source </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: </span><span class="si">{</span><span class="n">pattern</span><span class="si">!r}</span><span class="s2"> matches nothing (looked in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">found</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Step">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Step">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Step</span><span class="p">:</span>
+    <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">channels</span><span class="p">:</span> <span class="n">Any</span>
+<span class="w">    </span><span class="sd">"""``"all"``, ``"role:&lt;role&gt;"`` or a tuple of channel names."""</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""What later steps call this one (`input = "&lt;name&gt;"`); needed by a step whose algorithm gives a trace (a filter)."""</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""The `name` of an earlier step whose resulting trace this step reads instead of the raw trace, or `None`."""</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+<span class="w">    </span><span class="sd">"""Appended to the names of the quantities this step writes (`adc_max` becomes `adc_max_lp`), so that the same algorithm can run on the raw trace and on a filtered one."""</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""The names of the sources this step applies to, or `None` for all of them."""</span>
+
+<div class="viewcode-block" id="Step.applies_to">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Step.applies_to">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">applies_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Does this step run on the raw files of the source called `source_name`? (Always, unless the step names its `sources`.)"""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span></div>
+
+
+<div class="viewcode-block" id="Step.channel_names">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Step.channel_names">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detector</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The channels of `detector` this step applies to."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">detector</span><span class="o">.</span><span class="n">channel_names</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">channels_with_role</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"role:"</span><span class="p">):])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">names</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="si">!r}</span><span class="s2">: the detector </span><span class="si">{</span><span class="n">detector</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> has no channel with role "</span>
+                                 <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">'role:'</span><span class="p">):]</span><span class="si">!r}</span><span class="s2"> (roles: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">({</span><span class="n">c</span><span class="o">.</span><span class="n">role</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">detector</span><span class="o">.</span><span class="n">channels</span><span class="p">})</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">names</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+            <span class="n">detector</span><span class="o">.</span><span class="n">channel</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>                                     <span class="c1"># KeyError for an unknown channel</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Step.resolve">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Step.resolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">PulseConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The parameters with every `"@readout.&lt;field&gt;"` replaced by that field of `config`."""</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"@readout."</span><span class="p">):</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"@readout."</span><span class="p">):]</span>
+                <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_READOUT</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="si">!r}</span><span class="s2">, parameter </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">: the readout has </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">_READOUT</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"step </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="si">!r}</span><span class="s2">, parameter </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">: the readout does not give </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DatasetSpec">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.DatasetSpec">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetSpec</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">output</span><span class="p">:</span> <span class="n">Path</span>
+    <span class="n">sources</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Source</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Step</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="w">    </span><span class="sd">"""The definition file."""</span>
+    <span class="n">raw</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="w">    </span><span class="sd">"""The parsed TOML, kept for provenance."""</span>
+    <span class="n">output_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"parquet"</span>
+<span class="w">    </span><span class="sd">"""`"parquet"` (a goldpan dataset) or `"root"` (RQ-style ROOT files, `goldpan.adapters.rq_root.write`)."""</span>
+    <span class="n">root_detector</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""The number `N` of the `zip&lt;N&gt;` tree of the ROOT output; required with `output_format = "root"` (written in the file, or the</span>
+<span class="sd">    `number` of the registry's record of the detector), otherwise `None`."""</span>
+    <span class="n">registry</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_registry</span><span class="o">.</span><span class="n">Registry</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""The registry the definition names (and the environment variable adds); empty if there is none."""</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">"""The file the definition names as its run metadata (`[dataset] metadata`), or `None`. It is not opened until it is used."""</span>
+
+<div class="viewcode-block" id="DatasetSpec.run_metadata">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.DatasetSpec.run_metadata">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""The run metadata as a table (``{column: array}``, see `goldpan.runmeta.read_table`), or `None` if the definition names none.</span>
+<span class="sd">        The file is read now, not when the definition is loaded, so a run that does not need it works without it."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_runmeta</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">: [dataset] metadata: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DatasetSpec.source">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.DatasetSpec.source">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Source</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"the dataset has several sources </span><span class="si">{</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">]</span><span class="si">}</span><span class="s2">: name one"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">s</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"no source </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">; the dataset has </span><span class="si">{</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_unknown</span><span class="p">(</span><span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">allowed</span><span class="p">:</span> <span class="nb">set</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">extra</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">-</span> <span class="n">allowed</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">extra</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: unknown key(s) </span><span class="si">{</span><span class="n">extra</span><span class="si">}</span><span class="s2">; allowed: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">allowed</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_readout</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reg</span><span class="p">:</span> <span class="n">_registry</span><span class="o">.</span><span class="n">Registry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PulseConfig</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">reg</span><span class="o">.</span><span class="n">readout_config</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: readout </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">_unknown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: readout"</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">_READOUT</span><span class="p">)</span>
+        <span class="n">missing</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_READOUT</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: readout needs </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s2"> (there are no defaults); write the three numbers or name a preset"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PulseConfig</span><span class="p">(</span><span class="o">**</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: readout must be a preset name or a table, not </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_output_path</span><span class="p">(</span><span class="n">written</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Where `output = written` goes: a full path (or one that starts with ``~``) as written; a relative one under</span>
+<span class="sd">    ``$GOLDSLUICE_OUTPUT`` when that is set, otherwise relative to the folder `base` of the definition."""</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">written</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">path</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ENV_OUTPUT</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span> <span class="o">/</span> <span class="n">path</span> <span class="k">if</span> <span class="n">root</span> <span class="k">else</span> <span class="n">base</span> <span class="o">/</span> <span class="n">path</span>
+
+
+<div class="viewcode-block" id="load">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.load">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Read and check a dataset definition file. Nothing is opened: the raw files need not exist yet."""</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span>
+    <span class="k">except</span> <span class="n">tomllib</span><span class="o">.</span><span class="n">TOMLDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: not valid TOML: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="k">return</span> <span class="n">_spec</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_spec</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Check a parsed definition (`raw`) as if it were the file `path` (which need not exist: only its folder is used) and make the spec."""</span>
+    <span class="n">_unknown</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">raw</span><span class="p">,</span> <span class="n">_TOP</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"dataset"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: needs a [dataset] table with name and output"</span><span class="p">)</span>
+    <span class="n">_unknown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: [dataset]"</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">_DATASET</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"format_version"</span><span class="p">,</span> <span class="n">FORMAT_VERSION</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">FORMAT_VERSION</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> has format_version </span><span class="si">{</span><span class="n">d</span><span class="p">[</span><span class="s1">'format_version'</span><span class="p">]</span><span class="si">}</span><span class="s2">, newer than this goldpan (</span><span class="si">{</span><span class="n">FORMAT_VERSION</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: [dataset] needs </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">folders</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"registry"</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">folders</span> <span class="o">=</span> <span class="p">[</span><span class="n">folders</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">folders</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">folders</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: [dataset] registry must be a folder or a list of folders"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">reg</span> <span class="o">=</span> <span class="n">_registry</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="o">*</span><span class="p">[(</span><span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span> <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="n">base</span> <span class="o">/</span> <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">())</span>
+                               <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">_output_path</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"output"</span><span class="p">],</span> <span class="n">base</span><span class="p">)</span>
+    <span class="n">output_format</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"output_format"</span><span class="p">,</span> <span class="s2">"parquet"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_OUTPUT_FORMATS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: [dataset] output_format must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_OUTPUT_FORMATS</span><span class="p">)</span><span class="si">}</span><span class="s2">, not </span><span class="si">{</span><span class="n">output_format</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">root_detector</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"root_detector"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">root_detector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root_detector</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root_detector</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">or</span> <span class="n">root_detector</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: root_detector must be a whole number, the N of the zip&lt;N&gt; tree (output_format = </span><span class="se">\"</span><span class="s2">root</span><span class="se">\"</span><span class="s2"> needs root_detector = N)"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_format</span> <span class="o">!=</span> <span class="s2">"root"</span> <span class="ow">and</span> <span class="n">root_detector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: root_detector only applies with output_format = </span><span class="se">\"</span><span class="s2">root</span><span class="se">\"</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">metadata</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s2">"metadata"</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"metadata"</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">d</span><span class="p">[</span><span class="s2">"metadata"</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: [dataset] metadata must be the path of a CSV file (relative to this file)"</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"metadata"</span><span class="p">])</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="n">base</span> <span class="o">/</span> <span class="n">metadata</span>
+
+    <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sources"</span><span class="p">,</span> <span class="p">[])):</span>
+        <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: sources[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span>
+        <span class="n">_unknown</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">_SOURCE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"format"</span><span class="p">,</span> <span class="s2">"detector"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2"> needs </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">patterns</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"paths"</span><span class="p">,</span> <span class="p">[]))</span> <span class="o">+</span> <span class="p">([</span><span class="n">s</span><span class="p">[</span><span class="s2">"glob"</span><span class="p">]]</span> <span class="k">if</span> <span class="s2">"glob"</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">else</span> <span class="p">[]))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">patterns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2"> needs paths and/or glob"</span><span class="p">)</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">detector</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">"detector"</span><span class="p">])</span> <span class="k">if</span> <span class="n">reg</span><span class="o">.</span><span class="n">has_detector</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">"detector"</span><span class="p">])</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">readout</span> <span class="o">=</span> <span class="n">_readout</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"readout"</span><span class="p">),</span> <span class="n">where</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+        <span class="n">read</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"read"</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">readout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">from_registry</span> <span class="o">=</span> <span class="n">_readout</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">readout</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: the registry's detector </span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">,</span> <span class="n">reg</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">readout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">readout</span> <span class="o">=</span> <span class="n">from_registry</span>
+                <span class="k">elif</span> <span class="n">readout</span> <span class="o">!=</span> <span class="n">from_registry</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: the readout written here (</span><span class="si">{</span><span class="n">readout</span><span class="si">}</span><span class="s2">) is not the one the registry gives detector "</span>
+                                  <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">record</span><span class="o">.</span><span class="n">readout</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">from_registry</span><span class="si">}</span><span class="s2">); the one written here is used"</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">read</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">record</span><span class="o">.</span><span class="n">read_defaults</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s2">"format"</span><span class="p">]),</span> <span class="o">**</span><span class="n">read</span><span class="p">}</span>
+        <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Source</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"source</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">),</span> <span class="n">s</span><span class="p">[</span><span class="s2">"format"</span><span class="p">],</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="s2">"detector"</span><span class="p">],</span> <span class="n">readout</span><span class="p">,</span> <span class="n">read</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">record</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sources</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: needs at least one [[sources]]"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">({</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">})</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: source names must be unique, got </span><span class="si">{</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">sources</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s2">"root"</span><span class="p">:</span>
+        <span class="n">numbers</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">detector_record</span><span class="o">.</span><span class="n">number</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">detector_record</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">s</span><span class="o">.</span><span class="n">detector_record</span><span class="o">.</span><span class="n">number</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">root_detector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: output_format = </span><span class="se">\"</span><span class="s2">root</span><span class="se">\"</span><span class="s2"> needs root_detector = N, the number of the zip&lt;N&gt; tree (a whole number), "</span>
+                                 <span class="s2">"or one detector in a registry that has a `number`"</span> <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">" (the sources have </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span> <span class="k">if</span> <span class="n">numbers</span> <span class="k">else</span> <span class="s2">""</span><span class="p">))</span>
+            <span class="n">root_detector</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">numbers</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">numbers</span> <span class="ow">and</span> <span class="n">numbers</span> <span class="o">!=</span> <span class="p">{</span><span class="n">root_detector</span><span class="p">}:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: root_detector = </span><span class="si">{</span><span class="n">root_detector</span><span class="si">}</span><span class="s2"> is not the number the registry gives the detector "</span>
+                          <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span><span class="si">}</span><span class="s2">); the one written here is used"</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">st</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"processing"</span><span class="p">,</span> <span class="p">[])):</span>
+        <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: processing[</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">]"</span>
+        <span class="n">_unknown</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="n">_STEP</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"algorithm"</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">st</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2"> needs </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="s2">"channels"</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">channels</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">channels</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="n">channels</span> <span class="o">==</span> <span class="s2">"all"</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">channels</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">channels</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"role:"</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">channels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: channels must be </span><span class="se">\"</span><span class="s2">all</span><span class="se">\"</span><span class="s2">, </span><span class="se">\"</span><span class="s2">role:&lt;role&gt;</span><span class="se">\"</span><span class="s2"> or a list of names, not </span><span class="si">{</span><span class="n">channels</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span> <span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"input"</span><span class="p">),</span> <span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"suffix"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_STEP_NAME</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: name must be letters, digits and underscores, starting with a letter, not </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: two steps are named </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">steps</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: input </span><span class="si">{</span><span class="n">source</span><span class="si">!r}</span><span class="s2"> is not the name of an earlier step (steps run in order; an input is a step above this one)"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_SUFFIX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">suffix</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: suffix must be letters, digits and underscores, not </span><span class="si">{</span><span class="n">suffix</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">only</span> <span class="o">=</span> <span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sources"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">only</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">only</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">only</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: sources must be a non-empty list of source names (the sources of this file are </span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">only</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">only</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: sources names a source twice: </span><span class="si">{</span><span class="n">only</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">unknown</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">only</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: sources </span><span class="si">{</span><span class="n">unknown</span><span class="si">}</span><span class="s2"> are not sources of this file (they are </span><span class="si">{</span><span class="n">names</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="n">only</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">only</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>                                   <span class="c1"># a step that reads a filter must run where the filter runs</span>
+            <span class="n">producer</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">steps</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">source</span><span class="p">)</span>
+            <span class="n">mine</span><span class="p">,</span> <span class="n">theirs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">only</span> <span class="ow">or</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">]),</span> <span class="nb">set</span><span class="p">(</span><span class="n">producer</span><span class="o">.</span><span class="n">sources</span> <span class="ow">or</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">mine</span> <span class="o">&lt;=</span> <span class="n">theirs</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: runs on the sources </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">mine</span><span class="p">)</span><span class="si">}</span><span class="s2"> but the step </span><span class="si">{</span><span class="n">source</span><span class="si">!r}</span><span class="s2"> that it reads runs only on </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">theirs</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Step</span><span class="p">(</span><span class="n">st</span><span class="p">[</span><span class="s2">"algorithm"</span><span class="p">],</span> <span class="n">channels</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">st</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"params"</span><span class="p">,</span> <span class="p">{})),</span> <span class="n">name</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">suffix</span><span class="p">,</span> <span class="n">only</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">DatasetSpec</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sources</span><span class="p">),</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">steps</span><span class="p">),</span> <span class="n">path</span><span class="p">,</span> <span class="n">raw</span><span class="p">,</span> <span class="n">output_format</span><span class="p">,</span> <span class="n">root_detector</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+
+
+<span class="n">_toml_key</span><span class="p">,</span> <span class="n">_toml_value</span> <span class="o">=</span> <span class="n">_key</span><span class="p">,</span> <span class="n">_value</span>                                      <span class="c1"># the writers of values live in `_toml`</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_toml_table</span><span class="p">(</span><span class="n">header</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">sub</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The lines of one table: `header` (``[dataset]``, ``[[sources]]``), its keys, and the sub-table `sub` (``read``, ``params``) after them."""</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">header</span><span class="p">]</span>
+    <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_toml_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">_toml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="n">sub</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">table</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sub</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">header</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'[]'</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">sub</span><span class="si">}</span><span class="s2">]"</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_toml_key</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">_toml_value</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">table</span><span class="p">[</span><span class="n">sub</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="n">lines</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_toml_text</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">blocks</span> <span class="o">=</span> <span class="p">[</span><span class="n">_toml_table</span><span class="p">(</span><span class="s2">"[dataset]"</span><span class="p">,</span> <span class="n">raw</span><span class="p">[</span><span class="s2">"dataset"</span><span class="p">])]</span>
+    <span class="n">blocks</span> <span class="o">+=</span> <span class="p">[</span><span class="n">_toml_table</span><span class="p">(</span><span class="s2">"[[sources]]"</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s2">"read"</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"sources"</span><span class="p">,</span> <span class="p">[])]</span>
+    <span class="n">blocks</span> <span class="o">+=</span> <span class="p">[</span><span class="n">_toml_table</span><span class="p">(</span><span class="s2">"[[processing]]"</span><span class="p">,</span> <span class="n">st</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">)</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"processing"</span><span class="p">,</span> <span class="p">[])]</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"# </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">"</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span> <span class="o">+</span> <span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="k">if</span> <span class="n">header</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">comment</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_raw_of</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">definition</span><span class="o">.</span><span class="n">raw</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">definition</span><span class="p">,</span> <span class="n">DatasetSpec</span><span class="p">)</span> <span class="k">else</span> <span class="n">definition</span>
+
+
+<div class="viewcode-block" id="dumps">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.dumps">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dumps</span><span class="p">(</span><span class="n">definition</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="s2">"."</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The text of a dataset definition file, for `definition`: a mapping with the same layout as the file (``{"dataset": {...}, "sources": [...],</span>
+<span class="sd">    "processing": [...]}``, what `tomllib` gives for it) or a `DatasetSpec` (its `raw`). The definition is checked first, exactly as</span>
+<span class="sd">    `load` checks a file, as if the file were in the folder `base` (relative `registry` and `metadata` are looked for there), so text that</span>
+<span class="sd">    `load` would refuse is never produced, and `load(dump(...))` gives back the same definition. `header` is written as comment lines at the</span>
+<span class="sd">    top. Keys are written as given and nothing is added, not even `format_version`. Tables go in the order dataset, sources, steps, with</span>
+<span class="sd">    `read` and `params` as sub-tables; comments of an earlier file are not kept."""</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">_raw_of</span><span class="p">(</span><span class="n">definition</span><span class="p">)</span>
+    <span class="n">_spec</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">base</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"definition.dataset.toml"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_toml_text</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dump">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.dump">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dump</span><span class="p">(</span><span class="n">definition</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Write a dataset definition to the file `path` (see `dumps` for what `definition` is and how it is checked; the check looks at the folder of</span>
+<span class="sd">    `path`) and return it loaded from there, so the caller has what `load(path)` gives. A definition that does not pass the check is not written,</span>
+<span class="sd">    and an existing file at `path` is left alone."""</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">dumps</span><span class="p">(</span><span class="n">definition</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="step_record">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.step_record">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">step_record</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">Step</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A step as it is hashed and recorded in the provenance: `name`, `input`, `suffix` and `sources` appear only when the step has them, so a</span>
+<span class="sd">    definition without them keeps the fingerprint it had before the keys existed."""</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"algorithm"</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">algorithm</span><span class="p">,</span> <span class="s2">"channels"</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">channels</span><span class="p">,</span> <span class="s2">"params"</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">params</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"input"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">suffix</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"suffix"</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">suffix</span>
+    <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">sources</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">out</span><span class="p">[</span><span class="s2">"sources"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+
+<div class="viewcode-block" id="fingerprint">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.fingerprint">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fingerprint</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">DatasetSpec</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A short hash of what determines the processed quantities of `source`: how it is read and the processing steps that run on it (a step</span>
+<span class="sd">    that names other `sources` does not count). The batch run stores it in every output file and skips a file whose fingerprint has not changed."""</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"source"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"format"</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="s2">"detector"</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">detector</span><span class="p">,</span>
+                          <span class="s2">"readout"</span><span class="p">:</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">readout</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">asdict</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">readout</span><span class="p">),</span>
+                          <span class="s2">"read"</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">},</span>
+               <span class="s2">"steps"</span><span class="p">:</span> <span class="p">[</span><span class="n">step_record</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">steps</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">applies_to</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="p">)]}</span>      <span class="c1"># only the steps that run on this source</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_format</span> <span class="o">!=</span> <span class="s2">"parquet"</span><span class="p">:</span>                    <span class="c1"># a Parquet definition keeps the fingerprint it had before the key existed</span>
+        <span class="n">payload</span><span class="p">[</span><span class="s2">"output"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"format"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">output_format</span><span class="p">,</span> <span class="s2">"root_detector"</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">root_detector</span><span class="p">}</span>
+    <span class="n">blob</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()[:</span><span class="mi">16</span><span class="p">]</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_kwargs</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">accepted</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">read</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"detector_name"</span> <span class="ow">in</span> <span class="n">accepted</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"detector_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">detector</span>
+    <span class="k">elif</span> <span class="s2">"detector"</span> <span class="ow">in</span> <span class="n">accepted</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"detector"</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">detector</span>
+    <span class="k">if</span> <span class="s2">"config"</span> <span class="ow">in</span> <span class="n">accepted</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">readout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"source </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: the </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">format</span><span class="si">!r}</span><span class="s2"> adapter needs a readout (a preset name or three numbers)"</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">"config"</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">readout</span>
+    <span class="n">unknown</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-</span> <span class="n">accepted</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">unknown</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"source </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">: the </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">format</span><span class="si">!r}</span><span class="s2"> adapter's read() has no argument </span><span class="si">{</span><span class="n">unknown</span><span class="si">}</span><span class="s2">; it has </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">accepted</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">kwargs</span>
+
+
+<div class="viewcode-block" id="read_raw">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.read_raw">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_raw</span><span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="n">Source</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">chunk</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Events</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The pulses of one raw file of `source` as `Events` read by its adapter: one `Events`, or with `chunk` pieces of at most</span>
+<span class="sd">    that many events when the adapter can (`iter_chunks`; otherwise the whole file is one piece)."""</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">_adapter</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="n">_read_kwargs</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chunk</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">"iter_chunks"</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="n">module</span><span class="o">.</span><span class="n">iter_chunks</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">chunk</span><span class="o">=</span><span class="n">chunk</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">module</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="output_status">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.output_status">[docs]</a>
+<span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">output_status</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The contents of `_goldsluice_status.json` in the output folder `out` (`{"state": "running" | "complete", ...}`), or `None` if the</span>
+<span class="sd">    folder has no such file (it was made before the file existed, or is not a goldsluice output)."""</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">/</span> <span class="n">STATUS_FILE</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">))</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="Dataset">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""A dataset definition opened for reading: the pulses from its sources and the quantities processed from them."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">DatasetSpec</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">spec</span>
+
+<div class="viewcode-block" id="Dataset.open">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset.open">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Dataset"</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Dataset(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="si">!r}</span><span class="s2">, sources=</span><span class="si">{</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">sources</span><span class="p">]</span><span class="si">}</span><span class="s2">, output=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="si">!r}</span><span class="s2">)"</span>
+
+<div class="viewcode-block" id="Dataset.processed">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset.processed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">processed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">detector</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Events</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""The processed quantities of a detector, without pulses (an `Events` with no traces): one record per event. With the run metadata</span>
+<span class="sd">        of the definition (`metadata`) each event also gets its series' values as columns, joined now (`metadata=False` leaves them out)."""</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output_format</span> <span class="o">==</span> <span class="s2">"root"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">: the output is ROOT files (</span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">); read them with "</span>
+                             <span class="sa">f</span><span class="s2">"goldpan.adapters.rq_root.read(path, detector=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">root_detector</span><span class="si">}</span><span class="s2">). processed() reads Parquet output only"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">out</span> <span class="o">/</span> <span class="n">_parquet</span><span class="o">.</span><span class="n">MANIFEST</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nothing processed yet in </span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">: run `python -m goldsluice run </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">`"</span><span class="p">)</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">output_status</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"state"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"complete"</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">: the last `goldsluice run` did not finish (state </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'state'</span><span class="p">)</span><span class="si">!r}</span><span class="s2">, started </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'started'</span><span class="p">)</span><span class="si">}</span><span class="s2">): "</span>
+                          <span class="sa">f</span><span class="s2">"the output may be incomplete. Run `python -m goldsluice run </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">` again to finish it"</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="n">_parquet</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">detector</span><span class="o">=</span><span class="n">detector</span> <span class="k">if</span> <span class="n">detector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="p">())</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">run_metadata</span><span class="p">()</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">events</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="n">_runmeta</span><span class="o">.</span><span class="n">per_event</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">quantities</span><span class="p">[</span><span class="s2">"series"</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">(),</span> <span class="n">table</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (run metadata </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">clash</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">quantities</span><span class="o">.</span><span class="n">fields</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">clash</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">: the run metadata column(s) </span><span class="si">{</span><span class="n">clash</span><span class="si">}</span><span class="s2"> have the name of a column of the processed data; rename them in the table"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">events</span><span class="o">.</span><span class="n">with_quantities</span><span class="p">(</span><span class="o">**</span><span class="n">columns</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">detector</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">sources</span><span class="p">}</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Dataset.iter_events">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset.iter_events">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">iter_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">processed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Events</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""One `Events` per raw file of `source`: its pulses, with the processed quantities attached unless `processed=False`."""</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processed</span><span class="p">(</span><span class="n">detector</span><span class="o">=</span><span class="n">src</span><span class="o">.</span><span class="n">detector</span><span class="p">)</span> <span class="k">if</span> <span class="n">processed</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">files</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">ev</span> <span class="ow">in</span> <span class="n">read_raw</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">have</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ak</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="n">ev</span><span class="o">.</span><span class="n">quantities</span><span class="p">))</span>                  <span class="c1"># what the adapter already gives (trigger_type, ...) is not attached again</span>
+                    <span class="n">extra</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ak</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">quantities</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_rq</span><span class="o">.</span><span class="n">KEY_COLUMNS</span> <span class="ow">or</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">have</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">ev</span> <span class="o">=</span> <span class="n">_rq</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">ev</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">quantities</span><span class="p">[</span><span class="n">extra</span><span class="p">])</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">; has the batch run covered this file? "</span>
+                                         <span class="sa">f</span><span class="s2">"`python -m goldsluice run </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">`"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+                <span class="k">yield</span> <span class="n">ev</span></div>
+
+
+<div class="viewcode-block" id="Dataset.read">
+<a class="viewcode-back" href="../../reference/generated/goldpan.dataset.html#goldpan.dataset.Dataset.read">[docs]</a>
+    <span class="nd">@status</span><span class="p">(</span><span class="n">DONE</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">processed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Events</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""All the events of `source` as one `Events` (pulses, and the processed quantities unless `processed=False`)."""</span>
+        <span class="k">return</span> <span class="n">Events</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_events</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">processed</span><span class="o">=</span><span class="n">processed</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; the NSDF-Data authors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=7f41d439"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

@@ -1,0 +1,100 @@
+# Made from r76-82V-window-integral.dataset.toml (goldmap). Two changes. (1) window_integral over samples 400 to 1500 (-100 and +1000 from
+# the trigger) instead of 450 to 950. (2) subtract_line fits its line to the post-trigger tail,
+# samples 2375 to 4095 (from 1.5 ms after the trigger, sample 500, to the end), instead of to the whole trace, so the fit leaves the
+# pulse out. subtract_line's fit window starts at its `glitch_samples`, which is set here for that step alone; the other steps keep the
+# readout's. The line is extrapolated back under the pulse and the pretrigger; window_integral and the others then measure from the
+# pretrigger mean of what is left, as before.
+# Check:  python -m goldsluice check r76-82V-window-integral-tail.dataset.toml
+
+[dataset]
+name = "r76-82V-window-integral-tail"
+output = "~/goldsluice-output/r76-82V-window-integral-tail"
+registry = ["C:/Users/Anthony/Research/NSDF-Data/registry"]
+metadata = "series.csv"
+
+[[sources]]
+name = "raw"
+format = "idx"
+paths = ["C:/Users/Anthony/idx/07221111_2153_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221112_0943_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221112_2249_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221113_1159_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221114_2141_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221115_0845_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221115_2109_F[0-9][0-9][0-9][0-9]", "C:/Users/Anthony/idx/07221116_1003_F[0-9][0-9][0-9][0-9]"]
+detector = "NAI-S2"
+
+[[processing]]
+algorithm = "subtract_line"
+channels = "role:phonon"
+name = "subtract_line1"
+[processing.params]
+fit_end_samples = 4096
+glitch_samples = 2375                # the start of the fit: 1.5 ms after the trigger (500 + 1500 us / 0.8 us)
+
+[[processing]]
+algorithm = "baseline"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "excursion"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "integral"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "peak"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+amps_per_adc = 1
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+
+[[processing]]
+algorithm = "rise_crossing"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+fraction = 0.2
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "max_time"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "rise_time"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+lo = 0.1
+hi = 0.9
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"
+
+[[processing]]
+algorithm = "window_integral"
+channels = "role:phonon"
+input = "subtract_line1"
+[processing.params]
+start_sample = 400                   # 100 samples (80 us) before the trigger at sample 500
+stop_sample = 1500                   # 1000 samples (800 us) after it; the window was 450 to 950
+glitch_samples = "@readout.glitch_samples"
+pretrigger_samples = "@readout.pretrigger_samples"
+sample_period_s = "@readout.sample_period_s"

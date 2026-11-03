@@ -5,7 +5,7 @@ author: "Anthony Villano"
 date: "2026-11-02"
 status: "In progress"
 keywords: "Pu/Be, 82V, bstd, raw pulse, saturation, baseline window"
-description: "A first look at the eight series of Run 76 near -82 V that trigger on Side2pF: every channel saturates at its own height, the baseline window of the processing contained the rising edge of the pulse (so bstd grew with the height) and was shortened from 500 to 450 samples, clean pulses grow smoothly from the threshold to 5 percent of saturation, and the delay position of the small quiet events is not yet usable."
+description: "A first look at the eight series of Run 76 near -82 V that trigger on Side2pF: every channel saturates at its own height, the baseline window of the processing contained the rising edge of the pulse (so bstd grew with the height) and was shortened from 500 to 450 samples, clean pulses grow smoothly from the threshold to 5 percent of saturation, and the small quiet events, with the delay plane re-centred on the large circle of events, form a blob near the edge of the face whose integrals need a short window with the drifting baseline subtracted."
 ---
 
 <!-- The clickable outline at the top of the published page is built from the ## headings below: do not write one. -->
@@ -19,6 +19,10 @@ The notebooks are in `data_analysis/R76/notebooks/relcal/` on the branch `featur
 - [`baseline-window-onset.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/a49e3e734833e48c0aaef10df31a93a1d4e1c451/data_analysis/R76/notebooks/relcal/baseline-window-onset.ipynb) — where the pulse starts, in every channel, from the raw traces.
 - [`bstd-distribution-450.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/a49e3e734833e48c0aaef10df31a93a1d4e1c451/data_analysis/R76/notebooks/relcal/bstd-distribution-450.ipynb) — `bstd` after the reprocessing with the 450-sample window, the two windows compared, and the pulse evolution with a `bstd` cut (a movie, `figures/pulse-evolution-450.gif`, also in this note as Figure 6).
 - [`positions-small-quiet-82v.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/a49e3e734833e48c0aaef10df31a93a1d4e1c451/data_analysis/R76/notebooks/relcal/positions-small-quiet-82v.ipynb) — the delay position of the small events that pass the `bstd` cut.
+
+The last section, *The small events re-centred: a blob, and the drift of the baseline*, comes from a later version of the position notebook, pinned to the commit `bebbaba`:
+
+- [`positions-small-quiet-82v.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/bebbaba3d00cdfd42bc83da4dffda233d8b9d91b/data_analysis/R76/notebooks/relcal/positions-small-quiet-82v.ipynb) (at `bebbaba`) — the plane of the delays re-centred on the large circle of events, the cut on the blob of small events, and the short-window integrals and filtered heights with a straight line subtracted, for one channel, the inner four and all six.
 
 The processing is [`r76-82v-dcrc1pb.dataset.toml`](https://github.com/villano-lab/NSDF-Data/blob/a49e3e734833e48c0aaef10df31a93a1d4e1c451/data_analysis/R76/processing/r76-82v-dcrc1pb.dataset.toml) with the readout in [`registry/readouts.toml`](https://github.com/villano-lab/NSDF-Data/blob/a49e3e734833e48c0aaef10df31a93a1d4e1c451/registry/readouts.toml). The processed files are not in the repository: they are written to `~/goldsluice-output/r76-82v-dcrc1pb/`.
 
@@ -116,9 +120,39 @@ The position on the face can be made from the delays between the 20 % rise times
 
 This distribution is **not on the face**. It sits at large `xdel` (median 20.6 us, 16 to 84 percent from 11.4 to 30.5 us), with `ydel` near 0 (median -0.8 us), outside the face that is drawn at the placeholder scale (about 14 us in radius); `phidel` is one peak at 0 degrees and `afdel` peaks at about -8 us. None of the two spots seen with the large events is visible. A condition that every channel has a pulse of at least 6 times its `bstd` keeps 10,951 of the 16,228 events (67.5 percent) and gives the same picture, so this is not only events in which a channel has no pulse.
 
+## The small events re-centred: a blob, and the drift of the baseline
+
+**A larger circle sets the centre and the scale.** When the cut on the size is raised from 5 to 15 or 30 percent of the saturated height, the small events of Figure 7 sit inside a larger, roughly circular distribution, whose outer edge is centred at about `xdel` = -1.5 us and `ydel` = +6 us with Fritts's offsets and has a radius of about 28 us. I took that circle as the face: the offsets became `xdel = t_E - (t_C + t_D) / 2 + 0.5 us` and `ydel = 0.866 (t_D - t_C) + 12 us` (within 1.5 and 3 us of Fritts's -1 and +9 us), and the detector is drawn with a radius of 28 us instead of the placeholder 14 us. The circle was fitted by eye to the edge, and **that it is the edge of the face is an assumption**. With that scale the events that pass only the `bstd` cut, which are mostly large pulses, fill the drawn face, with the two high-activity spots over C and next to the centre disc (Figure 8, left). The small, quiet events form a blob near the left edge of the face, at the C/D boundary, at `xdel` of about +22 us and `ydel` of about +2 us (Figure 8, right).
+
+![**Figure 8.** The plane of the delays re-centred on the large circle of events, the detector drawn with its radius (28 us; x reversed: C upper left, D lower left, E right). Left: real triggers that pass the `bstd` cut in all six channels; middle: no channel above 5 % of its saturated height; right: both cuts, the 16,228 small, quiet events.](img/82V-self-trigger-first-look-fig8.png)
+
+**The blob.** The density of the small, quiet events is highest at (`xdel`, `ydel`) = (22, 2) us, halves about 7 us from there and falls to a quarter at about 10 us. A circle of 10 us around that point holds 8,888 of the 16,228 events (55 percent); the other 7,340 are the comparison (Figure 9).
+
+![**Figure 9.** The small, quiet events in the re-centred plane, with the cut on the blob (white circle, 10 us around `xdel` = 22, `ydel` = 2 us) and the two high-activity spots of the large events (red).](img/82V-self-trigger-first-look-fig9.png)
+
+**The integral of a small pulse is dominated by the drift of the baseline.** The Side2pF `integral` of the processing (the whole trace, the mean of samples 10 to 450 as the baseline) is negative for almost all of these events, in the blob (median -0.007 ADC counts x s) and outside it (median -0.011) alike (Figure 10). The raw traces show why: the pulses are real, 20 to 40 counts high and back to the baseline in about 200 us, but after them the baseline drifts down by 5 to 40 counts over the 3 ms of the trace. A pulse of that size is worth about +0.005 ADC counts x s, the drift -0.01 to -0.05.
+
+![**Figure 10.** The Side2pF integral over the whole trace of the blob (red), of the other small, quiet events (grey) and of the random triggers (blue), each normalised. Nearly all are negative: for pulses this small the integral over the whole trace measures the drift of the baseline, not the pulse.](img/82V-self-trigger-first-look-fig10.png)
+
+**A short window, with a straight line fitted and subtracted.** These quantities are not in the processed data, so they were computed from the raw dumps with `goldpan` (the `idx` reader and `goldpan.algorithms.lowpass`), for every channel, for the small, quiet events and the 25,511 random triggers, in one pass over the 391 dumps (about an hour; the result is cached next to the event cache):
+
+- the integral over samples 480 to 1125 (16 us before the trigger to 500 us after it) instead of the whole trace;
+- the same after a **straight line** is fitted to the pretrigger samples (10 to 450) **and** to the late tail (from 1.5 ms after the trigger to the end), leaving the pulse out, and subtracted, so that the line follows the drift under the pulse (unlike `subtract_line`, which fits the pretrigger only);
+- the height after the same line is subtracted and the trace is filtered (`lowpass`, 50 kHz, zero phase).
+
+With the window the pulses come out positive, and with the line the random triggers are centred on zero (Figure 11). Side2pF, medians: the line-subtracted window integral is 0.0049 for the blob, 0.0042 outside it and -0.0001 for the random triggers; the filtered height is 29, 24 and 2 counts. The blob is about 15 to 20 percent larger in Side2pF than the other small events, and its events lie on a single band of integral against height (about 0.00017 ADC counts x s per count, an effective length of about 170 us). Outside the blob there are, besides that band, a steeper one at heights of 8 to 20 counts with about 1.5 times the integral per count (longer pulses), and a few events with no pulse in Side2pF at all.
+
+![**Figure 11.** Side2pF of the blob, the other small, quiet events and the random triggers: the integral over samples 480 to 1125 with the mean baseline (left) and with the straight line fitted and subtracted (middle), and the height after the line is subtracted and the trace filtered (right).](img/82V-self-trigger-first-look-fig11.png)
+
+**Summed over the channels.** Summed over the four inner channels (C, D, E and F) the line-subtracted window integral has a median of 0.0146 for the blob and 0.0127 outside it; summed over all six, 0.0202 and 0.0178 (Figure 12). The outer rings A and B carry about 28 percent of the sum in both sets, and the inner and outer sums grow together along one narrow band. The steep group outside the blob reaches about twice the sum of the main band at the same Side2pF height: it carries much more in C, D and E relative to F, as an event far from the centre would. The channels are summed with equal weights and nothing is calibrated.
+
+![**Figure 12.** The line-subtracted window integral summed over all six channels, for the blob, the other small, quiet events and the random triggers, on a linear and a log scale.](img/82V-self-trigger-first-look-fig12.png)
+
 ## What is not done, and what could be wrong
 
-- **The times of small pulses.** The 20 % time is taken from the raw trace. For pulses of 20 to 60 counts against a noise of 2 to 3, the times may be biased and not only noisy. A filtered trace (`lowpass`, `subtract_line`) is needed before the delays of small events mean anything. I have not tested which.
+- **The times of small pulses.** The 20 % time is taken from the raw trace. For pulses of 20 to 60 counts against a noise of 2 to 3, the times may be biased and not only noisy. The heights and integrals of the last section are taken after a line is subtracted and the trace is filtered, but the **times** are not yet: the delays of small events, and so the blob, are still those of the raw traces.
+- **The centre and the scale of the face.** The large circle of events is taken to be the edge of the face, fitted by eye; neither the offsets nor the radius are derived, and the delays are not converted to millimetres.
+- **The short-window quantities** are computed in a notebook from the raw dumps, not by the processing; the window (samples 480 to 1125) and the line (fitted to samples 10 to 450 and from 1.5 ms on) are choices.
 - **The cut.** `bstd` below twice the random-trigger median is a first choice. 10 to 15 percent of the real triggers are above it, and what those events look like (activity before the trigger, glitches, drift) has not been checked trace by trace.
 - **The onset test** uses one dump of each series and one definition of the onset (5 times the smoothed noise). The conclusion that the edge is inside a window to sample 500 does not depend on it much, but the numbers (sample 483 to 486) do.
 - **The saturated heights** are heights above the baseline, not absolute ADC values. The flat tops below the ceiling in C, E and F, and why the ceilings differ between the channels, are not explained.

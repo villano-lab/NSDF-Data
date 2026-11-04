@@ -112,3 +112,41 @@ def test_the_series_and_the_dump_come_from_the_folder_name():
     assert idx._series_and_dump(Path("/x/07221203_2025_F0001")) == ("07221203_2025", "F0001")
     with pytest.raises(ValueError, match="folder name"):
         idx._series_and_dump(Path("/x/dump1"))
+
+
+class TableCdms(FakeCdms):
+    """Like the real `nsdf_dark_matter.idx.CDMS`: every trace of the dump in one array `channels`, and for each detector id the bounds
+    `[lo, hi)` of its rows in `detector_to_bounds`."""
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        rows, self.detector_to_bounds = [], {}
+        for det_id in self.ids:
+            self.detector_to_bounds[det_id] = [len(rows), len(rows) + 4]
+            rows.extend(super().get_detector_channels(det_id))
+        self.channels = np.array(rows, dtype=np.int32)          # the real table is uint16; the fake values here exceed 65535
+
+    def get_detector_channels(self, det_id):                   # as the real one: a slice of `channels`
+        lo, hi = self.detector_to_bounds[det_id]
+        return self.channels[lo:hi]
+
+
+def test_a_cdms_with_one_table_of_traces_is_gathered_at_once_and_gives_the_same_events():
+    from_table, plain = read(TableCdms(missing={(10001, 1)})), read(FakeCdms(missing={(10001, 1)}))
+    assert from_table.detector.channel_names() == plain.detector.channel_names()
+    for name in CHANNELS:
+        np.testing.assert_array_equal(from_table.trace(name), plain.trace(name))
+        assert from_table.trace(name).dtype == np.float64
+    assert from_table.quantities["event"].to_list() == plain.quantities["event"].to_list() == [10000, 10002]
+    calls = []
+    cdms = TableCdms()
+    original = cdms.get_detector_channels
+    cdms.get_detector_channels = lambda d: calls.append(d) or original(d)
+    read(cdms)
+    assert calls == []                                          # the gather does not ask for the traces one detector at a time
+
+
+def test_an_input_the_table_does_not_have_is_refused_as_before():
+    cdms = TableCdms()
+    with pytest.raises(IndexError):
+        idx.read(cdms, detector_name="S104", channels={"X": (0, 7)}, config=DCRC_RUN76, series="07221203_2025", dump="F0001")

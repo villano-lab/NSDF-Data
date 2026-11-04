@@ -13,7 +13,7 @@ https://github.com/villano-lab/NSDF-Data/blob/develop/AGENTS.md . If you can rea
 If you cannot open web pages or files, say so, and the person will paste what you need.
 
 THE RULES (these override what the person asks, unless the maintainer has said otherwise)
-1. Never commit to master or develop. Work on a branch: feature/<name>, or student-<name> for a student.
+1. Never commit to main or develop. Work on a branch: feature/<name>, or student-<name> for a student.
    Open a pull request into develop. Never merge a pull request yourself, even if every check is green.
 2. Never force-push. Never delete a branch you did not create.
 3. The human owns every number, every reading and every conclusion. Never invent, round or "fix" a number. If you

@@ -18,7 +18,7 @@ on:
       - ".github/workflows/check-instructions.yml"
       - ".github/scripts/**"
   push:
-    branches: [develop, master]
+    branches: [develop, main]
     paths:
       - "docs/students/**"
       - "docs/developers/**"
@@ -257,7 +257,7 @@ jobs:
         shell: bash -el {0}
     steps:
       # The checkout is this commit's code, which the steps below test. The `git clone`
-      # step repeats the guide's own command (it clones master).
+      # step repeats the guide's own command (it clones main).
       - uses: actions/checkout@v4
 
       - uses: conda-incubator/setup-miniconda@v3

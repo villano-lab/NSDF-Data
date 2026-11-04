@@ -210,8 +210,23 @@ __marimo__/
 # No leading slash: `nsdf-cli download` writes an idx folder wherever it is run, so ignore it at any depth.
 idx/
 
+# Processed output of `python -m goldsluice run` (Parquet files and the ledger _goldsluice.json): results, not source. A dataset
+# definition should send its output outside the repository (see the example); these rules are the second line of defence.
+processed/
+_goldsluice.json
+
 # Claude Code: per-user local settings (permissions etc.) are not shared
 .claude/settings.local.json
 
 # Left behind by the Updating your setup guide if run inside the repo
 /old-environment.txt
+
+# goldsluice (Rust build output)
+goldsluice/target/
+goldsluice/python/goldsluice/_core*
+
+# Sphinx autosummary stubs (generated at build time)
+sphinx/reference/generated/
+
+# Excel lock files ("~$name.xlsx" is made next to a file while it is open); the series lists are kept as Excel files
+data_analysis/R76/series_lists/~$*

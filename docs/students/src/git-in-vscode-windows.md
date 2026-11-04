@@ -1,7 +1,7 @@
 ---
 title: "Git in VS Code"
 subtitle: "NSDF-Data student guide 9 — Windows edition, optional"
-date: "Version 5 · 20 October 2026"
+date: "Version 6 · 28 October 2026"
 ---
 
 ::: tip
@@ -48,10 +48,10 @@ Look at the bottom-left corner of the VS Code window. It shows the name of your 
 The corner shows `student-yourname` (your own branch). This is the same check as `git branch --show-current` in the terminal guides.
 :::
 
-If it shows `develop` or `master`, or a branch that is not yours, switch to yours first: click the name in the corner and pick `student-yourname` from the list. Changes you have not committed yet come with you to your branch.
+If it shows `develop` or `main`, or a branch that is not yours, switch to yours first: click the name in the corner and pick `student-yourname` from the list. Changes you have not committed yet come with you to your branch.
 
 ::: careful
-If VS Code or Git shows a **warning** when you switch (for example that your changes would be overwritten), **stop and ask your lead**, and do not force it. Do not commit, and do not press **Sync Changes**, while the corner shows `develop` or `master`: your own work belongs on your own branch.
+If VS Code or Git shows a **warning** when you switch (for example that your changes would be overwritten), **stop and ask your lead**, and do not force it. Do not commit, and do not press **Sync Changes**, while the corner shows `develop` or `main`: your own work belongs on your own branch.
 :::
 
 ## Step 4. Save your work as a commit
@@ -136,7 +136,7 @@ This part was written from the extension's own documentation and its list of com
 2. Search for `GitHub Pull Requests`{.cmd}. Install the one whose publisher is **GitHub**, with the check mark (verified publisher) next to the name.
 3. A GitHub icon appears in the bar on the left. Click it and choose **Sign in**. A web page opens in your browser: sign in to GitHub there. **Never type your GitHub password into VS Code or into the terminal.**
 4. Your branch will **not** be listed in the extension's view: that view lists pull requests, not branches, so a branch that has no pull request yet does not appear in it. To start one, click the **Create Pull Request** button. It is a **very small icon**, the pull-request symbol with a plus sign on it, at the right end of the title bar of the **Pull Requests** view (the view you open with the GitHub icon in the bar on the left). Move the mouse over it and a label says *Create Pull Request*. Or press `Ctrl+Shift+P`, type `GitHub Pull Requests: Create Pull Request`{.cmd}, and press Enter. The button and the command only appear after you have signed in (point 3) and pushed your branch (Step 5).
-5. A form opens. Check that the **base** is `develop` (it may offer `master`: change it) and that the branch being compared is `student-yourname`. Write the title and the description as guide 4 says, then click **Create**. Your pull request is then listed in the view.
+5. A form opens. Check that the **base** is `develop` (it may offer `main`: change it) and that the branch being compared is `student-yourname`. Write the title and the description as guide 4 says, then click **Create**. Your pull request is then listed in the view.
 
 ![](img/vscode-pull-requests-view.png){width=75%}
 
@@ -163,7 +163,7 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 | You see | What it means | What to do |
 |---|---|---|
 | The Source Control tab is empty and mentions Restricted Mode | VS Code has not been told to trust this folder. | Click **Restricted Mode** in the bottom-left status bar and choose **Trust** (Step 2). |
-| The corner shows `develop` or `master` | You are not on your own branch. | Switch to your own branch (Step 3). Stop and ask your lead only if Git warns when you switch. |
+| The corner shows `develop` or `main` | You are not on your own branch. | Switch to your own branch (Step 3). Stop and ask your lead only if Git warns when you switch. |
 | No **Source Control** icon, or "no repository found" | The folder you opened is not the `NSDF-Data` folder. | **File**, **Open Folder**, and pick the `NSDF-Data` folder itself. |
 | A question about staging everything and committing | Nothing is staged yet. | **Cancel**, then stage your files with **+** (Step 4). |
 | **Sync Changes** shows a down-arrow number as well as an up-arrow number | There are newer commits on your branch on GitHub: your lead merged the project's newest changes into it. | Check the branch name, click **Sync Changes**, and click **OK** on the question (Step 5). |
@@ -174,7 +174,7 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 
 ## Session Info
 
-Guide version 5, 20 October 2026, Windows edition. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
+Guide version 6, 28 October 2026, Windows edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

@@ -1,0 +1,117 @@
+name: Publish goldsluice
+
+# Publishes goldsluice/ (the Rust kernels and `goldsluice run`) to PyPI as `goldsluice`, when a tag `goldsluice-vX.Y.Z` is pushed
+# (RELEASING.md, "Publishing goldsluice to PyPI"). It is a Rust extension, so the upload holds a wheel for each operating system and
+# a source archive. The extension uses the stable Python interface (abi3-py39), so one wheel per system serves every Python from 3.9.
+# No token is stored anywhere: PyPI trusts this workflow (a "trusted publisher"), and the upload job waits for the maintainer's
+# approval of the `pypi` environment.
+#
+# Run by hand (Actions, "Run workflow") it only builds and tests the wheels and never publishes: a dry run.
+
+on:
+  push:
+    tags: ["goldsluice-v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: The tag agrees with the code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12" # keep in step with the Python version in AGENTS.md
+
+      - name: The tag, the three version numbers and the changelog agree, and the tag is on main (tag pushes only)
+        if: github.ref_type == 'tag'
+        run: |
+          python tools/check_goldsluice_release.py "$GITHUB_REF_NAME"
+          git fetch --quiet origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::The tag is not on main. Tag the merge commit of the release pull request (RELEASING.md)."
+            exit 1
+          fi
+
+  wheels:
+    name: Wheel (${{ matrix.os }})
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build the wheel
+        uses: PyO3/maturin-action@v1
+        with:
+          command: build
+          args: --release --out dist --manifest-path goldsluice/Cargo.toml
+          manylinux: auto
+
+      - name: Install the wheel in a clean environment and run the parity tests
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/venv"
+          if [ -x "$RUNNER_TEMP/venv/Scripts/python.exe" ]; then py="$RUNNER_TEMP/venv/Scripts/python.exe"; else py="$RUNNER_TEMP/venv/bin/python"; fi
+          "$py" -m pip install pytest numpy "./python[parquet]"              # batch mode reads datasets with goldpan
+          "$py" -m pip install --no-index --find-links dist goldsluice     # the wheel, and nothing from the source tree
+          cd goldsluice                                                    # the tests, away from the source folder of the package
+          "$py" -c "import goldsluice; print('goldsluice', goldsluice.__version__, goldsluice.__file__)"
+          "$py" -m pytest tests -q
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.os }}
+          path: dist/
+          if-no-files-found: error
+
+  sdist:
+    name: Source archive
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the source archive
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist --manifest-path goldsluice/Cargo.toml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    name: Upload to PyPI
+    needs: [wheels, sdist]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/goldsluice/
+    permissions:
+      id-token: write # the trusted publisher: PyPI accepts this workflow's identity instead of a token
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "{wheel-*,sdist}"
+          merge-multiple: true
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

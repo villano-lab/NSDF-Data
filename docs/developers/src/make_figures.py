@@ -78,7 +78,7 @@ def branches():
     ym, yd, yf = 14.2, 8.0, 2.6
     for y in (ym, yd):
         ax.plot([2, 71], [y, y], color=LINE, lw=1.6, solid_capstyle="round")
-    ax.text(2, ym + 1.7, "master", fontsize=8.2, fontweight="bold", va="center", color=GRAY["tc"])
+    ax.text(2, ym + 1.7, "main", fontsize=8.2, fontweight="bold", va="center", color=GRAY["tc"])
     ax.text(10.2, ym + 1.7, "released and tagged only", fontsize=6.9, va="center", color="#5F5E5A")
     ax.text(2, yd + 1.7, "develop", fontsize=8.2, fontweight="bold", va="center", color=GRAY["tc"])
     ax.text(10.8, yd + 1.7, "integration, and the live site is served from here", fontsize=6.9,
@@ -100,7 +100,7 @@ def branches():
     ax.text(45.6, 11.2, "release PR", fontsize=6.9, ha="right", va="center", color="#5F5E5A")
     ax.add_patch(FancyArrowPatch((58.1, ym - 0.1), (64, yd + 0.5), arrowstyle="-|>", mutation_scale=8,
                                  lw=1.1, color=LINE, connectionstyle="arc3,rad=-0.28"))
-    ax.text(64, 5.6, "merge master back", fontsize=6.9, ha="center", va="center", color="#5F5E5A")
+    ax.text(64, 5.6, "merge main back", fontsize=6.9, ha="center", va="center", color="#5F5E5A")
     fig.savefig(OUT / "branches.png", dpi=230, bbox_inches="tight", pad_inches=0.03, facecolor="white")
     plt.close(fig)
 

@@ -1,0 +1,31 @@
+# The readouts (how a trace is sampled and where its baseline window ends) of the data we analyse. A detector record names one
+# (`readout = "..."`). Read by goldpan.registry. Not part of the library; `goldpan.config` keeps the same two numbers as presets for
+# old code, and a test checks that they agree with this file.
+format_version = 1
+
+[readouts.DCRC_RUN76]
+pretrigger_samples = 500           # the end of the baseline window, and the sample where the trigger-locked pulses start: see evidence
+glitch_samples = 10
+sample_period_s = 0.8e-6
+status = "inferred"
+series = ["07221203_2025"]
+description = "DCRC readout of the Run 76 series (UMN, Side-2 readout): 4096 samples at 0.8 us (1.25 MHz) is a trace of 3.2768 ms."
+evidence = """sample_period_s: the first-pulse analysis of the Run 76 phonon channels, see 'The sample period' in python/README.md (we used \
+1.6 us until 2026-10-22, which is the Z7 value). pretrigger_samples: measured on dumps F0005, F0015 and F0025 of 07221203_2025 \
+(about 8,800 events, issue 154). The 90 % of the events whose trigger_type label is 'Unknown' have their pulse start at sample \
+480 to 520 (the 10 % rise point is at sample 498, p10 to p90 480 to 510) and are flat before sample 470, so the pulse starts at \
+about sample 500, not at the 1000 that this entry had until 2026-10-28. With 1000, the baseline of `peak` (the mean of samples \
+10 to 1000) was about half pulse and `current_max` came out at 0.52 of its value; a baseline over samples 10 to 500 gives 0.999 \
+of it. Note 2 compares the two windows and uses 500. The events labelled 'Physics' have pulses at random times. The numbers are \
+the same on Side2pA, B and F. glitch_samples: see goldpan.config."""
+
+[readouts.Z7]
+pretrigger_samples = 6250
+glitch_samples = 10
+sample_period_s = 1.6e-6
+status = "inferred"
+description = "The Z7 readout (SNOLAB): a 6250-sample pretrigger window (10 ms), 1.6 us per sample (625 kHz)."
+evidence = """Taken from the Z7 analysis of the collaboration's scdms-analysis-tools (a fixed 10 ms pretrigger window at 1.6 us per \
+sample). NOT checked against a file: the begin-of-run ODB of series 24260424_145101 (Det07) gives a pre-trigger offset of 16383 \
+samples (26.2 ms) and an on-pulse length of 32768 samples (52.4 ms), which is a different number; they may be different \
+configurations. Confirm before using this entry for that series (issue 150)."""

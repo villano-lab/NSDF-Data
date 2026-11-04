@@ -11,7 +11,7 @@ without any error. Name the readout of your data, either with a preset or with t
     config = DCRC_RUN76                                                  # the Run 76 phonon channels
     config = PulseConfig(pretrigger_samples=2000, glitch_samples=10, sample_period_s=1e-6)   # your own
 
-The presets are data, not recommendations: `DCRC_RUN76` is the DCRC readout of the Run 76 (UMN, 2022) series, 0.8 us per
+The presets are data, not recommendations (the registry, `goldpan.registry`, holds the same readouts with their evidence): `DCRC_RUN76` is the DCRC readout of the Run 76 (UMN, 2022) series, 0.8 us per
 sample (1.25 MHz; see "The sample period" in `python/README.md` for the evidence), and `Z7` is the Z7 (SNOLAB) readout,
 1.6 us per sample (625 kHz). Both are right for their data and wrong for each other's.
 """
@@ -40,9 +40,11 @@ class PulseConfig:
         return 1.0 / self.sample_period_s
 
 
-DCRC_RUN76 = PulseConfig(pretrigger_samples=1000, glitch_samples=10, sample_period_s=0.8e-6)
-"""The DCRC readout of the Run 76 series (UMN): 1000-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of
-4096 samples is 3.2768 ms."""
+DCRC_RUN76 = PulseConfig(pretrigger_samples=500, glitch_samples=10, sample_period_s=0.8e-6)
+"""The DCRC readout of the Run 76 series (UMN): 500-sample pretrigger window, 0.8 us per sample (1.25 MHz), a trace of
+4096 samples is 3.2768 ms. The pulses of the trigger-locked events start at about sample 500, not at 1000 (value until 2026-10-28;
+issue 154). The record with the evidence is `[readouts.DCRC_RUN76]` in `registry/readouts.toml` (`goldpan.registry`); this preset is
+kept for existing code and a test checks that the two agree."""
 
 Z7 = PulseConfig(pretrigger_samples=6250, glitch_samples=10, sample_period_s=1.6e-6)
 """The Z7 readout (SNOLAB): 6250-sample pretrigger window (10 ms), 1.6 us per sample (625 kHz)."""

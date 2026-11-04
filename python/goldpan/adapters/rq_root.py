@@ -1,4 +1,5 @@
-"""The ROOT RQ adapter: the processed quantities (RQs) of the collaboration's reconstruction, read with uproot. Read only.
+"""The ROOT RQ adapter: the processed quantities (RQs) of the collaboration's reconstruction, read with uproot; and `write`, which
+puts our own processed quantities into the same layout.
 
 The RQs of a series are in a ROOT file with a directory `rqDir` holding `eventTree` (event-level quantities) and `zip<N>` (the
 quantities of detector number `N`), row-aligned. This adapter returns them as a **table of quantities**: an Awkward Array with one
@@ -18,8 +19,20 @@ RQs, so that `goldpan.adapters.rq.attach` can add them to an `Events` of the sam
 * `path` may be one file, a list of files or a folder of `.root` files; their events follow one after another.
 
 Needs `uproot` (`pip install uproot`, in `requirements.txt`).
+
+Writing (`write`) keeps **our names**: a channel's quantities become branches `<channel>_<quantity>` (`Side2pC_adc_max`) in `zip<N>`,
+not the collaboration's `P<letter>S<side><quantity>`. Only the container is theirs: `rqDir/eventTree` with `SeriesNumber`,
+`DumpNumber`, `EventNumber`, `rqDir/zip<N>` row-aligned with it, every branch a `double`. `read` reads the files back.
+
+The trigger type of an event (the quantity `trigger_type`, a text such as `Physics`) goes into `eventTree` as the **number** `TRIGGER_CODES`
+gives it, because a branch is a number: `Unknown` is 0 and the names of the DAQ's trigger types keep their numbers (`Physics` is 1,
+`BeginOfRunRandom` 2, ...). The table is also stored in every file as the string `infoDir/trigger_types` (JSON, name to number), and a
+label that is not in it is an error, never a guess. `read` returns the number; the labels are only recorded, not interpreted.
+
+**Where the files go is not decided here.** `write(events, path)` writes exactly where it is told and does not check that the folder is outside a Git repository: that guard, and the single output root (`GOLDSLUICE_OUTPUT`, see `goldpan.dataset`), belong to batch mode (`goldsluice run`, `goldsluice.batch.check_output_location`). Called by hand, keep the output outside the repository yourself.
 """
 import fnmatch
+import json
 import re
 from pathlib import Path
 from typing import Iterator, Optional
@@ -27,10 +40,26 @@ from typing import Iterator, Optional
 import awkward as ak
 import numpy as np
 
+from ..data import KEY_COLUMNS, Events
 from ..status import DONE, status
+
+REVISION = 1
+"""Raised by one when a change of this reader changes what it returns for the same file (a fix), so that `goldsluice run` redoes the outputs
+made with the old one (`goldpan.adapters.revision`). Not for a change that leaves the results alone."""
 
 DIRECTORY = "rqDir"
 EVENT_TREE = "eventTree"
+TRIGGER_TYPE = "trigger_type"
+
+
+def _trigger_codes() -> dict:
+    """`{label: number}`: `Unknown` is 0 (the label of a Run 76 dump's `.csv`), the others keep the numbers of the DAQ (`adapters.midas`)."""
+    from .midas import TRIGGER_TYPES
+    return {"Unknown": 0, **{name: number for number, name in TRIGGER_TYPES.items()}}
+
+
+TRIGGER_CODES = _trigger_codes()
+"""The number that `write` gives each trigger type label in `eventTree` (and stores as `infoDir/trigger_types`)."""
 SERIES_NAME = re.compile(r"\d{8}_\d{4,6}")
 KEY_BRANCHES = ("DumpNumber", "EventNumber")
 
@@ -158,3 +187,88 @@ def missing(path, *, detector: int, branches) -> list:
     with uproot.open(_files(path)[0]) as f:
         event_tree, zip_tree = _trees(f, detector)
         return _wanted(branches, _branch_names(event_tree), _branch_names(zip_tree))[2]
+
+
+# ---- writing: our quantities in the layout of the RQ files, under our own names
+
+_BRANCH_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+_DUMP_LABEL = re.compile(r"^F(\d+)$")
+
+
+def _series_number(series: str) -> float:
+    digits = str(series).replace("_", "")
+    if not digits.isdigit():
+        raise ValueError(f"cannot make a series number of {series!r}: expected digits and underscores, like 24260424_145101")
+    return float(int(digits))
+
+
+def _dump_number(dump: str) -> float:
+    m = _DUMP_LABEL.match(str(dump))
+    if not m:
+        raise ValueError(f"cannot make a dump number of {dump!r}: expected a label like F0001")
+    return float(int(m.group(1)))
+
+
+def _flat_quantities(quantities: ak.Array) -> dict:
+    """`{branch name: float64 array}`: a record field `Side2pC: {adc_max}` becomes `Side2pC_adc_max`, a plain field keeps its name."""
+    columns = {}
+    for name in ak.fields(quantities):
+        if name in KEY_COLUMNS:
+            continue
+        field = quantities[name]
+        inner = ak.fields(field)
+        for branch, values in ([(f"{name}_{k}", field[k]) for k in inner] if inner else [(name, field)]):
+            if not _BRANCH_NAME.match(branch):
+                raise ValueError(f"{branch!r} is not a usable branch name: letters, digits and underscores, not starting with a digit")
+            values = np.asarray(ak.to_numpy(values))
+            if values.dtype.kind in "USO":                       # text (trigger_type): a TTree branch is a number, so text is only in Parquet
+                continue
+            columns[branch] = values.astype(np.float64)
+    return columns
+
+
+@status(DONE)
+def write(events: Events, path, *, detector: int) -> list:
+    """Write the quantities of `events` (their pulses are not written) as RQ-style ROOT files in the folder `path`; returns the
+    files. One file per series and dump, `<series>_<dump>.root`, which `read` accepts (a folder of them is one dataset).
+
+    Each file has `rqDir/eventTree` (`SeriesNumber`, `DumpNumber`, `EventNumber`, and `trigger_type` as a number if the events have it) and `rqDir/zip<detector>` (one branch
+    `<channel>_<quantity>` for each quantity of each channel, our names), row-aligned, every branch a `double`. A
+    `goldsluice` entry in `events.meta` (the provenance of a batch run) is stored as the string `infoDir/goldsluice`.
+    `detector` is the number of the `zip<N>` tree: it is never assumed. An existing file of the same name is replaced."""
+    uproot = _uproot()
+    columns = _flat_quantities(events.quantities)
+    if not columns:
+        raise ValueError("the events have no quantities to write (only the keys)")
+    series = np.array(events.quantities["series"].to_list(), dtype=object)
+    dump = np.array(events.quantities["dump"].to_list(), dtype=object)
+    event = np.asarray(ak.to_numpy(events.quantities["event"]), dtype=np.float64)
+    trigger = None
+    if TRIGGER_TYPE in ak.fields(events.quantities):
+        labels = events.quantities[TRIGGER_TYPE].to_list()
+        unknown = sorted({str(x) for x in labels} - set(TRIGGER_CODES))
+        if unknown:
+            raise ValueError(f"the trigger type {unknown} is not in rq_root.TRIGGER_CODES ({sorted(TRIGGER_CODES)}): add it there, "
+                             f"with a number, before it can be written to a ROOT file")
+        trigger = np.array([TRIGGER_CODES[str(x)] for x in labels], dtype=np.float64)
+    folder = Path(path)
+    folder.mkdir(parents=True, exist_ok=True)
+    written = []
+    for pair in sorted({(a, b) for a, b in zip(series, dump)}):
+        take = (series == pair[0]) & (dump == pair[1])
+        n = int(take.sum())
+        file = folder / f"{pair[0]}_{pair[1]}.root"
+        with uproot.recreate(file) as f:
+            tree = {"SeriesNumber": np.full(n, _series_number(pair[0])),
+                    "DumpNumber": np.full(n, _dump_number(pair[1])),
+                    "EventNumber": event[take]}
+            if trigger is not None:
+                tree[TRIGGER_TYPE] = trigger[take]
+            f[f"{DIRECTORY}/{EVENT_TREE}"] = tree
+            f[f"{DIRECTORY}/zip{int(detector)}"] = {name: values[take] for name, values in columns.items()}
+            if trigger is not None:
+                f["infoDir/trigger_types"] = json.dumps(TRIGGER_CODES, sort_keys=True)
+            if "goldsluice" in events.meta:
+                f["infoDir/goldsluice"] = json.dumps(dict(events.meta["goldsluice"]), sort_keys=True, default=str)
+        written.append(file)
+    return written

@@ -5,9 +5,14 @@ Before the package existed, the library was eight flat modules, and the notebook
 are the *same code* as the package with two differences, both for the sake of those notebooks, which all analyse the
 Run 76 readout:
 
-* a function that takes a `config` gets the Run 76 readout (`goldpan.config.DCRC_RUN76`) as the default;
+* a function that takes a `config` gets the Run 76 readout as the default;
 * `pulse_config.PulseConfig` has the Run 76 values as defaults (and warns when 1.6e-6 s is given, the value those
   notebooks used wrongly until 2026-10-22), and `DEFAULT_CONFIG = PulseConfig()`.
+
+These defaults are frozen at the values the notebooks and notes were run with, including the 1000-sample pretrigger window: the
+Run 76 pulses start at about sample 500, so `goldpan.config.DCRC_RUN76` has 500 since 2026-10-28 (issue 154), but changing the
+flat defaults would change the results of every notebook that is run again. Pass a `config` (or `n_samples=500`) to get the
+window before the pulse.
 
 New code should import `goldpan.*` and name its readout. The flat names will be removed in a later release.
 """

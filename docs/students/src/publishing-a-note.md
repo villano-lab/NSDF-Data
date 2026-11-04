@@ -211,7 +211,7 @@ When you start a pull request, on github.com or from VS Code, the form has four 
 
 ```
 > **Target branch:** open feature PRs against **`develop`**.
-> Only `release/*` and `hotfix/*` branches target `master`. See `RELEASING.md`.
+> Only `release/*` and `hotfix/*` branches target `main`. See `RELEASING.md`.
 
 ## What and why
 

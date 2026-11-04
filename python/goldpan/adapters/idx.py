@@ -25,6 +25,10 @@ from ..config import PulseConfig
 from ..data import ChannelInfo, Detector, Events, Readout
 from ..status import DONE, status
 
+REVISION = 1
+"""Raised by one when a change of this reader changes what it returns for the same file (a fix), so that `goldsluice run` redoes the outputs
+made with the old one (`goldpan.adapters.revision`). Not for a change that leaves the results alone."""
+
 _DUMP_NAME = re.compile(r"^(?P<series>.+)_(?P<dump>F\d+)$")
 
 
@@ -34,6 +38,21 @@ def _series_and_dump(path: Path):
         raise ValueError(f"cannot tell the series and the dump from the folder name {path.name!r} (expected <series>_F<number>): "
                          "pass series= and dump=")
     return m["series"], m["dump"]
+
+
+def _traces(cdms, ids, inp) -> np.ndarray:
+    """The traces of input `inp` of the detectors `ids`, as one float64 array `(len(ids), n_samples)`.
+
+    A real `cdms` object (`nsdf_dark_matter.idx.CDMS`) holds every trace of the dump in one array `channels` (rows) and, for each detector
+    id, the bounds `[lo, hi)` of its rows in `detector_to_bounds`, so the traces of one input are one fancy-indexed gather and one
+    conversion, not a Python call per event. Any other object (the fakes of the tests, an adapter of your own) goes through
+    `get_detector_channels` one detector at a time, with the same result."""
+    table, bounds = getattr(cdms, "channels", None), getattr(cdms, "detector_to_bounds", None)
+    if isinstance(table, np.ndarray) and table.ndim == 2 and bounds is not None and len(ids):
+        lo_hi = np.array([bounds[d][:2] for d in ids], dtype=np.intp)
+        if (lo_hi[:, 1] - lo_hi[:, 0] > inp).all():
+            return np.take(table, lo_hi[:, 0] + inp, axis=0).astype(np.float64)
+    return np.stack([np.asarray(cdms.get_detector_channels(d)[inp], dtype=np.float64) for d in ids])
 
 
 @status(DONE)
@@ -68,8 +87,7 @@ def read(source, *, detector_name: str, channels: Mapping[str, tuple], config: P
 
     arrays = {}
     for name, (board, inp) in channels.items():
-        arrays[name] = np.stack([np.asarray(cdms.get_detector_channels(by_event_board[(e, board)])[inp], dtype=np.float64)
-                                 for e in kept])
+        arrays[name] = _traces(cdms, [by_event_board[(e, board)] for e in kept], inp)
     n_samples = {a.shape[1] for a in arrays.values()}
     if len(n_samples) != 1:
         raise ValueError(f"the channels of {origin} have different numbers of samples: {sorted(n_samples)}")

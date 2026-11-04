@@ -8,21 +8,21 @@ The current version is in the `VERSION` file, and its history is in `CHANGELOG.m
 
 | Branch | Purpose | Branches from | Merges into |
 |---|---|---|---|
-| `master` | Released code only. Every commit on it is a release, tagged `vX.Y.Z`. | | |
+| `main` | Released code only. Every commit on it is a release, tagged `vX.Y.Z`. | | |
 | `develop` | Integration branch: the next release, in progress. **GitHub Pages serves the notes site and the student guide PDFs from `develop` (`/docs`)**, so a change to them is live as soon as it is merged here. | | |
 | `feature/<short-name>` | One piece of work (a function, a note, a guide change, a CI change). | `develop` | `develop` (pull request) |
-| `release/X.Y.Z` | Prepares a release: version number, changelog and last fixes only. | `develop` | `master` (pull request), then back into `develop` |
-| `hotfix/X.Y.Z` | An urgent fix to what is released (a broken guide step, a broken site page). | `master` | `master` (pull request), then back into `develop` |
+| `release/X.Y.Z` | Prepares a release: version number, changelog and last fixes only. | `develop` | `main` (pull request), then back into `develop` |
+| `hotfix/X.Y.Z` | An urgent fix to what is released (a broken guide step, a broken site page). | `main` | `main` (pull request), then back into `develop` |
 
 Student branches (`student-<name>`, from the student guides) are feature branches: they branch from `develop` and open pull requests into `develop`.
 
 ## Rules
 
-- **Never commit directly to `master` or `develop`.** Work on a branch and open a pull request, except for the merge commits that finish a release or hotfix.
+- **Never commit directly to `main` or `develop`.** Work on a branch and open a pull request, except for the merge commits that finish a release or hotfix.
 - Use **merge commits** (not squash or rebase) when finishing a feature, release or hotfix, so the branch history stays visible.
-- **Reviews and who merges:** GitHub automatically requests the maintainer (@villaa) as reviewer on pull requests that other people open (see `.github/CODEOWNERS`); other reviewers are added by hand under **Reviewers**. The maintainer may merge their own pull requests. Feature pull requests into `develop` may also be merged by Kitty Mickelson (@nuclearGoblin), after review by someone other than the author. Release and hotfix pull requests into `master` are merged **only by the maintainer**. An AI agent never merges any pull request without the maintainer's explicit go-ahead.
-- Never force-push to `master` or `develop`. Delete a branch only after it is merged, and only if you created it.
-- Open pull requests **against `develop`**, except `release/*` and `hotfix/*`, which target `master`.
+- **Reviews and who merges:** GitHub automatically requests the maintainer (@villaa) as reviewer on pull requests that other people open (see `.github/CODEOWNERS`); other reviewers are added by hand under **Reviewers**. The maintainer may merge their own pull requests. Feature pull requests into `develop` may also be merged by Kitty Mickelson (@nuclearGoblin), after review by someone other than the author. Release and hotfix pull requests into `main` are merged **only by the maintainer**. An AI agent never merges any pull request without the maintainer's explicit go-ahead.
+- Never force-push to `main` or `develop`. Delete a branch only after it is merged, and only if you created it.
+- Open pull requests **against `develop`**, except `release/*` and `hotfix/*`, which target `main`.
 - **The site and the guides do not wait for a release.** Fix a guide, add a note or correct a page with an ordinary feature PR into `develop`; it is live about two minutes after the merge. A release only marks a version (`vX.Y.Z`).
 
 ## Choosing the next version
@@ -47,19 +47,28 @@ The library in `python/` (the `goldpan` distribution, see issue 71) has a versio
 - **What counts as the library:** the modules listed in `python/pyproject.toml`. Tools, tests, `check_environment.py` and the guides are not versioned by it.
 - `python/tests/test_library_install.py` checks that the version is well formed and that the list of modules matches the files.
 
+## goldsluice's own version
+
+`goldsluice/` (the Rust kernels and `goldsluice run`, see `goldsluice/README.md`) has a version of its own, **independent of `VERSION` and of the library's**. It is written in three places that must agree: `version` in `goldsluice/Cargo.toml`, `version` in `goldsluice/pyproject.toml` and `__version__` in `goldsluice/python/goldsluice/__init__.py` (`goldsluice/tests/test_version.py` fails if they differ or are not `X.Y.Z`).
+
+- **Semantic versioning,** starting at 0.1.0 and staying 0.x while the algorithms and the definition format settle. While 0.x, raise the **minor** number (0.2.0) when an algorithm is added or removed, a parameter or an output is added, renamed or removed, or **any result changes** (a bug fixed in a kernel included); raise the **patch** number (0.1.1) for a change that does none of those (speed, messages, documentation, internal code).
+- **Bump it on the `release/*` or `hotfix/*` branch, not in a feature pull request.** The package version only labels a release (and, later, the PyPI upload): it does **not** decide whether `goldsluice run` redoes an output. That is decided by the `REVISION` of each algorithm a definition uses and of the reader of its source (`goldsluice/PORTING.md`), which is raised in the pull request of the fix itself, so a release, or a new algorithm, never makes everything be processed again. Between releases the version in the files may lag behind the code.
+- **Say it in the release notes.** In that release's `CHANGELOG.md` section, add the line `goldsluice X.Y.Z` and what changed in it. There is no *Students, please:* line for it: students do not install `goldsluice` (it is not in `requirements.txt`).
+- **Rebuild after a bump.** The compiled extension carries the version; run `maturin develop --release` in `goldsluice/` so that the build and the files agree.
+
 ## Making a release
 
 1. Make sure `develop` is green (CI passing) and every finished feature is merged.
 2. `git switch develop && git pull`, then `git switch -c release/X.Y.Z`.
 3. On that branch:
-   - set the number in `VERSION`, and, if the library changed since the last release, its own version in `python/pyproject.toml` (see "The library's own version");
+   - set the number in `VERSION`, and, if the library changed since the last release, its own version in `python/pyproject.toml` (see "The library's own version"), and likewise `goldsluice`'s three version numbers if `goldsluice/` changed (see "goldsluice's own version");
    - in `CHANGELOG.md`, rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and start a new empty `[Unreleased]` section;
    - rebuild any student guide PDFs whose source changed (see `AGENTS.md`) and commit sources and PDFs together;
    - **if the release changes the environment** (the Python version, a package pin in `requirements.txt`, or the library's own version in `python/pyproject.toml`), start that release's `CHANGELOG.md` section with a line beginning **Students, please:** that says what to do and points to *Updating your setup* (student guide 7), and tell the students when the release is out. Students learn about it from `python check_environment.py` (it warns when the environment differs from `requirements.txt` and the guides) and from that line;
    - only small fixes. No new features.
-4. Open a pull request from `release/X.Y.Z` into `master`. The maintainer merges it (a merge commit).
+4. Open a pull request from `release/X.Y.Z` into `main`. The maintainer merges it (a merge commit).
 5. Tag the merge commit: `git tag -a vX.Y.Z -m "Release X.Y.Z"` and `git push origin vX.Y.Z`.
-6. Merge `master` back into `develop` (a pull request or a merge commit) so `develop` has the release commit and the tag's history.
+6. Merge `main` back into `develop` (a pull request or a merge commit) so `develop` has the release commit and the tag's history.
 7. Delete the `release/X.Y.Z` branch. The live site is unaffected, because it is served from `develop`.
 
 ## Publishing the library to PyPI
@@ -72,22 +81,32 @@ The library is published as **`goldpan`** (https://pypi.org/project/goldpan/) by
 2. PyPI, project `goldpan`, *Manage*, *Publishing*, *Add a new publisher*, GitHub: owner `villano-lab`, repository `NSDF-Data`, workflow `publish-goldpan.yml`, environment `pypi`.
 3. Run the dry run once and read its log.
 
-**Each library release.** Make the release as above, with the library's version in `python/pyproject.toml` and the line `goldpan X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `master`:
+**Each library release.** Make the release as above, with the library's version in `python/pyproject.toml` and the line `goldpan X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `main`:
 
 1. Tag the merge commit with the *library* tag, which is not the project's tag `vX.Y.Z` (the two may point at the same commit): `git tag -a goldpan-vX.Y.Z -m "goldpan X.Y.Z"` and `git push origin goldpan-vX.Y.Z`.
-2. The workflow's first job checks that the tag, `python/pyproject.toml` and the changelog agree (`python tools/check_goldpan_release.py goldpan-vX.Y.Z` does the same on your computer) and that the tag is on `master`.
+2. The workflow's first job checks that the tag, `python/pyproject.toml` and the changelog agree (`python tools/check_goldpan_release.py goldpan-vX.Y.Z` does the same on your computer) and that the tag is on `main`.
 3. Approve the *Upload to PyPI* job when GitHub asks. Check https://pypi.org/project/goldpan/ and, in a throwaway environment, `python -m pip install goldpan==X.Y.Z`.
 
 A version on PyPI can never be replaced or reused: a bad upload can only be yanked, and fixed by a new patch version, so run the dry run first. **An AI agent never pushes a `goldpan-v*` tag.** If the library moves to its own repository, register the trusted publisher again for the new repository.
+
+## Publishing goldsluice to PyPI
+
+goldsluice is published as **`goldsluice`** (https://pypi.org/project/goldsluice/) by the workflow `.github/workflows/publish-goldsluice.yml`. It is a Rust extension, so the upload holds a wheel for Linux, Windows and macOS and a source archive. The extension uses the stable Python interface (`abi3-py39`), so one wheel per system serves every Python from 3.9. The workflow runs when a tag `goldsluice-vX.Y.Z` is pushed, builds the wheels, installs each in a clean environment and runs the tests, and then uploads. **No token is stored anywhere**: PyPI trusts the workflow, and the upload waits for the maintainer to approve the `pypi` environment. Run by hand (Actions, *Publish goldsluice*, *Run workflow*) it is a dry run: it builds and tests and never uploads.
+
+**One-time setup (maintainer):** the `pypi` environment is the one made for goldpan, but under *Deployment branches and tags* it must also allow tags matching `goldsluice-v*`. On PyPI, project `goldsluice`, *Manage*, *Publishing*, *Add a new publisher*, GitHub: owner `villano-lab`, repository `NSDF-Data`, workflow `publish-goldsluice.yml`, environment `pypi`. Then run the dry run once and read its log.
+
+**Each goldsluice release.** Make the release as above, with goldsluice's three version numbers and the line `goldsluice X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `main`, tag the merge commit with the *goldsluice* tag, which is neither the project's `vX.Y.Z` nor the library's `goldpan-vX.Y.Z`: `git tag -a goldsluice-vX.Y.Z -m "goldsluice X.Y.Z"` and `git push origin goldsluice-vX.Y.Z`. The first job checks that the tag, the three numbers and the changelog agree (`python tools/check_goldsluice_release.py goldsluice-vX.Y.Z` does the same on your computer) and that the tag is on `main`. Approve the *Upload to PyPI* job, then check https://pypi.org/project/goldsluice/ and, in a throwaway environment, `python -m pip install goldsluice==X.Y.Z`.
+
+As with the library, a version on PyPI can never be replaced or reused, so run the dry run first. **An AI agent never pushes a `goldsluice-v*` tag.**
 
 ## Making a hotfix
 
 A hotfix repairs **released code** (for example a broken library function in a tagged release). A broken guide or site page is *not* a hotfix: fix it with a feature PR into `develop`, and it is live on merge.
 
-1. `git switch master && git pull`, then `git switch -c hotfix/X.Y.Z` (X.Y.Z is the next patch number).
-2. Fix it, set `VERSION` (and the library's own version in `python/pyproject.toml` if the fix changes the library), and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
-3. Open a pull request into `master`. The maintainer merges it, then tags `vX.Y.Z` as above.
-4. Merge `master` back into `develop`.
+1. `git switch main && git pull`, then `git switch -c hotfix/X.Y.Z` (X.Y.Z is the next patch number).
+2. Fix it, set `VERSION` (and the library's own version in `python/pyproject.toml` if the fix changes the library, or goldsluice's three version numbers if it changes `goldsluice/`), and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
+3. Open a pull request into `main`. The maintainer merges it, then tags `vX.Y.Z` as above.
+4. Merge `main` back into `develop`.
 
 ## When the NSDF software updates
 
@@ -113,7 +132,7 @@ To **take a note off the site**, delete `notes/src/<name>.md` (and any picture o
 
 ### The notes bot and the pull-request rule
 
-The rulesets `protect-develop` and `protect-master` block deletion and force-push and **require a pull request** (0 approvals, merge commits only). The bot of the *Student notes* workflow commits the generated pages straight to `develop` (or `master`), so it needs a way past that rule. GitHub does not offer GitHub Actions as a bypass actor on this repository, so the bot pushes with a **deploy key**:
+The rulesets `protect-develop` and `protect-main` block deletion and force-push and **require a pull request** (0 approvals, merge commits only). The bot of the *Student notes* workflow commits the generated pages straight to `develop` (or `main`), so it needs a way past that rule. GitHub does not offer GitHub Actions as a bypass actor on this repository, so the bot pushes with a **deploy key**:
 
 1. On a computer with `ssh-keygen`, in an empty folder outside the repository: `ssh-keygen -t ed25519 -N "" -C "notes-bot" -f notes-bot`. It writes `notes-bot` (private) and `notes-bot.pub` (public).
 2. Add the public key as a deploy key **with write access**: `gh repo deploy-key add notes-bot.pub --allow-write --title notes-bot` (or Settings, Deploy keys).
@@ -121,10 +140,12 @@ The rulesets `protect-develop` and `protect-master` block deletion and force-pus
 4. **Delete both files** (`notes-bot` and `notes-bot.pub`). The key lives only in GitHub.
 5. In both rulesets, Bypass list, Add bypass, tick **Deploy keys** (mode Always).
 
+The *Documentation* workflow (`.github/workflows/docs.yml`) uses the same deploy key to commit the generated Sphinx pages in `docs/api/` ("Publish the documentation") on pushes to `develop` and `main`; no other key or secret is needed.
+
 To check it, merge a student note (or a change to `tools/build_notes.py`) and see that the *Student notes* run on `develop` ends with "Publish student notes". If the run fails with "The push was rejected", the secret or the bypass is missing. To revoke the bot's access, delete the deploy key in Settings. A lost private key cannot be recovered: repeat the steps with a new pair.
 
 ## One-time repository settings (maintainer)
 
 - Make `develop` the default branch, so new pull requests and clones start there.
-- Keep a ruleset on `master` against deletion and force-push, naming `refs/heads/master` explicitly: the existing `protect-master` ruleset targets the *default* branch, so it would move to `develop` when the default changes. Add the same protection for `develop`, but **no pull-request requirement**: the student-notes bot commits to it.
+- Keep a ruleset on `main` against deletion and force-push, naming `refs/heads/main` explicitly: the existing `protect-main` ruleset targets the *default* branch, so it would move to `develop` when the default changes. Add the same protection for `develop`, but **no pull-request requirement**: the student-notes bot commits to it.
 - **GitHub Pages: set the source to branch `develop`, folder `/docs`** (Settings → Pages). Do this together with making `develop` the default branch, and after the student-notes workflow change has been merged into `develop`.

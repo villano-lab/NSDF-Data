@@ -24,7 +24,7 @@ dependencies = ["numpy", "awkward"]
 Homepage = "https://villano-lab.github.io/NSDF-Data/"
 Documentation = "https://villano-lab.github.io/NSDF-Data/library/"
 Repository = "https://github.com/villano-lab/NSDF-Data"
-Changelog = "https://github.com/villano-lab/NSDF-Data/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/villano-lab/NSDF-Data/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 # goldpan.archive writes and reads HDF5 files.

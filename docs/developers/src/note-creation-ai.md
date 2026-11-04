@@ -38,7 +38,7 @@ The agent does the mechanical work. **You own every number, every reading and ev
 **The agent may** draft the page from the newest note, extract figures, pin and verify links, add the index row and the changelog line, run `python -m pytest -q`{.cmd}, and, once you say so, commit with a `Co-Authored-By:` trailer and open the PR with `gh pr create --base develop`{.cmd}.
 
 ::: careful
-**The agent must never** invent, round or "fix" a number; write the Reading or the conclusion; edit a **Complete** note, another note, or their figures; run `07221203_2025_dump1_noise.ipynb`; commit data (`.bin` files, the `idx` folder); push to `master` or `develop`; or **merge a pull request**. These are the rules in `AGENTS.md`.
+**The agent must never** invent, round or "fix" a number; write the Reading or the conclusion; edit a **Complete** note, another note, or their figures; run `07221203_2025_dump1_noise.ipynb`; commit data (`.bin` files, the `idx` folder); push to `main` or `develop`; or **merge a pull request**. These are the rules in `AGENTS.md`.
 :::
 
 **Your checks, before you let it commit**

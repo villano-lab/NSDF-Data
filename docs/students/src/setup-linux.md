@@ -287,7 +287,7 @@ On the computer you are leaving, **commit and push your work first** (Sync Chang
 
 ## Rules for keeping your work safe
 
-- **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
+- **Never work on `main` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
 - **Never commit data.** The raw files in the `idx` folder are large external data, not part of our data analysis code in the NSDF-Data repository. Download only from your home folder, never from inside `NSDF-Data`.
 - **Do not run `07221203_2025_dump1_noise.ipynb`** unless the project lead says it is fine. It overwrites a shared archive file.
 - **Save often,** and commit your work when a piece is finished (see the first analysis guide).

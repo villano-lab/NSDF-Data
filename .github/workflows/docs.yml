@@ -2,7 +2,7 @@ name: Documentation
 
 # The Sphinx documentation of goldpan and goldsluice (sources in sphinx/, built by tools/build_docs.py into docs/api/).
 # A pull request builds it with warnings as errors, so a broken reference or a docstring Sphinx cannot read fails the check.
-# A push to develop or master builds it again and commits docs/api/ with the same deploy key as the notes bot
+# A push to develop or main builds it again and commits docs/api/ with the same deploy key as the notes bot
 # (RELEASING.md, "The notes bot and the pull-request rule"), so the site, which is served from develop, stays current.
 
 on:
@@ -14,7 +14,7 @@ on:
       - "tools/build_docs.py"
       - ".github/workflows/docs.yml"
   push:
-    branches: [develop, master]
+    branches: [develop, main]
     paths:
       - "sphinx/**"
       - "python/goldpan/**"
@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # develop and master require a pull request; the bot pushes with the deploy key (see the notes workflow).
+          # develop and main require a pull request; the bot pushes with the deploy key (see the notes workflow).
           ssh-key: ${{ secrets.NOTES_DEPLOY_KEY }}
       - uses: actions/setup-python@v5
         with:
@@ -74,7 +74,7 @@ jobs:
             # the branch may have moved while this build ran: rebase onto it, then push
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push || {
-              echo "::error::The push was rejected: the docs bot needs the deploy key (secret NOTES_DEPLOY_KEY) and 'Deploy keys' on the bypass list of the rulesets protect-develop and protect-master."
+              echo "::error::The push was rejected: the docs bot needs the deploy key (secret NOTES_DEPLOY_KEY) and 'Deploy keys' on the bypass list of the rulesets protect-develop and protect-main."
               exit 1
             }
           fi

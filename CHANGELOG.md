@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **The released branch is now `main`, not `master`.** The branch was renamed on GitHub (old links such as `.../blob/master/...` still redirect), the ruleset is now `protect-main`, and the workflows, `RELEASING.md`, `AGENTS.md`, the guides and the developer sheets say `main`. `develop` is unchanged. If you have a clone with a `master` branch, run `git fetch --prune`, then `git branch -m master main` and `git branch -u origin/main main`. Pinned links in the notes that name `master` still count as not pinned to a commit hash.
+
 ### Added
 
 - **A new goldsluice algorithm, `window_integral`: the integral between two samples.** It is `integral` (the sum of the baseline-subtracted trace, times `sample_period_s`, in the trace's unit times seconds) summed only over samples `start_sample` to `stop_sample - 1`, as in a slice, so the pulse can be integrated without the tail and the noise of the rest of the trace (`start_sample = 0`, `stop_sample` = the trace length gives `integral`). The baseline is still the mean of the pretrigger window, whatever the limits. Both limits are required, like every parameter; `integral` and the definitions that use it do not change. A Rust kernel and its Python mirror, `REVISION = 1`, and a step in `examples/r76-registry.dataset.toml`; goldmap offers it as a step with no change of its own.

@@ -89,6 +89,16 @@ The library is published as **`goldpan`** (https://pypi.org/project/goldpan/) by
 
 A version on PyPI can never be replaced or reused: a bad upload can only be yanked, and fixed by a new patch version, so run the dry run first. **An AI agent never pushes a `goldpan-v*` tag.** If the library moves to its own repository, register the trusted publisher again for the new repository.
 
+## Publishing goldsluice to PyPI
+
+goldsluice is published as **`goldsluice`** (https://pypi.org/project/goldsluice/) by the workflow `.github/workflows/publish-goldsluice.yml`. It is a Rust extension, so the upload holds a wheel for Linux, Windows and macOS and a source archive. The extension uses the stable Python interface (`abi3-py39`), so one wheel per system serves every Python from 3.9. The workflow runs when a tag `goldsluice-vX.Y.Z` is pushed, builds the wheels, installs each in a clean environment and runs the tests, and then uploads. **No token is stored anywhere**: PyPI trusts the workflow, and the upload waits for the maintainer to approve the `pypi` environment. Run by hand (Actions, *Publish goldsluice*, *Run workflow*) it is a dry run: it builds and tests and never uploads.
+
+**One-time setup (maintainer):** the `pypi` environment is the one made for goldpan, but under *Deployment branches and tags* it must also allow tags matching `goldsluice-v*`. On PyPI, project `goldsluice`, *Manage*, *Publishing*, *Add a new publisher*, GitHub: owner `villano-lab`, repository `NSDF-Data`, workflow `publish-goldsluice.yml`, environment `pypi`. Then run the dry run once and read its log.
+
+**Each goldsluice release.** Make the release as above, with goldsluice's three version numbers and the line `goldsluice X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `main`, tag the merge commit with the *goldsluice* tag, which is neither the project's `vX.Y.Z` nor the library's `goldpan-vX.Y.Z`: `git tag -a goldsluice-vX.Y.Z -m "goldsluice X.Y.Z"` and `git push origin goldsluice-vX.Y.Z`. The first job checks that the tag, the three numbers and the changelog agree (`python tools/check_goldsluice_release.py goldsluice-vX.Y.Z` does the same on your computer) and that the tag is on `main`. Approve the *Upload to PyPI* job, then check https://pypi.org/project/goldsluice/ and, in a throwaway environment, `python -m pip install goldsluice==X.Y.Z`.
+
+As with the library, a version on PyPI can never be replaced or reused, so run the dry run first. **An AI agent never pushes a `goldsluice-v*` tag.**
+
 ## Making a hotfix
 
 A hotfix repairs **released code** (for example a broken library function in a tagged release). A broken guide or site page is *not* a hotfix: fix it with a feature PR into `develop`, and it is live on merge.

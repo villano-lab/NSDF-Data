@@ -7,7 +7,7 @@
 
 Needs the packages of sphinx/requirements.txt, and the dependencies of the modules it documents (numpy, awkward, pyarrow, h5py,
 uproot, lz4: `pip install -e "./python[archive,parquet,root,midas]"`). The Rust extension of goldsluice is not needed.
-The pages in docs/api/ are generated: never edit them by hand. On pushes to develop and master the workflow
+The pages in docs/api/ are generated: never edit them by hand. On pushes to develop and main the workflow
 .github/workflows/docs.yml rebuilds and commits them.
 """
 import argparse

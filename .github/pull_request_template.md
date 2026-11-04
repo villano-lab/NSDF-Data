@@ -1,4 +1,4 @@
-> **Target branch:** open feature PRs against **`develop`**. Only `release/*` and `hotfix/*` branches target `master`. See `RELEASING.md`.
+> **Target branch:** open feature PRs against **`develop`**. Only `release/*` and `hotfix/*` branches target `main`. See `RELEASING.md`.
 
 ## What and why
 

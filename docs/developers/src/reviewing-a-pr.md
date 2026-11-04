@@ -18,7 +18,7 @@ html-subtitle: "Developer quick-sheet · for the maintainer and for reviewers ·
 \vspace{0.2em}
 ```
 
-A pull request (PR) is ready to merge when **the checks are green**, **the diff holds only what this kind of PR should hold**, and **a person has read what a check cannot judge**. Who may merge is in `AGENTS.md`: contributors do not merge their own PR; the maintainer may merge their own; Kitty Mickelson may merge a feature PR into `develop` after a review by someone else; release and hotfix PRs into `master` are merged only by the maintainer. **An AI agent never merges without the maintainer's explicit go-ahead.**
+A pull request (PR) is ready to merge when **the checks are green**, **the diff holds only what this kind of PR should hold**, and **a person has read what a check cannot judge**. Who may merge is in `AGENTS.md`: contributors do not merge their own PR; the maintainer may merge their own; Kitty Mickelson may merge a feature PR into `develop` after a review by someone else; release and hotfix PRs into `main` are merged only by the maintainer. **An AI agent never merges without the maintainer's explicit go-ahead.**
 
 ```{=latex}
 \small
@@ -26,7 +26,7 @@ A pull request (PR) is ready to merge when **the checks are green**, **the diff 
 
 ## 1. The frame (one minute)
 
-- **Base.** It is `develop`. Only `release/*` and `hotfix/*` branches target `master`.
+- **Base.** It is `develop`. Only `release/*` and `hotfix/*` branches target `main`.
 - **Checks.** *Student notes* (notes, and the pinned links), *Note pins*, *Library tests* (when `python/` changed) and *Check instructions* (the guides' setup steps on Windows, macOS and Linux). Skipped is fine; failing is not. A job that never got a runner and was cancelled after 15 minutes is not a failure: re-run it.
 - **Files changed.** Is there anything the kind of PR in section 2 does not need? Ask why before reading further.
 - **Behind `develop`?** If GitHub says the branch is out of date and there are no conflicts, press **Update branch** (a merge commit) and let the checks run again. If there are conflicts, ask the author, or resolve them in GitHub's editor and say so.

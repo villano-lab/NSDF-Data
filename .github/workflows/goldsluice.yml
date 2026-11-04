@@ -12,7 +12,7 @@ on:
       - "python/goldpan/adapters/**"
       - ".github/workflows/goldsluice.yml"
   push:
-    branches: [develop, master]
+    branches: [develop, main]
     paths:
       - "goldsluice/**"
       - "python/goldpan/dataset.py"

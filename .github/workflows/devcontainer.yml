@@ -14,7 +14,7 @@ on:
       - "python/**"
       - ".github/workflows/devcontainer.yml"
   push:
-    branches: [develop, master]
+    branches: [develop, main]
     paths:
       - ".devcontainer/**"
       - "requirements.txt"

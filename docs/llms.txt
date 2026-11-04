@@ -2,7 +2,7 @@
 
 > Analysis of SuperCDMS-type dark-matter detector data (Run 76) from the National Science Data Fabric: a small pulse-analysis library, analysis notebooks, student guides and published analysis notes. Maintainer: Anthony Villano (villaa).
 
-If you are an AI agent, read the brief and AGENTS.md first. They contain the rules (never commit to master or develop, never merge a pull request, never invent a number).
+If you are an AI agent, read the brief and AGENTS.md first. They contain the rules (never commit to main or develop, never merge a pull request, never invent a number).
 
 ## Start here
 

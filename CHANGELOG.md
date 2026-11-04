@@ -4,6 +4,14 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-11-04
+
+**Students, please:** the library `goldpan` has a new version (0.3.0), so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python python/check_environment.py`, which should say `Environment OK`. Python is still 3.12 and no package is new, so you do not need a new environment. Until you reinstall, the check warns that `goldpan` is older than the repository wants. Nothing you already run changes. **If you have a clone with a `master` branch,** the released branch is now `main` (see *Changed* below): run `git fetch --prune`, then `git branch -m master main` and `git branch -u origin/main main`.
+
+`goldpan` 0.3.0: dataset definition format 7 (a step can name the `sources` it runs on, steps can build on each other, run metadata joins at read time), `goldpan.dataset.dump` and `dumps`, `goldpan.registry.add_record` and `record_text`, `goldpan.runmeta`, `goldpan.rqdata` with `all_files=True`, and the Run 76 readout with a 500-sample pretrigger window (a result that changes: `current_max` of trigger-locked events). No existing function is renamed or removed.
+
+`goldsluice` 0.1.0: the first release of the reduction package, with the Rust kernels and `python -m goldsluice run` (algorithms `peak`, `max_time`, `baseline`, `integral`, `excursion`, `rise_time`, `rise_crossing`, `lowpass`, `subtract_line`, `window_integral`; `--workers`, `--readahead`, `--replace`), and a workflow that publishes it to PyPI. The `goldsluice` on PyPI so far is only a placeholder (0.0.1).
+
 ### Changed
 
 - **The released branch is now `main`, not `master`.** The branch was renamed on GitHub (old links such as `.../blob/master/...` still redirect), the ruleset is now `protect-main`, and the workflows, `RELEASING.md`, `AGENTS.md`, the guides and the developer sheets say `main`. `develop` is unchanged. If you have a clone with a `master` branch, run `git fetch --prune`, then `git branch -m master main` and `git branch -u origin/main main`. Pinned links in the notes that name `master` still count as not pinned to a commit hash.

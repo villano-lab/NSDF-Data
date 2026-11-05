@@ -12,7 +12,6 @@ on:
       - "docs/index.html"
       - "docs/guide.css"
       - "docs/guide.js"
-      - "python/**"
       - "requirements.txt"
       - ".devcontainer/**"
       - ".github/workflows/check-instructions.yml"
@@ -25,7 +24,6 @@ on:
       - "docs/index.html"
       - "docs/guide.css"
       - "docs/guide.js"
-      - "python/**"
       - "requirements.txt"
       - ".devcontainer/**"
       - ".github/workflows/check-instructions.yml"
@@ -286,24 +284,23 @@ jobs:
           # Step 4's git clone fetched the default branch. Use this commit's requirements.txt, so a
           # pull request tests its own version of the file (the same file once it is merged).
           cp "$GITHUB_WORKSPACE/requirements.txt" requirements.txt
-          # requirements.txt installs ./python in place (the package goldpan and its aliases), so a pull request that
-          # changes the library must bring its own python/ folder too, not only its pyproject.toml.
-          rm -rf python && cp -r "$GITHUB_WORKSPACE/python" python
+          # requirements.txt pins goldpan from PyPI, as the student does.
           python -m pip install -r requirements.txt
 
-      - name: Setup Step 6 - tests and tool versions
+      - name: Setup Step 6 - the environment check, the library and tool versions
         run: |
           conda activate darkmatter_cli_env
-          cd python
-          python -m pytest -q
+          cd ~/Research/NSDF-Data
+          python -m check_environment --strict
+          python -c "import importlib.metadata as m, goldpan; print('goldpan', m.version('goldpan'))"
           nsdf-cli version
           jupyter lab --version
 
       - name: Updating your setup Step 1 - the environment check says OK
         run: |
           conda activate darkmatter_cli_env
-          cd python
-          python check_environment.py --strict
+          cd ~/Research/NSDF-Data
+          python -m check_environment --strict
 
       - name: Setup Step 7 - register the Jupyter kernel
         run: |

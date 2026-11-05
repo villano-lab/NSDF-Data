@@ -65,12 +65,12 @@ result with a <code>&lt;figure&gt;</code>, alt text and a caption; what
 it means and what could be wrong; next steps). Student guide 3 shows
 three notes with their headings.</li>
 <li><strong>Pin the code.</strong> Every link to a notebook or to
-<code>python/</code> uses the commit hash, never a branch name: under
-the repository URL, <code>blob/&lt;hash&gt;/&lt;path&gt;</code> for a
-file and <code>tree/&lt;hash&gt;/&lt;folder&gt;</code> for a folder.
-Check each one: <code
-class="cmd">git cat-file -e &lt;hash&gt;:&lt;path&gt;</code> prints
-nothing when the file exists.</li>
+library code (goldpan or goldsluice, in their repositories) uses the
+commit hash, never a branch name: under the repository URL,
+<code>blob/&lt;hash&gt;/&lt;path&gt;</code> for a file and
+<code>tree/&lt;hash&gt;/&lt;folder&gt;</code> for a folder. Check each
+one: <code class="cmd">git cat-file -e &lt;hash&gt;:&lt;path&gt;</code>
+prints nothing when the file exists.</li>
 <li><strong>Index row.</strong> Add one <code>&lt;tr&gt;</code> to the
 Analysis Notes table in <code>docs/index.html</code>, <strong>newest
 note first</strong>. Columns: Note # (NN for now), Link, Date, Author,
@@ -90,8 +90,8 @@ this step: only the number changes.</li>
 <li><strong>Changelog and checks.</strong> Add a line under
 <code>[Unreleased]</code> in <code>CHANGELOG.md</code> (a new note is a
 patch-level change). Open the page from disk in a browser: figures show,
-links work. If you touched <code>python/</code>, run <code
-class="cmd">cd python &amp;&amp; python -m pytest -q</code>.</li>
+links work. If you touched the tools or the guides, run <code
+class="cmd">python -m pytest tests -q</code>.</li>
 <li><strong>PR.</strong> <code
 class="cmd">git push -u origin feature/note-short-name</code>, then
 <code class="cmd">gh pr create --base develop --fill</code>. When the

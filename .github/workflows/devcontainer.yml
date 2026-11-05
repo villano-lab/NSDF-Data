@@ -11,14 +11,12 @@ on:
     paths:
       - ".devcontainer/**"
       - "requirements.txt"
-      - "python/**"
       - ".github/workflows/devcontainer.yml"
   push:
     branches: [develop, main]
     paths:
       - ".devcontainer/**"
       - "requirements.txt"
-      - "python/**"
       - ".github/workflows/devcontainer.yml"
   schedule:
     - cron: "17 6 * * 1"
@@ -49,9 +47,9 @@ jobs:
             echo "--- the library imports from any folder (no sys.path edit)"
             (cd / && python -c "import pulse_quantities, pulse_cuts, pulse_config, pulse_io, pulse_archive, pulse_channels, pulse_operations, pulse_status; print('imports OK')")
             echo "--- environment check"
-            python python/check_environment.py --strict
+            python -m check_environment --strict
             echo "--- NSDF command-line tool and Jupyter kernel"
             nsdf-cli version
             jupyter kernelspec list | grep darkmatter_cli_env
-            echo "--- library tests"
-            (cd python && python -m pytest -q)
+            echo "--- goldpan, from PyPI"
+            python -c "import importlib.metadata as m, goldpan; print('goldpan', m.version('goldpan'))"

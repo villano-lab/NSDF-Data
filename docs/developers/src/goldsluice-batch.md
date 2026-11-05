@@ -18,9 +18,9 @@ html-subtitle: "Developer quick-sheet · goldsluice and goldpan share one datase
 \small
 ```
 
-A **dataset definition** is one small text file that says *which raw files*, *how to read them* and *which processing to run*. `goldsluice` runs it over every raw file in one command and writes the results next to it; `goldpan` opens the same file and gives you the pulses together with the processed quantities. Nothing is assumed: the readout, the channels and every parameter are written in the file. This sheet is the whole loop; the file format is specified in the docstring of `python/goldpan/dataset.py`, and a new algorithm is a different sheet (*Running goldsluice and developing an algorithm*).
+A **dataset definition** is one small text file that says *which raw files*, *how to read them* and *which processing to run*. `goldsluice` runs it over every raw file in one command and writes the results next to it; `goldpan` opens the same file and gives you the pulses together with the processed quantities. Nothing is assumed: the readout, the channels and every parameter are written in the file. This sheet is the whole loop; the file format is specified in the docstring of `goldpan/dataset.py` (in the goldpan repository), and a new algorithm is a different sheet (*Running goldsluice and developing an algorithm*).
 
-You need the setup of that sheet (`maturin develop --release` in `goldsluice/`) and `goldpan` installed with Parquet support (`pip install -e "./python[parquet]"` from the repository).
+You need the setup of that sheet (`maturin develop --release` in a clone of the goldsluice repository, or just `pip install "goldsluice[batch]"`) and `goldpan` installed with Parquet support (`pip install "goldpan[parquet]"`; `requirements.txt` of NSDF-Data already does).
 
 ## 1. The definition file
 

@@ -6,7 +6,6 @@
 
 ## What changed
 
-- [ ] Library code (`python/`)
 - [ ] Notebooks (`data_analysis/`)
 - [ ] Notes site or hand-written notes (`docs/`)
 - [ ] Student guides (`docs/students/src/`)
@@ -17,8 +16,7 @@
 
 Tick what applies, and say "n/a" for the rest. See `AGENTS.md` for the details of each.
 
-- [ ] Tests pass: `cd python && python -m pytest -q`
-- [ ] New or changed library functions have tests and a `@status` tag
+- [ ] Tests pass: `python -m pytest tests -q`
 - [ ] A new or renamed note has its row in `docs/index.html` (newest first)
 - [ ] Guides: edited the **sources** (`gen.py` or the guide's `.md`), rebuilt, and committed sources **and** PDFs together
 - [ ] Guides: bumped the version and date in the header and *Session Info*

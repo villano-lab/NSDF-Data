@@ -33,11 +33,11 @@ without the maintainer’s explicit go-ahead.</strong></p>
 <code>release/*</code> and <code>hotfix/*</code> branches target
 <code>main</code>.</li>
 <li><strong>Checks.</strong> <em>Student notes</em> (notes, and the
-pinned links), <em>Note pins</em>, <em>Library tests</em> (when
-<code>python/</code> changed) and <em>Check instructions</em> (the
-guides’ setup steps on Windows, macOS and Linux). Skipped is fine;
-failing is not. A job that never got a runner and was cancelled after 15
-minutes is not a failure: re-run it.</li>
+pinned links), <em>Note pins</em>, <em>Repository tests</em> and
+<em>Check instructions</em> (the guides’ setup steps on Windows, macOS
+and Linux). Skipped is fine; failing is not. A job that never got a
+runner and was cancelled after 15 minutes is not a failure: re-run
+it.</li>
 <li><strong>Files changed.</strong> Is there anything the kind of PR in
 section 2 does not need? Ask why before reading further.</li>
 <li><strong>Behind <code>develop</code>?</strong> If GitHub says the
@@ -86,11 +86,12 @@ the header and <em>Session Info</em>. No text past the margin in the
 PDF, and the check “PDFs copy as plain text” is green.</td>
 </tr>
 <tr>
-<td><strong>Library</strong> (<code>python/</code>)</td>
+<td><strong>Library</strong> (goldpan or goldsluice, reviewed in their
+own repositories)</td>
 <td>Tests added; every public function has a <code>@status</code> tag
-and a docstring; the generated reference page rebuilt (a test fails if
-it is stale); a breaking change updates the notebooks or marks them
-deprecated; a changelog line.</td>
+and a docstring; a breaking change updates the notebooks here or marks
+them deprecated; a changelog line. This repository only changes the pin
+in <code>requirements.txt</code>.</td>
 </tr>
 <tr>
 <td><strong>Hand-written note</strong> (<code>docs/notes/</code>)</td>

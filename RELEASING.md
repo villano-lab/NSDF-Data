@@ -1,6 +1,6 @@
 # Branching, versions and releases
 
-This repository uses **Git Flow** branching and **semantic versioning** (https://semver.org). One version number describes the whole repository: the `python/` library, the notebooks, the notes site, the student guides and the CI checks together. The guides also carry their own document versions (in their headers); those are separate and are not the repository version.
+This repository uses **Git Flow** branching and **semantic versioning** (https://semver.org). One version number describes the whole repository (the library `goldpan` and the reduction package `goldsluice` have repositories and versions of their own, see "goldpan and goldsluice"): the notebooks, the notes site, the student guides and the CI checks together. The guides also carry their own document versions (in their headers); those are separate and are not the repository version.
 
 The current version is in the `VERSION` file, and its history is in `CHANGELOG.md`. A one-page summary with diagrams is on the notes site: `docs/developers/developer-workflow.pdf` (source in `docs/developers/src/`, rebuilt with `sh docs/developers/src/build.sh`).
 
@@ -27,84 +27,48 @@ Student branches (`student-<name>`, from the student guides) are feature branche
 
 ## Choosing the next version
 
-The version is `MAJOR.MINOR.PATCH`. While the major version is 0, the library is still changing; a breaking change then raises the minor number instead.
+The version is `MAJOR.MINOR.PATCH`. While the major version is 0, the project is still changing; a breaking change then raises the minor number instead.
 
 | Bump | When | Examples |
 |---|---|---|
-| **MAJOR** (X) | A breaking change to the `python/` library (a function renamed or removed, or a changed signature) or to the repository layout that existing notebooks or guides rely on. Not used while the version is 0.x. | Renaming `bstd`; moving the library into a package. |
-| **MINOR** (Y) | New backwards-compatible capability. | A new library function or module; a new student guide; a new CI check; a new notes feature. While 0.x: also a breaking change. |
+| **MAJOR** (X) | A breaking change to the repository layout that existing notebooks or guides rely on, or to the environment they need. Not used while the version is 0.x. | Moving the analysis folder; a new major Python version. |
+| **MINOR** (Y) | New backwards-compatible capability. | A new student guide; a new CI check; a new notes feature. While 0.x: also a breaking change. |
 | **PATCH** (Z) | Fixes and content changes with no new capability. | A corrected guide step; a new or revised note; a CI fix; a typo. |
 
 If a release contains changes of several kinds, use the highest bump.
 
-## The library's own version
+## goldpan and goldsluice
 
-The library in `python/` (the `goldpan` distribution, see issue 71) has a version of its own, in `python/pyproject.toml`. It is **independent of `VERSION`**: `VERSION` marks the project as a whole (guides, notes, tooling and library together), and most of its releases do not touch the library, so the two numbers differ and that is intended. The library's version also stays meaningful if it is ever split into its own repository.
+The pulse-analysis library **goldpan** (https://github.com/villano-lab/goldpan) and the reduction package **goldsluice** (https://github.com/villano-lab/goldsluice) have repositories, versions, changelogs and PyPI releases of their own; how they are versioned and published is in the `CONTRIBUTING.md` of each. They were `python/` and `goldsluice/` of this repository until 2026-11-05. Their versions are independent of `VERSION`.
 
-- **Semantic versioning,** starting at 0.1.0 and staying 0.x until the public functions and `PulseConfig` settle. While 0.x, raise the **minor** number (0.2.0) for anything that changes results, signatures or names, or adds a function; raise the **patch** number (0.1.1) for a fix that changes none of those. A change in a default that changes results counts as a minor change (the sample-period fix of October 2026 is the example).
-- **Bump it on the `release/*` or `hotfix/*` branch, not in a feature pull request.** Every bump makes each student's `python check_environment.py` warn ("goldpan is 0.1.0, but requirements.txt wants 0.2.0") until they re-run `python -m pip install -r requirements.txt`, so batching bumps into releases keeps that to once per release. In between, the version in the file may lag behind the code.
-- **Say it in the release notes.** In that release's `CHANGELOG.md` section, add the line `goldpan X.Y.Z` (state what changed in the library, as for any change) and start the section with **Students, please:** to re-run *Updating your setup* (student guide 7), Step 3, as for any environment change.
-- **What counts as the library:** the modules listed in `python/pyproject.toml`. Tools, tests, `check_environment.py` and the guides are not versioned by it.
-- `python/tests/test_library_install.py` checks that the version is well formed and that the list of modules matches the files.
+What this repository does about them:
 
-## goldsluice's own version
-
-`goldsluice/` (the Rust kernels and `goldsluice run`, see `goldsluice/README.md`) has a version of its own, **independent of `VERSION` and of the library's**. It is written in three places that must agree: `version` in `goldsluice/Cargo.toml`, `version` in `goldsluice/pyproject.toml` and `__version__` in `goldsluice/python/goldsluice/__init__.py` (`goldsluice/tests/test_version.py` fails if they differ or are not `X.Y.Z`).
-
-- **Semantic versioning,** starting at 0.1.0 and staying 0.x while the algorithms and the definition format settle. While 0.x, raise the **minor** number (0.2.0) when an algorithm is added or removed, a parameter or an output is added, renamed or removed, or **any result changes** (a bug fixed in a kernel included); raise the **patch** number (0.1.1) for a change that does none of those (speed, messages, documentation, internal code).
-- **Bump it on the `release/*` or `hotfix/*` branch, not in a feature pull request.** The package version only labels a release (and, later, the PyPI upload): it does **not** decide whether `goldsluice run` redoes an output. That is decided by the `REVISION` of each algorithm a definition uses and of the reader of its source (`goldsluice/PORTING.md`), which is raised in the pull request of the fix itself, so a release, or a new algorithm, never makes everything be processed again. Between releases the version in the files may lag behind the code.
-- **Say it in the release notes.** In that release's `CHANGELOG.md` section, add the line `goldsluice X.Y.Z` and what changed in it. There is no *Students, please:* line for it: students do not install `goldsluice` (it is not in `requirements.txt`).
-- **Rebuild after a bump.** The compiled extension carries the version; run `maturin develop --release` in `goldsluice/` so that the build and the files agree.
+- **`requirements.txt` pins goldpan** (`goldpan[archive,parquet,root,midas]==X.Y.Z`, from PyPI). A fix in goldpan reaches students only through a goldpan release and a new pin here. Change the pin on a feature branch, test it in a throwaway environment as for the NSDF packages ("When the NSDF software updates"), and say it in the `CHANGELOG.md` entry.
+- **Say it in the release notes.** A release of this repository that changes the pin starts its `CHANGELOG.md` section with **Students, please:** to re-run *Updating your setup* (student guide 7), Step 3, as for any environment change, and adds the line `goldpan X.Y.Z`. Students do not install `goldsluice` (it is not in `requirements.txt`).
+- **Every bump makes each student's `python -m check_environment` warn** ("goldpan is 0.3.1, but requirements.txt wants 0.3.2") until they re-run `python -m pip install -r requirements.txt`, so batch the pins into releases.
+- **An AI agent never pushes a release tag** of either repository (`vX.Y.Z` there publishes to PyPI, which cannot be undone). Only the maintainer does, and approves the `pypi` environment.
 
 ## Making a release
 
 1. Make sure `develop` is green (CI passing) and every finished feature is merged.
 2. `git switch develop && git pull`, then `git switch -c release/X.Y.Z`.
 3. On that branch:
-   - set the number in `VERSION`, and, if the library changed since the last release, its own version in `python/pyproject.toml` (see "The library's own version"), and likewise `goldsluice`'s three version numbers if `goldsluice/` changed (see "goldsluice's own version");
+   - set the number in `VERSION`, (a new goldpan pin in `requirements.txt` is a change of the environment, see below);
    - in `CHANGELOG.md`, rename `[Unreleased]` to `[X.Y.Z] - YYYY-MM-DD` and start a new empty `[Unreleased]` section;
    - rebuild any student guide PDFs whose source changed (see `AGENTS.md`) and commit sources and PDFs together;
-   - **if the release changes the environment** (the Python version, a package pin in `requirements.txt`, or the library's own version in `python/pyproject.toml`), start that release's `CHANGELOG.md` section with a line beginning **Students, please:** that says what to do and points to *Updating your setup* (student guide 7), and tell the students when the release is out. Students learn about it from `python check_environment.py` (it warns when the environment differs from `requirements.txt` and the guides) and from that line;
+   - **if the release changes the environment** (the Python version or a package pin in `requirements.txt`, goldpan's included), start that release's `CHANGELOG.md` section with a line beginning **Students, please:** that says what to do and points to *Updating your setup* (student guide 7), and tell the students when the release is out. Students learn about it from `python check_environment.py` (it warns when the environment differs from `requirements.txt` and the guides) and from that line;
    - only small fixes. No new features.
 4. Open a pull request from `release/X.Y.Z` into `main`. The maintainer merges it (a merge commit).
 5. Tag the merge commit: `git tag -a vX.Y.Z -m "Release X.Y.Z"` and `git push origin vX.Y.Z`.
 6. Merge `main` back into `develop` (a pull request or a merge commit) so `develop` has the release commit and the tag's history.
 7. Delete the `release/X.Y.Z` branch. The live site is unaffected, because it is served from `develop`.
 
-## Publishing the library to PyPI
-
-The library is published as **`goldpan`** (https://pypi.org/project/goldpan/) by the workflow `.github/workflows/publish-goldpan.yml`. It runs when a tag `goldpan-vX.Y.Z` is pushed, builds the package, installs the wheel in a clean environment and imports every module, and then uploads it. **No token is stored anywhere**: PyPI trusts the workflow (a "trusted publisher"), and the upload waits for the maintainer to approve the `pypi` environment. Run by hand (Actions, *Publish goldpan*, *Run workflow*) it is a dry run: it builds and tests and never uploads.
-
-**One-time setup (maintainer, on the two websites):**
-
-1. GitHub, *Settings*, *Environments*, *New environment*: name it `pypi`; under *Required reviewers* add yourself, so that every upload needs your click; under *Deployment branches and tags* allow only tags matching `goldpan-v*`.
-2. PyPI, project `goldpan`, *Manage*, *Publishing*, *Add a new publisher*, GitHub: owner `villano-lab`, repository `NSDF-Data`, workflow `publish-goldpan.yml`, environment `pypi`.
-3. Run the dry run once and read its log.
-
-**Each library release.** Make the release as above, with the library's version in `python/pyproject.toml` and the line `goldpan X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `main`:
-
-1. Tag the merge commit with the *library* tag, which is not the project's tag `vX.Y.Z` (the two may point at the same commit): `git tag -a goldpan-vX.Y.Z -m "goldpan X.Y.Z"` and `git push origin goldpan-vX.Y.Z`.
-2. The workflow's first job checks that the tag, `python/pyproject.toml` and the changelog agree (`python tools/check_goldpan_release.py goldpan-vX.Y.Z` does the same on your computer) and that the tag is on `main`.
-3. Approve the *Upload to PyPI* job when GitHub asks. Check https://pypi.org/project/goldpan/ and, in a throwaway environment, `python -m pip install goldpan==X.Y.Z`.
-
-A version on PyPI can never be replaced or reused: a bad upload can only be yanked, and fixed by a new patch version, so run the dry run first. **An AI agent never pushes a `goldpan-v*` tag.** If the library moves to its own repository, register the trusted publisher again for the new repository.
-
-## Publishing goldsluice to PyPI
-
-goldsluice is published as **`goldsluice`** (https://pypi.org/project/goldsluice/) by the workflow `.github/workflows/publish-goldsluice.yml`. It is a Rust extension, so the upload holds a wheel for Linux, Windows and macOS and a source archive. The extension uses the stable Python interface (`abi3-py39`), so one wheel per system serves every Python from 3.9. The workflow runs when a tag `goldsluice-vX.Y.Z` is pushed, builds the wheels, installs each in a clean environment and runs the tests, and then uploads. **No token is stored anywhere**: PyPI trusts the workflow, and the upload waits for the maintainer to approve the `pypi` environment. Run by hand (Actions, *Publish goldsluice*, *Run workflow*) it is a dry run: it builds and tests and never uploads.
-
-**One-time setup (maintainer):** the `pypi` environment is the one made for goldpan, but under *Deployment branches and tags* it must also allow tags matching `goldsluice-v*`. On PyPI, project `goldsluice`, *Manage*, *Publishing*, *Add a new publisher*, GitHub: owner `villano-lab`, repository `NSDF-Data`, workflow `publish-goldsluice.yml`, environment `pypi`. Then run the dry run once and read its log.
-
-**Each goldsluice release.** Make the release as above, with goldsluice's three version numbers and the line `goldsluice X.Y.Z` in that release's `CHANGELOG.md` section. After the release pull request is merged into `main`, tag the merge commit with the *goldsluice* tag, which is neither the project's `vX.Y.Z` nor the library's `goldpan-vX.Y.Z`: `git tag -a goldsluice-vX.Y.Z -m "goldsluice X.Y.Z"` and `git push origin goldsluice-vX.Y.Z`. The first job checks that the tag, the three numbers and the changelog agree (`python tools/check_goldsluice_release.py goldsluice-vX.Y.Z` does the same on your computer) and that the tag is on `main`. Approve the *Upload to PyPI* job, then check https://pypi.org/project/goldsluice/ and, in a throwaway environment, `python -m pip install goldsluice==X.Y.Z`.
-
-As with the library, a version on PyPI can never be replaced or reused, so run the dry run first. **An AI agent never pushes a `goldsluice-v*` tag.**
-
 ## Making a hotfix
 
 A hotfix repairs **released code** (for example a broken library function in a tagged release). A broken guide or site page is *not* a hotfix: fix it with a feature PR into `develop`, and it is live on merge.
 
 1. `git switch main && git pull`, then `git switch -c hotfix/X.Y.Z` (X.Y.Z is the next patch number).
-2. Fix it, set `VERSION` (and the library's own version in `python/pyproject.toml` if the fix changes the library, or goldsluice's three version numbers if it changes `goldsluice/`), and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
+2. Fix it, set `VERSION` (and the goldpan pin in `requirements.txt` if the fix is a new goldpan release), and add the entry to `CHANGELOG.md`. Rebuild any guide PDFs whose source changed.
 3. Open a pull request into `main`. The maintainer merges it, then tags `vX.Y.Z` as above.
 4. Merge `main` back into `develop`.
 
@@ -114,7 +78,7 @@ A hotfix repairs **released code** (for example a broken library function in a t
 
 1. **Notice.** Run `python tools/check_upstream.py` (read-only; `--strict` exits 1 when a pinned package has a newer release). Look at it when the Nexus-DM team announces something and before each release.
 2. **Read what changed.** The release notes, and the code: compare the tags on GitHub (`compare/<old>...<new>`) and note which files changed under `nsdf_dark_matter/` (the library) and `nsdf_dark_matter_cli/`. Check their open issues for anything we filed (for example the trigger-label and missing-data bugs).
-3. **Test in a throwaway environment, never in yours.** `conda create -n nexus_test python=3.12 pip -y`, then `python -m pip install -r` a copy of `requirements.txt` with the new pins. Run the commands with a temporary home folder (set `USERPROFILE` and `HOME`), because the CLI now writes `~/.nexus-dm/config.json` the first time any command runs. Check: `nsdf-cli version`, `config` (and `config --output-global`, `--reset`), `ls --limit 3`, `download 07221203_2025_F0001` from a different folder, the same files and sizes as an existing download, `download ... -o`, `prune -f`, then the guide's numbers (shape (1517, 4096), 179 quiet traces, 141 randoms), `python python/check_environment.py` (it should warn about the pin you changed) and `python -m pytest -q`. Then `conda env remove -n nexus_test -y`.
+3. **Test in a throwaway environment, never in yours.** `conda create -n nexus_test python=3.12 pip -y`, then `python -m pip install -r` a copy of `requirements.txt` with the new pins. Run the commands with a temporary home folder (set `USERPROFILE` and `HOME`), because the CLI now writes `~/.nexus-dm/config.json` the first time any command runs. Check: `nsdf-cli version`, `config` (and `config --output-global`, `--reset`), `ls --limit 3`, `download 07221203_2025_F0001` from a different folder, the same files and sizes as an existing download, `download ... -o`, `prune -f`, then the guide's numbers (shape (1517, 4096), 179 quiet traces, 141 randoms), `python -m check_environment` (it should warn about the pin you changed) and `python -m pytest -q`. Then `conda env remove -n nexus_test -y`.
 4. **Bump the pins** in `requirements.txt` only, then change what quotes them: the "NSDF Dark Matter CLI: X" line of the setup guide and the Codespaces guide (a test fails until they match), the pinned-packages line of `AGENTS.md`, and any new options the guides should teach. Rebuild the guides and open a pull request: the CI check "Guide steps" repeats the setup and first analysis on Windows, macOS and Linux with the new pins.
 5. **Release it** with a changelog line beginning **Students, please:** that points to *Updating your setup* (student guide 7, Step 3), as for any change of environment. Students are warned by `check_environment.py` until they reinstall.
 6. **Tell the Nexus-DM team** about anything wrong that you found (an issue on their repository), and keep our own notes about their behaviour (for example the unconfirmed trigger-label assumption in `pulse_cuts.py`) in step with their answers.
@@ -139,8 +103,6 @@ The rulesets `protect-develop` and `protect-main` block deletion and force-push 
 3. Store the private key as the Actions secret `NOTES_DEPLOY_KEY`: `gh secret set NOTES_DEPLOY_KEY < notes-bot`.
 4. **Delete both files** (`notes-bot` and `notes-bot.pub`). The key lives only in GitHub.
 5. In both rulesets, Bypass list, Add bypass, tick **Deploy keys** (mode Always).
-
-The *Documentation* workflow (`.github/workflows/docs.yml`) uses the same deploy key to commit the generated Sphinx pages in `docs/api/` ("Publish the documentation") on pushes to `develop` and `main`; no other key or secret is needed.
 
 To check it, merge a student note (or a change to `tools/build_notes.py`) and see that the *Student notes* run on `develop` ends with "Publish student notes". If the run fails with "The push was rejected", the secret or the bypass is missing. To revoke the bot's access, delete the deploy key in Settings. A lost private key cannot be recovered: repeat the steps with a new pair.
 

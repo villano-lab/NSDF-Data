@@ -4,6 +4,14 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **goldpan is installed from PyPI, not in place from this repository (setup guide version 23, updating guide version 7, Codespaces guide version 8).** goldpan has its own repository, <https://github.com/villano-lab/goldpan>, and `requirements.txt` now says `goldpan[archive,parquet,root,midas]==0.3.2` instead of `-e ./python[...]`. For a student the commands change in two places: the environment check is `python -m check_environment` (in the `NSDF-Data` folder; it used to be `python check_environment.py` in the `python` folder), and Step 6 of the setup guide and Step 5 of the updating guide no longer run the library tests (`cd python`, `pytest`), which had made-up data and belonged to the library; they run the environment check and print the goldpan version. `import check_environment`, `import pulse_cuts` and the other old names work as before, so no notebook changes. The old in-place install is replaced by pip when `requirements.txt` is installed again (tried: the editable install is uninstalled and goldpan 0.3.2 installed, no leftovers).
+- The folders `python/` and `goldsluice/` of this repository are now frozen copies (their homes are `villano-lab/goldpan` and `villano-lab/goldsluice`, both on PyPI) and will be removed.
+- `check_environment` is part of goldpan 0.3.2 and finds `requirements.txt` by walking up from the current folder.
+- The Codespaces guide's "install by hand" line was out of date (it left out `awkward`, `pyarrow` and the rest): it now says `python -m pip install -r requirements.txt`.
+- The test that writes every `*.dataset.toml` of this repository back as the same definition moved from the library to `tests/test_definitions.py`; the tests of the install and of the Codespaces guide follow the PyPI pin.
+
 ## [0.11.0] - 2026-11-04
 
 **Students, please:** the library `goldpan` has a new version (0.3.0), so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python python/check_environment.py`, which should say `Environment OK`. Python is still 3.12 and no package is new, so you do not need a new environment. Until you reinstall, the check warns that `goldpan` is older than the repository wants. Nothing you already run changes. **If you have a clone with a `master` branch,** the released branch is now `main` (see *Changed* below): run `git fetch --prune`, then `git branch -m master main` and `git branch -u origin/main main`.

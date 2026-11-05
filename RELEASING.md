@@ -45,7 +45,7 @@ The library in `python/` (the `goldpan` distribution, see issue 71) has a versio
 - **Bump it on the `release/*` or `hotfix/*` branch, not in a feature pull request.** Every bump makes each student's `python check_environment.py` warn ("goldpan is 0.1.0, but requirements.txt wants 0.2.0") until they re-run `python -m pip install -r requirements.txt`, so batching bumps into releases keeps that to once per release. In between, the version in the file may lag behind the code.
 - **Say it in the release notes.** In that release's `CHANGELOG.md` section, add the line `goldpan X.Y.Z` (state what changed in the library, as for any change) and start the section with **Students, please:** to re-run *Updating your setup* (student guide 7), Step 3, as for any environment change.
 - **What counts as the library:** the modules listed in `python/pyproject.toml`. Tools, tests, `check_environment.py` and the guides are not versioned by it.
-- `python/tests/test_library_install.py` checks that the version is well formed and that the list of modules matches the files.
+- `tests/test_library_install.py` checks that the version is well formed and that the list of modules matches the files.
 
 ## goldsluice's own version
 

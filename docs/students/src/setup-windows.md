@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
 subtitle: "NSDF-Data student guide 1 — Windows edition"
-date: "Version 22 · 28 October 2026"
+date: "Version 23 · 5 November 2026"
 ---
 
 ::: tip
@@ -146,16 +146,17 @@ The last line of the output is a message, not an error, and the `(darkmatter_cli
 
 ## Step 6. Check that everything works
 
-First, the tests. They use made-up data, so they need no download. Run the three commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
+First, the environment and the project's library. Run the four commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
 
 ```
 conda activate darkmatter_cli_env
-cd %USERPROFILE%\Research\NSDF-Data\python
-python -m pytest -q
+cd %USERPROFILE%\Research\NSDF-Data
+python -m check_environment
+python -c "import importlib.metadata as m, goldpan; print('goldpan', m.version('goldpan'))"
 ```
 
 ::: checkpoint
-The last line says `101 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
+The check says `Environment OK`, and the last line prints `goldpan` and a version number. If the check says `WARNING`, it lists what differs: stop and ask the project lead, and do not change any files.
 :::
 
 Then, the data tool:
@@ -183,8 +184,9 @@ It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not fou
 | Line | What it does |
 |---|---|
 | `conda activate` | Switches your environment on. Do this in every new terminal. |
-| `cd` | Moves into the `python` folder of the project. |
-| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `101 passed` means every check worked. |
+| `cd` | Moves into the `NSDF-Data` folder of the project. |
+| `python -m check_environment` | Runs the project's environment check. It compares your Python and your packages with the project's list (`requirements.txt`) and prints `Environment OK`, or says what differs. |
+| `python -c "..."` | Asks Python to load the project's library (`goldpan`) and print its version. If it answers, the library is installed. |
 | `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -279,7 +281,7 @@ On the computer you are leaving, **commit and push your work first** (Sync Chang
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `dir %USERPROFILE%\Research`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} ends with `101 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd %USERPROFILE%\Research\NSDF-Data\python`{.cmd}, as in Step 6.
+- [ ] `python -m check_environment`{.cmd} says `Environment OK`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the `NSDF-Data` folder with `cd %USERPROFILE%\Research\NSDF-Data`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -306,7 +308,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 22, 28 October 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 23, 5 November 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

@@ -1,7 +1,7 @@
 ---
 title: "Updating your setup"
 subtitle: "NSDF-Data student guide 7 — Linux edition"
-date: "Version 6 · 13 October 2026"
+date: "Version 7 · 5 November 2026"
 ---
 
 ::: maintenance
@@ -34,11 +34,11 @@ Open a terminal (Step 1 of the setup guide), and type these lines, one at a time
 
 ```
 conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python check_environment.py
+cd ~/Research/NSDF-Data
+python -m check_environment
 ```
 
-**What these lines do:** the first switches your environment on, the second moves you into the project's `python` folder, and the third runs the project's environment check.
+**What these lines do:** the first switches your environment on, the second moves you into the `NSDF-Data` folder, and the third runs the project's environment check.
 
 ::: checkpoint
 If it says `Environment OK`, your environment is current: go to Step 2 anyway if a new release was announced, otherwise you are done. If it says `WARNING`, it lists what differs. A line about **Python** means Step 4. A line about a **package** means Step 3. Do Step 2 first in both cases.
@@ -127,14 +127,14 @@ If you installed anything yourself into the old environment, its name is in `old
 
 ```
 conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python check_environment.py
-python -m pytest -q
+cd ~/Research/NSDF-Data
+python -m check_environment
+python -c "import importlib.metadata as m, goldpan; print('goldpan', m.version('goldpan'))"
 nsdf-cli version
 ```
 
 ::: checkpoint
-The check says `Environment OK`, `pytest` ends with `101 passed`, and the last line prints `NSDF Dark Matter CLI: 0.6.0` (or the newer version the release notes name). If not, do not guess: copy the output and send it to the project lead.
+The check says `Environment OK`, the next line prints `goldpan` and a version number, and the last line prints `NSDF Dark Matter CLI: 0.6.0` (or the newer version the release notes name). If not, do not guess: copy the output and send it to the project lead.
 :::
 
 ## Step 6. Start Jupyter again
@@ -162,9 +162,9 @@ What the Nexus-DM team changed in each version is in [their release notes](https
 
 ## You are done when
 
-- [ ] `python check_environment.py`{.cmd} (in the `python` folder, with the environment on) says `Environment OK`.
+- [ ] `python -m check_environment`{.cmd} (in the `NSDF-Data` folder, with the environment on) says `Environment OK`.
 - [ ] `git status`{.cmd} in the `NSDF-Data` folder shows your own branch and nothing you want to keep is unsaved.
-- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `101 passed`.
+- [ ] `python -c "import goldpan"`{.cmd} prints nothing and no error.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
 - [ ] Your notebook's first cell prints `Environment OK`.
 
@@ -172,7 +172,8 @@ What the Nexus-DM team changed in each version is in [their release notes](https
 
 | What you see | What to do |
 |---|---|
-| `python: can't open file 'check_environment.py'` or `No such file` | You are not in the `python` folder. Run the `cd` line of Step 1, and make sure Step 2 finished (the file arrives with the newest changes). |
+| `No module named check_environment` | The project's library (`goldpan`) is not installed in this environment. Make sure Step 2 finished (the new `requirements.txt` arrives with the newest changes), then do Step 3: `python -m pip install -r requirements.txt` in the `NSDF-Data` folder. |
+| `requirements.txt was not found, so only the Python version was checked` | You are not inside the `NSDF-Data` folder. Run the `cd` line of Step 1 and run the check again. |
 | `EnvironmentLocationNotFound` or "not a conda environment" on `conda env remove` | There is no environment of that name any more. That is fine: carry on with the next line. |
 | `CondaError: Prefix record '...' already exists` on `conda create` | Conda's download cache has a bad entry. Type `conda clean --all -y`{.cmd} and then run the `conda create` line again. |
 | `conda create` complains that the folder exists, or a leftover folder `darkmatter_cli_env` is in the `envs` folder | The removal left an empty shell behind. Type `conda info --envs`{.cmd} to see where the environments live, check that the leftover `darkmatter_cli_env` folder holds no `python` file, delete that folder, and run the `conda create` line again. |
@@ -190,7 +191,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 6, 13 October 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 7, 5 November 2026, Linux edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

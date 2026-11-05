@@ -36,9 +36,8 @@ def test_guides_quote_the_pinned_cli_version():
         assert set(shown) == {cli}, f"{rel} shows {sorted(set(shown))}, requirements.txt pins {cli}"
 
 
-def test_codespaces_install_line_matches_requirements():
-    pins = cu.parse_pins((ROOT / "requirements.txt").read_text(encoding="utf-8"))
+def test_codespaces_fallback_installs_from_the_list_not_from_a_copy_of_it():
+    """The Codespaces guide must not repeat package versions by hand: they would drift from requirements.txt."""
     text = (ROOT / "docs/students/src/codespaces.md").read_text(encoding="utf-8")
-    for name in ("nsdf-dark-matter", "nsdf-dark-matter-cli"):
-        found = re.findall(rf"{re.escape(name)}==(\d+\.\d+\.\d+)", text)
-        assert found and set(found) == {pins[name]}, f"codespaces.md and requirements.txt disagree on {name}"
+    assert "python -m pip install -r requirements.txt" in text
+    assert not re.search(r"pip install [^\n]*==", text), "codespaces.md lists versions by hand: say `pip install -r requirements.txt`"

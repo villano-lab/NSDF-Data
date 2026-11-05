@@ -28,7 +28,7 @@
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Windows
-edition &middot; Version 22 · 28 October 2026</p>
+edition &middot; Version 23 · 5 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -421,17 +421,19 @@ prompt.</p>
 </div>
 <h2 id="windows-step-6.-check-that-everything-works">Step 6. Check that
 everything works</h2>
-<p>First, the tests. They use made-up data, so they need no download.
-Run the three commands below, one at a time: type (or paste) each line
-into the terminal and press Enter, and wait for the prompt to come back
-before the next one:</p>
+<p>First, the environment and the project’s library. Run the four
+commands below, one at a time: type (or paste) each line into the
+terminal and press Enter, and wait for the prompt to come back before
+the next one:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd %USERPROFILE%\Research\NSDF-Data\python
-python -m pytest -q</code></pre>
+cd %USERPROFILE%\Research\NSDF-Data
+python -m check_environment
+python -c &quot;import importlib.metadata as m, goldpan; print(&#39;goldpan&#39;, m.version(&#39;goldpan&#39;))&quot;</code></pre>
 <div class="checkpoint">
-<p>The last line says <code>101 passed</code> (it can be a larger number
-later, which is also fine). If it says <code>failed</code>, stop and ask
-the project lead, and do not change any files.</p>
+<p>The check says <code>Environment OK</code>, and the last line prints
+<code>goldpan</code> and a version number. If the check says
+<code>WARNING</code>, it lists what differs: stop and ask the project
+lead, and do not change any files.</p>
 </div>
 <p>Then, the data tool:</p>
 <pre><code>nsdf-cli version</code></pre>
@@ -468,13 +470,18 @@ class="cmd">python -m pip install -r requirements.txt</code> again.</p>
 </tr>
 <tr>
 <td><code>cd</code></td>
-<td>Moves into the <code>python</code> folder of the project.</td>
+<td>Moves into the <code>NSDF-Data</code> folder of the project.</td>
 </tr>
 <tr>
-<td><code>python -m pytest -q</code></td>
-<td>Runs the project’s built-in self-checks. The <code>-q</code> just
-means “keep the output short”. <code>101 passed</code> means every check
-worked.</td>
+<td><code>python -m check_environment</code></td>
+<td>Runs the project’s environment check. It compares your Python and
+your packages with the project’s list (<code>requirements.txt</code>)
+and prints <code>Environment OK</code>, or says what differs.</td>
+</tr>
+<tr>
+<td><code>python -c "..."</code></td>
+<td>Asks Python to load the project’s library (<code>goldpan</code>) and
+print its version. If it answers, the library is installed.</td>
 </tr>
 <tr>
 <td><code>nsdf-cli version</code>,
@@ -610,12 +617,12 @@ terminal.</label></li>
 class="cmd">dir %USERPROFILE%\Research</code> lists
 <code>NSDF-Data</code>.</label></li>
 <li><label><input type="checkbox" /><code
-class="cmd">python -m pytest -q</code> ends with
-<code>101 passed</code>. Note: first activate the environment with <code
-class="cmd">conda activate darkmatter_cli_env</code> and go to the
-repository’s <code>python</code> folder with <code
-class="cmd">cd %USERPROFILE%\Research\NSDF-Data\python</code>, as in
-Step 6.</label></li>
+class="cmd">python -m check_environment</code> says
+<code>Environment OK</code>. Note: first activate the environment with
+<code class="cmd">conda activate darkmatter_cli_env</code> and go to the
+<code>NSDF-Data</code> folder with <code
+class="cmd">cd %USERPROFILE%\Research\NSDF-Data</code>, as in Step
+6.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">nsdf-cli version</code> prints a version.</label></li>
 <li><label><input type="checkbox" /><code
@@ -658,7 +665,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 22, 28 October 2026, Windows edition. Written for
+<p>Guide version 23, 5 November 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="windows-key-links">Key links</h2>
@@ -680,7 +687,7 @@ class="uri">https://git-scm.com</a></li>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — macOS
-edition &middot; Version 22 · 28 October 2026</p>
+edition &middot; Version 23 · 5 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1012,17 +1019,19 @@ prompt.</p>
 </div>
 <h2 id="macos-step-6.-check-that-everything-works">Step 6. Check that
 everything works</h2>
-<p>First, the tests. They use made-up data, so they need no download.
-Run the three commands below, one at a time: type (or paste) each line
-into the terminal and press Enter, and wait for the prompt to come back
-before the next one:</p>
+<p>First, the environment and the project’s library. Run the four
+commands below, one at a time: type (or paste) each line into the
+terminal and press Enter, and wait for the prompt to come back before
+the next one:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python -m pytest -q</code></pre>
+cd ~/Research/NSDF-Data
+python -m check_environment
+python -c &quot;import importlib.metadata as m, goldpan; print(&#39;goldpan&#39;, m.version(&#39;goldpan&#39;))&quot;</code></pre>
 <div class="checkpoint">
-<p>The last line says <code>101 passed</code> (it can be a larger number
-later, which is also fine). If it says <code>failed</code>, stop and ask
-the project lead, and do not change any files.</p>
+<p>The check says <code>Environment OK</code>, and the last line prints
+<code>goldpan</code> and a version number. If the check says
+<code>WARNING</code>, it lists what differs: stop and ask the project
+lead, and do not change any files.</p>
 </div>
 <p>Then, the data tool:</p>
 <pre><code>nsdf-cli version</code></pre>
@@ -1059,13 +1068,18 @@ class="cmd">python -m pip install -r requirements.txt</code> again.</p>
 </tr>
 <tr>
 <td><code>cd</code></td>
-<td>Moves into the <code>python</code> folder of the project.</td>
+<td>Moves into the <code>NSDF-Data</code> folder of the project.</td>
 </tr>
 <tr>
-<td><code>python -m pytest -q</code></td>
-<td>Runs the project’s built-in self-checks. The <code>-q</code> just
-means “keep the output short”. <code>101 passed</code> means every check
-worked.</td>
+<td><code>python -m check_environment</code></td>
+<td>Runs the project’s environment check. It compares your Python and
+your packages with the project’s list (<code>requirements.txt</code>)
+and prints <code>Environment OK</code>, or says what differs.</td>
+</tr>
+<tr>
+<td><code>python -c "..."</code></td>
+<td>Asks Python to load the project’s library (<code>goldpan</code>) and
+print its version. If it answers, the library is installed.</td>
 </tr>
 <tr>
 <td><code>nsdf-cli version</code>,
@@ -1201,12 +1215,11 @@ terminal.</label></li>
 class="cmd">ls ~/Research</code> lists
 <code>NSDF-Data</code>.</label></li>
 <li><label><input type="checkbox" /><code
-class="cmd">python -m pytest -q</code> ends with
-<code>101 passed</code>. Note: first activate the environment with <code
-class="cmd">conda activate darkmatter_cli_env</code> and go to the
-repository’s <code>python</code> folder with <code
-class="cmd">cd ~/Research/NSDF-Data/python</code>, as in Step
-6.</label></li>
+class="cmd">python -m check_environment</code> says
+<code>Environment OK</code>. Note: first activate the environment with
+<code class="cmd">conda activate darkmatter_cli_env</code> and go to the
+<code>NSDF-Data</code> folder with <code
+class="cmd">cd ~/Research/NSDF-Data</code>, as in Step 6.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">nsdf-cli version</code> prints a version.</label></li>
 <li><label><input type="checkbox" /><code
@@ -1249,7 +1262,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 22, 28 October 2026, macOS edition. Written for
+<p>Guide version 23, 5 November 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="macos-key-links">Key links</h2>
@@ -1271,7 +1284,7 @@ class="uri">https://git-scm.com</a></li>
 
 <h1>Setting up your computer</h1>
 <p class="meta">NSDF-Data student guide 1 — Linux
-edition &middot; Version 22 · 28 October 2026</p>
+edition &middot; Version 23 · 5 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1654,17 +1667,19 @@ prompt.</p>
 </div>
 <h2 id="linux-step-6.-check-that-everything-works">Step 6. Check that
 everything works</h2>
-<p>First, the tests. They use made-up data, so they need no download.
-Run the three commands below, one at a time: type (or paste) each line
-into the terminal and press Enter, and wait for the prompt to come back
-before the next one:</p>
+<p>First, the environment and the project’s library. Run the four
+commands below, one at a time: type (or paste) each line into the
+terminal and press Enter, and wait for the prompt to come back before
+the next one:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python -m pytest -q</code></pre>
+cd ~/Research/NSDF-Data
+python -m check_environment
+python -c &quot;import importlib.metadata as m, goldpan; print(&#39;goldpan&#39;, m.version(&#39;goldpan&#39;))&quot;</code></pre>
 <div class="checkpoint">
-<p>The last line says <code>101 passed</code> (it can be a larger number
-later, which is also fine). If it says <code>failed</code>, stop and ask
-the project lead, and do not change any files.</p>
+<p>The check says <code>Environment OK</code>, and the last line prints
+<code>goldpan</code> and a version number. If the check says
+<code>WARNING</code>, it lists what differs: stop and ask the project
+lead, and do not change any files.</p>
 </div>
 <p>Then, the data tool:</p>
 <pre><code>nsdf-cli version</code></pre>
@@ -1701,13 +1716,18 @@ class="cmd">python -m pip install -r requirements.txt</code> again.</p>
 </tr>
 <tr>
 <td><code>cd</code></td>
-<td>Moves into the <code>python</code> folder of the project.</td>
+<td>Moves into the <code>NSDF-Data</code> folder of the project.</td>
 </tr>
 <tr>
-<td><code>python -m pytest -q</code></td>
-<td>Runs the project’s built-in self-checks. The <code>-q</code> just
-means “keep the output short”. <code>101 passed</code> means every check
-worked.</td>
+<td><code>python -m check_environment</code></td>
+<td>Runs the project’s environment check. It compares your Python and
+your packages with the project’s list (<code>requirements.txt</code>)
+and prints <code>Environment OK</code>, or says what differs.</td>
+</tr>
+<tr>
+<td><code>python -c "..."</code></td>
+<td>Asks Python to load the project’s library (<code>goldpan</code>) and
+print its version. If it answers, the library is installed.</td>
 </tr>
 <tr>
 <td><code>nsdf-cli version</code>,
@@ -1843,12 +1863,11 @@ terminal.</label></li>
 class="cmd">ls ~/Research</code> lists
 <code>NSDF-Data</code>.</label></li>
 <li><label><input type="checkbox" /><code
-class="cmd">python -m pytest -q</code> ends with
-<code>101 passed</code>. Note: first activate the environment with <code
-class="cmd">conda activate darkmatter_cli_env</code> and go to the
-repository’s <code>python</code> folder with <code
-class="cmd">cd ~/Research/NSDF-Data/python</code>, as in Step
-6.</label></li>
+class="cmd">python -m check_environment</code> says
+<code>Environment OK</code>. Note: first activate the environment with
+<code class="cmd">conda activate darkmatter_cli_env</code> and go to the
+<code>NSDF-Data</code> folder with <code
+class="cmd">cd ~/Research/NSDF-Data</code>, as in Step 6.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">nsdf-cli version</code> prints a version.</label></li>
 <li><label><input type="checkbox" /><code
@@ -1891,7 +1910,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 22, 28 October 2026, Linux edition. Written for
+<p>Guide version 23, 5 November 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="linux-key-links">Key links</h2>

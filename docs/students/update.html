@@ -28,7 +28,7 @@
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — Windows
-edition &middot; Version 6 · 13 October 2026</p>
+edition &middot; Version 7 · 5 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -150,12 +150,11 @@ version, such as <code>numpy==2.2.6</code>.</td>
 <strong>Enter</strong>), and type these lines, one at a time, pressing
 Enter after each:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd %USERPROFILE%\Research\NSDF-Data\python
-python check_environment.py</code></pre>
+cd %USERPROFILE%\Research\NSDF-Data
+python -m check_environment</code></pre>
 <p><strong>What these lines do:</strong> the first switches your
-environment on, the second moves you into the project’s
-<code>python</code> folder, and the third runs the project’s environment
-check.</p>
+environment on, the second moves you into the <code>NSDF-Data</code>
+folder, and the third runs the project’s environment check.</p>
 <div class="checkpoint">
 <p>If it says <code>Environment OK</code>, your environment is current:
 go to Step 2 anyway if a new release was announced, otherwise you are
@@ -317,13 +316,13 @@ not skip it: see <em>If something goes wrong</em> below.</p>
 <h2 id="windows-step-5.-check-that-everything-works">Step 5. Check that
 everything works</h2>
 <pre><code>conda activate darkmatter_cli_env
-cd %USERPROFILE%\Research\NSDF-Data\python
-python check_environment.py
-python -m pytest -q
+cd %USERPROFILE%\Research\NSDF-Data
+python -m check_environment
+python -c &quot;import importlib.metadata as m, goldpan; print(&#39;goldpan&#39;, m.version(&#39;goldpan&#39;))&quot;
 nsdf-cli version</code></pre>
 <div class="checkpoint">
-<p>The check says <code>Environment OK</code>, <code>pytest</code> ends
-with <code>101 passed</code>, and the last line prints
+<p>The check says <code>Environment OK</code>, the next line prints
+<code>goldpan</code> and a version number, and the last line prints
 <code>NSDF Dark Matter CLI: 0.6.0</code> (or the newer version the
 release notes name). If not, do not guess: copy the output and send it
 to the project lead.</p>
@@ -377,15 +376,15 @@ notes</a>.</p>
 <h2 id="windows-you-are-done-when">You are done when</h2>
 <ul class="task-list">
 <li><label><input type="checkbox" /><code
-class="cmd">python check_environment.py</code> (in the
-<code>python</code> folder, with the environment on) says
+class="cmd">python -m check_environment</code> (in the
+<code>NSDF-Data</code> folder, with the environment on) says
 <code>Environment OK</code>.</label></li>
 <li><label><input type="checkbox" /><code class="cmd">git status</code>
 in the <code>NSDF-Data</code> folder shows your own branch and nothing
 you want to keep is unsaved.</label></li>
 <li><label><input type="checkbox" /><code
-class="cmd">python -m pytest -q</code> in the <code>python</code> folder
-ends with <code>101 passed</code>.</label></li>
+class="cmd">python -c "import goldpan"</code> prints nothing and no
+error.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">jupyter kernelspec list</code> lists
 <code>darkmatter_cli_env</code>.</label></li>
@@ -407,11 +406,17 @@ class="cmd">jupyter kernelspec list</code> lists
 </thead>
 <tbody>
 <tr>
-<td><code>python: can't open file 'check_environment.py'</code> or
-<code>No such file</code></td>
-<td>You are not in the <code>python</code> folder. Run the
-<code>cd</code> line of Step 1, and make sure Step 2 finished (the file
-arrives with the newest changes).</td>
+<td><code>No module named check_environment</code></td>
+<td>The project’s library (<code>goldpan</code>) is not installed in
+this environment. Make sure Step 2 finished (the new
+<code>requirements.txt</code> arrives with the newest changes), then do
+Step 3: <code>python -m pip install -r requirements.txt</code> in the
+<code>NSDF-Data</code> folder.</td>
+</tr>
+<tr>
+<td><code>requirements.txt was not found, so only the Python version was checked</code></td>
+<td>You are not inside the <code>NSDF-Data</code> folder. Run the
+<code>cd</code> line of Step 1 and run the check again.</td>
 </tr>
 <tr>
 <td><code>EnvironmentLocationNotFound</code> or “not a conda
@@ -482,7 +487,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 6, 13 October 2026, Windows edition. Written for
+<p>Guide version 7, 5 November 2026, Windows edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="windows-key-links">Key links</h2>
@@ -503,7 +508,7 @@ class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — macOS
-edition &middot; Version 6 · 13 October 2026</p>
+edition &middot; Version 7 · 5 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -622,12 +627,11 @@ version, such as <code>numpy==2.2.6</code>.</td>
 <p>Open a terminal (Step 1 of the setup guide), and type these lines,
 one at a time, pressing Enter after each:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python check_environment.py</code></pre>
+cd ~/Research/NSDF-Data
+python -m check_environment</code></pre>
 <p><strong>What these lines do:</strong> the first switches your
-environment on, the second moves you into the project’s
-<code>python</code> folder, and the third runs the project’s environment
-check.</p>
+environment on, the second moves you into the <code>NSDF-Data</code>
+folder, and the third runs the project’s environment check.</p>
 <div class="checkpoint">
 <p>If it says <code>Environment OK</code>, your environment is current:
 go to Step 2 anyway if a new release was announced, otherwise you are
@@ -789,13 +793,13 @@ not skip it: see <em>If something goes wrong</em> below.</p>
 <h2 id="macos-step-5.-check-that-everything-works">Step 5. Check that
 everything works</h2>
 <pre><code>conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python check_environment.py
-python -m pytest -q
+cd ~/Research/NSDF-Data
+python -m check_environment
+python -c &quot;import importlib.metadata as m, goldpan; print(&#39;goldpan&#39;, m.version(&#39;goldpan&#39;))&quot;
 nsdf-cli version</code></pre>
 <div class="checkpoint">
-<p>The check says <code>Environment OK</code>, <code>pytest</code> ends
-with <code>101 passed</code>, and the last line prints
+<p>The check says <code>Environment OK</code>, the next line prints
+<code>goldpan</code> and a version number, and the last line prints
 <code>NSDF Dark Matter CLI: 0.6.0</code> (or the newer version the
 release notes name). If not, do not guess: copy the output and send it
 to the project lead.</p>
@@ -849,15 +853,15 @@ notes</a>.</p>
 <h2 id="macos-you-are-done-when">You are done when</h2>
 <ul class="task-list">
 <li><label><input type="checkbox" /><code
-class="cmd">python check_environment.py</code> (in the
-<code>python</code> folder, with the environment on) says
+class="cmd">python -m check_environment</code> (in the
+<code>NSDF-Data</code> folder, with the environment on) says
 <code>Environment OK</code>.</label></li>
 <li><label><input type="checkbox" /><code class="cmd">git status</code>
 in the <code>NSDF-Data</code> folder shows your own branch and nothing
 you want to keep is unsaved.</label></li>
 <li><label><input type="checkbox" /><code
-class="cmd">python -m pytest -q</code> in the <code>python</code> folder
-ends with <code>101 passed</code>.</label></li>
+class="cmd">python -c "import goldpan"</code> prints nothing and no
+error.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">jupyter kernelspec list</code> lists
 <code>darkmatter_cli_env</code>.</label></li>
@@ -879,11 +883,17 @@ class="cmd">jupyter kernelspec list</code> lists
 </thead>
 <tbody>
 <tr>
-<td><code>python: can't open file 'check_environment.py'</code> or
-<code>No such file</code></td>
-<td>You are not in the <code>python</code> folder. Run the
-<code>cd</code> line of Step 1, and make sure Step 2 finished (the file
-arrives with the newest changes).</td>
+<td><code>No module named check_environment</code></td>
+<td>The project’s library (<code>goldpan</code>) is not installed in
+this environment. Make sure Step 2 finished (the new
+<code>requirements.txt</code> arrives with the newest changes), then do
+Step 3: <code>python -m pip install -r requirements.txt</code> in the
+<code>NSDF-Data</code> folder.</td>
+</tr>
+<tr>
+<td><code>requirements.txt was not found, so only the Python version was checked</code></td>
+<td>You are not inside the <code>NSDF-Data</code> folder. Run the
+<code>cd</code> line of Step 1 and run the check again.</td>
 </tr>
 <tr>
 <td><code>EnvironmentLocationNotFound</code> or “not a conda
@@ -954,7 +964,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 6, 13 October 2026, macOS edition. Written for
+<p>Guide version 7, 5 November 2026, macOS edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="macos-key-links">Key links</h2>
@@ -975,7 +985,7 @@ class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
 
 <h1>Updating your setup</h1>
 <p class="meta">NSDF-Data student guide 7 — Linux
-edition &middot; Version 6 · 13 October 2026</p>
+edition &middot; Version 7 · 5 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1094,12 +1104,11 @@ version, such as <code>numpy==2.2.6</code>.</td>
 <p>Open a terminal (Step 1 of the setup guide), and type these lines,
 one at a time, pressing Enter after each:</p>
 <pre><code>conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python check_environment.py</code></pre>
+cd ~/Research/NSDF-Data
+python -m check_environment</code></pre>
 <p><strong>What these lines do:</strong> the first switches your
-environment on, the second moves you into the project’s
-<code>python</code> folder, and the third runs the project’s environment
-check.</p>
+environment on, the second moves you into the <code>NSDF-Data</code>
+folder, and the third runs the project’s environment check.</p>
 <div class="checkpoint">
 <p>If it says <code>Environment OK</code>, your environment is current:
 go to Step 2 anyway if a new release was announced, otherwise you are
@@ -1261,13 +1270,13 @@ not skip it: see <em>If something goes wrong</em> below.</p>
 <h2 id="linux-step-5.-check-that-everything-works">Step 5. Check that
 everything works</h2>
 <pre><code>conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python check_environment.py
-python -m pytest -q
+cd ~/Research/NSDF-Data
+python -m check_environment
+python -c &quot;import importlib.metadata as m, goldpan; print(&#39;goldpan&#39;, m.version(&#39;goldpan&#39;))&quot;
 nsdf-cli version</code></pre>
 <div class="checkpoint">
-<p>The check says <code>Environment OK</code>, <code>pytest</code> ends
-with <code>101 passed</code>, and the last line prints
+<p>The check says <code>Environment OK</code>, the next line prints
+<code>goldpan</code> and a version number, and the last line prints
 <code>NSDF Dark Matter CLI: 0.6.0</code> (or the newer version the
 release notes name). If not, do not guess: copy the output and send it
 to the project lead.</p>
@@ -1321,15 +1330,15 @@ notes</a>.</p>
 <h2 id="linux-you-are-done-when">You are done when</h2>
 <ul class="task-list">
 <li><label><input type="checkbox" /><code
-class="cmd">python check_environment.py</code> (in the
-<code>python</code> folder, with the environment on) says
+class="cmd">python -m check_environment</code> (in the
+<code>NSDF-Data</code> folder, with the environment on) says
 <code>Environment OK</code>.</label></li>
 <li><label><input type="checkbox" /><code class="cmd">git status</code>
 in the <code>NSDF-Data</code> folder shows your own branch and nothing
 you want to keep is unsaved.</label></li>
 <li><label><input type="checkbox" /><code
-class="cmd">python -m pytest -q</code> in the <code>python</code> folder
-ends with <code>101 passed</code>.</label></li>
+class="cmd">python -c "import goldpan"</code> prints nothing and no
+error.</label></li>
 <li><label><input type="checkbox" /><code
 class="cmd">jupyter kernelspec list</code> lists
 <code>darkmatter_cli_env</code>.</label></li>
@@ -1351,11 +1360,17 @@ class="cmd">jupyter kernelspec list</code> lists
 </thead>
 <tbody>
 <tr>
-<td><code>python: can't open file 'check_environment.py'</code> or
-<code>No such file</code></td>
-<td>You are not in the <code>python</code> folder. Run the
-<code>cd</code> line of Step 1, and make sure Step 2 finished (the file
-arrives with the newest changes).</td>
+<td><code>No module named check_environment</code></td>
+<td>The project’s library (<code>goldpan</code>) is not installed in
+this environment. Make sure Step 2 finished (the new
+<code>requirements.txt</code> arrives with the newest changes), then do
+Step 3: <code>python -m pip install -r requirements.txt</code> in the
+<code>NSDF-Data</code> folder.</td>
+</tr>
+<tr>
+<td><code>requirements.txt was not found, so only the Python version was checked</code></td>
+<td>You are not inside the <code>NSDF-Data</code> folder. Run the
+<code>cd</code> line of Step 1 and run the check again.</td>
 </tr>
 <tr>
 <td><code>EnvironmentLocationNotFound</code> or “not a conda
@@ -1426,7 +1441,7 @@ class="email">anthony.villano@ucdenver.edu</a></p>
 the last few lines the computer printed. A screenshot helps. Nobody will
 be annoyed by a question about a step that did not work.</p>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 6, 13 October 2026, Linux edition. Written for
+<p>Guide version 7, 5 November 2026, Linux edition. Written for
 beginners; please tell the project lead where a step was unclear, so the
 guide can be fixed.</p>
 <h2 id="linux-key-links">Key links</h2>

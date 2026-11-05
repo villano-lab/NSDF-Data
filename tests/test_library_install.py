@@ -37,9 +37,13 @@ def test_library_has_a_semantic_version_and_numpy_dependency():
     assert "h5py" in meta["optional-dependencies"]["archive"]
 
 
-def test_requirements_installs_the_library_in_place():
+def test_requirements_pins_goldpan_from_pypi_with_every_extra_the_guides_promise():
+    """goldpan comes from PyPI (its home is github.com/villano-lab/goldpan); the extras bring h5py, pyarrow, uproot and lz4."""
     lines = [l.split("#")[0].strip() for l in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()]
-    assert any(l.startswith("-e ./python") for l in lines), "requirements.txt must contain a line `-e ./python[archive]`"
+    found = [re.fullmatch(r"goldpan\[([a-z,]+)\]==(\d+\.\d+\.\d+)", l) for l in lines if l.startswith("goldpan")]
+    assert len(found) == 1 and found[0], "requirements.txt must have one line `goldpan[archive,parquet,root,midas]==X.Y.Z`"
+    assert set(found[0].group(1).split(",")) == {"archive", "parquet", "root", "midas"}
+    assert not any(l.startswith("-e") for l in lines), "the library is no longer installed in place from this repository"
 
 
 def test_every_module_is_imported_by_its_plain_name():
@@ -49,9 +53,8 @@ def test_every_module_is_imported_by_its_plain_name():
         assert (PY / f"{name}.py").exists()
 
 
-def test_the_environment_check_sees_the_library_that_requirements_installs():
-    """requirements.txt installs the library whose name and version pyproject.toml gives, and check_environment pins it."""
+def test_the_environment_check_reads_the_goldpan_pin_of_requirements():
+    """check_environment pins goldpan like any other package: it reads `goldpan[extras]==X.Y.Z` by the plain name."""
     import check_environment as ce
-    meta = project()["project"]
-    assert meta["name"] == "goldpan"
-    assert ce.library_pins(ROOT / "requirements.txt") == {"goldpan": meta["version"]}
+    pins = ce.parse_requirements((ROOT / "requirements.txt").read_text(encoding="utf-8"))
+    assert re.fullmatch(r"\d+\.\d+\.\d+", pins.get("goldpan", ""))

@@ -9,7 +9,7 @@ import pytest
 from goldpan import channels, config, dataset, registry
 from goldpan.config import DCRC_RUN76
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 FOLDER = REPO / "registry"
 EXAMPLES = REPO / "goldsluice" / "examples"
 

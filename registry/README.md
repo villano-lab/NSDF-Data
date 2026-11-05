@@ -10,7 +10,7 @@ where each named channel is wired in a given file format. Read by `goldpan.regis
   can move to a repository of its own (or be replaced by a database behind the same `goldpan.registry` interface) without a change
   to the library.
 - A name may be defined once. To add a detector, add a table to a file here (or a new file) and run
-  `python -m pytest python/tests/test_registry_data.py`.
+  `python -m pytest tests/test_registry_data.py`.
   A program can add a record instead of an editor: `goldpan.registry.add_record(folder, "detectors", name, table)` checks it as the reader does and
   appends it to `detectors.toml` without touching the rest of the file (write `confirmed` only for what a file or a document says).
 

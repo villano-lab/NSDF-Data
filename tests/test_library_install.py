@@ -4,7 +4,7 @@ import re
 import tomllib
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[1]
 PY = ROOT / "python"
 NOT_LIBRARY = set()   # every *.py in python/ is a module of the library
 ORIGINAL_MODULES = {"archive", "channels", "config", "cuts", "io", "operations", "quantities", "status"}

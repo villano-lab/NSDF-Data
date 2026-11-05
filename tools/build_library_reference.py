@@ -9,7 +9,7 @@ dependencies (numpy, h5py), so it runs wherever the tests run.
     python tools/build_library_reference.py          # write docs/library/index.html
     python tools/build_library_reference.py check    # exit 1 if the page is out of date
 
-`check` runs in the library tests (python/tests/test_library_reference.py), so a pull request
+`check` runs in the library tests (tests/test_library_reference.py), so a pull request
 that changes a function without rebuilding the page fails CI.
 """
 import ast

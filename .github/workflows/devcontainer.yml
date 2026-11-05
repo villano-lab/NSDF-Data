@@ -11,14 +11,12 @@ on:
     paths:
       - ".devcontainer/**"
       - "requirements.txt"
-      - "python/**"
       - ".github/workflows/devcontainer.yml"
   push:
     branches: [develop, main]
     paths:
       - ".devcontainer/**"
       - "requirements.txt"
-      - "python/**"
       - ".github/workflows/devcontainer.yml"
   schedule:
     - cron: "17 6 * * 1"

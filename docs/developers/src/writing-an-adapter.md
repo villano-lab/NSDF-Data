@@ -18,7 +18,7 @@ html-subtitle: "Developer quick-sheet · for anyone who wants goldpan to read an
 \small
 ```
 
-An **adapter** is the only code that knows a file format. It turns one storage (a MIDAS file, an idx dump, a ROOT file, your lab's own format) into the objects the rest of `goldpan` works on; everything else in the library sees arrays and never a file. Four exist: `idx`, `parquet`, `midas` (they read traces into an `Events`) and `rq_root` (it reads processed quantities into a table). A new one is a small Python module. Start from the complete example in `python/tests/example_adapter.py` (about 50 lines, tested), then follow this sheet.
+An **adapter** is the only code that knows a file format. It turns one storage (a MIDAS file, an idx dump, a ROOT file, your lab's own format) into the objects the rest of `goldpan` works on; everything else in the library sees arrays and never a file. Four exist: `idx`, `parquet`, `midas` (they read traces into an `Events`) and `rq_root` (it reads processed quantities into a table). A new one is a small Python module. Start from the complete example in `tests/example_adapter.py` (in the goldpan repository) (about 50 lines, tested), then follow this sheet.
 
 ## 1. Which shape
 
@@ -47,7 +47,7 @@ def write(events, path) -> None                                # optional
 
 `iter_chunks` gives the same events in pieces (for a file larger than memory); `write` makes a file that `read` reads back.
 
-The core of `python/tests/example_adapter.py`: it checks the sample period of the file, then builds the `Events`.
+The core of `tests/example_adapter.py` (in the [goldpan repository](https://github.com/villano-lab/goldpan)): it checks the sample period of the file, then builds the `Events`.
 
 ```python
 with np.load(path) as f:
@@ -75,13 +75,13 @@ from goldpan.testing import check_adapter
 check_adapter(my_module, "sample.npz", detector_name="TOY", config=CONFIG)
 ```
 
-Then add the tests only you can write: the error messages, a truncated file, a channel that is missing. For data to try the adapter on, `python/tests/synthetic_series.py` writes one made-up series in idx, MIDAS, RQ Parquet, RQ ROOT and native Parquet (`python python/tests/synthetic_series.py OUTDIR`); add a writer for your format there and compare it with the same events. A test on a real file belongs in the repository only as a skipped-unless-present test: put the path in an environment variable, as `GOLDPAN_MIDAS_SAMPLE` does; real data are never committed.
+Then add the tests only you can write: the error messages, a truncated file, a channel that is missing. For data to try the adapter on, `tests/synthetic_series.py` writes one made-up series in idx, MIDAS, RQ Parquet, RQ ROOT and native Parquet (`python tests/synthetic_series.py OUTDIR`); add a writer for your format there and compare it with the same events. A test on a real file belongs in the repository only as a skipped-unless-present test: put the path in an environment variable, as `GOLDPAN_MIDAS_SAMPLE` does; real data are never committed.
 
 ## 5. Make it available
 
 - **For yourself or your package:** `goldpan.adapters.register("name", my_module)` makes `goldpan.adapters.read(path, format="name", ...)` work. Nothing in `goldpan` changes.
-- **As a built-in** (a pull request into `develop`, as in `AGENTS.md`): the module `<name>.py` goes in `python/goldpan/adapters/` with a docstring that says what the format is and gives one example call (it becomes the page of the library reference); its public functions carry `@status(DONE)`; add it to `_BUILTIN` in `python/goldpan/adapters/__init__.py` (and to the suffix guess, if it has one); tests in `python/tests/` (`test_goldpan_<name>.py`); rebuild the reference page (`python tools/build_library_reference.py`); a line in `CHANGELOG.md`.
-- **A new dependency** is imported inside the functions that need it, with a message that says what to install (`ImportError: ... pip install lz4`), pinned in `requirements.txt` and named as an extra in `python/pyproject.toml`. It also needs a *Students, please:* line at the next release (`RELEASING.md`).
+- **As a built-in** (a pull request into `develop` of the goldpan repository, as in its `CONTRIBUTING.md`): the module `<name>.py` goes in `src/goldpan/adapters/` with a docstring that says what the format is and gives one example call (it becomes a page of the reference in the goldpan documentation); its public functions carry `@status(DONE)`; add it to `_BUILTIN` in `src/goldpan/adapters/__init__.py` (and to the suffix guess, if it has one); tests in `tests/` (`test_goldpan_<name>.py`); a line in its `CHANGELOG.md`.
+- **A new dependency** is imported inside the functions that need it, with a message that says what to install (`ImportError: ... pip install lz4`), named as an extra in `pyproject.toml` of goldpan and pinned in `requirements.txt` of NSDF-Data (through the `goldpan[...]` line). It also needs a *Students, please:* line at the next NSDF-Data release (`RELEASING.md`).
 
 ## 6. What the four adapters learned
 

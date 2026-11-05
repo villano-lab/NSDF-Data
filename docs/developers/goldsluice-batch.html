@@ -26,14 +26,15 @@ file in one command and writes the results next to it;
 together with the processed quantities. Nothing is assumed: the readout,
 the channels and every parameter are written in the file. This sheet is
 the whole loop; the file format is specified in the docstring of
-<code>python/goldpan/dataset.py</code>, and a new algorithm is a
-different sheet (<em>Running goldsluice and developing an
+<code>goldpan/dataset.py</code> (in the goldpan repository), and a new
+algorithm is a different sheet (<em>Running goldsluice and developing an
 algorithm</em>).</p>
 <p>You need the setup of that sheet
-(<code>maturin develop --release</code> in <code>goldsluice/</code>) and
+(<code>maturin develop --release</code> in a clone of the goldsluice
+repository, or just <code>pip install "goldsluice[batch]"</code>) and
 <code>goldpan</code> installed with Parquet support
-(<code>pip install -e "./python[parquet]"</code> from the
-repository).</p>
+(<code>pip install "goldpan[parquet]"</code>;
+<code>requirements.txt</code> of NSDF-Data already does).</p>
 <h2 id="the-definition-file">1. The definition file</h2>
 <p>A TOML file, by convention <code>&lt;name&gt;.dataset.toml</code>.
 Annotated; the whole file is <code>examples/r76.dataset.toml</code>:</p>

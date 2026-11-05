@@ -14,7 +14,8 @@ If you are an AI agent, read the brief and AGENTS.md first. They contain the rul
 
 - [Notes and guides (front page)](https://villano-lab.github.io/NSDF-Data/): every analysis note and student guide
 - [Repository](https://github.com/villano-lab/NSDF-Data)
-- [python/ library](https://github.com/villano-lab/NSDF-Data/tree/develop/python): the pulse library and its README
+- [goldpan](https://villano-lab.github.io/goldpan/): the pulse-analysis library (code: https://github.com/villano-lab/goldpan)
+- [goldsluice](https://villano-lab.github.io/goldsluice/): the reduction package (code: https://github.com/villano-lab/goldsluice)
 - [RELEASING.md](https://github.com/villano-lab/NSDF-Data/blob/develop/RELEASING.md): branches, releases and versions (Git Flow)
 - [CHANGELOG.md](https://github.com/villano-lab/NSDF-Data/blob/develop/CHANGELOG.md)
 

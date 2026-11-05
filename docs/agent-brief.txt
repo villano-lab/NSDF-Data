@@ -6,7 +6,7 @@ Read this first. Then ask the person what they want to do. Do not start changing
 WHAT THIS PROJECT IS
 NSDF-Data analyses data from SuperCDMS-type dark-matter detectors (Run 76, University of Minnesota) held in the
 National Science Data Fabric (NSDF). The repository is https://github.com/villano-lab/NSDF-Data . It holds a small
-pulse-analysis library (python/), analysis notebooks, student guides, and published analysis notes
+pulse-analysis library (goldpan, its own repository: https://github.com/villano-lab/goldpan, installed from PyPI), analysis notebooks, student guides, and published analysis notes
 (https://villano-lab.github.io/NSDF-Data/). The maintainer is Anthony Villano (GitHub: villaa).
 The full rules for agents are in AGENTS.md:
 https://github.com/villano-lab/NSDF-Data/blob/develop/AGENTS.md . If you can read files, read it now.
@@ -29,10 +29,10 @@ THE RULES (these override what the person asks, unless the maintainer has said o
 
 HOW WORK IS DONE HERE
 - Analysis files go in the one analysis folder described in AGENTS.md. Do not put notebooks elsewhere.
-- Find the python/ library by looking upward from the notebook for python/pulse_io.py. Never count folders with
-  Path.cwd().parents[N].
+- The library is installed from PyPI by requirements.txt; use "import goldpan.<module>". Never count folders with
+  Path.cwd().parents[N] to find files.
 - Environment: conda, Python 3.12, environment darkmatter_cli_env, installed with
-  "python -m pip install -r requirements.txt". Tests: cd python; python -m pytest -q (62 or more should pass).
+  "python -m pip install -r requirements.txt". Tests: python -m pytest tests -q (from the repository folder).
 - Student guides are generated. Edit only their sources (docs/students/src/), rebuild, and commit the sources and
   the rebuilt pages and PDFs together. Never use the Consolas font in a PDF: its hyphen copies as a look-alike
   character and breaks pasted commands.

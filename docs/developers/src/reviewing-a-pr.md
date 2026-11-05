@@ -27,7 +27,7 @@ A pull request (PR) is ready to merge when **the checks are green**, **the diff 
 ## 1. The frame (one minute)
 
 - **Base.** It is `develop`. Only `release/*` and `hotfix/*` branches target `main`.
-- **Checks.** *Student notes* (notes, and the pinned links), *Note pins*, *Library tests* (when `python/` changed) and *Check instructions* (the guides' setup steps on Windows, macOS and Linux). Skipped is fine; failing is not. A job that never got a runner and was cancelled after 15 minutes is not a failure: re-run it.
+- **Checks.** *Student notes* (notes, and the pinned links), *Note pins*, *Repository tests* and *Check instructions* (the guides' setup steps on Windows, macOS and Linux). Skipped is fine; failing is not. A job that never got a runner and was cancelled after 15 minutes is not a failure: re-run it.
 - **Files changed.** Is there anything the kind of PR in section 2 does not need? Ask why before reading further.
 - **Behind `develop`?** If GitHub says the branch is out of date and there are no conflicts, press **Update branch** (a merge commit) and let the checks run again. If there are conflicts, ask the author, or resolve them in GitHub's editor and say so.
 
@@ -37,7 +37,7 @@ A pull request (PR) is ready to merge when **the checks are green**, **the diff 
 |---|---|
 | **Student note** (`student-<name>`, `notes/src/`) | Only `notes/src/*.md`, `notes/src/img/` and the student's own folder under `data_analysis/R76/student/`. Run `python tools/check_note.py notes/src/<note>.md`{.cmd} (or read the job summary): the structure and the pinned links must be fine; look at each number listed NOT FOUND (advice only: a value from a paper is fine if the text says so, and it carries `<!-- numbers-ok -->`). Read the note: the title is a question, each figure has a bold "Figure N" caption, it says what was *not* checked. Header: `id` (section 4), status, and, if it replaces an earlier note, that note's status and link change in the same PR. |
 | **Student guide** (`docs/students/src/`) | Sources edited, never the HTML or PDF by hand. The rebuilt pages and PDFs of the changed guides are committed with the sources, and only those (restore the others the build touched). Version and date bumped in the header and *Session Info*. No text past the margin in the PDF, and the check "PDFs copy as plain text" is green. |
-| **Library** (`python/`) | Tests added; every public function has a `@status` tag and a docstring; the generated reference page rebuilt (a test fails if it is stale); a breaking change updates the notebooks or marks them deprecated; a changelog line. |
+| **Library** (goldpan or goldsluice, reviewed in their own repositories) | Tests added; every public function has a `@status` tag and a docstring; a breaking change updates the notebooks here or marks them deprecated; a changelog line. This repository only changes the pin in `requirements.txt`. |
 | **Hand-written note** (`docs/notes/`) | One row in `docs/index.html`, newest first; every link pinned to a commit (`python tools/check_note_pins.py check`{.cmd}); a **Complete** note gets only a minimal correction. |
 | **CI or tools** (`.github/`, `tools/`) | It runs on its own PR; permissions are as small as they can be; it works on all three systems if it checks the guides; a new check for notes goes into `tools/check_note.py`; the tool has tests and a changelog line. |
 | **Release or hotfix** | Maintainer only. Follow `RELEASING.md`. |

@@ -220,7 +220,6 @@ If it replaces an earlier note, say so, for example "Supersedes Note 3".>
 
 ## What changed
 
-- [ ] Library code (`python/`) n/a
 - [x] Notebooks (`data_analysis/`)
 - [ ] Notes site or hand-written notes (`docs/`) n/a
 - [ ] Student guides (`docs/students/src/`) n/a
@@ -231,8 +230,7 @@ If it replaces an earlier note, say so, for example "Supersedes Note 3".>
 
 Tick what applies, and say "n/a" for the rest.
 
-- [ ] Tests pass (`python -m pytest -q` in `python/`) n/a
-- [ ] New or changed library functions have tests and a `@status` tag n/a
+- [ ] Tests pass (`python -m pytest tests -q`) n/a
 - [ ] A new or renamed note has its row in `docs/index.html` n/a
 - [ ] Guides: edited the sources, rebuilt, committed sources and PDFs n/a
 - [ ] Guides: bumped the version and date n/a

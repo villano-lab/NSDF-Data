@@ -33,7 +33,7 @@ The agent does the mechanical work. **You own every number, every reading and ev
 
 **A starting brief** (fill in the brackets):
 
-> Write the note, using the placeholder NN for its number (I will pick the number at the end), from `[notebook]`, committed at `[hash]`. Copy the structure of `docs/notes/note-02a-bstd-vs-time.html`. Save the figures from the executed notebook into `docs/notes/img/`. Pin every notebook and `python/` link to the hash and verify each with `git cat-file -e`. Add the index row, newest first, and a line under `[Unreleased]` in `CHANGELOG.md`. Every number must come from the notebook output: list any number you cannot find there. Leave the Reading and Next steps sections for me. Show me the diff and stop; do not commit or push.
+> Write the note, using the placeholder NN for its number (I will pick the number at the end), from `[notebook]`, committed at `[hash]`. Copy the structure of `docs/notes/note-02a-bstd-vs-time.html`. Save the figures from the executed notebook into `docs/notes/img/`. Pin every notebook and library-code link to the hash and verify each with `git cat-file -e`. Add the index row, newest first, and a line under `[Unreleased]` in `CHANGELOG.md`. Every number must come from the notebook output: list any number you cannot find there. Leave the Reading and Next steps sections for me. Show me the diff and stop; do not commit or push.
 
 **The agent may** draft the page from the newest note, extract figures, pin and verify links, add the index row and the changelog line, run `python -m pytest -q`{.cmd}, and, once you say so, commit with a `Co-Authored-By:` trailer and open the PR with `gh pr create --base develop`{.cmd}.
 

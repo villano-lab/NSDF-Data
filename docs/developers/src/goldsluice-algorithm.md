@@ -18,7 +18,7 @@ html-subtitle: "Developer quick-sheet · from a Python idea to a fast Rust kerne
 \small
 ```
 
-`goldsluice` is the fast half of the project: pulse-reduction kernels in **Rust**, each with a **Python mirror** that is the readable definition. You develop in Python on ordinary arrays, then port the same computation to Rust; a test makes sure the two never disagree. It lives in `goldsluice/` (start with its `README.md`; `PORTING.md` is the reference for the port). Two algorithms exist: `peak` (the largest ADC value and the largest current above the baseline of each trace) and `max_time` (the time of the largest sample); `max_time` is the worked example below, and the smaller model to copy.
+`goldsluice` is the fast half of the project: pulse-reduction kernels in **Rust**, each with a **Python mirror** that is the readable definition. You develop in Python on ordinary arrays, then port the same computation to Rust; a test makes sure the two never disagree. It lives in its own repository, [villano-lab/goldsluice](https://github.com/villano-lab/goldsluice) (start with its `README.md`; `PORTING.md` is the reference for the port; documentation: <https://villano-lab.github.io/goldsluice/>). Two algorithms exist: `peak` (the largest ADC value and the largest current above the baseline of each trace) and `max_time` (the time of the largest sample); `max_time` is the worked example below, and the smaller model to copy.
 
 ## 1. One-time setup
 
@@ -82,7 +82,7 @@ cargo bench
 
 The time of the largest sample (as `goldpan.algorithms.max_time`). It is in the repository (`reference/max_time.py`, `src/max_time.rs`): read it next to this page. The steps are the same for every algorithm; replace `max_time` by your name.
 
-**Step 1. Write the mirror**, `python/goldsluice/reference/max_time.py`, in the *kernel subset*: one trace in, plain loops, no numpy inside `kernel`.
+**Step 1. Write the mirror**, `python/goldsluice/reference/max_time.py` (in the goldsluice repository), in the *kernel subset*: one trace in, plain loops, no numpy inside `kernel`.
 
 ```python
 NAME = "max_time"

@@ -11,7 +11,7 @@ from goldpan.config import DCRC_RUN76
 
 REPO = Path(__file__).resolve().parents[1]
 FOLDER = REPO / "registry"
-EXAMPLES = REPO / "goldsluice" / "examples"
+EXAMPLES = REPO / "tests" / "data"      # copies of the examples of goldsluice (villano-lab/goldsluice, examples/): the registry here must keep describing them
 
 pytestmark = pytest.mark.skipif(not FOLDER.is_dir(), reason="the registry folder is not in this checkout")
 

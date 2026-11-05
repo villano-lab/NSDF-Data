@@ -26,8 +26,8 @@ Four exist: <code>idx</code>, <code>parquet</code>, <code>midas</code>
 (they read traces into an <code>Events</code>) and <code>rq_root</code>
 (it reads processed quantities into a table). A new one is a small
 Python module. Start from the complete example in
-<code>python/tests/example_adapter.py</code> (about 50 lines, tested),
-then follow this sheet.</p>
+<code>tests/example_adapter.py</code> (in the goldpan repository) (about
+50 lines, tested), then follow this sheet.</p>
 <h2 id="which-shape">1. Which shape</h2>
 <ul>
 <li><strong>Events adapter</strong>: file to
@@ -119,8 +119,10 @@ def write(events, path) -&gt; None                                # optional</co
 <p><code>iter_chunks</code> gives the same events in pieces (for a file
 larger than memory); <code>write</code> makes a file that
 <code>read</code> reads back.</p>
-<p>The core of <code>python/tests/example_adapter.py</code>: it checks
-the sample period of the file, then builds the <code>Events</code>.</p>
+<p>The core of <code>tests/example_adapter.py</code> (in the <a
+href="https://github.com/villano-lab/goldpan">goldpan repository</a>):
+it checks the sample period of the file, then builds the
+<code>Events</code>.</p>
 <pre class="python"><code>with np.load(path) as f:
     names = list(channels) if channels else [k for k in f.files if k not in NOT_CHANNELS]
     if &quot;period_s&quot; in f.files and config.sample_period_s is not None:
@@ -146,12 +148,12 @@ returns the list of checks passed:</p>
 check_adapter(my_module, &quot;sample.npz&quot;, detector_name=&quot;TOY&quot;, config=CONFIG)</code></pre>
 <p>Then add the tests only you can write: the error messages, a
 truncated file, a channel that is missing. For data to try the adapter
-on, <code>python/tests/synthetic_series.py</code> writes one made-up
-series in idx, MIDAS, RQ Parquet, RQ ROOT and native Parquet
-(<code>python python/tests/synthetic_series.py OUTDIR</code>); add a
-writer for your format there and compare it with the same events. A test
-on a real file belongs in the repository only as a
-skipped-unless-present test: put the path in an environment variable, as
+on, <code>tests/synthetic_series.py</code> writes one made-up series in
+idx, MIDAS, RQ Parquet, RQ ROOT and native Parquet
+(<code>python tests/synthetic_series.py OUTDIR</code>); add a writer for
+your format there and compare it with the same events. A test on a real
+file belongs in the repository only as a skipped-unless-present test:
+put the path in an environment variable, as
 <code>GOLDPAN_MIDAS_SAMPLE</code> does; real data are never
 committed.</p>
 <h2 id="make-it-available">5. Make it available</h2>
@@ -161,23 +163,24 @@ committed.</p>
 <code>goldpan.adapters.read(path, format="name", ...)</code> work.
 Nothing in <code>goldpan</code> changes.</li>
 <li><strong>As a built-in</strong> (a pull request into
-<code>develop</code>, as in <code>AGENTS.md</code>): the module
-<code>&lt;name&gt;.py</code> goes in
-<code>python/goldpan/adapters/</code> with a docstring that says what
-the format is and gives one example call (it becomes the page of the
-library reference); its public functions carry
+<code>develop</code> of the goldpan repository, as in its
+<code>CONTRIBUTING.md</code>): the module <code>&lt;name&gt;.py</code>
+goes in <code>src/goldpan/adapters/</code> with a docstring that says
+what the format is and gives one example call (it becomes a page of the
+reference in the goldpan documentation); its public functions carry
 <code>@status(DONE)</code>; add it to <code>_BUILTIN</code> in
-<code>python/goldpan/adapters/__init__.py</code> (and to the suffix
-guess, if it has one); tests in <code>python/tests/</code>
-(<code>test_goldpan_&lt;name&gt;.py</code>); rebuild the reference page
-(<code>python tools/build_library_reference.py</code>); a line in
+<code>src/goldpan/adapters/__init__.py</code> (and to the suffix guess,
+if it has one); tests in <code>tests/</code>
+(<code>test_goldpan_&lt;name&gt;.py</code>); a line in its
 <code>CHANGELOG.md</code>.</li>
 <li><strong>A new dependency</strong> is imported inside the functions
 that need it, with a message that says what to install
-(<code>ImportError: ... pip install lz4</code>), pinned in
-<code>requirements.txt</code> and named as an extra in
-<code>python/pyproject.toml</code>. It also needs a <em>Students,
-please:</em> line at the next release (<code>RELEASING.md</code>).</li>
+(<code>ImportError: ... pip install lz4</code>), named as an extra in
+<code>pyproject.toml</code> of goldpan and pinned in
+<code>requirements.txt</code> of NSDF-Data (through the
+<code>goldpan[...]</code> line). It also needs a <em>Students,
+please:</em> line at the next NSDF-Data release
+(<code>RELEASING.md</code>).</li>
 </ul>
 <h2 id="what-the-four-adapters-learned">6. What the four adapters
 learned</h2>

@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **The three developer quick-sheets about the packages (*Writing an adapter*, *Batch mode*, *Running goldsluice and developing an algorithm*) are now one-page overviews that link to the full guides in the documentation of goldpan and goldsluice** (version 2 of each). The guides moved there so that they live with the code they describe and change with it. The addresses of the sheets are unchanged.
+
 ## [0.12.0] - 2026-11-05
 
 **Students, please:** `goldpan` now comes from PyPI and no longer from the `python/` folder, which is gone, so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python -m check_environment`, which should say `Environment OK` (the old command `python python/check_environment.py` no longer exists). Python is still 3.12 and no other package is new, so you do not need a new environment. Until you reinstall, the notebooks cannot import `goldpan`, because the old in-place install pointed into the removed folder. If a `python/` folder is left over after the update, it holds only build leftovers and you can delete it. Nothing you already run changes.

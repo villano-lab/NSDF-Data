@@ -4,6 +4,12 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-11-05
+
+**Students, please:** `goldpan` now comes from PyPI and no longer from the `python/` folder, which is gone, so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python -m check_environment`, which should say `Environment OK` (the old command `python python/check_environment.py` no longer exists). Python is still 3.12 and no other package is new, so you do not need a new environment. Until you reinstall, the notebooks cannot import `goldpan`, because the old in-place install pointed into the removed folder. If a `python/` folder is left over after the update, it holds only build leftovers and you can delete it. Nothing you already run changes.
+
+`goldpan` 0.3.2 (from PyPI; before this release it was installed from `python/`): it holds the library, the old flat `pulse_*` names and `check_environment`, which finds `requirements.txt` by walking up from the current folder. `goldsluice` 0.1.1 is on PyPI too (not in `requirements.txt`).
+
 ### Changed
 
 - **goldpan is installed from PyPI, not in place from this repository (setup guide version 23, updating guide version 7, Codespaces guide version 8).** goldpan has its own repository, <https://github.com/villano-lab/goldpan>, and `requirements.txt` now says `goldpan[archive,parquet,root,midas]==0.3.2` instead of `-e ./python[...]`. For a student the commands change in two places: the environment check is `python -m check_environment` (in the `NSDF-Data` folder; it used to be `python check_environment.py` in the `python` folder), and Step 6 of the setup guide and Step 5 of the updating guide no longer run the library tests (`cd python`, `pytest`), which had made-up data and belonged to the library; they run the environment check and print the goldpan version. `import check_environment`, `import pulse_cuts` and the other old names work as before, so no notebook changes. The old in-place install is replaced by pip when `requirements.txt` is installed again (tried: the editable install is uninstalled and goldpan 0.3.2 installed, no leftovers).

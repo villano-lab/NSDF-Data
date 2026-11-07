@@ -8,7 +8,7 @@ student notes (notes/src/*.md). It needs `git` and the repository's history (in 
 
     python tools/check_note_pins.py check
         Every pinned link must resolve: the commit exists, and the file or folder exists at that commit. A link that
-        is not pinned to a commit (for example .../blob/master/...) is also an error. Exit status 1 if anything is wrong.
+        is not pinned to a commit (for example .../blob/main/...) is also an error. Exit status 1 if anything is wrong.
         This is the CI check.
 
     python tools/check_note_pins.py signature [--head REF]

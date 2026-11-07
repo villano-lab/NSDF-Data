@@ -4,7 +4,39 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Changed
+
+- **The three developer quick-sheets about the packages (*Writing an adapter*, *Batch mode*, *Running goldsluice and developing an algorithm*) are now one-page overviews that link to the full guides in the documentation of goldpan and goldsluice** (version 2 of each). The guides moved there so that they live with the code they describe and change with it. The addresses of the sheets are unchanged.
+
+## [0.12.0] - 2026-11-05
+
+**Students, please:** `goldpan` now comes from PyPI and no longer from the `python/` folder, which is gone, so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python -m check_environment`, which should say `Environment OK` (the old command `python python/check_environment.py` no longer exists). Python is still 3.12 and no other package is new, so you do not need a new environment. Until you reinstall, the notebooks cannot import `goldpan`, because the old in-place install pointed into the removed folder. If a `python/` folder is left over after the update, it holds only build leftovers and you can delete it. Nothing you already run changes.
+
+`goldpan` 0.3.2 (from PyPI; before this release it was installed from `python/`): it holds the library, the old flat `pulse_*` names and `check_environment`, which finds `requirements.txt` by walking up from the current folder. `goldsluice` 0.1.1 is on PyPI too (not in `requirements.txt`).
+
+### Changed
+
+- **goldpan is installed from PyPI, not in place from this repository (setup guide version 23, updating guide version 7, Codespaces guide version 8).** goldpan has its own repository, <https://github.com/villano-lab/goldpan>, and `requirements.txt` now says `goldpan[archive,parquet,root,midas]==0.3.2` instead of `-e ./python[...]`. For a student the commands change in two places: the environment check is `python -m check_environment` (in the `NSDF-Data` folder; it used to be `python check_environment.py` in the `python` folder), and Step 6 of the setup guide and Step 5 of the updating guide no longer run the library tests (`cd python`, `pytest`), which had made-up data and belonged to the library; they run the environment check and print the goldpan version. `import check_environment`, `import pulse_cuts` and the other old names work as before, so no notebook changes. The old in-place install is replaced by pip when `requirements.txt` is installed again (tried: the editable install is uninstalled and goldpan 0.3.2 installed, no leftovers).
+- **The folders `python/` and `goldsluice/` are removed** (with `sphinx/`, `docs/api/`, `docs/library/`, their workflows and tools and their tests): goldpan and goldsluice live in `villano-lab/goldpan` and `villano-lab/goldsluice`, with their own documentation (<https://villano-lab.github.io/goldpan/>, <https://villano-lab.github.io/goldsluice/>), versions and PyPI releases. `docs/api/` and `docs/library/` stay as two small pages that say the documentation has moved, because the Documentation links of the releases already on PyPI point there. The *Library tests* workflow is now *Repository tests* (`tests/` only). Notes keep working: their links are pinned to commits, and the small "latest" link beside them says the file was removed. `RELEASING.md`, `AGENTS.md`, the front page, `llms.txt` and the developer quick-sheets point to the new repositories.
+- `check_environment` is part of goldpan 0.3.2 and finds `requirements.txt` by walking up from the current folder.
+- The Codespaces guide's "install by hand" line was out of date (it left out `awkward`, `pyarrow` and the rest): it now says `python -m pip install -r requirements.txt`.
+- The test that writes every `*.dataset.toml` of this repository back as the same definition moved from the library to `tests/test_definitions.py`; the tests of the install and of the Codespaces guide follow the PyPI pin.
+
+## [0.11.0] - 2026-11-04
+
+**Students, please:** the library `goldpan` has a new version (0.3.0), so update: follow *Updating your setup* (student guide 7), Step 2 (bring in the newest changes) and Step 3 (`python -m pip install -r requirements.txt`), then run `python python/check_environment.py`, which should say `Environment OK`. Python is still 3.12 and no package is new, so you do not need a new environment. Until you reinstall, the check warns that `goldpan` is older than the repository wants. Nothing you already run changes. **If you have a clone with a `master` branch,** the released branch is now `main` (see *Changed* below): run `git fetch --prune`, then `git branch -m master main` and `git branch -u origin/main main`.
+
+`goldpan` 0.3.0: dataset definition format 7 (a step can name the `sources` it runs on, steps can build on each other, run metadata joins at read time), `goldpan.dataset.dump` and `dumps`, `goldpan.registry.add_record` and `record_text`, `goldpan.runmeta`, `goldpan.rqdata` with `all_files=True`, and the Run 76 readout with a 500-sample pretrigger window (a result that changes: `current_max` of trigger-locked events). No existing function is renamed or removed.
+
+`goldsluice` 0.1.0: the first release of the reduction package, with the Rust kernels and `python -m goldsluice run` (algorithms `peak`, `max_time`, `baseline`, `integral`, `excursion`, `rise_time`, `rise_crossing`, `lowpass`, `subtract_line`, `window_integral`; `--workers`, `--readahead`, `--replace`), and a workflow that publishes it to PyPI. The `goldsluice` on PyPI so far is only a placeholder (0.0.1).
+
+### Changed
+
+- **The released branch is now `main`, not `master`.** The branch was renamed on GitHub (old links such as `.../blob/master/...` still redirect), the ruleset is now `protect-main`, and the workflows, `RELEASING.md`, `AGENTS.md`, the guides and the developer sheets say `main`. `develop` is unchanged. If you have a clone with a `master` branch, run `git fetch --prune`, then `git branch -m master main` and `git branch -u origin/main main`. Pinned links in the notes that name `master` still count as not pinned to a commit hash.
+
 ### Added
+
+- **A workflow that publishes goldsluice to PyPI (`.github/workflows/publish-goldsluice.yml`), and `tools/check_goldsluice_release.py`.** On a tag `goldsluice-vX.Y.Z` it builds the Rust extension for Linux, Windows and macOS (one stable-interface wheel each) and a source archive, tests each wheel in a clean environment, and uploads them with a trusted publisher after the maintainer approves the `pypi` environment; run by hand it is a dry run. The checker makes sure the tag, goldsluice's three version numbers and the changelog line agree. RELEASING.md has the section "Publishing goldsluice to PyPI".
 
 - **A new goldsluice algorithm, `window_integral`: the integral between two samples.** It is `integral` (the sum of the baseline-subtracted trace, times `sample_period_s`, in the trace's unit times seconds) summed only over samples `start_sample` to `stop_sample - 1`, as in a slice, so the pulse can be integrated without the tail and the noise of the rest of the trace (`start_sample = 0`, `stop_sample` = the trace length gives `integral`). The baseline is still the mean of the pretrigger window, whatever the limits. Both limits are required, like every parameter; `integral` and the definitions that use it do not change. A Rust kernel and its Python mirror, `REVISION = 1`, and a step in `examples/r76-registry.dataset.toml`; goldmap offers it as a step with no change of its own.
 

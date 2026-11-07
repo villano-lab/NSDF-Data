@@ -4,7 +4,7 @@
 --   * tables: wrap them so a wide table scrolls sideways on a phone.
 local alt = {
   ["loop.png"]          = "The ten steps of the daily loop: update develop, make a branch, work and commit, push, open a pull request, checks run, review, merge, live in about two minutes, clean up.",
-  ["branches.png"]      = "The branches over time: a feature branch splits off develop and merges back through a pull request; later a release goes to master, is tagged v0.1.0, and master is merged back into develop.",
+  ["branches.png"]      = "The branches over time: a feature branch splits off develop and merges back through a pull request; later a release goes to main, is tagged v0.1.0, and main is merged back into develop.",
   ["note-path.png"]     = "Six steps from a written note to a live page: write, commit and push, open a pull request, the check runs, your lead reviews and gives an S-number, live in about two minutes.",
   ["note-steps.png"]    = "Six steps for creating a note: notebook, figures, page, index row, check, pull request and merge.",
   ["note-ai-steps.png"] = "Six steps for creating a note with an AI agent: you write the brief, the agent drafts, you verify the numbers, the agent wires up the index and changelog, you read the diff, then pull request and merge.",

@@ -21,7 +21,7 @@ date: "Version 2 · 14 October 2026"
 | **branch** | A separate line of saved versions. Your branch is your own copy of the work. |
 | **push** | Send your commits from your computer to GitHub. |
 | **pull request** | A button on github.com that means "I'm done, please have a look." Your lead reads it and, if it is ready, adds your work to the project. Guide 4 shows it step by step. |
-| **`develop` and `master`** | The shared branches that belong to the project. You never work on them. |
+| **`develop` and `main`** | The shared branches that belong to the project. You never work on them. |
 
 ## Your branch
 
@@ -33,7 +33,7 @@ To see which branch you are on, type:
 git branch --show-current
 ```
 
-It should print `student-yourname`. If it prints `develop` or `master`, stop and ask your lead.
+It should print `student-yourname`. If it prints `develop` or `main`, stop and ask your lead.
 
 ## The four commands
 

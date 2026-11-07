@@ -210,7 +210,7 @@ git push -u origin student-yourname
 **What these lines do:** the first one moves you into the project. `git branch --show-current` prints the name of the branch you are on, and `git status` lists what has changed since your last save. **Make this a habit: every time you open a terminal in a project, look at the branch and the status before you do anything else.** Then `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
 
 ::: checkpoint
-`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
+`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `main`, stop and ask the project lead: do not commit there.
 :::
 
 ::: tip

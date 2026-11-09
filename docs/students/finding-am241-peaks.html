@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finding the Am-241 peaks (NSDF-Data student guide 10 — an
+exploration, for every computer)</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../guide.css">
+<script src="../guide.js" defer></script>
+</head>
+<body>
+<div class="wrap note guide">
+
+<header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="finding-am241-peaks.pdf">PDF version (download or print)</a></nav></header>
+
+<h1>Finding the Am-241 peaks</h1>
+<p class="meta">NSDF-Data student guide 10 — an exploration, for every
+computer &middot; Version 2 · 9 November 2026</p>
+
+<nav class="outline" aria-label="Outline">
+<strong>Outline</strong>
+<ul>
+<li><a href="#the-question" id="toc-the-question">The question</a></li>
+<li><a href="#before-you-start" id="toc-before-you-start">Before you
+start</a></li>
+<li><a href="#your-first-look-load-then-histogram"
+id="toc-your-first-look-load-then-histogram">Your first look: load, then
+histogram</a></li>
+<li><a href="#what-you-can-lean-on" id="toc-what-you-can-lean-on">What
+you can lean on</a></li>
+<li><a href="#a-way-of-working" id="toc-a-way-of-working">A way of
+working</a></li>
+<li><a href="#hints" id="toc-hints">Hints</a></li>
+<li><a href="#what-a-good-answer-looks-like"
+id="toc-what-a-good-answer-looks-like">What a good answer looks
+like</a></li>
+<li><a href="#when-you-write-it-up" id="toc-when-you-write-it-up">When
+you write it up</a></li>
+<li><a href="#session-info" id="toc-session-info">Session Info</a></li>
+<li><a href="#where-to-get-help" id="toc-where-to-get-help">Where to get
+help</a></li>
+<li><a href="#key-links" id="toc-key-links">Key links</a></li>
+</ul>
+</nav>
+
+<div class="tip">
+<p><strong>This is a guide to a question, not a recipe.</strong> It
+tells you what to look for and gives hints in three levels. It does not
+tell you which cells to run. Work out your own way, and open the next
+level of hints only when you are stuck. Notes about what you tried,
+including what did not work, are welcome.</p>
+</div>
+<h2 id="the-question">The question</h2>
+<p>Part of the Run 76 data was taken with an <strong>Am-241
+source</strong> near the detector. Americium-241 emits a gamma ray of
+<strong>59.54 keV</strong> and a whole family of lower-energy X-rays and
+gamma rays from the neptunium it turns into. In a good spectrum these
+show up as <strong>peaks</strong>: bumps at fixed energies on top of a
+smooth background.</p>
+<p><strong>Can you find the Am-241 peaks in the Run 76 data, say which
+energy each one is, and show how sure you are?</strong></p>
+<p>You are not given a calibration. The detector reports an uncalibrated
+pulse size (the <em>integral</em> of the pulse, in ADC counts), not keV.
+Finding the peaks and putting energies on them is the same job: once you
+know which bump is which line, the bumps <em>are</em> your
+calibration.</p>
+<h2 id="before-you-start">Before you start</h2>
+<ul>
+<li>You finished the setup guide and the first analysis for your
+computer, and you can open a notebook and plot a pulse.</li>
+<li>You know what a <em>series</em>, a <em>dump</em>, an <em>event</em>
+and a <em>channel</em> are (guide 2).</li>
+<li>You have data to look at: the file described in <em>Your first
+look</em> below. It holds the events of one region of the detector at
+one voltage. If you want other data, ask the project lead; you can also
+process dumps yourself with goldpan.</li>
+</ul>
+<div class="careful">
+<p><strong>Do not run anything that rewrites a shared file.</strong> If
+a notebook writes an <code>.h5</code> file or a processed folder, check
+with the project lead first. Read the data, and write your own results
+somewhere of your own.</p>
+</div>
+<h2 id="your-first-look-load-then-histogram">Your first look: load, then
+histogram</h2>
+<p>This is one way to get started. It is the only code in this guide,
+and it is a starting point to change, not a solution.</p>
+<p>The data is one <strong>Parquet file</strong> (about 14 MB, from the
+project’s GitHub releases), with one row per event: 129,539 events of
+Run 76 taken at -82 V, all close to the place on the detector where the
+Am-241 source events cluster. The columns are <code>series</code>, the
+position on the detector (<code>xdel_us</code>, <code>ydel_us</code>),
+and one column for each of the six channels (<code>Side2pA</code> to
+<code>Side2pF</code>). Each channel column holds two quantities:
+<code>window_integral</code> (the pulse size) and
+<code>baseline_mean</code>. The example downloads the file, pulls out
+two quantities of channel A, and draws a 1D histogram and then a 2D
+histogram. Paste it into a notebook cell.</p>
+<pre class="python"><code>import urllib.request
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pyarrow.compute as pc
+import pyarrow.parquet as pq
+
+# 1. Download the data once (about 14 MB), then load it.
+URL = (&quot;https://github.com/villano-lab/NSDF-Data/releases/download/&quot;
+       &quot;data-am241-v1/am241-patch-82v.parquet&quot;)
+path = Path(&quot;am241-patch-82v.parquet&quot;)
+if not path.exists():
+    urllib.request.urlretrieve(URL, path)
+table = pq.read_table(path)
+print(table.num_rows, &quot;events;&quot;, table.schema.names)
+
+def quantity(table, channel, name):
+    &quot;&quot;&quot;One quantity of one channel, as a numpy array.
+    Each channel is a column of its own.&quot;&quot;&quot;
+    col = table[f&quot;Side2p{channel}&quot;].combine_chunks()
+    return pc.struct_field(col, name).to_numpy(zero_copy_only=False)
+
+# The pulse size of channel A, and the baseline of the same events.
+size = quantity(table, &quot;A&quot;, &quot;window_integral&quot;)
+baseline = quantity(table, &quot;A&quot;, &quot;baseline_mean&quot;)
+# Look at the numbers before you choose a plotting range.
+print(np.percentile(size, [1, 50, 99]))
+print(np.percentile(baseline, [1, 50, 99]))
+
+# 2. A 1D histogram: how many events at each pulse size?
+# The range and the number of bins are your choice.
+fig, ax = plt.subplots()
+ax.hist(size, bins=200, range=(0, 1.0))
+ax.set_xlabel(&quot;window_integral of Side2pA (uncalibrated)&quot;)
+ax.set_ylabel(&quot;events per bin&quot;)
+ax.set_yscale(&quot;log&quot;)
+
+# 3. A 2D histogram: the same events, pulse size against baseline.
+lo, hi = np.percentile(baseline, [0.5, 99.5])
+fig, ax = plt.subplots()
+h = ax.hist2d(baseline, size, bins=(100, 200),
+              range=((lo, hi), (0, 1.0)), norm=&quot;log&quot;, cmin=1)
+fig.colorbar(h[3], label=&quot;events per bin&quot;)
+ax.set_xlabel(&quot;baseline_mean of Side2pA (ADC counts)&quot;)
+ax.set_ylabel(&quot;window_integral of Side2pA&quot;)
+plt.show()</code></pre>
+<p>Things to try next, on your own:</p>
+<ul>
+<li>What do the printed percentiles tell you about the range worth
+plotting? Change the ranges and bins until the picture is useful.</li>
+<li>The events are not all alike. The table also has
+<code>series</code>, <code>xdel_us</code> and <code>ydel_us</code>. Do
+the histograms change if you separate the series, or cut on the
+position?</li>
+<li>Repeat for the other five channels. Replace the <code>"A"</code> and
+look at the 2D picture again.</li>
+</ul>
+<h2 id="what-you-can-lean-on">What you can lean on</h2>
+<p>You do not have to find the energies in the data. They are known, and
+<strong>their ratios do not depend on your detector</strong>:</p>
+<ul>
+<li>the lines you are looking for are at fixed energies, and</li>
+<li>the pulse size is, to a good approximation, proportional to the
+energy.</li>
+</ul>
+<p>So a line at twice the energy of another sits at about twice the
+pulse size, with no offset. That is a very strong check: a candidate
+peak that does not fit the ratios is probably not an Am-241 line.</p>
+<p>Which lines, and at what energies, is for you to look up. Good places
+to start: the decay scheme of Am-241 (Nuclear Data Sheets, or a
+reference such as LNHB’s table), and the X-ray lines of neptunium. Write
+down the table you build, with a source for every number, and put it in
+your note.</p>
+<h2 id="a-way-of-working">A way of working</h2>
+<p>You do not have to follow this order. It is only a map.</p>
+<ol type="1">
+<li><strong>Make the picture first.</strong> Histogram the pulse size of
+one channel for the events you were given. Try different binning, a log
+scale, and different ranges. What is the most obvious feature? What
+changes when you zoom in?</li>
+<li><strong>Decide what an “event” is for this question.</strong> The
+source does not trigger every event, and the detector also records noise
+and other particles. Which events do you keep, and why? Look at a few
+pulses by eye before you decide.</li>
+<li><strong>Look for bumps, then check them.</strong> Mark the ones you
+believe. For each, ask whether it survives a different binning, a
+different range, and a different set of events.</li>
+<li><strong>Match bumps to lines.</strong> Use the ratios above. Start
+with the one you are surest of.</li>
+<li><strong>Put a number on each peak.</strong> Where is it, how wide is
+it, how many events are in it? Say how you got the numbers (a fit, a
+mean, a read-off from the plot), and how much you trust them.</li>
+<li><strong>Look at what is left.</strong> Which bumps do you
+<em>not</em> understand? Say so. An honest “I do not know what this is”
+is a result.</li>
+</ol>
+<h2 id="hints">Hints</h2>
+<p>Open these one level at a time.</p>
+<div class="tip">
+<p><strong>Hint level 1: the data.</strong> The pulse size you histogram
+is a sum over the trace, so anything that shifts the trace shifts the
+answer. Plot the pulse size against the baseline of the same event. Does
+the spectrum look the same for every baseline? If a feature smears out
+when you plot all events together, ask what it would look like if you
+separated them first.</p>
+</div>
+<div class="tip">
+<p><strong>Hint level 2: the channels.</strong> There are six sensors,
+and they do not see the same share of an event’s energy. Do they give
+the same spectrum? What happens if you add them? Does the sum look
+better or worse than the best single channel, and is that the same at
+low and high energy? Where on the detector the event happened may matter
+too.</p>
+</div>
+<div class="tip">
+<p><strong>Hint level 3: the fit.</strong> A peak on a falling
+background is not a Gaussian by itself. If you fit one, think about what
+you are asking the fit to do with the background, and what range of the
+data you give it. Try more than one range and see whether the position
+moves. When two lines are closer than the width of a peak, fit them
+together or say that you cannot separate them.</p>
+</div>
+<h2 id="what-a-good-answer-looks-like">What a good answer looks
+like</h2>
+<ul>
+<li>A spectrum with the peaks marked, with axes you can read.</li>
+<li>A table: for each peak, its position in pulse-size units, the energy
+you assign to it, and how you decided.</li>
+<li>A plot of energy against pulse size for the peaks you trust, and a
+statement of how straight it is and whether it passes through zero.</li>
+<li>A short list of what you could not explain.</li>
+</ul>
+<p>You are not expected to find every line. A secure calibration from
+the two or three strongest peaks is a better result than a long list you
+are not sure of.</p>
+<h2 id="when-you-write-it-up">When you write it up</h2>
+<p>Use guide 3 to write a note, and guide 4 to publish it. A note on
+this question should say which series and which events you used, what
+you cut and why, and which numbers you are confident in. Pin your
+notebook to the commit that produced the results.</p>
+<h2 id="session-info">Session Info</h2>
+<p>Guide version 2, 9 November 2026. Written for every computer. Please
+tell the project lead where a step was unclear, or where a hint gave too
+much away or too little.</p>
+<h2 id="where-to-get-help">Where to get help</h2>
+<p><strong>Anthony Villano</strong>, project lead: <a
+href="mailto:anthony.villano@ucdenver.edu"
+class="email">anthony.villano@ucdenver.edu</a></p>
+<p>When you write, say which series you are using, what you have plotted
+so far, and what surprised you.</p>
+<h2 id="key-links">Key links</h2>
+<ul>
+<li>Notes site: <a href="../index.html"
+class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
+<li>Repository: <a href="https://github.com/villano-lab/NSDF-Data"
+class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
+<li>goldpan documentation: <a
+href="https://villano-lab.github.io/goldpan/"
+class="uri">https://villano-lab.github.io/goldpan/</a></li>
+</ul>
+
+<footer>This guide is also available as a <a href="finding-am241-peaks.pdf">PDF</a>, for printing or offline use. <a href="../index.html">&larr; All notes and guides</a> &middot; <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data on GitHub</a></footer>
+
+</div>
+</body>
+</html>

@@ -71,10 +71,10 @@ calibration.</p>
 computer, and you can open a notebook and plot a pulse.</li>
 <li>You know what a <em>series</em>, a <em>dump</em>, an <em>event</em>
 and a <em>channel</em> are (guide 2).</li>
-<li>You have data to look at. Ask the project lead which series and
-which processed output to use: the peaks are easiest to see in a series
-taken with the source in place and a single trigger type. Without that,
-say so in your note and work from the dumps you can download.</li>
+<li>You have data to look at: the file described in <em>Your first
+look</em> below. It holds the events of one region of the detector at
+one voltage. If you want other data, ask the project lead; you can also
+process dumps yourself with goldpan.</li>
 </ul>
 <div class="careful">
 <p><strong>Do not run anything that rewrites a shared file.</strong> If
@@ -86,28 +86,32 @@ somewhere of your own.</p>
 histogram</h2>
 <p>This is one way to get started. It is the only code in this guide,
 and it is a starting point to change, not a solution.</p>
-<p>The processed data is a folder of <strong>Parquet files</strong>, one
-per dump. Each row is one event. Each of the six channels
-(<code>Side2pA</code> to <code>Side2pF</code>) is a column that holds
-several quantities of that channel, among them
+<p>The data is one <strong>Parquet file</strong> (about 14 MB, from the
+project’s GitHub releases), with one row per event: 129,539 events of
+Run 76 taken at -82 V, all close to the place on the detector where the
+Am-241 source events cluster. The columns are <code>series</code>, the
+position on the detector (<code>xdel_us</code>, <code>ydel_us</code>),
+and one column for each of the six channels (<code>Side2pA</code> to
+<code>Side2pF</code>). Each channel column holds two quantities:
 <code>window_integral</code> (the pulse size) and
-<code>baseline_mean</code>. The example loads some files, pulls out two
-quantities of channel A, and draws a 1D histogram and then a 2D
-histogram. Paste it into a notebook cell and change the folder.</p>
-<pre class="python"><code>from pathlib import Path
+<code>baseline_mean</code>. The example downloads the file, pulls out
+two quantities of channel A, and draws a 1D histogram and then a 2D
+histogram. Paste it into a notebook cell.</p>
+<pre class="python"><code>import urllib.request
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
-# 1. Load. One folder of Parquet files, one file per dump.
-#    Change the folder to where your copy of the data is.
-folder = Path.home() / &quot;goldsluice-output&quot; / &quot;NAI-S2&quot;
-# Start with a few files. Use all of them later.
-files = sorted(folder.glob(&quot;*.parquet&quot;))[:50]
-table = pa.concat_tables([pq.read_table(f) for f in files])
+# 1. Download the data once (about 14 MB), then load it.
+URL = (&quot;https://github.com/villano-lab/NSDF-Data/releases/download/&quot;
+       &quot;data-am241-v1/am241-patch-82v.parquet&quot;)
+path = Path(&quot;am241-patch-82v.parquet&quot;)
+if not path.exists():
+    urllib.request.urlretrieve(URL, path)
+table = pq.read_table(path)
 print(table.num_rows, &quot;events;&quot;, table.schema.names)
 
 def quantity(table, channel, name):
@@ -126,7 +130,7 @@ print(np.percentile(baseline, [1, 50, 99]))
 # 2. A 1D histogram: how many events at each pulse size?
 # The range and the number of bins are your choice.
 fig, ax = plt.subplots()
-ax.hist(size, bins=200, range=(0, 1.5))
+ax.hist(size, bins=200, range=(0, 1.0))
 ax.set_xlabel(&quot;window_integral of Side2pA (uncalibrated)&quot;)
 ax.set_ylabel(&quot;events per bin&quot;)
 ax.set_yscale(&quot;log&quot;)
@@ -135,7 +139,7 @@ ax.set_yscale(&quot;log&quot;)
 lo, hi = np.percentile(baseline, [0.5, 99.5])
 fig, ax = plt.subplots()
 h = ax.hist2d(baseline, size, bins=(100, 200),
-              range=((lo, hi), (0, 1.5)), norm=&quot;log&quot;, cmin=1)
+              range=((lo, hi), (0, 1.0)), norm=&quot;log&quot;, cmin=1)
 fig.colorbar(h[3], label=&quot;events per bin&quot;)
 ax.set_xlabel(&quot;baseline_mean of Side2pA (ADC counts)&quot;)
 ax.set_ylabel(&quot;window_integral of Side2pA&quot;)
@@ -144,11 +148,10 @@ plt.show()</code></pre>
 <ul>
 <li>What do the printed percentiles tell you about the range worth
 plotting? Change the ranges and bins until the picture is useful.</li>
-<li>The events are not all alike. The table also has a
-<code>trigger_type</code> column (and <code>series</code>,
-<code>dump</code>, <code>event</code>). Do the histograms change if you
-separate them?</li>
-<li>Load every file, not just 50, and see how the peaks sharpen.</li>
+<li>The events are not all alike. The table also has
+<code>series</code>, <code>xdel_us</code> and <code>ydel_us</code>. Do
+the histograms change if you separate the series, or cut on the
+position?</li>
 <li>Repeat for the other five channels. Replace the <code>"A"</code> and
 look at the 2D picture again.</li>
 </ul>

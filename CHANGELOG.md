@@ -4,6 +4,10 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ## [Unreleased]
 
+### Added
+
+- **Student guide 10, *Finding the Am-241 peaks*** (version 1): an open exploration with three levels of hints, for finding the americium lines in a spectrum and putting energies on them. It does not say which cells to run. Its data is one small Parquet file (129,539 events, 14 MB), published as the asset of the GitHub release `data-am241-v1`; the example in the guide downloads it.
+
 ### Changed
 
 - **The three developer quick-sheets about the packages (*Writing an adapter*, *Batch mode*, *Running goldsluice and developing an algorithm*) are now one-page overviews that link to the full guides in the documentation of goldpan and goldsluice** (version 2 of each). The guides moved there so that they live with the code they describe and change with it. The addresses of the sheets are unchanged.

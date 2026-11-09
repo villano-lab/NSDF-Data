@@ -6,7 +6,7 @@ These files are the source of the PDFs in `docs/students/`. Edit here, then rebu
 |---|---|
 | `gen.py` | Holds the text of the setup, first-analysis, updating and Git-in-VS-Code guides. The `OS` dictionary has the per-operating-system parts (Windows, macOS, Linux); `SETUP`, `FIRST`, `UPDATE` and `GITVSCODE` are the shared templates. Running it writes the twelve `*-<os>.md` files. |
 | `setup-*.md`, `first-analysis-*.md`, `update-*.md`, `git-in-vscode-*.md` | Output of `gen.py` (the setup guide, the first-analysis guide, *Updating your setup* (guide 7) and *Git in VS Code* (guide 9)). Do not edit by hand: change `gen.py` and rerun it. |
-| `writing-a-note.md`, `publishing-a-note.md`, `publishing-with-ai.md`, `codespaces.md`, `git-in-five-minutes.md` | Sources of student guides 3, 4, 5, 6 and 8, edited directly. |
+| `writing-a-note.md`, `publishing-a-note.md`, `publishing-with-ai.md`, `codespaces.md`, `git-in-five-minutes.md`, `finding-am241-peaks.md` | Sources of student guides 3, 4, 5, 6, 8 and 10, edited directly. |
 | `note-cheatsheet.md`, `make_cheatsheet_figure.py` | Source of the one-page note cheat-sheet (summarises guides 3 and 4), and the script that draws its figure (`img/note-path.png`, needs matplotlib). |
 | `make_structure_figure.py` | Draws Figure 2 of the first-analysis guide (`img/data-structure.png`: series, dumps, events, detectors, channels, samples). Needs matplotlib; run by `build.sh`. |
 | `guide-template.html`, `htmlfix.lua` | The pandoc template and filter that turn every source into a web page (`docs/students/*.html`, `docs/developers/*.html`). The page styles and the copy-button script are `docs/guide.css` and `docs/guide.js`. |

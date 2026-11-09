@@ -32,7 +32,7 @@ A one-page reminder. The full steps are in [guide 3, writing a note](https://vil
 **Before you push**
 
 - Your note is `notes/src/your-note-name.md`, your pictures are in `notes/src/img/`, the header is complete, and it says `id: "TBD"`.
-- Every link to your code is pinned to a **commit hash**: not `develop`, `master` or `COMMIT`. Remove the template's `img/example.png` line, and any `<u>`, `<sup>`, `<sub>` or `<span>` tags.
+- Every link to your code is pinned to a **commit hash**: not `develop`, `main` or `COMMIT`. Remove the template's `img/example.png` line, and any `<u>`, `<sup>`, `<sub>` or `<span>` tags.
 - With your environment active, run `python tools/check_note.py notes/src/your-note-name.md`. It runs all the note checks: the structure and the pinned links must be fine, and it lists the numbers in your text that are not in your notebook's output.
 
 **Commands**, from the `NSDF-Data` folder, on your own branch:
@@ -69,4 +69,4 @@ Fix it on your branch, commit and push again. The PR updates itself and the chec
 
 **After that.** Your lead reads the note, may comment on the PR (answer there), and gives it a note number when it is ready. About two minutes after the merge your page is live, in the **Analysis Notes** table on the front page, in order of its number. To change a published note, first run `git switch student-yourname && git pull origin develop` and check that the header still has your note number (not `TBD`); then commit, push and open a new PR, update the date, and never delete a note to hide a mistake.
 
-**Never** work on `master` or `develop`, or commit data (`.bin` files, the `idx` folder) or other people's notes. Stuck? Write to Anthony Villano, <anthony.villano@ucdenver.edu>, with the PR number, the check's message and the step you are on.
+**Never** work on `main` or `develop`, or commit data (`.bin` files, the `idx` folder) or other people's notes. Stuck? Write to Anthony Villano, <anthony.villano@ucdenver.edu>, with the PR number, the check's message and the step you are on.

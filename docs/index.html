@@ -16,7 +16,8 @@
   <p>Analysis of University of Minnesota R68/R76 SuperCDMS-type data accessed through the National Science Data Fabric and <code>nsdf-cli</code>.</p>
   <nav>
     <a href="https://github.com/villano-lab/NSDF-Data">GitHub repository</a>
-    <a href="https://github.com/villano-lab/NSDF-Data/tree/master/python">python/ pulse library</a>
+    <a href="https://villano-lab.github.io/goldpan/">goldpan documentation</a>
+    <a href="https://villano-lab.github.io/goldsluice/">goldsluice documentation</a>
     <a href="https://nsdf-fabric.github.io/nexus-dm/">Nexus-DM documentation (formerly NSDF-SLAC)</a>
   </nav>
 </header>
@@ -59,16 +60,16 @@
   <li><a href="developers/note-creation.html">Developer quick-sheet: creating a note (one page)</a></li>
   <li><a href="developers/note-creation-ai.html">Developer quick-sheet: creating a note with an AI agent (one page)</a></li>
   <li><a href="developers/reviewing-a-pr.html">Developer quick-sheet: reviewing a pull request (one page)</a></li>
-  <li><a href="developers/writing-an-adapter.html">Developer quick-sheet: writing an adapter, so that goldpan reads another file format (two pages)</a></li>
-  <li><a href="developers/goldsluice-batch.html">Developer quick-sheet: batch mode, defining a dataset, processing it with goldsluice and reading it back with goldpan (two pages)</a></li>
-  <li><a href="developers/goldsluice-algorithm.html">Developer quick-sheet: running goldsluice and developing an algorithm, from a Python mirror to a Rust kernel (three pages)</a></li>
+  <li><a href="developers/writing-an-adapter.html">Developer quick-sheet: writing an adapter, so that goldpan reads another file format</a> (one-page overview; the full guide is in the <a href="https://villano-lab.github.io/goldpan/guides/writing-an-adapter.html">goldpan documentation</a>)</li>
+  <li><a href="developers/goldsluice-batch.html">Developer quick-sheet: batch mode, defining a dataset, processing it with goldsluice and reading it back with goldpan</a> (one-page overview; the full guide is in the <a href="https://villano-lab.github.io/goldsluice/guides/batch.html">goldsluice documentation</a>)</li>
+  <li><a href="developers/goldsluice-algorithm.html">Developer quick-sheet: running goldsluice and developing an algorithm, from a Python mirror to a Rust kernel</a> (one-page overview; the full guide is in the <a href="https://villano-lab.github.io/goldsluice/guides/algorithm.html">goldsluice documentation</a>)</li>
 </ul>
 
 <h2>Library reference</h2>
-<p>The shared <code>python/</code> library, generated from the code: every module, function, signature and status (done or under development).</p>
+<p>The pulse-analysis library <code>goldpan</code> and the reduction package <code>goldsluice</code> have repositories and documentation of their own (both install from PyPI): how the pieces fit, guides, and the reference of every module and function.</p>
 <ul class="repo">
-  <li><a href="api/index.html">Documentation of goldpan and goldsluice (Sphinx): how the pieces fit, guides, and the reference of every module and function</a></li>
-  <li><a href="library/index.html">Library reference: modules and functions (the earlier overview of goldpan)</a></li>
+  <li><a href="https://villano-lab.github.io/goldpan/">Documentation of goldpan</a> (code: <a href="https://github.com/villano-lab/goldpan">villano-lab/goldpan</a>)</li>
+  <li><a href="https://villano-lab.github.io/goldsluice/">Documentation of goldsluice</a> (code: <a href="https://github.com/villano-lab/goldsluice">villano-lab/goldsluice</a>)</li>
 </ul>
 
 <h2>Analysis Notes</h2>
@@ -90,7 +91,7 @@
 </div>
 
 <h3>Notebooks and deprecation</h3>
-<p>Notes marked <span class="status complete">Complete</span> are left as they are, apart from small updates where a change in the <code>python/</code> library requires one, such as a renamed function. The Jupyter notebooks they rest on are handled separately: when a library change breaks a notebook, it is either updated for the change or, if it no longer runs and is not worth fixing, marked deprecated with a warning cell at the top, like this:</p>
+<p>Notes marked <span class="status complete">Complete</span> are left as they are, apart from small updates where a change in the goldpan library requires one, such as a renamed function. The Jupyter notebooks they rest on are handled separately: when a library change breaks a notebook, it is either updated for the change or, if it no longer runs and is not worth fixing, marked deprecated with a warning cell at the top, like this:</p>
 
 <p class="caption">Example of the marker (illustrative only; no notebook is marked deprecated at present):</p>
 <pre class="jupyter-warning"><b>DeprecationWarning:</b> example_notebook.ipynb is deprecated (2026-09-25).
@@ -122,6 +123,17 @@
   <tbody>
 
     <tr class="generated">
+      <td class="num">12</td>
+      <td class="link"><a href="notes/student-aps-summit-2027-abstract.html">Open note &rarr;</a></td>
+      <td class="date">2026-11-03</td>
+      <td>George Spilver</td>
+      <td>George Spilver APS Global Physics Summit 2027 Poster Presentation</td>
+      <td class="desc">I submitted an abstract for the APS Global Physics Summit 2027 on using a machine-learning model to choose the noise traces that build SuperCDMS noise PSD templates, and I plan to present it there in person; this note records the abstract and the plan.</td>
+      <td class="kw">APS, Global Physics Summit, abstract, noise PSD, noise template, machine learning, optimal filter</td>
+      <td><span class="status in-progress">In progress</span></td>
+    </tr>
+
+    <tr class="generated">
       <td class="num">11</td>
       <td class="link"><a href="notes/student-goldpan-sluice-intro.html">Open note &rarr;</a></td>
       <td class="date">2026-10-26</td>
@@ -129,7 +141,7 @@
       <td>What are the packages <code>goldpan</code> and <code>goldsluice</code>?</td>
       <td class="desc">In doing some early data analysis--for example Notes 2, 7, and 9--it was useful to make some library functions. Those originally sat in <code>python/</code> at the top level of the <code>NSDF-Data</code> repository. As the tools have grown it seems like putting them into their own Python package makes sense. I am starting that work and there will be two resulting packages <code>goldpan</code> and <code>goldsluice</code> that are explained a bit in this note.</td>
       <td class="kw">libraries, data analysis, pip, PyPI</td>
-      <td><span class="status complete">Complete (2026-10-29)</span></td>
+      <td><span class="status complete">Complete (2026-11-04)</span></td>
     </tr>
 
     <tr class="generated">
@@ -151,7 +163,7 @@
       <td>What is the current best PSD estimate from series 07221203_2025?</td>
       <td class="desc">I created a sample of clean randoms selected in the same way as Note 2 and produced a noise PSD for 07221203_2025. The randoms selection is updated/improved but the technique is the same. Since there are no known real pulses in those noise traces this is a true characterization of our noise environment.</td>
       <td class="kw">PSD, Noise, Randoms, PuBe</td>
-      <td><span class="status complete">Complete (2026-10-20),<br>revised (2026-10-23)</span></td>
+      <td><span class="status complete">Complete (2026-10-23)</span></td>
     </tr>
 
     <tr>
@@ -270,7 +282,7 @@
 </div>
 
 <footer>
-  Source: <a href="https://github.com/villano-lab/NSDF-Data/tree/master/docs">docs/</a> in the
+  Source: <a href="https://github.com/villano-lab/NSDF-Data/tree/main/docs">docs/</a> in the
   <a href="https://github.com/villano-lab/NSDF-Data">NSDF-Data</a> repository. Plain static HTML, no build step.
   Layout follows the Analysis Notes table used for the NR Fano analysis.
 </footer>

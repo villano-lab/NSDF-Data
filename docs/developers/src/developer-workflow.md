@@ -18,7 +18,7 @@ html-subtitle: "NSDF-Data · Git Flow and semantic versioning · version 4, 23 O
 \vspace{0.3em}
 ```
 
-**A pull request (PR)** is a page on GitHub that says "please merge branch X into branch Y". It shows the changes, runs the automatic checks, and keeps the discussion in one place. **Nothing reaches `develop` until you press Merge.** `develop` is where work lands and what the live site is served from; `master` holds tagged releases only.
+**A pull request (PR)** is a page on GitHub that says "please merge branch X into branch Y". It shows the changes, runs the automatic checks, and keeps the discussion in one place. **Nothing reaches `develop` until you press Merge.** `develop` is where work lands and what the live site is served from; `main` holds tagged releases only.
 
 ![](img/loop.png){width=100%}
 
@@ -50,15 +50,15 @@ git switch develop && git pull && git branch -d feature/my-change   # 10
 ![](img/branches.png){width=100%}
 
 ```{=latex}
-{\footnotesize\textit{Branches over time. A feature merges into \texttt{develop} through a PR. A release goes to \texttt{master}, is tagged, and \texttt{master} is merged back.}}
+{\footnotesize\textit{Branches over time. A feature merges into \texttt{develop} through a PR. A release goes to \texttt{main}, is tagged, and \texttt{main} is merged back.}}
 ```
 ```{=html}
-<p class="caption">Branches over time. A feature merges into <code>develop</code> through a PR. A release goes to <code>master</code>, is tagged, and <code>master</code> is merged back.</p>
+<p class="caption">Branches over time. A feature merges into <code>develop</code> through a PR. A release goes to <code>main</code>, is tagged, and <code>main</code> is merged back.</p>
 ```
 
-**Making a release**, when there is something to version: branch `release/X.Y.Z` from `develop`, set `VERSION` (and `goldpan`'s own, if changed) and date `CHANGELOG.md`, open a PR into `master` and merge it, tag `vX.Y.Z` on the merge commit, merge `master` back into `develop`, publish the GitHub release, delete the branch. Bump **major** for a breaking library change (not while 0.x), **minor** for a new capability, **patch** for fixes and content. A guide or site fix is an ordinary feature PR. A **hotfix** is only for a bug in a released version.
+**Making a release**, when there is something to version: branch `release/X.Y.Z` from `develop`, set `VERSION` (and `goldpan`'s own, if changed) and date `CHANGELOG.md`, open a PR into `main` and merge it, tag `vX.Y.Z` on the merge commit, merge `main` back into `develop`, publish the GitHub release, delete the branch. Bump **major** for a breaking library change (not while 0.x), **minor** for a new capability, **patch** for fixes and content. A guide or site fix is an ordinary feature PR. A **hotfix** is only for a bug in a released version.
 
 **Special cases.** *A student note:* the PR into `develop` runs the check only, and nothing is visible; you replace `TBD` with the next note number (`python tools/build_notes.py next`{.cmd} prints it) and merge, the bot builds the page, and it is live in 2 to 3 minutes (delete the source file to remove a note). *A contributor such as Kitty:* they open a PR into `develop`, you are requested automatically, and you add other reviewers by hand. *An AI agent:* may open PRs, and never merges without your go-ahead.
 
-**Never** commit directly to `master` or `develop`, and never force-push (the rulesets block both).\
+**Never** commit directly to `main` or `develop`, and never force-push (the rulesets block both).\
 Details are in the repository: `RELEASING.md`, `AGENTS.md`, `CHANGELOG.md`.

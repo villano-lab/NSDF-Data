@@ -239,7 +239,7 @@ VS Code's Markdown preview and the published page both draw it. Put no space jus
 
 ## Pinning your code
 
-A note is only useful if the reader can find the code that made its numbers. Link to your notebook and library files at a **specific commit**, not at a branch name such as `develop` or `master`, because branches keep changing:
+A note is only useful if the reader can find the code that made its numbers. Link to your notebook and library files at a **specific commit**, not at a branch name such as `develop` or `main`, because branches keep changing:
 
 1. Commit your notebook to your branch (see the first analysis guide).
 2. Find the commit's short code, for example `a1b2c3d`.

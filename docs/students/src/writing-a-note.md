@@ -1,11 +1,11 @@
 ---
 title: "Writing a note"
-subtitle: "NSDF-Data student guide 3 — writing a note, for every computer"
-date: "Version 24 · 23 October 2026"
+subtitle: "NSDF-Data student guide 6 — writing a note, for every computer"
+date: "Version 25 · 12 November 2026"
 ---
 
 ::: tip
-**This is guide 3 of 5.** It is about *writing* the note. Guide 4 covers *publishing* it, and guide 5 covers publishing with an AI assistant.
+**This is guide 6.** It is about *writing* the note. Guide 7 covers *publishing* it, and guide 8 covers publishing with an AI assistant.
 :::
 
 ::: tip
@@ -82,7 +82,7 @@ What they share is the shape, not the headings: each says what was asked, shows 
 
 ## Where and how to write
 
-Write your note in whatever you are comfortable with. Two routes are supported, and guide 4 takes either one onto the site.
+Write your note in whatever you are comfortable with. Two routes are supported, and guide 7 takes either one onto the site.
 
 ### Suggested: VS Code, writing Markdown in the project
 
@@ -92,13 +92,13 @@ Write your note in whatever you are comfortable with. Two routes are supported, 
 2. In the file list on the left, open `notes/src`. Copy `_template.md` (right-click it, **Copy**, then right-click the folder and **Paste**) and rename the copy `your-note-name.md`. Use lowercase letters and hyphens, for example `baseline-in-dump-one.md`.
 3. Write. To see the preview in its own tab next to the text, press `Ctrl+K`, let go, then press `V` (on macOS: `Cmd+K`, then `V`). The preview follows as you type and scroll. (`Ctrl+Shift+V` also works, but it replaces the text with the preview in the same tab.)
 4. Save each figure as a PNG in `notes/src/img/`, with your note's name at the start of the file name (`baseline-in-dump-one-fig1.png`) and refer to it as `![caption](img/baseline-in-dump-one-fig1.png)`. All notes share that one folder, so the name prefix keeps your pictures from being mixed up with someone else's. Put the picture directly in `img/`, not in a subfolder. How to make the plot and write its caption (bold **Figure 1.** label, what is plotted, what to look for) is in [Making a good plot](#making-a-good-plot) and [The caption](#the-caption).
-5. Keep your notebook and any scripts in your own folder under `data_analysis/R76/student/`, and commit as you go (guide 2, Step 7).
+5. Keep your notebook and any scripts in your own folder under `data_analysis/R76/student/`, and commit as you go (guide 3, Step 7).
 
 Any other plain text editor works for this route too (Notepad, TextEdit set to **Format**, then **Make Plain Text**, or gedit). Save the file as `your-note-name.md`, as UTF-8, and check on Windows that the name does not end in `.md.txt` (File Explorer, **View**, then tick **File name extensions**). The GitHub web editor also works, with no install at all.
 
 ### Also supported: Word or Google Docs
 
-If you write better in Word or Google Docs, write there. Keep the file anywhere outside the project, for example your `Research` folder. When it is ready, guide 4 turns it into a note, pictures included, with one command, and the same command updates the note after you change the document. Three habits make the conversion clean:
+If you write better in Word or Google Docs, write there. Keep the file anywhere outside the project, for example your `Research` folder. When it is ready, guide 7 turns it into a note, pictures included, with one command, and the same command updates the note after you change the document. Three habits make the conversion clean:
 
 - **Use Heading styles for section titles.** In Word, select a section title and choose **Home**, then **Heading 1** (main sections) or **Heading 2** (sub-sections). Do not just make the title bold or bigger. Only Heading-styled text becomes a heading, and without headings there is no outline.
 - **Avoid underline and superscript.** Underlined text and superscripts (the raised "th" in 5th, for example) do not convert. Use plain text instead.
@@ -138,7 +138,7 @@ Sometimes a new note redoes an earlier one with a better method. Then the two no
     **Supersedes:** [Note 3](note-03-noise-psd.html)
     ```
 
-2. **In the pull request description** (guide 4), write `Supersedes Note 3` so your lead sees it at once.
+2. **In the pull request description** (guide 7), write `Supersedes Note 3` so your lead sees it at once.
 3. **The older note** then changes to the status *Superseded (reference/link)* and gets a link to yours. Your lead does this for a hand-written note, in the same pull request, as an extra commit. For another student note, change `status:` in its header in `notes/src/` yourself, add a line `**Superseded by:** [your note](student-your-note-name.html)` under its header, and include that file in your pull request.
 
 Do not delete the older note. It stays up for reference.
@@ -271,7 +271,7 @@ Go through this list before you ask for review:
 
 ### Checking the numbers with a tool
 
-The command that checks your whole note, `python tools/check_note.py notes/src/your-note-name.md`, includes this check (guide 4, Step 2, says what the rest of it does). To run only the numbers, with your environment active, run this from the `NSDF-Data` folder, with your own note's file name:
+The command that checks your whole note, `python tools/check_note.py notes/src/your-note-name.md`, includes this check (guide 7, Step 2, says what the rest of it does). To run only the numbers, with your environment active, run this from the `NSDF-Data` folder, with your own note's file name:
 
 ```
 python tools/check_note.py notes/src/your-note-name.md --only numbers
@@ -289,11 +289,11 @@ The tool is a help, not a judge: it matches numbers at the digits you wrote (0.5
 
 ## Session Info
 
-Guide version 24, 23 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 25, 12 November 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Next
 
-When the note is written and checked, go to **student guide 4: publishing a note**.
+When the note is written and checked, go to **student guide 7: publishing a note**.
 
 ## Where to get help
 

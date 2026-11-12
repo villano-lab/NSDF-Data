@@ -18,7 +18,7 @@ html-subtitle: "Developer quick-sheet · Claude Code or a similar agent · versi
 \vspace{0.2em}
 ```
 
-The agent does the mechanical work. **You own every number, every reading and every conclusion.** Start it in the `NSDF-Data` folder and it reads `CLAUDE.md` and `AGENTS.md`, so it already knows the branch and pull request rules. This sheet pairs with the developer sheet, [creating a note](https://villano-lab.github.io/NSDF-Data/developers/note-creation.html). Students use [guide 5](https://villano-lab.github.io/NSDF-Data/students/publishing-with-ai.html).
+The agent does the mechanical work. **You own every number, every reading and every conclusion.** Start it in the `NSDF-Data` folder and it reads `CLAUDE.md` and `AGENTS.md`, so it already knows the branch and pull request rules. This sheet pairs with the developer sheet, [creating a note](https://villano-lab.github.io/NSDF-Data/developers/note-creation.html). Students use [guide 8](https://villano-lab.github.io/NSDF-Data/students/publishing-with-ai.html).
 
 ![](img/note-ai-steps.png){width=100%}
 

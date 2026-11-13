@@ -6,6 +6,7 @@ All notable changes to this repository are recorded here. The format follows [Ke
 
 ### Added
 
+- **The UMN deep-storage listing** in `data_analysis/R76/series_lists/`: the raw data thought lost was found on the UMN MSI deep storage (2026-11-13). `umn_msi_series_listing.csv` (files and size of each of the 9,213 series), `umn_msi_run_summary.csv` (how much of each run's series list is there: Run 56 and Runs 63 to 79 almost all, Runs 55, 58, 59, 60, 65 none) and `UMN_MSI_LISTING.md`.
 - **Student guide 10, *Finding the Am-241 peaks*** (version 1): an open exploration with three levels of hints, for finding the americium lines in a spectrum and putting energies on them. It does not say which cells to run. Its data is one small Parquet file (129,539 events, 14 MB), published as the asset of the GitHub release `data-am241-v1`; the example in the guide downloads it.
 
 ### Changed

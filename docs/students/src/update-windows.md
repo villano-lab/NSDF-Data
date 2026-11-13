@@ -1,7 +1,7 @@
 ---
 title: "Updating your setup"
-subtitle: "NSDF-Data student guide 7 — Windows edition"
-date: "Version 7 · 5 November 2026"
+subtitle: "NSDF-Data student guide 5 — Windows edition"
+date: "Version 8 · 12 November 2026"
 ---
 
 ::: maintenance
@@ -191,7 +191,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 7, 5 November 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 8, 12 November 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

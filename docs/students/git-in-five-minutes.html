@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Git in five minutes (NSDF-Data student guide 8 — for every
+<title>Git in five minutes (NSDF-Data student guide 1 — for every
 computer)</title>
 <link rel="stylesheet" href="../style.css">
 <link rel="stylesheet" href="../guide.css">
@@ -15,15 +15,34 @@ computer)</title>
 <header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="git-in-five-minutes.pdf">PDF version (download or print)</a></nav></header>
 
 <h1>Git in five minutes</h1>
-<p class="meta">NSDF-Data student guide 8 — for every
-computer &middot; Version 2 · 14 October 2026</p>
+<p class="meta">NSDF-Data student guide 1 — for every
+computer &middot; Version 3 · 12 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
 <ul>
+<li><a href="#why-this-guide" id="toc-why-this-guide">Why this
+guide</a></li>
 <li><a href="#the-idea" id="toc-the-idea">The idea</a></li>
+<li><a href="#two-copies-your-computer-and-the-remote"
+id="toc-two-copies-your-computer-and-the-remote">Two copies: your
+computer and the remote</a></li>
 <li><a href="#the-words" id="toc-the-words">The words</a></li>
-<li><a href="#your-branch" id="toc-your-branch">Your branch</a></li>
+<li><a href="#branches-and-the-three-that-matter"
+id="toc-branches-and-the-three-that-matter">Branches, and the three that
+matter</a></li>
+<li><a href="#main-and-develop-are-protected-and-why"
+id="toc-main-and-develop-are-protected-and-why"><code>main</code> and
+<code>develop</code> are protected, and why</a></li>
+<li><a href="#how-your-work-gets-in-your-branch-pushed-to-the-remote"
+id="toc-how-your-work-gets-in-your-branch-pushed-to-the-remote">How your
+work gets in: your branch, pushed to the remote</a></li>
+<li><a href="#your-github-account-and-what-the-invitation-means"
+id="toc-your-github-account-and-what-the-invitation-means">Your GitHub
+account, and what the invitation means</a></li>
+<li><a href="#you-may-hear-about-git-flow"
+id="toc-you-may-hear-about-git-flow">You may hear about “Git
+Flow”</a></li>
 <li><a href="#the-four-commands" id="toc-the-four-commands">The four
 commands</a></li>
 <li><a href="#a-normal-session" id="toc-a-normal-session">A normal
@@ -35,9 +54,6 @@ changes</a></li>
 id="toc-prefer-buttons-to-typing">Prefer buttons to typing?</a></li>
 <li><a href="#when-something-looks-wrong"
 id="toc-when-something-looks-wrong">When something looks wrong</a></li>
-<li><a href="#you-may-hear-about-git-flow"
-id="toc-you-may-hear-about-git-flow">You may hear about “Git
-Flow”</a></li>
 <li><a href="#where-to-learn-more" id="toc-where-to-learn-more">Where to
 learn more</a></li>
 <li><a href="#session-info" id="toc-session-info">Session Info</a></li>
@@ -48,17 +64,78 @@ help</a></li>
 </nav>
 
 <div class="tip">
-<p><strong>This is guide 8.</strong> It explains the few Git ideas you
-need for this project, in plain words. Read it once, now or later, and
-come back to it when a Git word or message puzzles you. You do not have
-to memorize anything: you will use four commands.</p>
+<p><strong>This is guide 1: start here.</strong> It explains, in plain
+words, how the whole group shares one project without getting in each
+other’s way. You do not need to know anything about Git, and you do not
+need to type anything yet: just read. It takes about ten minutes.
+<strong>You can skip it</strong> if you already know what a commit, a
+push, a branch, a remote and a pull request are, and why the shared
+branches are protected, and if you already have a GitHub account and the
+lead’s invitation. You can come back to it any time a Git word or
+message puzzles you.</p>
 </div>
+<h2 id="why-this-guide">Why this guide</h2>
+<p>Many people work on this project at the same time: the project lead,
+other students, the people who check the work. Everyone needs the same
+analysis code, and everyone makes changes. Without a system, two people
+change the same file and one loses their work, or a half-finished change
+breaks the website for everybody.</p>
+<p>The system is called <strong>Git</strong>. Everything below is the
+few parts of it you need, and the reason for each rule.</p>
 <h2 id="the-idea">The idea</h2>
 <p><strong>Git</strong> keeps every saved version of your project, like
 an endless “Save As” where each save has a note saying what changed.
 Nothing you have saved is lost, even if you change your mind later.
-<strong>GitHub</strong> is the website that keeps a shared copy online,
-so your lead can see your work.</p>
+<strong>GitHub</strong> is a website (github.com) that keeps a shared
+copy of the project online, so that everyone, and your lead, can see the
+same thing.</p>
+<h2 id="two-copies-your-computer-and-the-remote">Two copies: your
+computer and the remote</h2>
+<p>This is the idea that makes the rest easy. There are always at least
+two copies of the project:</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Copy</th>
+<th>Where it is</th>
+<th>What it is called</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Your copy</strong></td>
+<td>The folder <code>NSDF-Data</code> on your own computer.</td>
+<td><strong>local</strong> (the copy “here”)</td>
+</tr>
+<tr>
+<td><strong>The shared copy</strong></td>
+<td>On GitHub’s computers, on the internet.</td>
+<td><strong>the remote</strong> (the copy “over there”); Git calls it
+<strong><code>origin</code></strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Git does not keep them in step by itself. You tell it to send things
+from one to the other:</p>
+<ul>
+<li><strong>clone</strong>: the first download of the project from the
+remote to your computer. The setup guide does it once.</li>
+<li><strong>push</strong>: send the versions you saved on your computer
+up to the remote.</li>
+<li><strong>pull</strong> (or <strong>fetch</strong>): bring newer
+versions from the remote down to your computer.</li>
+</ul>
+<p>Saving a version on your computer (a <strong>commit</strong>) does
+not change the remote at all. Nobody else sees it until you push. That
+is the safety net: you can save, try, and change your mind on your own
+computer, and the shared copy stays untouched.</p>
 <h2 id="the-words">The words</h2>
 <div class="table-scroll">
 <table>
@@ -84,40 +161,201 @@ saved history.</td>
 </tr>
 <tr>
 <td><strong>branch</strong></td>
-<td>A separate line of saved versions. Your branch is your own copy of
-the work.</td>
+<td>A separate line of saved versions: a copy of the whole project where
+you can work without changing the original.</td>
+</tr>
+<tr>
+<td><strong>local</strong> and <strong>remote</strong></td>
+<td>Your computer’s copy, and the copy on GitHub (see above).</td>
 </tr>
 <tr>
 <td><strong>push</strong></td>
-<td>Send your commits from your computer to GitHub.</td>
+<td>Send your commits from your computer to the remote.</td>
 </tr>
 <tr>
 <td><strong>pull request</strong></td>
 <td>A button on github.com that means “I’m done, please have a look.”
-Your lead reads it and, if it is ready, adds your work to the project.
-Guide 4 shows it step by step.</td>
+Your lead reads your changes and, if they are ready, adds them to the
+project. Guide 7 shows it step by step.</td>
 </tr>
 <tr>
-<td><strong><code>develop</code> and <code>main</code></strong></td>
-<td>The shared branches that belong to the project. You never work on
-them.</td>
+<td><strong>merge</strong></td>
+<td>Adding the changes of one branch into another.</td>
+</tr>
+<tr>
+<td><strong>terminal</strong></td>
+<td>A window where you type commands. The setup guide installs what you
+need and shows how to open it.</td>
 </tr>
 </tbody>
 </table>
 </div>
-<h2 id="your-branch">Your branch</h2>
-<p>Everything you do happens on your own branch, named
-<code>student-yourname</code>. The setup guide (Step 8) made it for you.
+<h2 id="branches-and-the-three-that-matter">Branches, and the three that
+matter</h2>
+<p>A <strong>branch</strong> is how Git lets many people work at once.
+Each person works on their own branch, so changes stay separate until
+they are deliberately put together.</p>
+<p>This project has three kinds of branch you will meet:</p>
+<div class="table-scroll">
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Branch</th>
+<th>What it is</th>
+<th>Who changes it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>main</code></strong></td>
+<td>The released version of the project: tested and numbered (such as
+0.12.0).</td>
+<td>Only the project lead, when a release is made.</td>
+</tr>
+<tr>
+<td><strong><code>develop</code></strong></td>
+<td>The shared working version, where everyone’s finished work is
+collected. <strong>The project website and the guides you are reading
+are served from it.</strong></td>
+<td>Only through pull requests.</td>
+</tr>
+<tr>
+<td><strong><code>student-yourname</code></strong></td>
+<td><strong>Your own branch.</strong> Yours alone; the setup guide (Step
+8) creates it.</td>
+<td>You.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="main-and-develop-are-protected-and-why"><code>main</code> and
+<code>develop</code> are protected, and why</h2>
+<p><strong>Protected</strong> means GitHub refuses to let anyone change
+<code>main</code> or <code>develop</code> directly. Nobody can push to
+them, <strong>not even the project lead</strong>. The only way a change
+gets in is a pull request that someone else has read and approved.
+GitHub also refuses to delete them or to rewrite their history.</p>
+<p>The reasons:</p>
+<ul>
+<li><strong>They are what everyone sees.</strong> The website and the
+guides come from <code>develop</code>. A change there appears online
+about two minutes later. A mistake there is public and affects
+everybody.</li>
+<li><strong>Everyone depends on them.</strong> Each person builds their
+own work on top of <code>develop</code>. If it breaks, every one of you
+is stuck.</li>
+<li><strong>A second pair of eyes catches mistakes.</strong> A wrong
+number, a missing file or a data file that should never be shared is
+easy to miss in your own work. A pull request is where someone else
+checks it.</li>
+<li><strong>Nothing is lost.</strong> Because history cannot be
+rewritten, there is always a record of who changed what, and any change
+can be undone.</li>
+</ul>
+<p>This is also a safety net for you. If you push to the wrong branch by
+accident, GitHub says no and nothing breaks.</p>
+<div class="careful">
+<p>GitHub protects the <strong>remote</strong> copies only. On your own
+computer nothing stops you from committing while you are on
+<code>develop</code>. The commit would be refused when you tried to push
+it, and then you would have to ask your lead to help. So always check
+which branch you are on before you commit (see the commands below).</p>
+</div>
+<h2 id="how-your-work-gets-in-your-branch-pushed-to-the-remote">How your
+work gets in: your branch, pushed to the remote</h2>
+<p>You never change <code>develop</code> yourself. You work on your own
+branch, send it to the remote, and ask for it to be added:</p>
+<ol type="1">
+<li><strong>Work on your branch, on your computer.</strong> Edit a
+notebook or write a note. Save versions (commits) as you go. Only your
+own copy changes.</li>
+<li><strong>Push your branch.</strong> This sends your commits to
+GitHub, where the remote now has a copy of your branch, named
+<code>origin/student-yourname</code>. Your lead and the others can see
+it. Nothing in <code>develop</code> has changed yet.</li>
+<li><strong>Open a pull request</strong> on github.com: “please add my
+branch to <code>develop</code>”. Your lead reads the changes there, may
+ask you to fix something (you commit and push again, and the pull
+request updates itself), and when it is ready, merges it.</li>
+<li><strong>Your work is now in <code>develop</code></strong>, which
+means in the shared project (and the website, if it was a note). Your
+branch stays, and you keep using it for your next piece of work.</li>
+<li><strong>Bring the newest <code>develop</code> into your branch from
+time to time</strong>, so you start from everyone’s latest work (the
+section “Getting the newest project changes” below).</li>
+</ol>
+<p>Your branch lives in both places: the copy on your computer, and the
+copy on the remote. A push makes the remote copy match your computer.
 Your branch cannot hurt anyone else’s work or the public site, however
 many times you commit or push.</p>
-<p>To see which branch you are on, type:</p>
-<pre><code>git branch --show-current</code></pre>
-<p>It should print <code>student-yourname</code>. If it prints
-<code>develop</code> or <code>main</code>, stop and ask your lead.</p>
+<h2 id="your-github-account-and-what-the-invitation-means">Your GitHub
+account, and what the invitation means</h2>
+<p>To push, you need two things: an account on GitHub, and permission
+from the project lead. Anyone can download (clone) the project, but only
+people the lead has invited can push to it.</p>
+<p><strong>1. Make a free account.</strong></p>
+<ol type="1">
+<li>Go to <a href="https://github.com">github.com</a> and choose
+<strong>Sign up</strong>.</li>
+<li>Give an email address, a password and a <strong>username</strong>.
+Your username is public and is shown next to your work, so choose one
+you are happy for others to see (your name, or something close to
+it).</li>
+<li>GitHub emails you a code to confirm the address. Type it in.</li>
+<li>Keep your password private. Never type it into a terminal, and never
+send it to anyone, including the project lead.</li>
+</ol>
+<p><strong>2. Send your username to the project lead.</strong> Only the
+username (not your password).</p>
+<p><strong>3. The lead invites you.</strong> On the project’s page on
+github.com, the lead opens <strong>Settings</strong>, then
+<strong>Collaborators</strong>, then <strong>Add people</strong>, and
+types your username. You become a <strong>collaborator</strong>.</p>
+<p><strong>4. Accept the invitation.</strong> GitHub sends an email to
+the address of your account, and shows a notice when you are signed in
+at github.com. Open it and choose <strong>Accept invitation</strong>. It
+expires after seven days. If it has, or you cannot find the email (look
+in your spam folder), tell the lead, who sends a new one.</p>
+<p><strong>What being a collaborator means.</strong> It gives you
+permission to <strong>push</strong> to the project’s remote: to create
+your own branch there and send your commits to it. That is all. It does
+<strong>not</strong> let you change <code>main</code> or
+<code>develop</code>: those are protected for every collaborator, the
+lead included (see above). Your changes still reach them only through a
+pull request. You are being trusted to work on your own branch, not to
+publish. Collaborators can also see all of the project’s pull requests
+and comment on them.</p>
+<p><strong>Why the invitation is needed at all.</strong> If anyone could
+push to the project, anyone could fill it with branches, or send files
+that should never be shared (such as data files). The invitation is the
+lead’s way of saying “this person is part of the group”, and it can be
+withdrawn later.</p>
+<p>If you try to push before you have accepted, GitHub answers with
+<code>Permission denied</code> or <code>403</code>. Nothing is wrong
+with your computer: accept the invitation (or ask the lead), then push
+again. The setup guide (Step 8) takes you through the rest: telling Git
+your name and email, signing in to GitHub from the terminal, and making
+your own branch.</p>
+<h2 id="you-may-hear-about-git-flow">You may hear about “Git Flow”</h2>
+<p><strong>Git Flow</strong> is the name of this way of organising
+branches. In short: <code>main</code> holds released versions;
+<code>develop</code> collects finished work; everyone’s own work happens
+on separate branches (for a student, <code>student-yourname</code>),
+which reach <code>develop</code> through pull requests; and the project
+lead makes short-lived <code>release/…</code> and <code>hotfix/…</code>
+branches to publish a numbered version or to fix something urgent. You
+only ever use your own branch and the pull request button. The rest is
+the maintainers’ business.</p>
 <h2 id="the-four-commands">The four commands</h2>
-<p>You will use these all the time. Run them in a terminal, from inside
-the <code>NSDF-Data</code> folder (the first two guides show how to get
-there).</p>
+<p>Once the setup guide (guide 2) has installed everything, you will use
+these all the time. Run them in a terminal, from inside the
+<code>NSDF-Data</code> folder (the setup guide shows how to get there).
+<strong>Do not type them yet.</strong></p>
 <pre><code>git status
 git add your-file
 git commit -m &quot;Say what you changed&quot;
@@ -148,13 +386,13 @@ name, as <code>git status</code> shows it.</td>
 </tr>
 <tr>
 <td><code>git commit -m "..."</code></td>
-<td>Saves a version of everything you added, with your message. A good
-message says what and why, in a few words.</td>
+<td>Saves a version (on your computer) of everything you added, with
+your message. A good message says what and why, in a few words.</td>
 </tr>
 <tr>
 <td><code>git push</code></td>
-<td>Sends your saved versions to GitHub. The first time on a new branch,
-Git tells you the exact command to use: copy it.</td>
+<td>Sends your saved versions to the remote, on GitHub. The first time
+on a new branch, Git tells you the exact command to use: copy it.</td>
 </tr>
 </tbody>
 </table>
@@ -165,6 +403,10 @@ It should show only your own files. If you see data files (a folder
 named <code>idx</code>, or <code>.bin</code> files) or other people’s
 files, do not add them: ask your lead.</p>
 </div>
+<p>To see which branch you are on, type:</p>
+<pre><code>git branch --show-current</code></pre>
+<p>It should print <code>student-yourname</code>. If it prints
+<code>develop</code> or <code>main</code>, stop and ask your lead.</p>
 <h2 id="a-normal-session">A normal session</h2>
 <ol type="1">
 <li>Go to the <code>NSDF-Data</code> folder in a terminal.</li>
@@ -175,18 +417,19 @@ your branch.</li>
 file of yours, then <code>git commit -m "..."</code>, then
 <code>git push</code>.</li>
 <li>When a note or a piece of work is ready for review, open a pull
-request on github.com (guide 4, Step 3).</li>
+request on github.com (guide 7, Step 3).</li>
 </ol>
 <h2 id="getting-the-newest-project-changes">Getting the newest project
 changes</h2>
-<p>The project keeps changing. To bring the newest shared changes into
-your branch, follow <em>Updating your setup</em> (guide 7, Step 2). It
-uses two lines, <code>git fetch origin</code> and
-<code>git merge --no-edit origin/develop</code>, and tells you what to
-do if Git reports a <code>CONFLICT</code>: stop, and send the message to
-your lead.</p>
+<p>The project keeps changing: other people’s work reaches
+<code>develop</code> all the time. To bring the newest shared changes
+into your branch, follow <em>Updating your setup</em> (guide 5, Step 2).
+It uses two lines, <code>git fetch origin</code> (look at what is new on
+the remote) and <code>git merge --no-edit origin/develop</code> (add it
+to your branch), and tells you what to do if Git reports a
+<code>CONFLICT</code>: stop, and send the message to your lead.</p>
 <h2 id="prefer-buttons-to-typing">Prefer buttons to typing?</h2>
-<p>Everything above can also be done with buttons in VS Code. Guide 9
+<p>Everything above can also be done with buttons in VS Code. Guide 4
 (<em>Git in VS Code</em>) shows how. It is optional: the terminal
 version stays the main one.</p>
 <h2 id="when-something-looks-wrong">When something looks wrong</h2>
@@ -229,8 +472,8 @@ question.</p>
 </tr>
 <tr>
 <td><code>Your branch is behind</code></td>
-<td>There are newer commits on GitHub.</td>
-<td>Ask your lead, or see guide 7, Step 2.</td>
+<td>There are newer commits on the remote.</td>
+<td>Ask your lead, or see guide 5, Step 2.</td>
 </tr>
 <tr>
 <td><code>CONFLICT</code></td>
@@ -256,14 +499,25 @@ GitHub.</td>
 <td>Setup guide, Step 8. Never type your GitHub password into the
 terminal.</td>
 </tr>
+<tr>
+<td><code>Permission denied</code> or <code>403</code> when you
+push</td>
+<td>You have not been added to the project yet, or you have not accepted
+the invitation.</td>
+<td>Check your email (and spam) for the GitHub invitation and accept it;
+otherwise ask the lead. See “Your GitHub account”.</td>
+</tr>
+<tr>
+<td><code>protected branch</code>, or a push to <code>develop</code> or
+<code>main</code> is refused</td>
+<td>You tried to change a protected branch directly.</td>
+<td>This is the protection working. Do not look for a way around it.
+Check your branch with <code>git branch --show-current</code> and ask
+your lead.</td>
+</tr>
 </tbody>
 </table>
 </div>
-<h2 id="you-may-hear-about-git-flow">You may hear about “Git Flow”</h2>
-<p>Git Flow is the set of branches (<code>develop</code>,
-<code>release/…</code>, <code>hotfix/…</code>) the project lead uses to
-publish versions. It is the maintainers’ business. You only ever use
-your own branch and the pull request button.</p>
 <h2 id="where-to-learn-more">Where to learn more</h2>
 <p>These are outside websites, which you can read at your own pace. None
 is required.</p>
@@ -286,7 +540,7 @@ wrong”. <a href="https://dangitgit.com/"
 class="uri">https://dangitgit.com/</a></li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 2, 14 October 2026. Written for every computer. Please
+<p>Guide version 3, 12 November 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a

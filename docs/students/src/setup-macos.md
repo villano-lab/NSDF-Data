@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
-subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 23 · 5 November 2026"
+subtitle: "NSDF-Data student guide 2 — macOS edition"
+date: "Version 24 · 12 November 2026"
 ---
 
 ::: tip
@@ -11,6 +11,7 @@ date: "Version 23 · 5 November 2026"
 ## Before you start
 
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
+- **New to Git and GitHub?** Read *Git in five minutes* (guide 1) first. It takes about ten minutes, needs no typing, and explains the words this guide uses (branch, push, remote, pull request) and why Step 8 asks for an invitation. Skip it if you already know them.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
 - **What to type, and what not to:** you type only the commands: text in a shaded box, or shaded inline like `git --version`{.cmd}. A checkpoint that says *You should see* describes what the computer prints back: do not type that. The symbol at the start of the line in the terminal (`$`, `>` or `%`) is the prompt the terminal shows you: do not type that either.
@@ -200,8 +201,8 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at [github.com](https://github.com) if you do not have one.
-2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
+1. Make a free account at [github.com](https://github.com) if you do not have one (guide 1 shows how).
+2. Send your GitHub username to the project lead. They will add you to the project as a collaborator: you get an email from GitHub, and you must accept it (guide 1 explains what this allows and what it does not).
 3. Once you have accepted the invitation, tell Git your name and email, so your work is labelled as yours. Use your own details:
 
 ```
@@ -303,7 +304,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 23, 5 November 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 24, 12 November 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

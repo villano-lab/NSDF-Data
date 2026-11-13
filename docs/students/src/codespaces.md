@@ -1,7 +1,7 @@
 ---
 title: "Working in your browser with GitHub Codespaces"
-subtitle: "NSDF-Data student guide 6 — no install, for every computer"
-date: "Version 8 · 5 November 2026"
+subtitle: "NSDF-Data student guide 9 — no install, for every computer"
+date: "Version 9 · 12 November 2026"
 ---
 
 ::: tip
@@ -69,7 +69,7 @@ The data (about 34 MB) goes into an `idx` folder in your home folder. Wait until
 
 ## Step 4. Open the first-analysis notebook
 
-Follow the steps of the first analysis guide (guide 2 for your computer). The only changes are these:
+Follow the steps of the first analysis guide (guide 3 for your computer). The only changes are these:
 
 - **Make your own folder, then open a notebook.** In the file list on the left, open `data_analysis/R76/student/`, right-click, choose **New Folder** and type your name (the same name as in your branch, without spaces). Open that folder, then click **New File**, or copy the code from the guide into a new notebook.
 - **Choose the kernel** when asked. Pick **darkmatter_cli_env** or the Python 3.12 kernel shown in the list.
@@ -87,7 +87,7 @@ Your work is kept in the codespace, but **it is not part of the project until it
 1. Click the **Source Control** icon in the left toolbar (it looks like a branch).
 2. Under **Changes**, check that only your notebook (and your note, if you have one) is listed. If `idx` or any `.bin` file appears, do not add it.
 3. Type a short message, such as `First analysis: 179 quiet traces`, and click **Commit**.
-4. Follow your lead's instructions for branches and pull requests. Notes are published through a pull request, as guides 3 and 4 explain.
+4. Follow your lead's instructions for branches and pull requests. Notes are published through a pull request, as guides 6 and 7 explain.
 
 ## Step 6. Stop the codespace
 
@@ -117,7 +117,7 @@ Then run the checks in Step 2 again. If that does not work, copy the last lines 
 
 ## Session Info
 
-Guide version 8, 5 November 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 9, 12 November 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 
@@ -129,4 +129,4 @@ When you write, include the codespace name (shown at the bottom left), the comma
 
 - Repository: <https://github.com/villano-lab/NSDF-Data>
 - Your codespaces: <https://github.com/codespaces>
-- Guide 2, first analysis (choose your computer): <https://villano-lab.github.io/NSDF-Data/>
+- Guide 3, first analysis (choose your computer): <https://villano-lab.github.io/NSDF-Data/>

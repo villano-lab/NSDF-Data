@@ -1,11 +1,11 @@
 ---
 title: "Publishing a note with an AI assistant"
-subtitle: "NSDF-Data student guide 5 — with Claude Code or a similar assistant"
-date: "Version 5 · 20 October 2026"
+subtitle: "NSDF-Data student guide 8 — with Claude Code or a similar assistant"
+date: "Version 6 · 12 November 2026"
 ---
 
 ::: tip
-**This is guide 5 of 5.** It shows how to use an AI coding assistant, such as Claude Code, to do the tedious parts of writing and publishing a note. It does not replace guides 3 and 4. You still own every number and every sentence.
+**This is guide 8.** It shows how to use an AI coding assistant, such as Claude Code, to do the tedious parts of writing and publishing a note. It does not replace guides 6 and 7. You still own every number and every sentence.
 :::
 
 ## What the assistant is good at here
@@ -38,7 +38,7 @@ Start with a brief like this, and fill in the brackets:
 
 > I am a student writing a note for the NSDF-Data site. My draft is `[path to your .docx or .md]`, my notebook is `[path to the notebook]`, and I committed it at `[commit hash]`. Please:
 >
-> 1. If the draft is a `.docx`, convert it with `python tools/word_to_note.py [path to the .docx] [note-name]`, as in student guide 4, Step 1. That puts the note in `notes/src/` and its pictures in `notes/src/img/`. Keep the header block and set `id: "TBD"`.
+> 1. If the draft is a `.docx`, convert it with `python tools/word_to_note.py [path to the .docx] [note-name]`, as in student guide 7, Step 1. That puts the note in `notes/src/` and its pictures in `notes/src/img/`. Keep the header block and set `id: "TBD"`.
 > 2. Check every number in the text against the notebook output, and list any number that does not match or that I have not shown.
 > 3. Pin every notebook link to the commit above.
 > 4. Run `python tools/check_note.py notes/src/[note-name].md`. Fix each problem it reports (the structure and the pinned links), without changing my sentences except where a fix needs it, and list the numbers it says are not in the notebook output, without changing them.
@@ -56,7 +56,7 @@ After the assistant has finished, go through these yourself:
 
 ## Committing and opening the pull request
 
-Once you are satisfied, follow guide 4 from Step 2 onward. You can ask the assistant to write the commit message, but read it before you commit.
+Once you are satisfied, follow guide 7 from Step 2 onward. You can ask the assistant to write the commit message, but read it before you commit.
 
 ## When the assistant goes wrong
 
@@ -67,7 +67,7 @@ Once you are satisfied, follow guide 4 from Step 2 onward. You can ask the assis
 
 ## Session Info
 
-Guide version 5, 20 October 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
+Guide version 6, 12 November 2026. Written for every computer. The AI tools change quickly, so if a step here no longer matches what you see, follow the assistant's own instructions and tell your lead.
 
 ## Where to get help
 
@@ -77,6 +77,6 @@ Include the brief you gave the assistant, what it changed, and the check's last 
 
 ## Key links
 
-- Guide 3, writing a note; guide 4, publishing a note: <https://villano-lab.github.io/NSDF-Data/>
+- Guide 6, writing a note; guide 7, publishing a note: <https://villano-lab.github.io/NSDF-Data/>
 - Pull requests: <https://github.com/villano-lab/NSDF-Data/pulls>
 - Claude Code documentation: <https://docs.claude.com>

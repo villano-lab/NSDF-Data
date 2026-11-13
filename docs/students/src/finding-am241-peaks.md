@@ -1,7 +1,7 @@
 ---
 title: "Finding the Am-241 peaks"
 subtitle: "NSDF-Data student guide 10 — an exploration, for every computer"
-date: "Version 2 · 9 November 2026"
+date: "Version 3 · 12 November 2026"
 ---
 
 ::: tip
@@ -19,7 +19,7 @@ You are not given a calibration. The detector reports an uncalibrated pulse size
 ## Before you start
 
 - You finished the setup guide and the first analysis for your computer, and you can open a notebook and plot a pulse.
-- You know what a *series*, a *dump*, an *event* and a *channel* are (guide 2).
+- You know what a *series*, a *dump*, an *event* and a *channel* are (guide 3).
 - You have data to look at: the file described in *Your first look* below. It holds the events of one region of the detector at one voltage. If you want other data, ask the project lead; you can also process dumps yourself with goldpan.
 
 ::: careful
@@ -137,11 +137,11 @@ You are not expected to find every line. A secure calibration from the two or th
 
 ## When you write it up
 
-Use guide 3 to write a note, and guide 4 to publish it. A note on this question should say which series and which events you used, what you cut and why, and which numbers you are confident in. Pin your notebook to the commit that produced the results.
+Use guide 6 to write a note, and guide 7 to publish it. A note on this question should say which series and which events you used, what you cut and why, and which numbers you are confident in. Pin your notebook to the commit that produced the results.
 
 ## Session Info
 
-Guide version 2, 9 November 2026. Written for every computer. Please tell the project lead where a step was unclear, or where a hint gave too much away or too little.
+Guide version 3, 12 November 2026. Written for every computer. Please tell the project lead where a step was unclear, or where a hint gave too much away or too little.
 
 ## Where to get help
 

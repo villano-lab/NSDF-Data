@@ -18,7 +18,7 @@ html-subtitle: "NSDF-Data student cheat-sheet · version 6, 20 October 2026"
 \vspace{0.3em}
 ```
 
-A one-page reminder. The full steps are in [guide 3, writing a note](https://villano-lab.github.io/NSDF-Data/students/writing-a-note.html) and [guide 4, publishing a note](https://villano-lab.github.io/NSDF-Data/students/publishing-a-note.html). **Nothing is public until your lead merges your pull request (PR).**
+A one-page reminder. The full steps are in [guide 6, writing a note](https://villano-lab.github.io/NSDF-Data/students/writing-a-note.html) and [guide 7, publishing a note](https://villano-lab.github.io/NSDF-Data/students/publishing-a-note.html). **Nothing is public until your lead merges your pull request (PR).**
 
 ![](img/note-path.png){width=100%}
 

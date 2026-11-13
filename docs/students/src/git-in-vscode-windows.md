@@ -1,24 +1,24 @@
 ---
 title: "Git in VS Code"
-subtitle: "NSDF-Data student guide 9 — Windows edition, optional"
-date: "Version 6 · 28 October 2026"
+subtitle: "NSDF-Data student guide 4 — Windows edition, optional"
+date: "Version 7 · 12 November 2026"
 ---
 
 ::: tip
-**This is guide 9, and it is optional.** It does the same Git steps as the terminal guides, with buttons in VS Code instead of typed commands. If you are happy with the terminal, you do not need this guide. If a screen here does not match what you see, trust the terminal version, and tell your lead which step differed.
+**This is guide 4, and it is optional.** It does the same Git steps as the terminal guides, with buttons in VS Code instead of typed commands. If you are happy with the terminal, you do not need this guide. If a screen here does not match what you see, trust the terminal version, and tell your lead which step differed.
 :::
 
 ## Before you start
 
-- You finished the setup guide (guide 1) for Windows, including Step 8, which made your branch `student-yourname`.
-- You have read *Git in five minutes* (guide 8). It explains the words used here: commit, branch, push, pull request.
+- You finished the setup guide (guide 2) for Windows, including Step 8, which made your branch `student-yourname`.
+- You have read *Git in five minutes* (guide 1). It explains the words used here: commit, branch, push, pull request.
 - **Time:** about 15 minutes, plus the install in Step 1 if you do not have VS Code yet.
 
-VS Code uses the Git that guide 1 installed, so nothing else has to be set up.
+VS Code uses the Git that guide 2 installed, so nothing else has to be set up.
 
 ## Step 1. Install VS Code
 
-If you wrote a note in Markdown (guide 3), you already have it: skip to Step 2.
+If you wrote a note in Markdown (guide 6), you already have it: skip to Step 2.
 
 Go to [code.visualstudio.com](https://code.visualstudio.com/) and click the download button for Windows. Run the installer and keep every default setting: click **Next** until you reach **Install**, then click **Install**. When it finishes, start VS Code from the **Start** menu (type `Visual Studio Code`).
 
@@ -103,7 +103,7 @@ This step is `git push` (the first time, `git push -u origin student-yourname`).
 
 ## Step 6. Bring in the newest project changes
 
-The project keeps changing. When *Updating your setup* (guide 7) tells you to bring in the newest changes (its Step 2), you can do that step here instead of typing the two lines. Do all the other steps of guide 7 as written, because they update your environment.
+The project keeps changing. When *Updating your setup* (guide 5) tells you to bring in the newest changes (its Step 2), you can do that step here instead of typing the two lines. Do all the other steps of guide 5 as written, because they update your environment.
 
 1. **Sync first.** Look at the big button in the Source Control tab. If it reads **Sync Changes** with an up-arrow or a down-arrow number (B, C or D in Figure 1), click it (Step 5) so that your branch and GitHub agree before you start. If it is the greyed-out **Commit** (A), or has no number, go on.
 2. Press `Ctrl+Shift+P`. A box opens at the top of the window.
@@ -122,21 +122,21 @@ If VS Code reports a **conflict**, or lists files under **Merge Changes** in the
 
 ## Step 7. Open a pull request
 
-When a note or a piece of work is ready for review, open the pull request the way guide 4 (Step 3) shows, on github.com. That route has been tested step by step, and it is the one to use.
+When a note or a piece of work is ready for review, open the pull request the way guide 7 (Step 3) shows, on github.com. That route has been tested step by step, and it is the one to use.
 
 ### Optional: from inside VS Code
 
 VS Code can also open pull requests for you, with an extension made by GitHub.
 
 ::: careful
-This part was written from the extension's own documentation and its list of commands, and has **not yet been tried all the way through on a student's computer**. If a screen differs, stop, and use guide 4 instead.
+This part was written from the extension's own documentation and its list of commands, and has **not yet been tried all the way through on a student's computer**. If a screen differs, stop, and use guide 7 instead.
 :::
 
 1. Press `Ctrl+Shift+X` to open **Extensions**.
 2. Search for `GitHub Pull Requests`{.cmd}. Install the one whose publisher is **GitHub**, with the check mark (verified publisher) next to the name.
 3. A GitHub icon appears in the bar on the left. Click it and choose **Sign in**. A web page opens in your browser: sign in to GitHub there. **Never type your GitHub password into VS Code or into the terminal.**
 4. Your branch will **not** be listed in the extension's view: that view lists pull requests, not branches, so a branch that has no pull request yet does not appear in it. To start one, click the **Create Pull Request** button. It is a **very small icon**, the pull-request symbol with a plus sign on it, at the right end of the title bar of the **Pull Requests** view (the view you open with the GitHub icon in the bar on the left). Move the mouse over it and a label says *Create Pull Request*. Or press `Ctrl+Shift+P`, type `GitHub Pull Requests: Create Pull Request`{.cmd}, and press Enter. The button and the command only appear after you have signed in (point 3) and pushed your branch (Step 5).
-5. A form opens. Check that the **base** is `develop` (it may offer `main`: change it) and that the branch being compared is `student-yourname`. Write the title and the description as guide 4 says, then click **Create**. Your pull request is then listed in the view.
+5. A form opens. Check that the **base** is `develop` (it may offer `main`: change it) and that the branch being compared is `student-yourname`. Write the title and the description as guide 7 says, then click **Create**. Your pull request is then listed in the view.
 
 ![](img/vscode-pull-requests-view.png){width=75%}
 
@@ -156,7 +156,7 @@ This part was written from the extension's own documentation and its list of com
 | `Git: Merge...`{.cmd} with `origin/develop` | `git merge --no-edit origin/develop` |
 | The **Create Pull Request** button of the GitHub extension (Step 7) | `gh pr create --base develop --title "Add note: your title" --body "One sentence on what the note answers."` |
 
-The last row uses the `gh` command, which guide 1 installed and signed in to GitHub in its Step 8. Run it from the `NSDF-Data` folder, on your own branch, after your commits are pushed (Step 5); it prints the address of your pull request. This way has **not yet been tried on a student's computer**: guide 4 (Step 3), on github.com, is the route that has been tested step by step. Whichever way you use, the base must be `develop`.
+The last row uses the `gh` command, which guide 2 installed and signed in to GitHub in its Step 8. Run it from the `NSDF-Data` folder, on your own branch, after your commits are pushed (Step 5); it prints the address of your pull request. This way has **not yet been tried on a student's computer**: guide 7 (Step 3), on github.com, is the route that has been tested step by step. Whichever way you use, the base must be `develop`.
 
 ## When something looks wrong
 
@@ -174,7 +174,7 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 
 ## Session Info
 
-Guide version 6, 28 October 2026, Windows edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
+Guide version 7, 12 November 2026, Windows edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

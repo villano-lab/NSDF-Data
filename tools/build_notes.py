@@ -66,7 +66,7 @@ def check_note(path, header, body, taken_ids, strict):
     elif nid in taken_ids:
         problems.append(f"id {nid} is already used by another note")
     for tag in FORBIDDEN_HTML.findall(body):
-        problems.append(f"raw HTML tag <{tag}> in the text: remove the formatting (see student guide 3)")
+        problems.append(f"raw HTML tag <{tag}> in the text: remove the formatting (see student guide 6)")
     for ref in PIN.findall(body):
         if ref == "master" or not re.fullmatch(r"[0-9a-f]{7,40}", ref):
             problems.append(f"notebook link pinned to {ref!r}, not a commit hash")
@@ -75,7 +75,7 @@ def check_note(path, header, body, taken_ids, strict):
             continue
         if not re.fullmatch(r"img/[^/]+", src):
             problems.append(f"picture {src!r} must be directly in notes/src/img/, not in a subfolder, "
-                            "and linked as img/name.png (student guide 4)")
+                            "and linked as img/name.png (student guide 7)")
         elif not (SRC / src).is_file():
             problems.append(f"picture not found: notes/src/{src}")
     if "COMMIT" in body:

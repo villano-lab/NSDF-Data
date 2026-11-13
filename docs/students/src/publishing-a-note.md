@@ -1,11 +1,11 @@
 ---
 title: "Publishing a note"
-subtitle: "NSDF-Data student guide 4 — for every computer"
-date: "Version 11 · 20 October 2026"
+subtitle: "NSDF-Data student guide 7 — for every computer"
+date: "Version 12 · 12 November 2026"
 ---
 
 ::: tip
-**This is guide 4 of 5.** It is about getting a finished note onto the site. Guide 3 covers writing the note; guide 5 covers doing this with an AI assistant.
+**This is guide 7.** It is about getting a finished note onto the site. Guide 6 covers writing the note; guide 8 covers doing this with an AI assistant.
 :::
 
 ## What happens when you publish
@@ -22,7 +22,7 @@ Nothing reaches the public site until the merge.
 ## Before you start
 
 - **You have write access.** Your lead adds you to the project on GitHub. You need this to push a branch.
-- **Your note is written and checked** against guide 3, as a Markdown file (the VS Code route) or a Word or Google Docs file, and the notebook it uses is committed to your branch.
+- **Your note is written and checked** against guide 6, as a Markdown file (the VS Code route) or a Word or Google Docs file, and the notebook it uses is committed to your branch.
 - **You know your branch name.** It is `student-yourname`, from the setup guide.
 
 ## Step 1. Get your note into `notes/src/`
@@ -69,7 +69,7 @@ It writes `notes/src/your-note-name.md`. It saves each picture in `notes/src/img
 The program printed `Wrote notes/src/your-note-name.md` and the number of pictures you expect. Open the note in VS Code or any text editor. Every section title you styled as a heading should start with `#` or `##`, and every picture should be a line starting `![` with a caption line under it. If the program listed leftover formatting (`<u>`, `<sup>`, `<sub>`, `<span>`), delete those tags and keep the words, or the check will reject the note. If you see no `#` lines at all, your titles were not Heading-styled: fix the document and run the command again.
 :::
 
-**d. Fill in the header** at the top of the new note: title, author, date, keywords and the one-sentence description (guide 3, *The header*). Leave `id: "TBD"`.
+**d. Fill in the header** at the top of the new note: title, author, date, keywords and the one-sentence description (guide 6, *The header*). Leave `id: "TBD"`.
 
 ::: tip
 **Test the conversion before you rely on it.** Convert a short two-section document with one picture first. If the headings and the picture both come through, convert the real note.
@@ -89,7 +89,7 @@ This runs, in one go, the same checks that GitHub runs on your pull request, and
 
 - **Structure:** the header, the status, the pictures. A problem fails the check.
 - **Pinned links:** every link to your code is pinned to a commit that exists. A problem fails the check. Push your notebook commit before you open the pull request: GitHub only sees pushed commits.
-- **Numbers:** the numbers in your text that are not in your notebook's saved output. This is advice only (guide 3 explains what to do with each line), and it does not fail the check.
+- **Numbers:** the numbers in your text that are not in your notebook's saved output. This is advice only (guide 6 explains what to do with each line), and it does not fail the check.
 
 Read the last line. *ready for review* means the structure and the links are fine. If it says to fix the problems, fix them (Step 4 has a table of the common messages) and run it again.
 
@@ -114,7 +114,7 @@ Look at the list that `git status` prints before the commit. It should contain o
 ## Step 3. Open the pull request
 
 ::: tip
-**What is a pull request? Nothing scary.** Your branch is your own copy of the project. Nothing you do on it changes anyone else's work or the public site. A *pull request* is a button on github.com that means "I'm done, please have a look." Your lead reads it, may ask for changes, and only then adds your work to the project. Until then you can push as often as you like, and you cannot break anything. If something looks wrong, stop, type `git status`, and send your lead what it prints. Guide 8, *Git in five minutes*, explains the words and the few commands you need.
+**What is a pull request? Nothing scary.** Your branch is your own copy of the project. Nothing you do on it changes anyone else's work or the public site. A *pull request* is a button on github.com that means "I'm done, please have a look." Your lead reads it, may ask for changes, and only then adds your work to the project. Until then you can push as often as you like, and you cannot break anything. If something looks wrong, stop, type `git status`, and send your lead what it prints. Guide 1, *Git in five minutes*, explains the words and the few commands you need.
 :::
 
 On [github.com](https://github.com), open the repository. GitHub shows a yellow banner saying your branch had recent pushes. Click **Compare & pull request**. Check that:
@@ -131,7 +131,7 @@ Click **Create pull request**.
 :::
 
 ::: careful
-**If your note replaces an earlier note**, that note's status must change and it must link to yours, and this has to travel in the same pull request. Guide 3 (*If your note replaces an earlier note*) says what goes in your note. For a hand-written note, your lead adds the change as a commit on your branch, so you do not edit `docs/`. For another student note, include its changed file in your pull request.
+**If your note replaces an earlier note**, that note's status must change and it must link to yours, and this has to travel in the same pull request. Guide 6 (*If your note replaces an earlier note*) says what goes in your note. For a hand-written note, your lead adds the change as a commit on your branch, so you do not edit `docs/`. For another student note, include its changed file in your pull request.
 :::
 
 ## Step 4. Read the check
@@ -194,7 +194,7 @@ git status
 git diff notes/src/your-note-name.md
 ```
 
-Then commit, push, and open a new pull request (or add to the open one). Let the check run again. If a result was wrong, say so in the note, with the date, as guide 3 explains. Do not delete a published note to hide a mistake.
+Then commit, push, and open a new pull request (or add to the open one). Let the check run again. If a result was wrong, say so in the note, with the date, as guide 6 explains. Do not delete a published note to hide a mistake.
 
 ## Appendix. The pull request form, step by step
 
@@ -255,7 +255,7 @@ Before you click **Create**: the base is `develop`, the title says what the note
 
 ## Session Info
 
-Guide version 11, 20 October 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 12, 12 November 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

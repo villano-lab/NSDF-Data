@@ -1,7 +1,7 @@
 ---
 title: "Git in five minutes"
 subtitle: "NSDF-Data student guide 1 — for every computer"
-date: "Version 4 · 12 November 2026"
+date: "Version 5 · 12 November 2026"
 ---
 
 ::: tip
@@ -12,9 +12,9 @@ date: "Version 4 · 12 November 2026"
 
 Many people work on this project at the same time: the project lead, other students, the people who check the work. Everyone needs the same analysis code, and everyone makes changes. Without a system, two people change the same file and one loses their work, or a half-finished change breaks the website for everybody.
 
-You may know Google Docs, where several people type in one file at the same time. That suits an essay, but not an analysis. Everyone sees your half-finished typing as you type it, nothing says which version produced which result, and nobody checks a change before it counts. Here a change must be finished and read by a second person before it is added, and every earlier version must stay recoverable so that a result can be reproduced. That is what Git gives us.
-
 The system (a computer program) is called **Git**. Everything below is the few parts of it you need, and the reason for each rule.
+
+You may know Google Docs, where several people type in one file at the same time. That suits an essay, but not an analysis. Everyone sees your half-finished typing as you type it, nothing says which version produced which result, and nobody checks a change before it counts. Here a change must be finished and read by a second person before it is added, and every earlier version must stay recoverable so that a result can be reproduced. That is what Git gives us.
 
 ## The idea
 
@@ -195,7 +195,7 @@ These are outside websites, which you can read at your own pace. None is require
 
 ## Session Info
 
-Guide version 4, 12 November 2026. Written for every computer. Please tell the project lead where a step was unclear.
+Guide version 5, 12 November 2026. Written for every computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 

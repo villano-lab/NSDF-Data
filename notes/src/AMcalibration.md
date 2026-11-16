@@ -1,29 +1,33 @@
 ---
 id: "TBD"
-title: "A question, written as a sentence"
-author: "Your Name"
-date: "2026-10-05"
 status: "In progress"
-keywords: "keyword one, keyword two"
-description: "One sentence: what you did and what you found."
+title: "Can we calibrate detector channel A using Am-241 decay peaks?"
+author: "Ace Trujillo"
+date: "2026-11-16"
+description: "Calibration of R76 detector channel A using Am-241 decay and Neptunium X-ray lines."
+keywords: "Am-241, calibration, detector, linear fit, X-rays"
+summary: "Calibrated R76 detector channel A using Am-241 gamma and Neptunium X-ray lines, showing a solid linear energy response."
 ---
 
-<!-- The clickable outline at the top of the published page is built from the ## headings below: do not write one. -->
+## What We're Doing & Why
+The main goal here is to figure out how to translate raw detector signals into actual physical energy units (keV) using an Americium-241 isotopic source. By hunting down the known gamma and X-ray peaks in our data, we can build a reliable conversion curve.
 
-## Code repository
+## Data & Setup
+- **Dataset:** Run 76 Parquet file pulled via `nsdf-cli`.
+- **Detector / Channel:** Detector 0, Channel A.
+- **Quick Fixes:** We had to apply a baseline gate to flatten out some diagonal slanting caused by baseline drift, which instantly made the peaks pop way cleaner.
 
-- [`your-notebook.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/COMMIT/data_analysis/R76/student/yourname/your-notebook.ipynb) — the notebook for everything below. Pinned to `COMMIT`: the link shows the notebook as it was at that commit, which may be older than the latest version, and the file may have moved since (see `data_analysis/README.md`).
+## Results & Calibration Curve
+After matching up our trusted peak pairs—specifically the 13.95 keV Np L-alpha, 17.8 keV Np L-beta, and the main 59.54 keV gamma ray—we ran a quick linear fit.
 
-## Data and setup
+- **Calibration Equation:** $E \approx 177.7x - 13.0$
 
-Say which series, dump, detector and channel you used, and define every quantity.
+![Calibration Curve](img/am241-calibration-fig1.png)
+**Figure 1. Energy calibration curve showing measured window integral vs. assigned physical energy (keV) with a linear fit.**
 
-## The question
+## Pinned Code
+The Jupyter notebook behind these numbers and plots is permanently locked in via Git:
+- [`first-analysis-acetrujillo.ipynb`](https://github.com/villano-lab/NSDF-Data/blob/fb4d75810a9692e9c4a4763d750b7b2f7c84bdd2/data_analysis/R76/student/acetrujillo/first-analysis-acetrujillo.ipynb) — the notebook for everything below. Pinned to `fb4d75810a9692e9c4a4763d750b7b2f7c84bdd2`: the link shows the notebook as it was at that commit.
 
-Say the question again, and why it matters.
-
-## (Your own headings from here)
-
-After the question there is no fixed list of headings. Name each section for what is in it, and use the ones your story needs: your figures and tables, a check you made, what the results mean and do not show, what could be wrong, what to do next. Student guide 3, "The parts of a note", has examples. Delete this section when you start.
-
-![**Figure 1.** What is plotted, for which data, and what to look for.](img/example.png)
+## Things We're Still Figuring Out
+The big three peaks lined up with the fit super nicely. That said, we noticed a few smaller, unexplained bumps showing up at higher window integrals. We aren't entirely sure yet if they're background noise, escape peaks, or something else entirely.

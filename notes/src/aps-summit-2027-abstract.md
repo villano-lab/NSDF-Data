@@ -2,7 +2,7 @@
 id: "12"
 title: "George Spilver APS Global Physics Summit 2027 Poster Presentation"
 author: "George Spilver"
-date: "2026-11-03"
+date: "2026-11-16"
 status: "In progress"
 keywords: "APS, Global Physics Summit, abstract, noise PSD, noise template, machine learning, optimal filter"
 description: "I submitted an abstract for the APS Global Physics Summit 2027 on using a machine-learning model to choose the noise traces that build SuperCDMS noise PSD templates, and I plan to present it there in person; this note records the abstract and the plan."

@@ -21,6 +21,12 @@ description: "I submitted an abstract for the APS Global Physics Summit 2027 on 
 
 The continued pursuit of direct dark matter detection relies on the ability to accurately measure low energy interactions, requiring as much mitigation of electronic noise as possible. One way this can be accomplished is by sampling the noise environment of the detectors, using raw traces (digitized sensor signals containing either noise or an event pulse) to create a Power Spectral Density (PSD) noise template by averaging the squared magnitudes of Fast Fourier Transforms of selected noise traces. The Optimal Filter algorithm uses the PSD template and an ideal pulse shape template to reduce noise and find best-fit values for event energy and time. Currently, in open test data from the University of Minnesota taken with a SuperCDMS detector and an intense neutron source, which generates dark matter-like events, only about 10% of randomly triggered traces pass our selection cuts. We are incorporating machine learning into the process of categorizing noise samples. By analyzing both time and frequency domain features, a tree-based ensemble model can identify anomalous noise traces and categorize them as good or bad, strengthening the PSD template by building it from a larger and more accurate selection of noise traces. In future work, we will quantify model performance and build PSD templates for localized sections of data. <!-- numbers-ok -->
 
+## Timeline
+- **Nov 2026:** Submit abstract (done)
+- **Dec 2026:** Receive acceptance notification
+- **Jan 2027:** Prepare poster and practice presentation
+- **Apr 2027:** Present poster at the APS Global Physics Summit
+
 ## Where the numbers and ideas come from
 
 - The "about 10%" is the current selection of clean random triggers in series `07221203_2025`, dump `F0001`: 101 of 1008 randoms ([Note 9](student-psd-clean-randoms-07221203-2025.html), after Notes 2 and 2a). <!-- numbers-ok -->

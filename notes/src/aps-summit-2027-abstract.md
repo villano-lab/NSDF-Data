@@ -31,7 +31,7 @@ The continued pursuit of direct dark matter detection relies on the ability to a
 
 - The "about 10%" is the current selection of clean random triggers in series `07221203_2025`, dump `F0001`: 101 of 1008 randoms ([Note 9](student-psd-clean-randoms-07221203-2025.html), after Notes 2 and 2a). <!-- numbers-ok -->
 - The selection cuts are described in [Note 2](note-02-noise-selection.html) and [Note 9](student-psd-clean-randoms-07221203-2025.html); the noise PSD in [Note 3](note-03-noise-psd.html).
-- My first machine-learning and Fourier-transform work is in `data_analysis/legacy/` (`MLmodelImplementaion.ipynb`, `Fourier Transform Analysis.ipynb`). The analysis behind the abstract is still in progress and will get its own notes as each step is done.
+- My first machine-learning and Fourier-transform work is in `data_analysis/R76/george/` (`MLmodelImplementaion.ipynb`, `Fourier Transform Analysis.ipynb`). The analysis behind the abstract is still in progress and will get its own notes as each step is done.
 
 ## Budget
 Estimated cost of attendance: <!-- numbers-ok -->
@@ -43,6 +43,6 @@ Estimated cost of attendance: <!-- numbers-ok -->
 | Ride from the airport | $50 | <!-- numbers-ok -->
 | Hotel | $350 per night, 6 nights | <!-- numbers-ok -->
 | Per diem | $86 per day, 6 days (0.75x of that on the first and last day) | <!-- numbers-ok -->
-| **Total** | **$3700** | <!-- numbers-ok -->
+| **Total** | **$3708** | <!-- numbers-ok -->
 
 I aim to get funding through a EUReCA student research grant, as well as any other possible grants/resources from the Physics department, and the rest will be covered by the DOE grant.

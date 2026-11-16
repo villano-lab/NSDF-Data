@@ -24,7 +24,7 @@ The continued pursuit of direct dark matter detection relies on the ability to a
 ## Timeline
 - **Nov 2026:** Submit abstract (done)
 - **Dec 2026:** Receive acceptance notification
-- **Jan 2027:** Prepare poster and practice presentation
+- **Jan - Mar 2027:** Prepare poster and practice presentation
 - **Apr 2027:** Present poster at the APS Global Physics Summit
 
 ## Where the numbers and ideas come from

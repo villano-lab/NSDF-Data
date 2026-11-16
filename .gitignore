@@ -221,12 +221,5 @@ _goldsluice.json
 # Left behind by the Updating your setup guide if run inside the repo
 /old-environment.txt
 
-# goldsluice (Rust build output)
-goldsluice/target/
-goldsluice/python/goldsluice/_core*
-
-# Sphinx autosummary stubs (generated at build time)
-sphinx/reference/generated/
-
 # Excel lock files ("~$name.xlsx" is made next to a file while it is open); the series lists are kept as Excel files
 data_analysis/R76/series_lists/~$*

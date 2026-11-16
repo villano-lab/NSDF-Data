@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Working in your browser with GitHub Codespaces (NSDF-Data student
-guide 6 — no install, for every computer)</title>
+guide 9 — no install, for every computer)</title>
 <link rel="stylesheet" href="../style.css">
 <link rel="stylesheet" href="../guide.css">
 <script src="../guide.js" defer></script>
@@ -15,8 +15,8 @@ guide 6 — no install, for every computer)</title>
 <header class="site"><nav><a href="../index.html">&larr; All notes and guides</a> <a class="pdf-link" href="codespaces.pdf">PDF version (download or print)</a></nav></header>
 
 <h1>Working in your browser with GitHub Codespaces</h1>
-<p class="meta">NSDF-Data student guide 6 — no install, for every
-computer &middot; Version 7 · 13 October 2026</p>
+<p class="meta">NSDF-Data student guide 9 — no install, for every
+computer &middot; Version 9 · 12 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -140,11 +140,10 @@ environment</h2>
 after each:</p>
 <pre><code>nsdf-cli version
 python -c &quot;import nsdf_dark_matter; print(&#39;ok&#39;)&quot;
-cd python &amp;&amp; python -m pytest -q &amp;&amp; cd ..</code></pre>
+python -m check_environment</code></pre>
 <div class="checkpoint">
 <p>You see <code>NSDF Dark Matter CLI: 0.6.0</code>, then
-<code>ok</code>, then a line ending <code>101 passed</code> (a larger
-number is fine).</p>
+<code>ok</code>, then <code>Environment OK</code>.</p>
 </div>
 <h2 id="step-3.-download-the-data">Step 3. Download the data</h2>
 <div class="careful">
@@ -158,7 +157,7 @@ nsdf-cli download 07221203_2025_F0001</code></pre>
 home folder. Wait until the prompt comes back.</p>
 <h2 id="step-4.-open-the-first-analysis-notebook">Step 4. Open the
 first-analysis notebook</h2>
-<p>Follow the steps of the first analysis guide (guide 2 for your
+<p>Follow the steps of the first analysis guide (guide 3 for your
 computer). The only changes are these:</p>
 <ul>
 <li><strong>Make your own folder, then open a notebook.</strong> In the
@@ -196,7 +195,7 @@ your note, if you have one) is listed. If <code>idx</code> or any
 <code>First analysis: 179 quiet traces</code>, and click
 <strong>Commit</strong>.</li>
 <li>Follow your lead’s instructions for branches and pull requests.
-Notes are published through a pull request, as guides 3 and 4
+Notes are published through a pull request, as guides 6 and 7
 explain.</li>
 </ol>
 <h2 id="step-6.-stop-the-codespace">Step 6. Stop the codespace</h2>
@@ -212,8 +211,9 @@ while it is on.</p>
 <h2 id="if-the-environment-is-missing">If the environment is
 missing</h2>
 <p>If <code>python -c "import nsdf_dark_matter"</code> fails, the setup
-step did not run. Install the packages by hand, in the terminal:</p>
-<pre><code>python -m pip install nsdf-dark-matter==0.3.1 nsdf-dark-matter-cli==0.6.0 numpy==2.2.6 matplotlib==3.10.7 h5py pytest ipykernel</code></pre>
+step did not run. Install the project’s packages from its list, in the
+terminal:</p>
+<pre><code>python -m pip install -r requirements.txt</code></pre>
 <p>Then run the checks in Step 2 again. If that does not work, copy the
 last lines of the message and send them to your lead.</p>
 <h2 id="you-are-done-when">You are done when</h2>
@@ -229,7 +229,7 @@ Source Control.</label></li>
 codespace.</label></li>
 </ul>
 <h2 id="session-info">Session Info</h2>
-<p>Guide version 7, 13 October 2026. Written for every computer. Please
+<p>Guide version 9, 12 November 2026. Written for every computer. Please
 tell the project lead where a step was unclear.</p>
 <h2 id="where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
@@ -243,7 +243,7 @@ left), the command you ran, and the last lines of its output.</p>
 class="uri">https://github.com/villano-lab/NSDF-Data</a></li>
 <li>Your codespaces: <a href="https://github.com/codespaces"
 class="uri">https://github.com/codespaces</a></li>
-<li>Guide 2, first analysis (choose your computer): <a
+<li>Guide 3, first analysis (choose your computer): <a
 href="../index.html"
 class="uri">https://villano-lab.github.io/NSDF-Data/</a></li>
 </ul>

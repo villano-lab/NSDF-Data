@@ -10,6 +10,7 @@ h5py
 pytest
 ipykernel
 jupyterlab
-# The library in python/, installed in place (phase 1 of issue 71). pip reads this path from the folder you run it in,
-# so run `pip install -r requirements.txt` from the NSDF-Data folder, as the guides do.
--e ./python[archive,parquet,root,midas]
+# goldpan, the project's pulse-analysis library, from PyPI (it was python/ of this repository until 2026-11-05; its home is
+# https://github.com/villano-lab/goldpan). The extras bring h5py, pyarrow, uproot and lz4. The old flat names
+# (import pulse_cuts) and check_environment are installed with it.
+goldpan[archive,parquet,root,midas]==0.3.2

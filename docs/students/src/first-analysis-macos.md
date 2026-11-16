@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
-subtitle: "NSDF-Data student guide 2 — macOS edition"
-date: "Version 23 · 23 October 2026"
+subtitle: "NSDF-Data student guide 3 — macOS edition"
+date: "Version 24 · 12 November 2026"
 ---
 
 ::: tip
@@ -210,7 +210,7 @@ git push -u origin student-yourname
 **What these lines do:** the first one moves you into the project. `git branch --show-current` prints the name of the branch you are on, and `git status` lists what has changed since your last save. **Make this a habit: every time you open a terminal in a project, look at the branch and the status before you do anything else.** Then `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
 
 ::: checkpoint
-`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
+`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `main`, stop and ask the project lead: do not commit there.
 :::
 
 ::: careful
@@ -229,7 +229,7 @@ Commit only your notebook. Check the list from `git status` before committing. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` (or `'check_environment'`) | The project's library is not installed in this environment, which happens if you have not updated since release 0.9.0. Open a terminal (Step 1 of the setup guide), run `conda activate darkmatter_cli_env`{.cmd}, then `cd ~/Research/NSDF-Data`{.cmd} and `python -m pip install -r requirements.txt`{.cmd}, and restart the notebook kernel (**Kernel**, then **Restart Kernel**). *Updating your setup* (guide 7, Step 3) explains it. |
+| `ModuleNotFoundError: No module named 'pulse_io'` (or `'check_environment'`) | The project's library is not installed in this environment, which happens if you have not updated since release 0.9.0. Open a terminal (Step 1 of the setup guide), run `conda activate darkmatter_cli_env`{.cmd}, then `cd ~/Research/NSDF-Data`{.cmd} and `python -m pip install -r requirements.txt`{.cmd}, and restart the notebook kernel (**Kernel**, then **Restart Kernel**). *Updating your setup* (guide 5, Step 3) explains it. |
 | `fatal: pathspec '...' did not match any files` when you run `git add` | You are not in the project folder, or the file name is not the one you saved. Open a terminal (Step 1 of the setup guide), run `cd ~/Research/NSDF-Data`{.cmd}, then `git status`{.cmd}, and copy the notebook's path exactly as Git prints it into `git add`. |
 | `IndexError: too many indices for array` | You wrote something like `pulses[1,2,3]`. Put one number in the brackets, for example `pulses[1]`, and run the cell again. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
@@ -395,7 +395,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 23, 23 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 24, 12 November 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

@@ -10,7 +10,7 @@ sample_period_s = 0.8e-6
 status = "inferred"
 series = ["07221203_2025"]
 description = "DCRC readout of the Run 76 series (UMN, Side-2 readout): 4096 samples at 0.8 us (1.25 MHz) is a trace of 3.2768 ms."
-evidence = """sample_period_s: the first-pulse analysis of the Run 76 phonon channels, see 'The sample period' in python/README.md (we used \
+evidence = """sample_period_s: the first-pulse analysis of the Run 76 phonon channels, see 'The sample period' in the README of goldpan (https://github.com/villano-lab/goldpan) (we used \
 1.6 us until 2026-10-22, which is the Z7 value). pretrigger_samples: measured on dumps F0005, F0015 and F0025 of 07221203_2025 \
 (about 8,800 events, issue 154). The 90 % of the events whose trigger_type label is 'Unknown' have their pulse start at sample \
 480 to 520 (the 10 % rise point is at sample 498, p10 to p90 480 to 510) and are flat before sample 470, so the pulse starts at \

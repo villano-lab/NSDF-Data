@@ -3,7 +3,7 @@ Code to work with the National Science Data Fabric and its online API to Univers
 
 To get started, go to the Nexus-DM documentation (the project formerly called NSDF-SLAC): https://nsdf-fabric.github.io/nexus-dm/
 
-**All data analysis goes in [`data_analysis/`](data_analysis/README.md), and nowhere else.** The rest of this repository is the shared library (`python/`), the guides and notes (`docs/`, `notes/`) and the tools that build them. A CI check fails a pull request that adds a notebook outside `data_analysis/`.
+**All data analysis goes in [`data_analysis/`](data_analysis/README.md), and nowhere else.** The pulse-analysis library and the reduction package live in repositories of their own, [goldpan](https://github.com/villano-lab/goldpan) and [goldsluice](https://github.com/villano-lab/goldsluice), and are installed from PyPI; the rest of this repository is the guides and notes (`docs/`, `notes/`) and the tools that build them. A CI check fails a pull request that adds a notebook outside `data_analysis/`.
 
 **AI agents and the people using them:** read [AGENTS.md](AGENTS.md) first. A page with setup for ChatGPT, Claude, Gemini, Copilot, Perplexity, Claude Code, Codex, Gemini CLI, Cursor, VS Code and Codespaces: https://villano-lab.github.io/NSDF-Data/agents.html
 

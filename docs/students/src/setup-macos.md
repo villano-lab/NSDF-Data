@@ -1,7 +1,7 @@
 ---
 title: "Setting up your computer"
-subtitle: "NSDF-Data student guide 1 — macOS edition"
-date: "Version 22 · 28 October 2026"
+subtitle: "NSDF-Data student guide 2 — macOS edition"
+date: "Version 24 · 12 November 2026"
 ---
 
 ::: tip
@@ -11,6 +11,7 @@ date: "Version 22 · 28 October 2026"
 ## Before you start
 
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
+- **New to Git and GitHub?** Read *Git in five minutes* (guide 1) first. It takes about ten minutes, needs no typing, and explains the words this guide uses (branch, push, remote, pull request) and why Step 8 asks for an invitation. Skip it if you already know them.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
 - **What to type, and what not to:** you type only the commands: text in a shaded box, or shaded inline like `git --version`{.cmd}. A checkpoint that says *You should see* describes what the computer prints back: do not type that. The symbol at the start of the line in the terminal (`$`, `>` or `%`) is the prompt the terminal shows you: do not type that either.
@@ -141,16 +142,17 @@ The last line of the output is a message, not an error, and the `(darkmatter_cli
 
 ## Step 6. Check that everything works
 
-First, the tests. They use made-up data, so they need no download. Run the three commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
+First, the environment and the project's library. Run the four commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
 
 ```
 conda activate darkmatter_cli_env
-cd ~/Research/NSDF-Data/python
-python -m pytest -q
+cd ~/Research/NSDF-Data
+python -m check_environment
+python -c "import importlib.metadata as m, goldpan; print('goldpan', m.version('goldpan'))"
 ```
 
 ::: checkpoint
-The last line says `101 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
+The check says `Environment OK`, and the last line prints `goldpan` and a version number. If the check says `WARNING`, it lists what differs: stop and ask the project lead, and do not change any files.
 :::
 
 Then, the data tool:
@@ -178,8 +180,9 @@ It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not fou
 | Line | What it does |
 |---|---|
 | `conda activate` | Switches your environment on. Do this in every new terminal. |
-| `cd` | Moves into the `python` folder of the project. |
-| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `101 passed` means every check worked. |
+| `cd` | Moves into the `NSDF-Data` folder of the project. |
+| `python -m check_environment` | Runs the project's environment check. It compares your Python and your packages with the project's list (`requirements.txt`) and prints `Environment OK`, or says what differs. |
+| `python -c "..."` | Asks Python to load the project's library (`goldpan`) and print its version. If it answers, the library is installed. |
 | `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -198,8 +201,8 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at [github.com](https://github.com) if you do not have one.
-2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
+1. Make a free account at [github.com](https://github.com) if you do not have one (guide 1 shows how).
+2. Send your GitHub username to the project lead. They will add you to the project as a collaborator: you get an email from GitHub, and you must accept it (guide 1 explains what this allows and what it does not).
 3. Once you have accepted the invitation, tell Git your name and email, so your work is labelled as yours. Use your own details:
 
 ```
@@ -264,7 +267,7 @@ On the computer you are leaving, **commit and push your work first** (Sync Chang
 
 ## Rules for keeping your work safe
 
-- **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
+- **Never work on `main` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
 - **Never commit data.** The raw files in the `idx` folder are large external data, not part of our data analysis code in the NSDF-Data repository. Download only from your home folder, never from inside `NSDF-Data`.
 - **Do not run `07221203_2025_dump1_noise.ipynb`** unless the project lead says it is fine. It overwrites a shared archive file.
 - **Save often,** and commit your work when a piece is finished (see the first analysis guide).
@@ -274,7 +277,7 @@ On the computer you are leaving, **commit and push your work first** (Sync Chang
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `ls ~/Research`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} ends with `101 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `cd ~/Research/NSDF-Data/python`{.cmd}, as in Step 6.
+- [ ] `python -m check_environment`{.cmd} says `Environment OK`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the `NSDF-Data` folder with `cd ~/Research/NSDF-Data`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -301,7 +304,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 22, 28 October 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 24, 12 November 2026, macOS edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 

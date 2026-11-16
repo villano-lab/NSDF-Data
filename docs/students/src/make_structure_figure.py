@@ -1,4 +1,4 @@
-"""Draw the data-structure figure of student guide 2 (img/data-structure.png): how a series is
+"""Draw the data-structure figure of student guide 3 (img/data-structure.png): how a series is
 split into dumps, events, detectors, channels and samples, and which of them the Step 4 code picks.
 
     python make_structure_figure.py

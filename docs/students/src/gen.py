@@ -10,7 +10,6 @@ OS = {
   MINIFORGE="Download the installer with this link: [Miniforge3-Windows-x86_64.exe](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe). It is about 150 MB, which takes less than a minute on most connections. If your browser asks whether to keep the file, choose **Keep**. (If the link ever stops working, the downloads are also listed on the [Miniforge page](https://github.com/conda-forge/miniforge).) Double-click the downloaded file and follow the installer. Click **Next** (and **I Agree** on the licence page) until you reach these choices:\n\n- When it asks who to install for, choose **Just Me**.\n- Keep the default install folder.\n- On the **Advanced Installation Options** screen, set the four boxes exactly as in the table. They are the installer's defaults, so you may not need to change anything, but check each one:\n\n| Box | Set it to |\n|---|---|\n| Create shortcuts (supported packages only) | **Ticked.** This creates the *Miniforge Prompt* you will use from Step 4. |\n| Add installation to my PATH environment variable | **Unticked.** The installer says \"not recommended\", and the Miniforge Prompt works without it. |\n| Register Miniforge3 as my default Python | **Unticked.** |\n| Clear the package cache upon completion | **Unticked.** (Ticking it also works. It only saves a little disk space.) |\n\nThen click **Install**, wait until it finishes, and click **Finish**.\n\nNow close the Command Prompt. Click **Start**, type `Miniforge Prompt`, and press **Enter**. Use this window for the rest of the guide.",
   FOLDER="%USERPROFILE%\\Research",
   CD_REPO="cd %USERPROFILE%\\Research\\NSDF-Data",
-  CD_PYTHON="cd %USERPROFILE%\\Research\\NSDF-Data\\python",
   CD_NOTES="cd %USERPROFILE%\\Research\\NSDF-Data\\data_analysis\\R76\\student",
   MKDIR="mkdir %USERPROFILE%\\Research",
   LISTCMD="dir",
@@ -31,7 +30,6 @@ OS = {
   CAREFUL_EXTRA="Windows may show a blue warning box when you run an installer (\"Windows protected your PC\"). Click **More info**, then **Run anyway**, only if you downloaded the file from the link in this guide.",
   P_CONFIG=".nexus-dm\\config.json",
   P_STUDENT="data_analysis\\R76\\student",
-  P_PULSEIO="python\\pulse_io.py",
   PS_NOTE=" Use the Miniforge Prompt, not PowerShell: PowerShell does not understand `%USERPROFILE%`.",
 ),
 "macos": dict(
@@ -45,7 +43,6 @@ OS = {
   MINIFORGE="First find out which chip your Mac has: click the Apple menu, then **About This Mac**. If it says **Chip: Apple M**something, use the **arm64** file. If it says **Processor: Intel**, use the **x86_64** file.\n\nDownload the file into your **Downloads** folder: [Miniforge3-MacOSX-arm64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh) (Apple chip) or [Miniforge3-MacOSX-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-x86_64.sh) (Intel chip). If your browser asks whether to keep the file, choose **Keep**. Then, in the Terminal, run the command below (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-MacOSX-arm64.sh\n```\n\nPress **Return** to read the licence, type `yes` and press **Return**, accept the default location, and when it asks *\"Do you wish the installer to initialize Miniforge3 by running conda init?\"* type `yes`. Then **quit Terminal completely** (Command + Q) and open it again.",
   FOLDER="~/Research",
   CD_REPO="cd ~/Research/NSDF-Data",
-  CD_PYTHON="cd ~/Research/NSDF-Data/python",
   CD_NOTES="cd ~/Research/NSDF-Data/data_analysis/R76/student",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
@@ -65,7 +62,6 @@ OS = {
   CRLF_NOTE="",
   P_CONFIG=".nexus-dm/config.json",
   P_STUDENT="data_analysis/R76/student",
-  P_PULSEIO="python/pulse_io.py",
   PS_NOTE="",
 ),
 "linux": dict(
@@ -79,7 +75,6 @@ OS = {
   MINIFORGE="Check your computer type with this command, which prints one word:\n\n```\nuname -m\n```\n\n`x86_64` means the file below. `aarch64` means an ARM computer: use **Miniforge3-Linux-aarch64.sh** instead.\n\nDownload the file into your **Downloads** folder: [Miniforge3-Linux-x86_64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh), or [Miniforge3-Linux-aarch64.sh](https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh) for an ARM computer. Then install it with this command (use the file name you downloaded):\n\n```\nbash ~/Downloads/Miniforge3-Linux-x86_64.sh\n```\n\nThe installer asks its questions in the terminal. They read like this (the wording can differ a little between versions):\n\n| What the installer shows | What you do |\n|---|---|\n| `Please, press ENTER to continue` | Press **Return**. The licence text starts to scroll. |\n| The licence text, then the question `Do you accept the license terms?` | Press **Return** (or **Space**) again and again until the text ends and the question appears. Then type `yes` and press **Return**. |\n| `Miniforge3 will now be installed into this location`, with a folder name | Press **Return** to accept the folder. |\n| `Do you wish to update your shell profile to automatically initialize conda?` | Type `yes` and press **Return**. |\n\nThen it prints a lot of text, and ends with `Thank you for installing Miniforge3!`. Now **close the terminal and open a new one**.",
   FOLDER="~/Research",
   CD_REPO="cd ~/Research/NSDF-Data",
-  CD_PYTHON="cd ~/Research/NSDF-Data/python",
   CD_NOTES="cd ~/Research/NSDF-Data/data_analysis/R76/student",
   MKDIR="mkdir -p ~/Research",
   LISTCMD="ls",
@@ -99,7 +94,6 @@ OS = {
   CRLF_NOTE="",
   P_CONFIG=".nexus-dm/config.json",
   P_STUDENT="data_analysis/R76/student",
-  P_PULSEIO="python/pulse_io.py",
   PS_NOTE="",
 ),
 }
@@ -123,8 +117,8 @@ GLOSSARY = """
 
 SETUP = """---
 title: "Setting up your computer"
-subtitle: "NSDF-Data student guide 1 — @NAME@ edition"
-date: "Version 22 · 28 October 2026"
+subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
+date: "Version 24 · 12 November 2026"
 ---
 
 ::: tip
@@ -134,6 +128,7 @@ date: "Version 22 · 28 October 2026"
 ## Before you start
 
 - **Time:** about one hour. Most of it is waiting for downloads and installers.
+- **New to Git and GitHub?** Read *Git in five minutes* (guide 1) first. It takes about ten minutes, needs no typing, and explains the words this guide uses (branch, push, remote, pull request) and why Step 8 asks for an invitation. Skip it if you already know them.
 - **You need:** an internet connection, the password for your computer, and about 3 GB of free disk space.
 - **Rule of thumb:** type or paste commands **exactly** as written. Capitals and spaces matter.
 - **What to type, and what not to:** you type only the commands: text in a shaded box, or shaded inline like `git --version`{.cmd}. A checkpoint that says *You should see* describes what the computer prints back: do not type that. The symbol at the start of the line in the terminal (`$`, `>` or `%`) is the prompt the terminal shows you: do not type that either.
@@ -237,16 +232,17 @@ The last line of the output is a message, not an error, and the `(darkmatter_cli
 
 ## Step 6. Check that everything works
 
-First, the tests. They use made-up data, so they need no download. Run the three commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
+First, the environment and the project's library. Run the four commands below, one at a time: type (or paste) each line into the terminal and press Enter, and wait for the prompt to come back before the next one:
 
 ```
 conda activate darkmatter_cli_env
-@CD_PYTHON@
-python -m pytest -q
+@CD_REPO@
+python -m check_environment
+python -c "import importlib.metadata as m, goldpan; print('goldpan', m.version('goldpan'))"
 ```
 
 ::: checkpoint
-The last line says `101 passed` (it can be a larger number later, which is also fine). If it says `failed`, stop and ask the project lead, and do not change any files.
+The check says `Environment OK`, and the last line prints `goldpan` and a version number. If the check says `WARNING`, it lists what differs: stop and ask the project lead, and do not change any files.
 :::
 
 Then, the data tool:
@@ -274,8 +270,9 @@ It prints a version number, such as `4.4.0`. If it says `jupyter-lab` is not fou
 | Line | What it does |
 |---|---|
 | `conda activate` | Switches your environment on. Do this in every new terminal. |
-| `cd` | Moves into the `python` folder of the project. |
-| `python -m pytest -q` | Runs the project's built-in self-checks. The `-q` just means "keep the output short". `101 passed` means every check worked. |
+| `cd` | Moves into the `NSDF-Data` folder of the project. |
+| `python -m check_environment` | Runs the project's environment check. It compares your Python and your packages with the project's list (`requirements.txt`) and prints `Environment OK`, or says what differs. |
+| `python -c "..."` | Asks Python to load the project's library (`goldpan`) and print its version. If it answers, the library is installed. |
 | `nsdf-cli version`, `jupyter lab --version` | Each one only asks a program to say which version it is. If it answers, it is installed. |
 
 ## Step 7. Let Jupyter notebooks use your environment
@@ -294,8 +291,8 @@ It prints a line that starts with `Installed kernelspec darkmatter_cli_env`.
 
 You will not change the main project. You will save your work on your own **branch**, and for that the lead must give you access:
 
-1. Make a free account at [github.com](https://github.com) if you do not have one.
-2. Send your GitHub username to the project lead. They will add you to the project as a collaborator.
+1. Make a free account at [github.com](https://github.com) if you do not have one (guide 1 shows how).
+2. Send your GitHub username to the project lead. They will add you to the project as a collaborator: you get an email from GitHub, and you must accept it (guide 1 explains what this allows and what it does not).
 3. Once you have accepted the invitation, tell Git your name and email, so your work is labelled as yours. Use your own details:
 
 ```
@@ -360,7 +357,7 @@ On the computer you are leaving, **commit and push your work first** (Sync Chang
 
 ## Rules for keeping your work safe
 
-- **Never work on `master` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
+- **Never work on `main` or `develop`.** Those are the shared versions. Work only on your `student-` branch.
 - **Never commit data.** The raw files in the `idx` folder are large external data, not part of our data analysis code in the NSDF-Data repository. Download only from your home folder, never from inside `NSDF-Data`.
 - **Do not run `07221203_2025_dump1_noise.ipynb`** unless the project lead says it is fine. It overwrites a shared archive file.
 - **Save often,** and commit your work when a piece is finished (see the first analysis guide).
@@ -370,7 +367,7 @@ On the computer you are leaving, **commit and push your work first** (Sync Chang
 - [ ] Your terminal opens and `git --version`{.cmd} prints a version.
 - [ ] `conda --version`{.cmd} prints a version, in a new terminal.
 - [ ] `@LISTCMD@ @FOLDER@`{.cmd} lists `NSDF-Data`.
-- [ ] `python -m pytest -q`{.cmd} ends with `101 passed`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the repository's `python` folder with `@CD_PYTHON@`{.cmd}, as in Step 6.
+- [ ] `python -m check_environment`{.cmd} says `Environment OK`. Note: first activate the environment with `conda activate darkmatter_cli_env`{.cmd} and go to the `NSDF-Data` folder with `@CD_REPO@`{.cmd}, as in Step 6.
 - [ ] `nsdf-cli version`{.cmd} prints a version.
 - [ ] `jupyter lab --version`{.cmd} prints a version.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
@@ -397,7 +394,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 22, 28 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 24, 12 November 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -409,8 +406,8 @@ Guide version 22, 28 October 2026, @NAME@ edition. Written for beginners; please
 
 FIRST = """---
 title: "Your first analysis"
-subtitle: "NSDF-Data student guide 2 — @NAME@ edition"
-date: "Version 23 · 23 October 2026"
+subtitle: "NSDF-Data student guide 3 — @NAME@ edition"
+date: "Version 24 · 12 November 2026"
 ---
 
 ::: tip
@@ -611,7 +608,7 @@ git push -u origin student-yourname
 **What these lines do:** the first one moves you into the project. `git branch --show-current` prints the name of the branch you are on, and `git status` lists what has changed since your last save. **Make this a habit: every time you open a terminal in a project, look at the branch and the status before you do anything else.** Then `git add` picks the file you want to save, `git commit` saves a snapshot of it with your short message, and `git push` uploads that snapshot to GitHub, to your own branch.
 
 ::: checkpoint
-`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `master`, stop and ask the project lead: do not commit there.
+`git branch --show-current` prints `student-yourname` (your own branch), and `git status` starts with `On branch student-yourname` and lists your notebook under **Untracked files** (a new file) or **Changes not staged for commit** (a file you changed). If the branch is `develop` or `main`, stop and ask the project lead: do not commit there.
 :::
 
 @CRLF_NOTE@::: careful
@@ -630,7 +627,7 @@ Commit only your notebook. Check the list from `git status` before committing. I
 | What you see | What to do |
 |---|---|
 | `ModuleNotFoundError: No module named 'nsdf_dark_matter'` | You are not in the environment. Run `conda activate darkmatter_cli_env`{.cmd}, then restart the notebook kernel (**Kernel**, then **Restart Kernel**). |
-| `ModuleNotFoundError: No module named 'pulse_io'` (or `'check_environment'`) | The project's library is not installed in this environment, which happens if you have not updated since release 0.9.0. Open @OPEN_TERM@, run `conda activate darkmatter_cli_env`{.cmd}, then `@CD_REPO@`{.cmd} and `python -m pip install -r requirements.txt`{.cmd}, and restart the notebook kernel (**Kernel**, then **Restart Kernel**). *Updating your setup* (guide 7, Step 3) explains it. |
+| `ModuleNotFoundError: No module named 'pulse_io'` (or `'check_environment'`) | The project's library is not installed in this environment, which happens if you have not updated since release 0.9.0. Open @OPEN_TERM@, run `conda activate darkmatter_cli_env`{.cmd}, then `@CD_REPO@`{.cmd} and `python -m pip install -r requirements.txt`{.cmd}, and restart the notebook kernel (**Kernel**, then **Restart Kernel**). *Updating your setup* (guide 5, Step 3) explains it. |
 | `fatal: pathspec '...' did not match any files` when you run `git add` | You are not in the project folder, or the file name is not the one you saved. Open @OPEN_TERM@, run `@CD_REPO@`{.cmd}, then `git status`{.cmd}, and copy the notebook's path exactly as Git prints it into `git add`.@PS_NOTE@ |
 | `IndexError: too many indices for array` | You wrote something like `pulses[1,2,3]`. Put one number in the brackets, for example `pulses[1]`, and run the cell again. |
 | `FileNotFoundError` on the dump folder | The download did not finish, or it went somewhere else. Check the folder in Step 2. |
@@ -796,7 +793,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 23, 23 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 24, 12 November 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 
@@ -808,8 +805,8 @@ Guide version 23, 23 October 2026, @NAME@ edition. Written for beginners; please
 
 UPDATE = """---
 title: "Updating your setup"
-subtitle: "NSDF-Data student guide 7 — @NAME@ edition"
-date: "Version 6 · 13 October 2026"
+subtitle: "NSDF-Data student guide 5 — @NAME@ edition"
+date: "Version 8 · 12 November 2026"
 ---
 
 ::: maintenance
@@ -842,11 +839,11 @@ Open @OPEN_TERM@, and type these lines, one at a time, pressing Enter after each
 
 ```
 conda activate darkmatter_cli_env
-@CD_PYTHON@
-python check_environment.py
+@CD_REPO@
+python -m check_environment
 ```
 
-**What these lines do:** the first switches your environment on, the second moves you into the project's `python` folder, and the third runs the project's environment check.
+**What these lines do:** the first switches your environment on, the second moves you into the `NSDF-Data` folder, and the third runs the project's environment check.
 
 ::: checkpoint
 If it says `Environment OK`, your environment is current: go to Step 2 anyway if a new release was announced, otherwise you are done. If it says `WARNING`, it lists what differs. A line about **Python** means Step 4. A line about a **package** means Step 3. Do Step 2 first in both cases.
@@ -863,7 +860,7 @@ git status
 ```
 
 ::: checkpoint
-`git branch --show-current` prints `student-yourname` (your own branch), and `git status` says `nothing to commit` (or lists only files you have not added, such as your own notebook folder). If it lists changed files you want to keep, **save them first**: commit them as in Step 7 of the first analysis guide, then come back. If the branch is `develop` or `master`, stop and ask the project lead.
+`git branch --show-current` prints `student-yourname` (your own branch), and `git status` says `nothing to commit` (or lists only files you have not added, such as your own notebook folder). If it lists changed files you want to keep, **save them first**: commit them as in Step 7 of the first analysis guide, then come back. If the branch is `develop` or `main`, stop and ask the project lead.
 :::
 
 Now bring the changes in:
@@ -935,14 +932,14 @@ If you installed anything yourself into the old environment, its name is in `old
 
 ```
 conda activate darkmatter_cli_env
-@CD_PYTHON@
-python check_environment.py
-python -m pytest -q
+@CD_REPO@
+python -m check_environment
+python -c "import importlib.metadata as m, goldpan; print('goldpan', m.version('goldpan'))"
 nsdf-cli version
 ```
 
 ::: checkpoint
-The check says `Environment OK`, `pytest` ends with `101 passed`, and the last line prints `NSDF Dark Matter CLI: 0.6.0` (or the newer version the release notes name). If not, do not guess: copy the output and send it to the project lead.
+The check says `Environment OK`, the next line prints `goldpan` and a version number, and the last line prints `NSDF Dark Matter CLI: 0.6.0` (or the newer version the release notes name). If not, do not guess: copy the output and send it to the project lead.
 :::
 
 ## Step 6. Start Jupyter again
@@ -970,9 +967,9 @@ What the Nexus-DM team changed in each version is in [their release notes](https
 
 ## You are done when
 
-- [ ] `python check_environment.py`{.cmd} (in the `python` folder, with the environment on) says `Environment OK`.
+- [ ] `python -m check_environment`{.cmd} (in the `NSDF-Data` folder, with the environment on) says `Environment OK`.
 - [ ] `git status`{.cmd} in the `NSDF-Data` folder shows your own branch and nothing you want to keep is unsaved.
-- [ ] `python -m pytest -q`{.cmd} in the `python` folder ends with `101 passed`.
+- [ ] `python -c "import goldpan"`{.cmd} prints nothing and no error.
 - [ ] `jupyter kernelspec list`{.cmd} lists `darkmatter_cli_env`.
 - [ ] Your notebook's first cell prints `Environment OK`.
 
@@ -980,7 +977,8 @@ What the Nexus-DM team changed in each version is in [their release notes](https
 
 | What you see | What to do |
 |---|---|
-| `python: can't open file 'check_environment.py'` or `No such file` | You are not in the `python` folder. Run the `cd` line of Step 1, and make sure Step 2 finished (the file arrives with the newest changes). |
+| `No module named check_environment` | The project's library (`goldpan`) is not installed in this environment. Make sure Step 2 finished (the new `requirements.txt` arrives with the newest changes), then do Step 3: `python -m pip install -r requirements.txt` in the `NSDF-Data` folder. |
+| `requirements.txt was not found, so only the Python version was checked` | You are not inside the `NSDF-Data` folder. Run the `cd` line of Step 1 and run the check again. |
 | `EnvironmentLocationNotFound` or "not a conda environment" on `conda env remove` | There is no environment of that name any more. That is fine: carry on with the next line. |
 | `CondaError: Prefix record '...' already exists` on `conda create` | Conda's download cache has a bad entry. Type `conda clean --all -y`{.cmd} and then run the `conda create` line again. |
 | `conda create` complains that the folder exists, or a leftover folder `darkmatter_cli_env` is in the `envs` folder | The removal left an empty shell behind. Type `conda info --envs`{.cmd} to see where the environments live, check that the leftover `darkmatter_cli_env` folder holds no `python` file, delete that folder, and run the `conda create` line again. |
@@ -998,7 +996,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 6, 13 October 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
+Guide version 8, 12 November 2026, @NAME@ edition. Written for beginners; please tell the project lead where a step was unclear, so the guide can be fixed.
 
 ## Key links
 
@@ -1009,25 +1007,25 @@ Guide version 6, 13 October 2026, @NAME@ edition. Written for beginners; please 
 
 GITVSCODE = """---
 title: "Git in VS Code"
-subtitle: "NSDF-Data student guide 9 — @NAME@ edition, optional"
-date: "Version 6 · 28 October 2026"
+subtitle: "NSDF-Data student guide 4 — @NAME@ edition, optional"
+date: "Version 7 · 12 November 2026"
 ---
 
 ::: tip
-**This is guide 9, and it is optional.** It does the same Git steps as the terminal guides, with buttons in VS Code instead of typed commands. If you are happy with the terminal, you do not need this guide. If a screen here does not match what you see, trust the terminal version, and tell your lead which step differed.
+**This is guide 4, and it is optional.** It does the same Git steps as the terminal guides, with buttons in VS Code instead of typed commands. If you are happy with the terminal, you do not need this guide. If a screen here does not match what you see, trust the terminal version, and tell your lead which step differed.
 :::
 
 ## Before you start
 
-- You finished the setup guide (guide 1) for @NAME@, including Step 8, which made your branch `student-yourname`.
-- You have read *Git in five minutes* (guide 8). It explains the words used here: commit, branch, push, pull request.
+- You finished the setup guide (guide 2) for @NAME@, including Step 8, which made your branch `student-yourname`.
+- You have read *Git in five minutes* (guide 1). It explains the words used here: commit, branch, push, pull request.
 - **Time:** about 15 minutes, plus the install in Step 1 if you do not have VS Code yet.
 
-VS Code uses the Git that guide 1 installed, so nothing else has to be set up.
+VS Code uses the Git that guide 2 installed, so nothing else has to be set up.
 
 ## Step 1. Install VS Code
 
-If you wrote a note in Markdown (guide 3), you already have it: skip to Step 2.
+If you wrote a note in Markdown (guide 6), you already have it: skip to Step 2.
 
 @VSC_INSTALL@
 
@@ -1055,10 +1053,10 @@ Look at the bottom-left corner of the VS Code window. It shows the name of your 
 The corner shows `student-yourname` (your own branch). This is the same check as `git branch --show-current` in the terminal guides.
 :::
 
-If it shows `develop` or `master`, or a branch that is not yours, switch to yours first: click the name in the corner and pick `student-yourname` from the list. Changes you have not committed yet come with you to your branch.
+If it shows `develop` or `main`, or a branch that is not yours, switch to yours first: click the name in the corner and pick `student-yourname` from the list. Changes you have not committed yet come with you to your branch.
 
 ::: careful
-If VS Code or Git shows a **warning** when you switch (for example that your changes would be overwritten), **stop and ask your lead**, and do not force it. Do not commit, and do not press **Sync Changes**, while the corner shows `develop` or `master`: your own work belongs on your own branch.
+If VS Code or Git shows a **warning** when you switch (for example that your changes would be overwritten), **stop and ask your lead**, and do not force it. Do not commit, and do not press **Sync Changes**, while the corner shows `develop` or `main`: your own work belongs on your own branch.
 :::
 
 ## Step 4. Save your work as a commit
@@ -1110,7 +1108,7 @@ This step is `git push` (the first time, `git push -u origin student-yourname`).
 
 ## Step 6. Bring in the newest project changes
 
-The project keeps changing. When *Updating your setup* (guide 7) tells you to bring in the newest changes (its Step 2), you can do that step here instead of typing the two lines. Do all the other steps of guide 7 as written, because they update your environment.
+The project keeps changing. When *Updating your setup* (guide 5) tells you to bring in the newest changes (its Step 2), you can do that step here instead of typing the two lines. Do all the other steps of guide 5 as written, because they update your environment.
 
 1. **Sync first.** Look at the big button in the Source Control tab. If it reads **Sync Changes** with an up-arrow or a down-arrow number (B, C or D in Figure 1), click it (Step 5) so that your branch and GitHub agree before you start. If it is the greyed-out **Commit** (A), or has no number, go on.
 2. Press `@MOD@+Shift+P`. A box opens at the top of the window.
@@ -1129,21 +1127,21 @@ If VS Code reports a **conflict**, or lists files under **Merge Changes** in the
 
 ## Step 7. Open a pull request
 
-When a note or a piece of work is ready for review, open the pull request the way guide 4 (Step 3) shows, on github.com. That route has been tested step by step, and it is the one to use.
+When a note or a piece of work is ready for review, open the pull request the way guide 7 (Step 3) shows, on github.com. That route has been tested step by step, and it is the one to use.
 
 ### Optional: from inside VS Code
 
 VS Code can also open pull requests for you, with an extension made by GitHub.
 
 ::: careful
-This part was written from the extension's own documentation and its list of commands, and has **not yet been tried all the way through on a student's computer**. If a screen differs, stop, and use guide 4 instead.
+This part was written from the extension's own documentation and its list of commands, and has **not yet been tried all the way through on a student's computer**. If a screen differs, stop, and use guide 7 instead.
 :::
 
 1. Press `@MOD@+Shift+X` to open **Extensions**.
 2. Search for `GitHub Pull Requests`{.cmd}. Install the one whose publisher is **GitHub**, with the check mark (verified publisher) next to the name.
 3. A GitHub icon appears in the bar on the left. Click it and choose **Sign in**. A web page opens in your browser: sign in to GitHub there. **Never type your GitHub password into VS Code or into the terminal.**
 4. Your branch will **not** be listed in the extension's view: that view lists pull requests, not branches, so a branch that has no pull request yet does not appear in it. To start one, click the **Create Pull Request** button. It is a **very small icon**, the pull-request symbol with a plus sign on it, at the right end of the title bar of the **Pull Requests** view (the view you open with the GitHub icon in the bar on the left). Move the mouse over it and a label says *Create Pull Request*. Or press `@MOD@+Shift+P`, type `GitHub Pull Requests: Create Pull Request`{.cmd}, and press Enter. The button and the command only appear after you have signed in (point 3) and pushed your branch (Step 5).
-5. A form opens. Check that the **base** is `develop` (it may offer `master`: change it) and that the branch being compared is `student-yourname`. Write the title and the description as guide 4 says, then click **Create**. Your pull request is then listed in the view.
+5. A form opens. Check that the **base** is `develop` (it may offer `main`: change it) and that the branch being compared is `student-yourname`. Write the title and the description as guide 7 says, then click **Create**. Your pull request is then listed in the view.
 
 ![](img/vscode-pull-requests-view.png){width=75%}
 
@@ -1163,14 +1161,14 @@ This part was written from the extension's own documentation and its list of com
 | `Git: Merge...`{.cmd} with `origin/develop` | `git merge --no-edit origin/develop` |
 | The **Create Pull Request** button of the GitHub extension (Step 7) | `gh pr create --base develop --title "Add note: your title" --body "One sentence on what the note answers."` |
 
-The last row uses the `gh` command, which guide 1 installed and signed in to GitHub in its Step 8. Run it from the `NSDF-Data` folder, on your own branch, after your commits are pushed (Step 5); it prints the address of your pull request. This way has **not yet been tried on a student's computer**: guide 4 (Step 3), on github.com, is the route that has been tested step by step. Whichever way you use, the base must be `develop`.
+The last row uses the `gh` command, which guide 2 installed and signed in to GitHub in its Step 8. Run it from the `NSDF-Data` folder, on your own branch, after your commits are pushed (Step 5); it prints the address of your pull request. This way has **not yet been tried on a student's computer**: guide 7 (Step 3), on github.com, is the route that has been tested step by step. Whichever way you use, the base must be `develop`.
 
 ## When something looks wrong
 
 | You see | What it means | What to do |
 |---|---|---|
 | The Source Control tab is empty and mentions Restricted Mode | VS Code has not been told to trust this folder. | Click **Restricted Mode** in the bottom-left status bar and choose **Trust** (Step 2). |
-| The corner shows `develop` or `master` | You are not on your own branch. | Switch to your own branch (Step 3). Stop and ask your lead only if Git warns when you switch. |
+| The corner shows `develop` or `main` | You are not on your own branch. | Switch to your own branch (Step 3). Stop and ask your lead only if Git warns when you switch. |
 | No **Source Control** icon, or "no repository found" | The folder you opened is not the `NSDF-Data` folder. | **File**, **Open Folder**, and pick the `NSDF-Data` folder itself. |
 | A question about staging everything and committing | Nothing is staged yet. | **Cancel**, then stage your files with **+** (Step 4). |
 | **Sync Changes** shows a down-arrow number as well as an up-arrow number | There are newer commits on your branch on GitHub: your lead merged the project's newest changes into it. | Check the branch name, click **Sync Changes**, and click **OK** on the question (Step 5). |
@@ -1181,7 +1179,7 @@ The last row uses the `gh` command, which guide 1 installed and signed in to Git
 
 ## Session Info
 
-Guide version 6, 28 October 2026, @NAME@ edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
+Guide version 7, 12 November 2026, @NAME@ edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 
@@ -1202,7 +1200,7 @@ for key, o in OS.items():
     o = dict(o)
     for kind, tpl in (("setup", SETUP), ("first-analysis", FIRST), ("update", UPDATE), ("git-in-vscode", GITVSCODE)):
         s = tpl.replace("@GLOSSARY@", GLOSSARY.strip()).replace("@NAVBOX@", NAVBOX)
-        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_PYTHON","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","IDXPATH","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE","MOD","VSC_INSTALL","P_CONFIG","P_STUDENT","P_PULSEIO","PS_NOTE"):
+        for k in ("NAME","TERMINAL","PASTE","GIT","MINIFORGE_FILE","MINIFORGE","CAREFUL_EXTRA","FOLDER","CD_REPO","CD_NOTES","MKDIR","LISTCMD","IDX","GOHOME","OLDENV","IDXPATH","NEW_TERM","OPEN_TERM","HOME_NOTE","CHECKIDX","PWDCMD","CRLF_NOTE","FILE","MOD","VSC_INSTALL","P_CONFIG","P_STUDENT","PS_NOTE"):
             s = s.replace("@"+k+"@", o[k])
         assert "@" not in s.replace("@", "@") or True
         open(f"{kind}-{key}.md", "w", encoding="utf-8", newline="\n").write(s)

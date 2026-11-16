@@ -5,8 +5,8 @@ on:
     paths: ["notes/src/**", "tools/build_notes.py", "tools/check_note.py", "tools/check_note_numbers.py", "tools/suggest_note_number.py"]
   push:
     # develop is what the site is served from (GitHub Pages), so notes merged there go live.
-    # master (releases and hotfixes) is built too, in case a note reaches it first.
-    branches: [develop, master]
+    # main (releases and hotfixes) is built too, in case a note reaches it first.
+    branches: [develop, main]
     paths: ["notes/src/**", "tools/build_notes.py"]
 
 permissions:
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0   # the dates a note became Complete come from Git's history
-          # develop and master require a pull request (rulesets protect-develop and protect-master), and GitHub does not
+          # develop and main require a pull request (rulesets protect-develop and protect-main), and GitHub does not
           # offer GitHub Actions as a bypass actor on this repository, so the bot pushes with a deploy key instead:
           # a key pair whose public half is a deploy key with write access (Settings, Deploy keys), whose private
           # half is this secret, and with "Deploy keys" on the bypass list of both rulesets. See RELEASING.md,
@@ -76,7 +76,7 @@ jobs:
             # the branch may have moved while this build ran: rebase onto it, then push
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push || {
-              echo "::error::The push was rejected. develop and master require a pull request, so the notes bot needs the deploy key (secret NOTES_DEPLOY_KEY) and 'Deploy keys' on the bypass list of both rulesets. See RELEASING.md, 'The notes bot and the pull-request rule'."
+              echo "::error::The push was rejected. develop and main require a pull request, so the notes bot needs the deploy key (secret NOTES_DEPLOY_KEY) and 'Deploy keys' on the bypass list of both rulesets. See RELEASING.md, 'The notes bot and the pull-request rule'."
               exit 1
             }
           fi

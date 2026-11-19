@@ -28,7 +28,7 @@
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 4 — Windows edition,
-optional &middot; Version 7 · 12 November 2026</p>
+optional &middot; Version 8 · 19 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -56,6 +56,9 @@ Bring in the newest project changes</a></li>
 <li><a href="#windows-step-7.-open-a-pull-request"
 id="windows-toc-step-7.-open-a-pull-request">Step 7. Open a pull
 request</a></li>
+<li><a href="#windows-step-8.-optional-run-notebooks-in-vs-code"
+id="windows-toc-step-8.-optional-run-notebooks-in-vs-code">Step 8.
+Optional: run notebooks in VS Code</a></li>
 <li><a href="#windows-the-same-steps-in-the-terminal"
 id="windows-toc-the-same-steps-in-the-terminal">The same steps in the
 terminal</a></li>
@@ -74,9 +77,10 @@ links</a></li>
 <div class="tip">
 <p><strong>This is guide 4, and it is optional.</strong> It does the
 same Git steps as the terminal guides, with buttons in VS Code instead
-of typed commands. If you are happy with the terminal, you do not need
-this guide. If a screen here does not match what you see, trust the
-terminal version, and tell your lead which step differed.</p>
+of typed commands. Step 8 also shows how to run your notebooks in VS
+Code instead of the browser. If you are happy with the terminal, you do
+not need this guide. If a screen here does not match what you see, trust
+the terminal version, and tell your lead which step differed.</p>
 </div>
 <h2 id="windows-before-you-start">Before you start</h2>
 <ul>
@@ -341,6 +345,43 @@ icon in the title bar, the pull-request symbol with a plus sign
 (outlined in red). It is small. The other icons are <em>Refresh</em>,
 <em>Collapse All</em> and a menu. Your own branch is not in the list
 below until its pull request exists.</p>
+<h2 id="windows-step-8.-optional-run-notebooks-in-vs-code">Step 8.
+Optional: run notebooks in VS Code</h2>
+<p>VS Code can open and run a notebook (<code>.ipynb</code> file)
+itself, so you do not have to start <code>jupyter lab</code> and use the
+browser. It is the same file: you can open it in either one.</p>
+<div class="careful">
+<p>This step has <strong>not yet been tried all the way through on a
+student’s computer</strong>. If a screen differs, use the Jupyter route
+in guide 3 (Step 3) instead.</p>
+</div>
+<ol type="1">
+<li>Press <code>Ctrl+Shift+X</code> to open
+<strong>Extensions</strong>.</li>
+<li>Search for <code class="cmd">Jupyter</code> and install the one
+whose publisher is <strong>Microsoft</strong>. It also installs the
+<strong>Python</strong> extension. If the <strong>Python</strong>
+extension is not listed under your installed extensions afterwards,
+install it the same way.</li>
+<li>Make sure the <code>NSDF-Data</code> folder is open (Step 2). In the
+file list on the left, open your notebook, for example
+<code>data_analysis/R76/student/yourname/first-analysis-yourname.ipynb</code>.
+To make a new one, right-click your own folder there, choose <strong>New
+File</strong>, and name it <code>something.ipynb</code>.</li>
+<li>Click <strong>Select Kernel</strong> at the top right of the
+notebook, choose <strong>Python Environments</strong>, and then
+<strong>darkmatter_cli_env</strong>. If it is not in the list, press
+<code>Ctrl+Shift+P</code>, type <code
+class="cmd">Developer: Reload Window</code>, press Enter, and try again.
+If it is still missing, run the <code>ipykernel install</code> line of
+the setup guide (Step 7) again.</li>
+<li>Click in a cell and press <strong>Shift + Enter</strong> to run it.
+The result appears under the cell. The <strong>+ Code</strong> and
+<strong>+ Markdown</strong> buttons above the notebook add cells, and
+<code>Ctrl+S</code> saves.</li>
+</ol>
+<p>You do not need a terminal running Jupyter. Commit and push the
+notebook the way Steps 4 and 5 show.</p>
 <h2 id="windows-the-same-steps-in-the-terminal">The same steps in the
 terminal</h2>
 <div class="table-scroll">
@@ -465,6 +506,23 @@ GitHub.</td>
 screenshot.</td>
 </tr>
 <tr>
+<td>The notebook says <strong>Select Kernel</strong>, or the first cell
+fails with <code>ModuleNotFoundError</code></td>
+<td>The notebook is not using the <code>darkmatter_cli_env</code>
+environment.</td>
+<td>Click the kernel name at the top right and choose <strong>Python
+Environments</strong>, then <strong>darkmatter_cli_env</strong> (Step
+8).</td>
+</tr>
+<tr>
+<td><code>darkmatter_cli_env</code> is not in the kernel list</td>
+<td>VS Code has not noticed the environment yet.</td>
+<td><code>Ctrl+Shift+P</code>, run <code
+class="cmd">Developer: Reload Window</code>, and look again. If it is
+still missing, run the <code>ipykernel install</code> line of the setup
+guide (Step 7) again.</td>
+</tr>
+<tr>
 <td>Two versions of a file side by side</td>
 <td>A comparison (a “diff”). VS Code shows it whenever you click a
 changed file. It is not a conflict.</td>
@@ -491,15 +549,18 @@ Code.</td>
 </table>
 </div>
 <h2 id="windows-session-info">Session Info</h2>
-<p>Guide version 7, 12 November 2026, Windows edition. Version 6 adds,
-for Linux, a way to install VS Code without administrator rights (the
-<code>.tar.gz</code> file); that route has not been tried on a real
-Linux computer. Kitty Mickelson went through the steps on Ubuntu, where
-they already use Git through VS Code, on 15 October and found them
-accurate; version 4 follows their review. The Git steps were also
-checked in a browser version of VS Code on a test copy of the project,
-on Windows (commit, the branch list, the merge list, and installing the
-extension). The names of the commands (<code>Git: Fetch</code>,
+<p>Guide version 8, 19 November 2026, Windows edition. Version 8 adds
+Step 8, running notebooks in VS Code; it was written from the
+documentation of the Jupyter and Python extensions and has not been
+tried on a student’s computer. Version 6 adds, for Linux, a way to
+install VS Code without administrator rights (the <code>.tar.gz</code>
+file); that route has not been tried on a real Linux computer. Kitty
+Mickelson went through the steps on Ubuntu, where they already use Git
+through VS Code, on 15 October and found them accurate; version 4
+follows their review. The Git steps were also checked in a browser
+version of VS Code on a test copy of the project, on Windows (commit,
+the branch list, the merge list, and installing the extension). The
+names of the commands (<code>Git: Fetch</code>,
 <code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
 against VS Code 1.141. The <strong>Sync Changes</strong> question and
 the way out of a conflict were written from VS Code’s documentation and
@@ -529,7 +590,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 4 — macOS edition,
-optional &middot; Version 7 · 12 November 2026</p>
+optional &middot; Version 8 · 19 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -556,6 +617,9 @@ in the newest project changes</a></li>
 <li><a href="#macos-step-7.-open-a-pull-request"
 id="macos-toc-step-7.-open-a-pull-request">Step 7. Open a pull
 request</a></li>
+<li><a href="#macos-step-8.-optional-run-notebooks-in-vs-code"
+id="macos-toc-step-8.-optional-run-notebooks-in-vs-code">Step 8.
+Optional: run notebooks in VS Code</a></li>
 <li><a href="#macos-the-same-steps-in-the-terminal"
 id="macos-toc-the-same-steps-in-the-terminal">The same steps in the
 terminal</a></li>
@@ -574,9 +638,10 @@ links</a></li>
 <div class="tip">
 <p><strong>This is guide 4, and it is optional.</strong> It does the
 same Git steps as the terminal guides, with buttons in VS Code instead
-of typed commands. If you are happy with the terminal, you do not need
-this guide. If a screen here does not match what you see, trust the
-terminal version, and tell your lead which step differed.</p>
+of typed commands. Step 8 also shows how to run your notebooks in VS
+Code instead of the browser. If you are happy with the terminal, you do
+not need this guide. If a screen here does not match what you see, trust
+the terminal version, and tell your lead which step differed.</p>
 </div>
 <h2 id="macos-before-you-start">Before you start</h2>
 <ul>
@@ -839,6 +904,43 @@ icon in the title bar, the pull-request symbol with a plus sign
 (outlined in red). It is small. The other icons are <em>Refresh</em>,
 <em>Collapse All</em> and a menu. Your own branch is not in the list
 below until its pull request exists.</p>
+<h2 id="macos-step-8.-optional-run-notebooks-in-vs-code">Step 8.
+Optional: run notebooks in VS Code</h2>
+<p>VS Code can open and run a notebook (<code>.ipynb</code> file)
+itself, so you do not have to start <code>jupyter lab</code> and use the
+browser. It is the same file: you can open it in either one.</p>
+<div class="careful">
+<p>This step has <strong>not yet been tried all the way through on a
+student’s computer</strong>. If a screen differs, use the Jupyter route
+in guide 3 (Step 3) instead.</p>
+</div>
+<ol type="1">
+<li>Press <code>Cmd+Shift+X</code> to open
+<strong>Extensions</strong>.</li>
+<li>Search for <code class="cmd">Jupyter</code> and install the one
+whose publisher is <strong>Microsoft</strong>. It also installs the
+<strong>Python</strong> extension. If the <strong>Python</strong>
+extension is not listed under your installed extensions afterwards,
+install it the same way.</li>
+<li>Make sure the <code>NSDF-Data</code> folder is open (Step 2). In the
+file list on the left, open your notebook, for example
+<code>data_analysis/R76/student/yourname/first-analysis-yourname.ipynb</code>.
+To make a new one, right-click your own folder there, choose <strong>New
+File</strong>, and name it <code>something.ipynb</code>.</li>
+<li>Click <strong>Select Kernel</strong> at the top right of the
+notebook, choose <strong>Python Environments</strong>, and then
+<strong>darkmatter_cli_env</strong>. If it is not in the list, press
+<code>Cmd+Shift+P</code>, type <code
+class="cmd">Developer: Reload Window</code>, press Enter, and try again.
+If it is still missing, run the <code>ipykernel install</code> line of
+the setup guide (Step 7) again.</li>
+<li>Click in a cell and press <strong>Shift + Enter</strong> to run it.
+The result appears under the cell. The <strong>+ Code</strong> and
+<strong>+ Markdown</strong> buttons above the notebook add cells, and
+<code>Cmd+S</code> saves.</li>
+</ol>
+<p>You do not need a terminal running Jupyter. Commit and push the
+notebook the way Steps 4 and 5 show.</p>
 <h2 id="macos-the-same-steps-in-the-terminal">The same steps in the
 terminal</h2>
 <div class="table-scroll">
@@ -963,6 +1065,23 @@ GitHub.</td>
 screenshot.</td>
 </tr>
 <tr>
+<td>The notebook says <strong>Select Kernel</strong>, or the first cell
+fails with <code>ModuleNotFoundError</code></td>
+<td>The notebook is not using the <code>darkmatter_cli_env</code>
+environment.</td>
+<td>Click the kernel name at the top right and choose <strong>Python
+Environments</strong>, then <strong>darkmatter_cli_env</strong> (Step
+8).</td>
+</tr>
+<tr>
+<td><code>darkmatter_cli_env</code> is not in the kernel list</td>
+<td>VS Code has not noticed the environment yet.</td>
+<td><code>Cmd+Shift+P</code>, run <code
+class="cmd">Developer: Reload Window</code>, and look again. If it is
+still missing, run the <code>ipykernel install</code> line of the setup
+guide (Step 7) again.</td>
+</tr>
+<tr>
 <td>Two versions of a file side by side</td>
 <td>A comparison (a “diff”). VS Code shows it whenever you click a
 changed file. It is not a conflict.</td>
@@ -989,22 +1108,25 @@ Code.</td>
 </table>
 </div>
 <h2 id="macos-session-info">Session Info</h2>
-<p>Guide version 7, 12 November 2026, macOS edition. Version 6 adds, for
-Linux, a way to install VS Code without administrator rights (the
-<code>.tar.gz</code> file); that route has not been tried on a real
-Linux computer. Kitty Mickelson went through the steps on Ubuntu, where
-they already use Git through VS Code, on 15 October and found them
-accurate; version 4 follows their review. The Git steps were also
-checked in a browser version of VS Code on a test copy of the project,
-on Windows (commit, the branch list, the merge list, and installing the
-extension). The names of the commands (<code>Git: Fetch</code>,
-<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
-against VS Code 1.141. The <strong>Sync Changes</strong> question and
-the way out of a conflict were written from VS Code’s documentation and
-have not been tried on a real conflict. The install on a computer that
-does not have VS Code yet, the sign-in, and the pull-request part have
-not been tried on a student’s computer. Please tell the project lead
-where a step was unclear.</p>
+<p>Guide version 8, 19 November 2026, macOS edition. Version 8 adds Step
+8, running notebooks in VS Code; it was written from the documentation
+of the Jupyter and Python extensions and has not been tried on a
+student’s computer. Version 6 adds, for Linux, a way to install VS Code
+without administrator rights (the <code>.tar.gz</code> file); that route
+has not been tried on a real Linux computer. Kitty Mickelson went
+through the steps on Ubuntu, where they already use Git through VS Code,
+on 15 October and found them accurate; version 4 follows their review.
+The Git steps were also checked in a browser version of VS Code on a
+test copy of the project, on Windows (commit, the branch list, the merge
+list, and installing the extension). The names of the commands
+(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
+<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
+<strong>Sync Changes</strong> question and the way out of a conflict
+were written from VS Code’s documentation and have not been tried on a
+real conflict. The install on a computer that does not have VS Code yet,
+the sign-in, and the pull-request part have not been tried on a
+student’s computer. Please tell the project lead where a step was
+unclear.</p>
 <h2 id="macos-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"
@@ -1027,7 +1149,7 @@ class="uri">https://code.visualstudio.com/</a></li>
 
 <h1>Git in VS Code</h1>
 <p class="meta">NSDF-Data student guide 4 — Linux edition,
-optional &middot; Version 7 · 12 November 2026</p>
+optional &middot; Version 8 · 19 November 2026</p>
 
 <nav class="outline" aria-label="Outline">
 <strong>Outline</strong>
@@ -1054,6 +1176,9 @@ in the newest project changes</a></li>
 <li><a href="#linux-step-7.-open-a-pull-request"
 id="linux-toc-step-7.-open-a-pull-request">Step 7. Open a pull
 request</a></li>
+<li><a href="#linux-step-8.-optional-run-notebooks-in-vs-code"
+id="linux-toc-step-8.-optional-run-notebooks-in-vs-code">Step 8.
+Optional: run notebooks in VS Code</a></li>
 <li><a href="#linux-the-same-steps-in-the-terminal"
 id="linux-toc-the-same-steps-in-the-terminal">The same steps in the
 terminal</a></li>
@@ -1072,9 +1197,10 @@ links</a></li>
 <div class="tip">
 <p><strong>This is guide 4, and it is optional.</strong> It does the
 same Git steps as the terminal guides, with buttons in VS Code instead
-of typed commands. If you are happy with the terminal, you do not need
-this guide. If a screen here does not match what you see, trust the
-terminal version, and tell your lead which step differed.</p>
+of typed commands. Step 8 also shows how to run your notebooks in VS
+Code instead of the browser. If you are happy with the terminal, you do
+not need this guide. If a screen here does not match what you see, trust
+the terminal version, and tell your lead which step differed.</p>
 </div>
 <h2 id="linux-before-you-start">Before you start</h2>
 <ul>
@@ -1361,6 +1487,43 @@ icon in the title bar, the pull-request symbol with a plus sign
 (outlined in red). It is small. The other icons are <em>Refresh</em>,
 <em>Collapse All</em> and a menu. Your own branch is not in the list
 below until its pull request exists.</p>
+<h2 id="linux-step-8.-optional-run-notebooks-in-vs-code">Step 8.
+Optional: run notebooks in VS Code</h2>
+<p>VS Code can open and run a notebook (<code>.ipynb</code> file)
+itself, so you do not have to start <code>jupyter lab</code> and use the
+browser. It is the same file: you can open it in either one.</p>
+<div class="careful">
+<p>This step has <strong>not yet been tried all the way through on a
+student’s computer</strong>. If a screen differs, use the Jupyter route
+in guide 3 (Step 3) instead.</p>
+</div>
+<ol type="1">
+<li>Press <code>Ctrl+Shift+X</code> to open
+<strong>Extensions</strong>.</li>
+<li>Search for <code class="cmd">Jupyter</code> and install the one
+whose publisher is <strong>Microsoft</strong>. It also installs the
+<strong>Python</strong> extension. If the <strong>Python</strong>
+extension is not listed under your installed extensions afterwards,
+install it the same way.</li>
+<li>Make sure the <code>NSDF-Data</code> folder is open (Step 2). In the
+file list on the left, open your notebook, for example
+<code>data_analysis/R76/student/yourname/first-analysis-yourname.ipynb</code>.
+To make a new one, right-click your own folder there, choose <strong>New
+File</strong>, and name it <code>something.ipynb</code>.</li>
+<li>Click <strong>Select Kernel</strong> at the top right of the
+notebook, choose <strong>Python Environments</strong>, and then
+<strong>darkmatter_cli_env</strong>. If it is not in the list, press
+<code>Ctrl+Shift+P</code>, type <code
+class="cmd">Developer: Reload Window</code>, press Enter, and try again.
+If it is still missing, run the <code>ipykernel install</code> line of
+the setup guide (Step 7) again.</li>
+<li>Click in a cell and press <strong>Shift + Enter</strong> to run it.
+The result appears under the cell. The <strong>+ Code</strong> and
+<strong>+ Markdown</strong> buttons above the notebook add cells, and
+<code>Ctrl+S</code> saves.</li>
+</ol>
+<p>You do not need a terminal running Jupyter. Commit and push the
+notebook the way Steps 4 and 5 show.</p>
 <h2 id="linux-the-same-steps-in-the-terminal">The same steps in the
 terminal</h2>
 <div class="table-scroll">
@@ -1485,6 +1648,23 @@ GitHub.</td>
 screenshot.</td>
 </tr>
 <tr>
+<td>The notebook says <strong>Select Kernel</strong>, or the first cell
+fails with <code>ModuleNotFoundError</code></td>
+<td>The notebook is not using the <code>darkmatter_cli_env</code>
+environment.</td>
+<td>Click the kernel name at the top right and choose <strong>Python
+Environments</strong>, then <strong>darkmatter_cli_env</strong> (Step
+8).</td>
+</tr>
+<tr>
+<td><code>darkmatter_cli_env</code> is not in the kernel list</td>
+<td>VS Code has not noticed the environment yet.</td>
+<td><code>Ctrl+Shift+P</code>, run <code
+class="cmd">Developer: Reload Window</code>, and look again. If it is
+still missing, run the <code>ipykernel install</code> line of the setup
+guide (Step 7) again.</td>
+</tr>
+<tr>
 <td>Two versions of a file side by side</td>
 <td>A comparison (a “diff”). VS Code shows it whenever you click a
 changed file. It is not a conflict.</td>
@@ -1511,22 +1691,25 @@ Code.</td>
 </table>
 </div>
 <h2 id="linux-session-info">Session Info</h2>
-<p>Guide version 7, 12 November 2026, Linux edition. Version 6 adds, for
-Linux, a way to install VS Code without administrator rights (the
-<code>.tar.gz</code> file); that route has not been tried on a real
-Linux computer. Kitty Mickelson went through the steps on Ubuntu, where
-they already use Git through VS Code, on 15 October and found them
-accurate; version 4 follows their review. The Git steps were also
-checked in a browser version of VS Code on a test copy of the project,
-on Windows (commit, the branch list, the merge list, and installing the
-extension). The names of the commands (<code>Git: Fetch</code>,
-<code>Git: Merge...</code>, <code>Git: Abort Merge</code>) were checked
-against VS Code 1.141. The <strong>Sync Changes</strong> question and
-the way out of a conflict were written from VS Code’s documentation and
-have not been tried on a real conflict. The install on a computer that
-does not have VS Code yet, the sign-in, and the pull-request part have
-not been tried on a student’s computer. Please tell the project lead
-where a step was unclear.</p>
+<p>Guide version 8, 19 November 2026, Linux edition. Version 8 adds Step
+8, running notebooks in VS Code; it was written from the documentation
+of the Jupyter and Python extensions and has not been tried on a
+student’s computer. Version 6 adds, for Linux, a way to install VS Code
+without administrator rights (the <code>.tar.gz</code> file); that route
+has not been tried on a real Linux computer. Kitty Mickelson went
+through the steps on Ubuntu, where they already use Git through VS Code,
+on 15 October and found them accurate; version 4 follows their review.
+The Git steps were also checked in a browser version of VS Code on a
+test copy of the project, on Windows (commit, the branch list, the merge
+list, and installing the extension). The names of the commands
+(<code>Git: Fetch</code>, <code>Git: Merge...</code>,
+<code>Git: Abort Merge</code>) were checked against VS Code 1.141. The
+<strong>Sync Changes</strong> question and the way out of a conflict
+were written from VS Code’s documentation and have not been tried on a
+real conflict. The install on a computer that does not have VS Code yet,
+the sign-in, and the pull-request part have not been tried on a
+student’s computer. Please tell the project lead where a step was
+unclear.</p>
 <h2 id="linux-where-to-get-help">Where to get help</h2>
 <p><strong>Anthony Villano</strong>, project lead: <a
 href="mailto:anthony.villano@ucdenver.edu"

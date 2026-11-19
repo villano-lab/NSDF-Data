@@ -1,7 +1,7 @@
 ---
 title: "Your first analysis"
 subtitle: "NSDF-Data student guide 3 — Windows edition"
-date: "Version 24 · 12 November 2026"
+date: "Version 25 · 19 November 2026"
 ---
 
 ::: tip
@@ -119,6 +119,10 @@ Your web browser opens a Jupyter page. Click **File**, then **New**, then **Note
 
 ::: tip
 A notebook is a list of boxes called **cells**. Type code in a cell and press **Shift + Enter** to run it. The result appears under the cell. Press **Enter** (without Shift) to keep typing in the same cell.
+:::
+
+::: tip
+**Prefer VS Code?** You can open and run the same notebook in VS Code instead of the browser, without starting `jupyter lab`. It is optional: *Git in VS Code* (guide 4), Step 8, shows how. If you use it, read "Restart Kernel" below as the **Restart** button in the notebook's toolbar.
 :::
 
 Give your notebook a name: right-click its tab at the top (it says `Untitled.ipynb`) and choose **Rename Notebook**. In the box, replace `Untitled` with `first-analysis-yourname` (keep `.ipynb` at the end) and click **Rename**.
@@ -404,7 +408,7 @@ When you write, include the step number, the command you typed, and the last few
 
 ## Session Info
 
-Guide version 24, 12 November 2026, Windows edition. Written for beginners; please tell the project lead where a step was unclear.
+Guide version 25, 19 November 2026, Windows edition. Version 25 adds a pointer to running the notebook in VS Code (guide 4, Step 8). Written for beginners; please tell the project lead where a step was unclear.
 
 ## Key links
 

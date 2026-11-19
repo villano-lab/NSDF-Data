@@ -1,11 +1,11 @@
 ---
 title: "Git in VS Code"
 subtitle: "NSDF-Data student guide 4 — Windows edition, optional"
-date: "Version 7 · 12 November 2026"
+date: "Version 8 · 19 November 2026"
 ---
 
 ::: tip
-**This is guide 4, and it is optional.** It does the same Git steps as the terminal guides, with buttons in VS Code instead of typed commands. If you are happy with the terminal, you do not need this guide. If a screen here does not match what you see, trust the terminal version, and tell your lead which step differed.
+**This is guide 4, and it is optional.** It does the same Git steps as the terminal guides, with buttons in VS Code instead of typed commands. Step 8 also shows how to run your notebooks in VS Code instead of the browser. If you are happy with the terminal, you do not need this guide. If a screen here does not match what you see, trust the terminal version, and tell your lead which step differed.
 :::
 
 ## Before you start
@@ -142,6 +142,22 @@ This part was written from the extension's own documentation and its list of com
 
 **Figure 2.** The **Pull Requests** view of the GitHub extension. The button that starts a pull request is the first icon in the title bar, the pull-request symbol with a plus sign (outlined in red). It is small. The other icons are *Refresh*, *Collapse All* and a menu. Your own branch is not in the list below until its pull request exists.
 
+## Step 8. Optional: run notebooks in VS Code
+
+VS Code can open and run a notebook (`.ipynb` file) itself, so you do not have to start `jupyter lab` and use the browser. It is the same file: you can open it in either one.
+
+::: careful
+This step has **not yet been tried all the way through on a student's computer**. If a screen differs, use the Jupyter route in guide 3 (Step 3) instead.
+:::
+
+1. Press `Ctrl+Shift+X` to open **Extensions**.
+2. Search for `Jupyter`{.cmd} and install the one whose publisher is **Microsoft**. It also installs the **Python** extension. If the **Python** extension is not listed under your installed extensions afterwards, install it the same way.
+3. Make sure the `NSDF-Data` folder is open (Step 2). In the file list on the left, open your notebook, for example `data_analysis/R76/student/yourname/first-analysis-yourname.ipynb`. To make a new one, right-click your own folder there, choose **New File**, and name it `something.ipynb`.
+4. Click **Select Kernel** at the top right of the notebook, choose **Python Environments**, and then **darkmatter_cli_env**. If it is not in the list, press `Ctrl+Shift+P`, type `Developer: Reload Window`{.cmd}, press Enter, and try again. If it is still missing, run the `ipykernel install` line of the setup guide (Step 7) again.
+5. Click in a cell and press **Shift + Enter** to run it. The result appears under the cell. The **+ Code** and **+ Markdown** buttons above the notebook add cells, and `Ctrl+S` saves.
+
+You do not need a terminal running Jupyter. Commit and push the notebook the way Steps 4 and 5 show.
+
 ## The same steps in the terminal
 
 | In VS Code | In the terminal |
@@ -168,13 +184,15 @@ The last row uses the `gh` command, which guide 2 installed and signed in to Git
 | A question about staging everything and committing | Nothing is staged yet. | **Cancel**, then stage your files with **+** (Step 4). |
 | **Sync Changes** shows a down-arrow number as well as an up-arrow number | There are newer commits on your branch on GitHub: your lead merged the project's newest changes into it. | Check the branch name, click **Sync Changes**, and click **OK** on the question (Step 5). |
 | VS Code says there are merge conflicts, or lists files under **Merge Changes** | Git cannot combine two changes by itself. Nothing has been sent to GitHub. | Stop. Do not edit anything. Press `Ctrl+Shift+P`, run `Git: Abort Merge`{.cmd}, and send your lead a screenshot. |
+| The notebook says **Select Kernel**, or the first cell fails with `ModuleNotFoundError` | The notebook is not using the `darkmatter_cli_env` environment. | Click the kernel name at the top right and choose **Python Environments**, then **darkmatter_cli_env** (Step 8). |
+| `darkmatter_cli_env` is not in the kernel list | VS Code has not noticed the environment yet. | `Ctrl+Shift+P`, run `Developer: Reload Window`{.cmd}, and look again. If it is still missing, run the `ipykernel install` line of the setup guide (Step 7) again. |
 | Two versions of a file side by side | A comparison (a "diff"). VS Code shows it whenever you click a changed file. It is not a conflict. | Nothing: close it, or go on. A real conflict is announced as in the row above. |
 | `Git: Merge...`{.cmd} finishes and nothing seems to have happened | You already had the newest changes. VS Code says nothing when there is nothing to merge. | Look at the big button (Step 6). No number means you were up to date. |
 | "Make sure you configure your user.name and user.email", or a permission error | Git does not know your name, or you are not signed in to GitHub. | Setup guide, Step 8. Never type your GitHub password into VS Code. |
 
 ## Session Info
 
-Guide version 7, 12 November 2026, Windows edition. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
+Guide version 8, 19 November 2026, Windows edition. Version 8 adds Step 8, running notebooks in VS Code; it was written from the documentation of the Jupyter and Python extensions and has not been tried on a student's computer. Version 6 adds, for Linux, a way to install VS Code without administrator rights (the `.tar.gz` file); that route has not been tried on a real Linux computer. Kitty Mickelson went through the steps on Ubuntu, where they already use Git through VS Code, on 15 October and found them accurate; version 4 follows their review. The Git steps were also checked in a browser version of VS Code on a test copy of the project, on Windows (commit, the branch list, the merge list, and installing the extension). The names of the commands (`Git: Fetch`, `Git: Merge...`, `Git: Abort Merge`) were checked against VS Code 1.141. The **Sync Changes** question and the way out of a conflict were written from VS Code's documentation and have not been tried on a real conflict. The install on a computer that does not have VS Code yet, the sign-in, and the pull-request part have not been tried on a student's computer. Please tell the project lead where a step was unclear.
 
 ## Where to get help
 
